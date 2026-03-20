@@ -88,7 +88,7 @@
     bottom: 1.2rem;
     right: 1.5rem;
     font-family: var(--mono);
-    font-size: 0.75rem;
+    font-size: 1rem;
     color: var(--fg-dim);
     z-index: 100;
   }
@@ -106,7 +106,7 @@
   .slide.active { display: flex; }
 
   .slide h1 {
-    font-size: 4.5rem;
+    font-size: 6rem;
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.1;
@@ -114,7 +114,7 @@
   }
 
   .slide h2 {
-    font-size: 2.2rem;
+    font-size: 3.2rem;
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.2;
@@ -122,17 +122,17 @@
   }
 
   .slide h3 {
-    font-size: 1.4rem;
+    font-size: 2rem;
     font-weight: 400;
     color: var(--fg-dim);
     margin-bottom: 1.5em;
   }
 
   .slide p, .slide li {
-    font-size: 1.15rem;
+    font-size: 1.6rem;
     line-height: 1.7;
     color: var(--fg);
-    max-width: 52rem;
+    max-width: 60rem;
   }
 
   .slide ul {
@@ -160,34 +160,36 @@
   .accent { color: var(--accent); }
 
   .small {
-    font-size: 0.85rem;
+    font-size: 1.1rem;
     color: var(--fg-dim);
     font-family: var(--mono);
   }
 
   .mono {
     font-family: var(--mono);
-    font-size: 0.95em;
+    font-size: 1.1em;
   }
 
   .stat {
     font-family: var(--mono);
     font-weight: 600;
+    font-size: 1.8rem;
     color: var(--accent);
   }
 
   .quote {
-    border-left: 3px solid var(--accent);
+    border-left: 4px solid var(--accent);
     padding: 0.6em 1.2em;
-    margin: 0.6em 0;
+    margin: 0.8em 0;
     font-style: italic;
+    font-size: 1.5rem;
     color: var(--fg);
-    max-width: 42rem;
+    max-width: 52rem;
   }
 
   .stack-diagram {
     font-family: var(--mono);
-    font-size: 0.95rem;
+    font-size: 1.2rem;
     line-height: 2;
     color: var(--fg-dim);
   }
@@ -242,6 +244,7 @@
 <div class="controls">
   <a href="../">&larr; back</a>
   <button onclick="toggleTheme()" id="theme-btn">light</button>
+  <button onclick="goFullscreen()" id="fs-btn">fullscreen</button>
 </div>
 
 <div class="slide-counter">
@@ -364,6 +367,7 @@
     if (e.key === 'ArrowLeft') { e.preventDefault(); show(idx - 1); }
     if (e.key === 'Home') { e.preventDefault(); show(0); }
     if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+    if (e.key === 'f' || e.key === 'F') { e.preventDefault(); goFullscreen(); }
   });
 
   // Touch/swipe support
@@ -382,6 +386,22 @@
     document.getElementById('theme-btn').textContent =
       document.body.classList.contains('light') ? 'dark' : 'light';
   }
+
+  // Fullscreen
+  function goFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+      document.getElementById('fs-btn').textContent = 'exit';
+    } else {
+      document.exitFullscreen();
+      document.getElementById('fs-btn').textContent = 'fullscreen';
+    }
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    document.getElementById('fs-btn').textContent =
+      document.fullscreenElement ? 'exit' : 'fullscreen';
+  });
 </script>
 
 <!--
