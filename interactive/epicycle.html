@@ -407,6 +407,16 @@ const hint = document.getElementById('hint');
 
 let W, H, dpr;
 
+// ==== State (declared early so resize() can reference them) ====
+let drawnPoints = [];
+let isDrawing = false;
+let fourierCoeffs = [];
+let fullCoeffs = []; // precomputed at max harmonics for slicing
+let fourierCenter = { x: 0, y: 0 };
+let animTime = 0;
+let tracePoints = [];
+let animId = null;
+
 function resize() {
   const wrap = canvas.parentElement;
   dpr = window.devicePixelRatio || 1;
@@ -439,15 +449,7 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// ==== State ====
-let drawnPoints = [];
-let isDrawing = false;
-let fourierCoeffs = [];
-let fullCoeffs = []; // precomputed at max harmonics for slicing
-let fourierCenter = { x: 0, y: 0 };
-let animTime = 0;
-let tracePoints = [];
-let animId = null;
+// (State variables declared above resize())
 
 // ==== Utility: get theme colors ====
 function themeColors() {
