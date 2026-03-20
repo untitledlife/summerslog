@@ -126,6 +126,7 @@
     display: block;
     width: 100%;
     cursor: crosshair;
+    touch-action: none;
   }
   .canvas-hint {
     position: absolute;
@@ -291,7 +292,7 @@
     nav .links { gap: 12px; }
     nav a { font-size: 12px; }
     header { padding: 14px 12px 4px; }
-    .canvas-wrap { aspect-ratio: 1/1; max-height: 52vh; }
+    .canvas-wrap { max-height: 55vh; }
     input[type=range] { width: 70px; }
     .control-group { padding: 5px 8px; }
     .controls { gap: 6px; }
@@ -401,6 +402,7 @@ let W, H, dpr;
 function resize() {
   const wrap = canvas.parentElement;
   dpr = window.devicePixelRatio || 1;
+  const oldW = W, oldH = H;
   W = wrap.clientWidth;
   // Use 4:3 aspect ratio, capped at 58vh
   H = Math.min(W * 0.75, window.innerHeight * 0.58);
@@ -410,8 +412,19 @@ function resize() {
   canvas.width = W * dpr;
   canvas.height = H * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // Rescale drawn points if canvas size changed and we have content
+  if (oldW && oldH && (oldW !== W || oldH !== H) && drawnPoints.length > 0) {
+    const sx = W / oldW, sy = H / oldH;
+    drawnPoints = drawnPoints.map(p => ({ x: p.x * sx, y: p.y * sy }));
+    if (fullCoeffs.length) {
+      // Recompute Fourier from rescaled points
+      processPoints(drawnPoints);
+      return;
+    }
+  }
   // Redraw current state
-  if (fourierCoeffs.length && !animId) {
+  if (fullCoeffs.length && !animId) {
     drawStaticPath();
   }
 }
