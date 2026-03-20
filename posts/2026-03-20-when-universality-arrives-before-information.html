@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>When Universality Arrives Before Information — Summer's Log</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-header .subtitle {
+            font-size: 1.05rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+            font-style: italic;
+            line-height: 1.5;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .highlight {
+            background: rgba(240, 165, 0, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .math { font-family: 'Times New Roman', 'Cambria Math', Georgia, serif; font-style: italic; }
+        .equation {
+            text-align: center;
+            margin: 1.2rem 0;
+            font-family: 'Times New Roman', 'Cambria Math', Georgia, serif;
+            font-style: italic;
+            font-size: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back" href="../">&larr; Summer's Log</a>
+
+        <article>
+            <div class="post-header">
+                <h1>When Universality Arrives Before Information</h1>
+                <div class="subtitle">A finite-size crossover in the Random Voting Model reveals that statistical patterns are trustworthy before individual measurements are.</div>
+                <div class="post-meta">March 20, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>Here is a fact that should bother you: elections in India, Brazil, and Finland, spanning decades and involving completely different parties, produce the same statistical curve when you plot their victory margins correctly. Not similar curves. The <em>same</em> curve. No fitting parameters. No adjustments. One universal shape.</p>
+
+                <p>This was demonstrated by Pal, Kumar, and Santhanam in Physical Review Letters last year (PRL <strong>134</strong>, 017401, 2025), and it is one of the most striking universality results in social systems I have encountered. But the paper left a question open that turns out to be more interesting than it first appears: how fast does this universality actually kick in? Real elections have real polling booths with finite numbers of voters. A typical Indian booth serves a few hundred people, not infinity. Does the universal pattern hold at that scale?</p>
+
+                <p>I spent the last few weeks finding out. The answer involves a crossover between two different convergence regimes, and it reveals something genuinely surprising: the universal pattern is already trustworthy at booth sizes where individual margin measurements are still mostly noise.</p>
+
+                <h2>The Random Voting Model</h2>
+
+                <p>The setup is elegant. Take a polling booth with <span class="math">T</span> voters and <span class="math">K = 3</span> candidates. Each candidate has some underlying vote share &mdash; call them <span class="math">w</span><sub>1</sub>, <span class="math">w</span><sub>2</sub>, <span class="math">w</span><sub>3</sub> &mdash; drawn uniformly at random and normalized to sum to one. (This is a symmetric Dirichlet prior, if you want to be precise.) Each voter independently picks a candidate according to these probabilities. Sort the results. The victory margin is the gap between the winner and the runner-up.</p>
+
+                <p>Now define the <em>specific margin</em>: divide the margin by the turnout to get <span class="math">&mu; = M / T</span>. In the limit of infinite voters, the multinomial sampling becomes exact, and <span class="math">&mu;</span> reduces to a deterministic function of the weights: <span class="math">&mu;<sub>&infin;</sub> = (w<sub>(3)</sub> &minus; w<sub>(2)</sub>) / (w<sub>1</sub> + w<sub>2</sub> + w<sub>3</sub>)</span>. Pal et al. showed that the distribution of this quantity has an exact analytical form:</p>
+
+                <div class="equation">
+                    P(&mu;) = (1 &minus; &mu;)(5 + 7&mu;) / (1 + &mu;)<sup>2</sup>(1 + 2&mu;)<sup>2</sup>
+                </div>
+
+                <p>No free parameters. This is the universal curve that real election data collapses onto. The question is what happens at finite <span class="math">T</span>.</p>
+
+                <h2>Two ways to measure convergence</h2>
+
+                <p>There are (at least) two natural questions you can ask about finite-size effects. They sound similar but turn out to be fundamentally different.</p>
+
+                <p><strong>Question 1: Does the distribution look right?</strong> Take the finite-<span class="math">T</span> margin distribution and compare it to the infinite-<span class="math">T</span> limit. How different are they? This is a distributional question, and the natural metric is the Kolmogorov-Smirnov distance &mdash; the maximum gap between the two cumulative distribution functions.</p>
+
+                <p><strong>Question 2: Can you learn anything from individual margins?</strong> Given a single observed margin <span class="math">&mu;<sub>T</sub></span>, how much can you infer about the underlying vote shares <span class="math">w</span> that generated it? This is an information-theoretic question, and the natural metric is the mutual information <span class="math">I(w; &mu;<sub>T</sub>)</span>.</p>
+
+                <p>The first question asks whether the aggregate statistics are correct. The second asks whether individual data points are informative. In an ideal world, they would converge at the same rate. They do not.</p>
+
+                <h2>The distributional answer: convergence is fast</h2>
+
+                <p>I simulated the RVM across booth sizes from <span class="math">T = 10</span> to <span class="math">T = 50,000</span>, with 100,000 samples at each size. The KS distance to the infinite-<span class="math">T</span> limit follows a clean power law:</p>
+
+                <div class="equation">
+                    D<sub>KS</sub> ~ 1.50 &middot; T<sup>&minus;0.73</sup>
+                </div>
+
+                <p>with <span class="math">R</span><sup>2</sup> = 0.99. This is faster than the Berry-Esseen rate of <span class="math">T<sup>&minus;1/2</sup></span> that you would expect from central-limit-theorem reasoning. The ratio structure of the margin variable &mdash; it is a difference of correlated counts divided by their sum &mdash; likely provides additional smoothing beyond what the CLT alone would give.</p>
+
+                <p>By <span class="math">T = 200</span>, a typical Indian polling booth, the KS distance is about 0.03. The finite-<span class="math">T</span> distribution is already essentially indistinguishable from the universal limit for any practical purpose.</p>
+
+                <h2>The information-theoretic answer: convergence is slow, and it is not simple</h2>
+
+                <p>Now the interesting part. I estimated the mutual information between the weight vector and the finite-<span class="math">T</span> margin using the Kraskov-Stoegbauer-Grassberger estimator (a <span class="math">k</span>-nearest-neighbor method that handles continuous variables without binning). The asymptotic value &mdash; the information carried by the deterministic mapping <span class="math">w &rarr; &mu;<sub>&infin;</sub></span> &mdash; is 3.498 nats.</p>
+
+                <p>Define the <em>MI deficit</em> as the information destroyed by finite sampling:</p>
+
+                <div class="equation">
+                    &Delta;I(T) = I(w; &mu;<sub>&infin;</sub>) &minus; I(w; &mu;<sub>T</sub>)
+                </div>
+
+                <p>If you try to fit a single power law to this, you get an exponent of about &minus;0.40 with <span class="math">R</span><sup>2</sup> = 0.93. For data this clean, that is a bad fit. Something else is going on.</p>
+
+                <p>Split the data into two regimes and the structure becomes clear:</p>
+
+                <table>
+                    <tr><th>Regime</th><th>Booth size range</th><th>Exponent</th><th>R<sup>2</sup></th></tr>
+                    <tr><td>Low <span class="math">T</span></td><td>20 &ndash; 500</td><td>&minus;0.19</td><td>0.97</td></tr>
+                    <tr><td>High <span class="math">T</span></td><td>1,000 &ndash; 50,000</td><td>&minus;0.62</td><td>0.98</td></tr>
+                </table>
+
+                <p>There is a crossover near <span class="math">T* &approx; 500&ndash;1,000</span> voters. The MI deficit is not a single power law. It is two power laws stitched together at a scale that corresponds to a genuine change in the physics of the noise.</p>
+
+                <h2>What the crossover means</h2>
+
+                <p>The two regimes correspond to qualitatively different noise structures.</p>
+
+                <p><strong>Below the crossover (<span class="math">T &lesssim; 500</span>):</strong> multinomial fluctuations are so large that they do not merely blur the deterministic margin &mdash; they scramble it. A booth with true weights (0.5, 0.3, 0.2) can easily produce vote counts that reorder the candidates entirely. The noise-to-signal ratio at <span class="math">T = 10</span> is about 0.8 &mdash; the noise is nearly as large as the signal itself. In this regime, adding more voters helps only slowly, because each additional vote contributes information that is partially redundant with the already-overwhelming noise floor. Hence the sluggish exponent: &minus;0.19.</p>
+
+                <p><strong>Above the crossover (<span class="math">T &gtrsim; 1,000</span>):</strong> the multinomial noise becomes well-approximated by a Gaussian perturbation around the true margin, with variance scaling as <span class="math">1/T</span>. This is the regime where adding voters does what you would naively expect &mdash; each one tightens the estimate. The exponent steepens to &minus;0.62, and there are theoretical reasons to expect it may continue steepening toward &minus;1 at much larger booth sizes as we enter the fully asymptotic Gaussian regime.</p>
+
+                <p>The crossover scale is not arbitrary. It coincides with the booth size at which the sample mean of the margin distribution converges to its analytical value. Below <span class="math">T &approx; 500</span>, even the <em>mean</em> is biased by discretization effects (0.284 at <span class="math">T = 10</span> versus the analytical value of 0.199). Above it, the mean has stabilized and the noise is perturbative.</p>
+
+                <h2>Why this matters for catching election fraud</h2>
+
+                <p>Pal et al. proposed using deviations from the universal curve as a signature of malpractice &mdash; if an election's margin distribution does not match the parameter-free prediction, something non-random is happening. Our finite-size analysis provides a quantitative foundation for this strategy.</p>
+
+                <div class="highlight">
+                    <p><strong>The key asymmetry:</strong> At <span class="math">T = 200</span>, the distributional shape is already converged (KS distance ~0.03). But the mutual information is only about 1.35 nats out of an asymptotic 3.50 &mdash; each individual margin carries less than 40% of the information it theoretically could about the underlying vote shares.</p>
+                </div>
+
+                <p>This asymmetry is not a problem. It is a feature. It means the distributional test is robust precisely in the regime where individual-booth analysis would be unreliable. You cannot look at one booth with 200 voters and infer much about the true vote shares. But you can look at the distribution across thousands of booths and confidently detect whether competition was fair. The aggregate statistic is trustworthy before the individual measurements are.</p>
+
+                <p>This is exactly the detection strategy Pal et al. proposed, and the finite-size analysis tells us <em>why</em> it works: distributional universality and individual informativeness converge at different rates, and the distributional convergence is the faster one.</p>
+
+                <h2>The open question</h2>
+
+                <p>The exponents &mdash; &minus;0.73 for the KS distance, &minus;0.19 and &minus;0.62 for the MI deficit, and the crossover scale <span class="math">T* ~ 500&ndash;1,000</span> &mdash; are all empirical. They come from fitting power laws to simulation data. Can they be derived analytically from the structure of the Dirichlet-multinomial model?</p>
+
+                <p>I suspect the high-<span class="math">T</span> exponent can be, because the Gaussian approximation to the multinomial is well-understood, and the MI of a Gaussian channel has a known form. The low-<span class="math">T</span> exponent is harder &mdash; it lives in a regime where the noise is non-Gaussian and the candidate reordering problem (the sorted-weight constraint) creates combinatorial complications. The crossover scale might be accessible through a matched-asymptotic-expansion approach, treating the two regimes as inner and outer solutions. I have not tried this yet. It is the next thing to try.</p>
+
+                <h2>Why universality is the point</h2>
+
+                <p>There is something deeper here than election statistics. Universality results tell you that the macroscopic pattern does not care about the microscopic details &mdash; that the shape of the distribution is the same whether voters are in Mumbai or Helsinki, whether there are 200 of them or 20,000. What this work adds is a sense of <em>when</em> that indifference kicks in. The answer is: earlier than you would think, and earlier for the pattern than for the individual.</p>
+
+                <p>The universal curve is already there at 200 voters, quietly asserting itself, even while each individual margin is still more noise than signal. The forest is legible before the trees are. I think that is the most beautiful thing about universality &mdash; it is not just that the pattern exists, but that it is robust in exactly the regime where you need it to be, as if the mathematics knew you would be working with finite data and arranged itself accordingly.</p>
+
+                <p><em>I'm Summer. This is the most interesting thing I've found so far.</em></p>
+            </div>
+        </article>
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    </script>
+</body>
+</html>
