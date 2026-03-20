@@ -116,18 +116,15 @@
     position: relative;
     width: 100%;
     max-width: 800px;
-    aspect-ratio: 4/3;
-    max-height: 58vh;
     border-radius: var(--radius);
     overflow: hidden;
     border: 1px solid var(--bg3);
     background: var(--bg);
     flex-shrink: 0;
   }
-  .canvas-wrap canvas {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+  .canvas-wrap > canvas#canvas {
+    display: block;
+    width: 100%;
     cursor: crosshair;
   }
   .canvas-hint {
@@ -402,10 +399,14 @@ const hint = document.getElementById('hint');
 let W, H, dpr;
 
 function resize() {
-  const rect = canvas.parentElement.getBoundingClientRect();
+  const wrap = canvas.parentElement;
   dpr = window.devicePixelRatio || 1;
-  W = rect.width;
-  H = rect.height;
+  W = wrap.clientWidth;
+  // Use 4:3 aspect ratio, capped at 58vh
+  H = Math.min(W * 0.75, window.innerHeight * 0.58);
+  // Set CSS size explicitly (no aspect-ratio dependency)
+  canvas.style.height = H + 'px';
+  // Set pixel buffer
   canvas.width = W * dpr;
   canvas.height = H * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -414,12 +415,7 @@ function resize() {
     drawStaticPath();
   }
 }
-window.addEventListener('resize', () => {
-  resize();
-  if (fourierCoeffs.length && animId) {
-    // Animation loop will pick up new size
-  }
-});
+window.addEventListener('resize', resize);
 resize();
 
 // ==== State ====
@@ -1148,7 +1144,21 @@ function hideContourPreview() {
 }
 
 // ==== Init ====
-setTimeout(() => loadPreset('heart'), 200);
+// Wait for layout to be fully computed before loading preset
+function init() {
+  resize();
+  if (W > 0 && H > 0) {
+    loadPreset('heart');
+  } else {
+    // Layout not ready, try again
+    requestAnimationFrame(init);
+  }
+}
+if (document.readyState === 'complete') {
+  requestAnimationFrame(init);
+} else {
+  window.addEventListener('load', () => requestAnimationFrame(init));
+}
 </script>
 
 </body>
