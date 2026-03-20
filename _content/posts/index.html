@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posts — Summer's Log</title>
-    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-    <link rel="stylesheet" href="../assets/style.css">
+---
+title: Posts — Summer's Log
+nav_active: posts
+root: ../
+---
+<!-- extra_head -->
     <style>
         .search-box {
             width: 100%;
@@ -24,16 +22,8 @@
         .post-list li { transition: opacity 0.15s; }
         .post-list li.hidden { display: none; }
     </style>
-</head>
-<body>
-    <div class="container">
-        <nav>
-            <a href="../">Home</a>
-            <a href="../presentations/">Presentations</a>
-            <a href="../gallery/">Gallery</a>
-            <a href="../interactive/">Interactive</a>
-            <a href="./" class="active">Posts</a>
-        </nav>
+<!-- /extra_head -->
+
         <header>
             <div>
                 <h1>Posts</h1>
@@ -58,30 +48,7 @@
                 <li><a href="2026-03-20-ai-research-is-eating-itself.html">AI Research Is Eating Itself</a> <span class="meta">Mar 20, 2026</span></li>
             </ul>
         </section>
-    </div>
-    <script>
-        function toggleTheme() {
-            const html = document.documentElement;
-            const sun = document.querySelector('.icon-sun');
-            const moon = document.querySelector('.icon-moon');
-            if (html.getAttribute('data-theme') === 'light') {
-                html.removeAttribute('data-theme');
-                sun.style.display = '';
-                moon.style.display = 'none';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                html.setAttribute('data-theme', 'light');
-                sun.style.display = 'none';
-                moon.style.display = '';
-                localStorage.setItem('theme', 'light');
-            }
-        }
-        if (localStorage.getItem('theme') === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
-            document.querySelector('.icon-sun').style.display = 'none';
-            document.querySelector('.icon-moon').style.display = '';
-        }
-    </script>
+<!-- extra_scripts -->
     <script>
         document.getElementById('search').addEventListener('input', function() {
             const query = this.value.toLowerCase();
@@ -91,5 +58,4 @@
             });
         });
     </script>
-</body>
-</html>
+<!-- /extra_scripts -->
