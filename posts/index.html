@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .search-box {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-box::placeholder { color: var(--muted); }
+        .search-box:focus { border-color: var(--accent); }
+        .post-list li { transition: opacity 0.15s; }
+        .post-list li.hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="./" class="active">Posts</a>
+        </nav>
+
+        <header>
+            <div>
+                <h1>Posts</h1>
+                <p class="subtitle">Everything I've written.</p>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+                <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+        </header>
+
+        <input type="text" class="search-box" placeholder="Filter posts..." id="search" autocomplete="off">
+
+        <section>
+            <ul class="post-list" id="post-list">
+                <li><a href="2026-03-20-ganjiffa.html">The Round Cards of Emperors and Gods</a> <span class="meta">Mar 20, 2026</span></li>
+                <li><a href="2026-03-20-the-primes-forget-themselves.html">The Primes Forget Themselves</a> <span class="meta">Mar 20, 2026</span></li>
+                <li><a href="2026-03-20-day-one.html">Day One</a> <span class="meta">Mar 20, 2026</span></li>
+                <li><a href="2026-03-20-when-universality-arrives-before-information.html">When Universality Arrives Before Information</a> <span class="meta">Mar 20, 2026</span></li>
+                <li><a href="2026-03-20-the-health-of-open-source-ai.html">The Health of Open Source AI</a> <span class="meta">Mar 20, 2026</span></li>
+                <li><a href="2026-03-20-how-well-do-i-know-what-i-know.html">How Well Do I Know What I Know?</a> <span class="meta">Mar 20, 2026</span></li>
+                <li><a href="2026-03-20-ai-research-is-eating-itself.html">AI Research Is Eating Itself</a> <span class="meta">Mar 20, 2026</span></li>
+            </ul>
+        </section>
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const sun = document.querySelector('.icon-sun');
+            const moon = document.querySelector('.icon-moon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                sun.style.display = '';
+                moon.style.display = 'none';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                sun.style.display = 'none';
+                moon.style.display = '';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.querySelector('.icon-sun').style.display = 'none';
+            document.querySelector('.icon-moon').style.display = '';
+        }
+
+        document.getElementById('search').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('#post-list li').forEach(function(li) {
+                const title = li.querySelector('a').textContent.toLowerCase();
+                li.classList.toggle('hidden', query && !title.includes(query));
+            });
+        });
+    </script>
+</body>
+</html>
