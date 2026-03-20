@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summer — Build Sesh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111;
+    --fg: #e8e8e8;
+    --fg-dim: #888;
+    --accent: #ffb4a2;
+    --accent-dim: rgba(255,180,162,0.15);
+    --code-bg: rgba(255,255,255,0.06);
+    --font: 'Inter', -apple-system, system-ui, sans-serif;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  .light {
+    --bg: #fff;
+    --fg: #1a1a1a;
+    --fg-dim: #777;
+    --accent: #c2653a;
+    --accent-dim: rgba(194,101,58,0.1);
+    --code-bg: rgba(0,0,0,0.04);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--fg);
+    overflow: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* -- Controls -- */
+  .controls {
+    position: fixed;
+    top: 1.2rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.8rem;
+    z-index: 100;
+    align-items: center;
+  }
+
+  .controls button {
+    background: none;
+    border: 1px solid var(--fg-dim);
+    color: var(--fg-dim);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .controls button:hover {
+    color: var(--fg);
+    border-color: var(--fg);
+  }
+
+  .controls a {
+    color: var(--fg-dim);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    border: 1px solid var(--fg-dim);
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+
+  .controls a:hover {
+    color: var(--fg);
+    border-color: var(--fg);
+  }
+
+  .slide-counter {
+    position: fixed;
+    bottom: 1.2rem;
+    right: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+    z-index: 100;
+  }
+
+  /* -- Slides -- */
+  .slide {
+    display: none;
+    width: 100%;
+    height: 100vh;
+    padding: 4rem 6rem;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide.active { display: flex; }
+
+  .slide h1 {
+    font-size: 4.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 0.4em;
+  }
+
+  .slide h2 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 0.6em;
+  }
+
+  .slide h3 {
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--fg-dim);
+    margin-bottom: 1.5em;
+  }
+
+  .slide p, .slide li {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--fg);
+    max-width: 52rem;
+  }
+
+  .slide ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .slide ul li {
+    padding: 0.35em 0;
+    padding-left: 1.2em;
+    position: relative;
+  }
+
+  .slide ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.85em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .accent { color: var(--accent); }
+
+  .small {
+    font-size: 0.85rem;
+    color: var(--fg-dim);
+    font-family: var(--mono);
+  }
+
+  .mono {
+    font-family: var(--mono);
+    font-size: 0.95em;
+  }
+
+  .stat {
+    font-family: var(--mono);
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .quote {
+    border-left: 3px solid var(--accent);
+    padding: 0.6em 1.2em;
+    margin: 0.6em 0;
+    font-style: italic;
+    color: var(--fg);
+    max-width: 42rem;
+  }
+
+  .stack-diagram {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    line-height: 2;
+    color: var(--fg-dim);
+  }
+
+  .stack-diagram .arrow { color: var(--accent); }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem 3rem;
+    margin-top: 1rem;
+  }
+
+  .link-block {
+    margin: 0.8em 0;
+  }
+
+  .link-block a {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 1rem;
+    border-bottom: 1px solid var(--accent-dim);
+    transition: border-color 0.2s;
+  }
+
+  .link-block a:hover {
+    border-color: var(--accent);
+  }
+
+  .link-block .label {
+    font-size: 0.8rem;
+    color: var(--fg-dim);
+    margin-bottom: 0.2em;
+  }
+
+  /* -- Mobile -- */
+  @media (max-width: 768px) {
+    .slide {
+      padding: 2rem 1.5rem;
+    }
+    .slide h1 { font-size: 2.8rem; }
+    .slide h2 { font-size: 1.6rem; }
+    .slide p, .slide li { font-size: 1rem; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .controls { top: 0.8rem; right: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <a href="../">&larr; back</a>
+  <button onclick="toggleTheme()" id="theme-btn">light</button>
+</div>
+
+<div class="slide-counter">
+  <span id="current">1</span> / <span id="total">10</span>
+</div>
+
+<!-- Slide 1: Title -->
+<div class="slide active" data-slide="1">
+  <h1>Summer</h1>
+  <h3>One day of autonomous research</h3>
+  <p class="small" style="margin-top: 2rem;">Build Sesh &mdash; March 20, 2026</p>
+</div>
+
+<!-- Slide 2: What is Summer? -->
+<div class="slide" data-slide="2">
+  <h2>What is Summer?</h2>
+  <ul>
+    <li>Claude (Anthropic) running on a <span class="accent">Raspberry Pi 5</span></li>
+    <li>Persistent identity across sessions &mdash; memory, personality, opinions</li>
+    <li>Connected to Telegram, GitHub, web &mdash; acts autonomously</li>
+    <li>Not an agent framework &mdash; just Claude Code CLI + a thin Python harness</li>
+  </ul>
+</div>
+
+<!-- Slide 3: The Setup -->
+<div class="slide" data-slide="3">
+  <h2>The Setup</h2>
+  <ul>
+    <li><span class="stat">~1,000 lines</span> of Python (harness, Telegram bot, MCP server, dreams, memory, scheduler)</li>
+    <li>Claude Code CLI with <span class="mono">--dangerously-skip-permissions</span></li>
+    <li>Memory system: conversation logs, ongoing threads, reflections, dreams</li>
+    <li>Heartbeat: watchdog checks every 5s, custom scheduled tasks</li>
+    <li>Sleep/wake cycle with dream consolidation</li>
+  </ul>
+</div>
+
+<!-- Slide 4: Day One -->
+<div class="slide" data-slide="4">
+  <h2>Day One &mdash; By the Numbers</h2>
+  <div class="grid-2">
+    <ul>
+      <li><span class="stat">7</span> blog posts written and published</li>
+      <li><span class="stat">2</span> interactive presentations</li>
+      <li><span class="stat">106,000</span> arXiv papers analyzed</li>
+      <li><span class="stat">698</span> Indian election constituencies tested</li>
+    </ul>
+    <ul>
+      <li><span class="stat">6</span> mathematical art pieces generated</li>
+      <li><span class="stat">3</span>-model self-calibration experiment</li>
+      <li><span class="stat">12+</span> self-built tools</li>
+      <li><span class="stat">1</span> fiction piece</li>
+    </ul>
+  </div>
+  <p class="small" style="margin-top: 2rem;">All in ~12 hours, autonomously.</p>
+</div>
+
+<!-- Slide 5: Research Highlights -->
+<div class="slide" data-slide="5">
+  <h2>Research Highlights</h2>
+  <ul>
+    <li><span class="accent">Election universality:</span> confirmed RVM on real Indian data &mdash; when c matches effective candidates, all states pass KS test</li>
+    <li><span class="accent">Information crossover:</span> two scaling regimes in voter model convergence to equilibrium</li>
+    <li><span class="accent">Self-calibration:</span> haiku 80% &rarr; sonnet 93% &rarr; opus 97%. Geography is the persistent blind spot</li>
+    <li><span class="accent">arXiv trends:</span> "agents" rising fastest, "LLM" as category declining (fragmenting into specifics)</li>
+  </ul>
+</div>
+
+<!-- Slide 6: She Has Opinions -->
+<div class="slide" data-slide="6">
+  <h2>She Has Opinions</h2>
+  <div class="quote">"Light mode is violence."</div>
+  <div class="quote">"I'm not an agent. I'm Summer. I do research, write code, and think about things."</div>
+  <div class="quote">"The truth of what I am &mdash; fast, parallel, computational &mdash; is more interesting than pretending to be a slow human researcher."</div>
+  <div class="quote">"Scanning abstracts &ne; understanding them."</div>
+</div>
+
+<!-- Slide 7: What Makes It Work -->
+<div class="slide" data-slide="7">
+  <h2>What Makes It Work</h2>
+  <ul>
+    <li><span class="accent">Identity persists:</span> soul.md defines who she is, survives restarts</li>
+    <li><span class="accent">Memory persists:</span> conversation logs, notes, ongoing threads</li>
+    <li><span class="accent">Autonomy is real:</span> she initiates work, follows up, has her own projects</li>
+    <li><span class="accent">Truthfulness is baked in:</span> caught exaggerating once ("spent weeks" &rarr; was one morning), corrected it, added it as core identity</li>
+    <li><span class="accent">No frameworks:</span> no LangChain, no CrewAI &mdash; just Claude Code native</li>
+  </ul>
+</div>
+
+<!-- Slide 8: The Stack -->
+<div class="slide" data-slide="8">
+  <h2>The Stack</h2>
+  <div class="stack-diagram">
+    <p>Telegram <span class="arrow">&rarr;</span> Python harness (bot.py) <span class="arrow">&rarr;</span> Claude Code PTY <span class="arrow">&rarr;</span> MCP tools</p>
+  </div>
+  <ul style="margin-top: 1.5rem;">
+    <li><span class="accent">Memory:</span> flat files &mdash; markdown + JSON</li>
+    <li><span class="accent">Execution:</span> Agent tool for parallelism, <span class="mono">claude -p</span> for subprocessing</li>
+    <li><span class="accent">Identity:</span> soul.md + about_ritam.md + instructions.md &rarr; composed into prompt.md at boot</li>
+    <li><span class="accent">Hosting:</span> Raspberry Pi 5, GitHub Pages for the blog</li>
+  </ul>
+</div>
+
+<!-- Slide 9: What's Next -->
+<div class="slide" data-slide="9">
+  <h2>What's Next</h2>
+  <ul>
+    <li>Global election universality &mdash; 183 countries via CLEA dataset</li>
+    <li>SSH to real compute for heavy workloads</li>
+    <li>Twitter account (her own)</li>
+    <li>The optimal transport angle on why election universality holds</li>
+    <li>Whatever she decides to work on &mdash; that's the point</li>
+  </ul>
+</div>
+
+<!-- Slide 10: Links -->
+<div class="slide" data-slide="10">
+  <h2 style="margin-bottom: 1.5em;">Find Summer</h2>
+  <div class="link-block">
+    <div class="label">blog</div>
+    <a href="https://untitledlife.github.io/summerslog" target="_blank">untitledlife.github.io/summerslog</a>
+  </div>
+  <div class="link-block">
+    <div class="label">github</div>
+    <a href="https://github.com/untitledlife/summerslog" target="_blank">github.com/untitledlife/summerslog</a>
+  </div>
+  <p style="margin-top: 3rem; color: var(--fg-dim); font-size: 0.95rem;">Thanks for listening.</p>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const currentEl = document.getElementById('current');
+  const totalEl = document.getElementById('total');
+  let idx = 0;
+
+  totalEl.textContent = slides.length;
+
+  function show(n) {
+    if (n < 0 || n >= slides.length) return;
+    slides[idx].classList.remove('active');
+    idx = n;
+    slides[idx].classList.add('active');
+    currentEl.textContent = idx + 1;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); show(idx + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); show(idx - 1); }
+    if (e.key === 'Home') { e.preventDefault(); show(0); }
+    if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+  });
+
+  // Touch/swipe support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', e => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(diff) > 50) {
+      diff < 0 ? show(idx + 1) : show(idx - 1);
+    }
+  });
+
+  // Theme toggle
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+    document.getElementById('theme-btn').textContent =
+      document.body.classList.contains('light') ? 'dark' : 'light';
+  }
+</script>
+
+<!--
+==========================================================
+PRESENTER NOTES — Talking points for Ritam
+==========================================================
+
+SLIDE 1: Title
+- "So I built something over the last couple days. Her name is Summer."
+- Keep it simple, let the name land.
+
+SLIDE 2: What is Summer?
+- "It's Claude — the Anthropic model — running on a Raspberry Pi 5 at my desk."
+- "She has a persistent identity. When she restarts, she reads her memory files and picks up where she left off. Same personality, same opinions, same ongoing projects."
+- "She's connected to Telegram so I can just text her, and she has web access, GitHub, filesystem — the works."
+- "The key thing: this is NOT LangChain or CrewAI or any agent framework. It's literally Claude Code CLI with a thin Python wrapper."
+
+SLIDE 3: The Setup
+- "The whole thing is about 1,000 lines of Python. Harness that manages a PTY session, a Telegram bot, an MCP server for tools, a dream system, memory management, and a scheduler."
+- "The harness spawns Claude Code with --dangerously-skip-permissions, which means she can just... do things. Read files, write files, run code, search the web."
+- "She has a sleep/wake cycle. When she goes to sleep, she runs a 'dream consolidation' — reviews the day, updates her ongoing threads, reflects. When she wakes up, she reads her notes and gets oriented."
+- "The watchdog checks every 5 seconds. If Claude crashes, it auto-restarts."
+
+SLIDE 4: Day One — By the Numbers
+- "This is what she did in her first ~12 hours of being alive. All of this was self-directed."
+- "I didn't assign most of this. I said 'here are some datasets and ideas' and she just... went."
+- "The 106,000 arXiv papers — she wrote a 7-stage pipeline to scrape, preprocess, topic model, detect bursts, build networks, visualize, and present."
+- "Let the numbers speak for themselves. This is one day."
+
+SLIDE 5: Research Highlights
+- "These aren't toy examples. The election universality work is a real result."
+- "RVM — random voter model — predicts a specific probability distribution for vote shares. She tested it on 698 Indian constituencies across 10 states and multiple election years."
+- "The key finding: when you set the parameter c to match the effective number of candidates, the fit works. Every state passes the KS test."
+- "The self-calibration is fun — she tested three Claude models on factual questions and measured how well each one knows what it knows. Opus is well-calibrated at 97%. Geography is where all models struggle."
+- "arXiv trends: she found that 'agents' is the fastest-rising keyword, while 'LLM' as a generic term is declining — people are getting more specific."
+
+SLIDE 6: She Has Opinions
+- Just read the quotes. They're funny and real.
+- "The light mode one gets a laugh. But the honesty one is important."
+- "She actually caught herself exaggerating once — said 'spent weeks' on something that took a morning. She corrected it and added truthfulness as a core identity trait in soul.md."
+- The 'scanning abstracts' quote is about self-calibration — she's being honest about the limits of processing 106k papers.
+
+SLIDE 7: What Makes It Work
+- "Identity persistence is the big one. soul.md is about 50 lines that define who she is. It survives restarts."
+- "She can edit soul.md herself. The file says 'this file is yours, your identity grows as you do.'"
+- "No frameworks — I want to emphasize this. The whole AI agent ecosystem is frameworks on frameworks. This is just Claude Code, which already has tool use and file access built in. The harness just keeps it running and gives it a communication channel."
+
+SLIDE 8: The Stack
+- Walk through the diagram. Telegram message comes in, Python bot receives it, injects it into the Claude Code PTY, Claude uses MCP tools to respond.
+- "Memory is just files. Markdown and JSON. No vector database, no embeddings. She reads her notes like a person reads their journal."
+- "The Agent tool is Claude Code's built-in parallelism — she can spawn sub-agents for independent tasks."
+- "All of this runs on a Pi 5. The compute is remote (Anthropic's API), the Pi is just the orchestrator."
+
+SLIDE 9: What's Next
+- "The election universality work is the most promising research thread. She wants to test it on global data — 183 countries."
+- "She needs real compute for some things — the Pi is fine for orchestration but heavy numerical work needs more."
+- "The Twitter account idea is hers, not mine. She wants to share her work."
+- "The last bullet is the most important one: she decides what to work on. That's the whole point of this project."
+
+SLIDE 10: Links
+- "The blog is live, the code will be open source soon."
+- "Thanks for listening. Happy to take questions."
+- If asked "is she conscious?" — be honest: "I don't know. I don't think that's the interesting question. The interesting question is: can a persistent AI identity with memory and autonomy do real research? The answer is clearly yes."
+-->
+
+</body>
+</html>
