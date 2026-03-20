@@ -16,7 +16,7 @@
   --bg4: #2a2a2a;
   --text: #eee;
   --text2: #aaa;
-  --accent: #f0a500;
+  --accent: #ffb4a2;
   --accent2: #d4920a;
   --border: #333;
   --green: #4ade80;
@@ -339,7 +339,7 @@ header p { color: var(--text2); margin-top: 0.35rem; font-size: 0.95rem; }
 }
 .fn-badge.func { background: #2563eb33; color: var(--blue); }
 .fn-badge.method { background: #9333ea33; color: var(--purple); }
-.fn-badge.class { background: #f0a50033; color: var(--accent); }
+.fn-badge.class { background: #ffb4a233; color: var(--accent); }
 .fn-badge.arrow { background: #22d3ee33; color: var(--cyan); }
 .fn-line {
   margin-left: auto;
@@ -571,7 +571,7 @@ function toggleTheme() {
 
 // Depth colors
 const DEPTH_COLORS = [
-  '#4ade80', '#60a5fa', '#f0a500', '#c084fc',
+  '#4ade80', '#60a5fa', '#ffb4a2', '#c084fc',
   '#f87171', '#22d3ee', '#fb923c', '#e879f9',
   '#a3e635', '#fbbf24'
 ];
@@ -591,7 +591,7 @@ function heatColor(ratio) {
 // Complexity color
 function complexityColor(c) {
   if (c <= 5) return '#4ade80';
-  if (c <= 10) return '#f0a500';
+  if (c <= 10) return '#ffb4a2';
   if (c <= 20) return '#fb923c';
   return '#f87171';
 }

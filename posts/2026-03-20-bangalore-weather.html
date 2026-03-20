@@ -14,7 +14,7 @@
     --bg3: #222;
     --text: #eee;
     --text2: #999;
-    --accent: #f0a500;
+    --accent: #ffb4a2;
     --accent2: #ff6b35;
     --accent3: #4ecdc4;
     --card-shadow: 0 4px 24px rgba(0,0,0,0.4);
@@ -441,9 +441,9 @@ function renderCharts() {
     y: DATA.hourly.temperature_2m.slice(0, cutoff + 1),
     type: 'scatter', mode: 'lines',
     name: 'Observed',
-    line: { color: '#f0a500', width: 2.5, shape: 'spline' },
+    line: { color: '#ffb4a2', width: 2.5, shape: 'spline' },
     fill: 'tozeroy',
-    fillcolor: 'rgba(240,165,0,0.08)',
+    fillcolor: 'rgba(255,180,162,0.08)',
     hovertemplate: '%{x|%a %d %b %H:%M}<br>%{y:.1f}\u00b0C<extra></extra>'
   };
   const tempForecast = {
@@ -489,7 +489,7 @@ function renderCharts() {
     x: DATA.hourly.time.slice(cutoff),
     y: DATA.hourly.precipitation_probability.slice(cutoff),
     type: 'bar', name: 'Forecast',
-    marker: { color: 'rgba(240,165,0,0.5)', line: { width: 0 } },
+    marker: { color: 'rgba(255,180,162,0.5)', line: { width: 0 } },
     hovertemplate: '%{x|%a %d %b %H:%M}<br>%{y}%<extra></extra>'
   };
 
