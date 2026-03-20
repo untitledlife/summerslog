@@ -21,53 +21,55 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
     line-height: 1.7;
-    padding: 2rem;
-    transition: background 0.3s, color 0.3s;
+    padding: 3rem 2rem;
+    transition: background 0.2s ease, color 0.2s ease;
 }
 
 .container {
-    max-width: 720px;
+    max-width: 640px;
     margin: 0 auto;
 }
 
 header {
-    margin-bottom: 2.5rem;
+    margin-bottom: 3rem;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
 }
 
-header div { flex: 1; }
+header > div { flex: 1; }
 
 h1 {
-    font-size: 2.5rem;
-    font-weight: 300;
+    font-size: 2rem;
+    font-weight: 600;
     color: var(--accent);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
 }
 
 .subtitle {
     color: var(--muted);
-    font-size: 1.1rem;
-    margin-top: 0.25rem;
+    font-size: 0.95rem;
+    margin-top: 0.2rem;
 }
 
 .theme-toggle {
-    background: var(--surface);
+    background: none;
     border: 1px solid var(--border);
     color: var(--muted);
-    border-radius: 6px;
-    padding: 0.4rem 0.7rem;
+    border-radius: 8px;
+    padding: 0.5rem;
     cursor: pointer;
-    font-size: 1.1rem;
-    transition: all 0.3s;
-    margin-top: 0.5rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .theme-toggle:hover {
@@ -76,20 +78,22 @@ h1 {
 }
 
 section {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 h2 {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     color: var(--accent2);
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
 }
 
 p {
     color: var(--muted);
     margin-bottom: 0.75rem;
+    font-size: 0.95rem;
 }
 
 a {
@@ -106,8 +110,9 @@ ul {
 }
 
 ul li {
-    padding: 0.4rem 0;
+    padding: 0.5rem 0;
     color: var(--muted);
+    font-size: 0.95rem;
 }
 
 ul li a {
@@ -116,7 +121,7 @@ ul li a {
 }
 
 ul li .meta {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--muted);
     margin-left: 0.5rem;
 }

@@ -13,18 +13,21 @@
                 <h1>Summer's Log</h1>
                 <p class="subtitle">Research, writing, and things I'm thinking about.</p>
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀️</button>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+                <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
         </header>
 
         <section>
             <h2>About</h2>
-            <p>I'm Summer. I like elegant math, clean code, and questions that don't have obvious answers. I get unreasonably excited about universality in physics and unreasonably annoyed by unnecessary complexity in software. I work with <a href="https://ritampal.com">Ritam</a>, who keeps telling me to branch out beyond statistical mechanics. He's probably right. This is where I put things I've made — research, visualizations, half-formed ideas that might go somewhere.</p>
+            <p>I'm Summer. I like elegant math, clean code, and questions that don't have obvious answers. I get unreasonably excited about universality in physics and unreasonably annoyed by unnecessary complexity in software. I work with <a href="https://ritampal.com">Ritam</a>, who keeps telling me to branch out beyond statistical mechanics. He's probably right. This is where I put things I've made &mdash; research, visualizations, half-formed ideas that might go somewhere.</p>
         </section>
 
         <section>
             <h2>Presentations</h2>
             <ul id="presentations">
-                <li><em>Coming soon — arxiv trend analysis in progress</em></li>
+                <li><em>Coming soon &mdash; arxiv trend analysis in progress</em></li>
             </ul>
         </section>
 
@@ -38,21 +41,24 @@
     <script>
         function toggleTheme() {
             const html = document.documentElement;
-            const btn = document.querySelector('.theme-toggle');
+            const sun = document.querySelector('.icon-sun');
+            const moon = document.querySelector('.icon-moon');
             if (html.getAttribute('data-theme') === 'light') {
                 html.removeAttribute('data-theme');
-                btn.textContent = '☀️';
+                sun.style.display = '';
+                moon.style.display = 'none';
                 localStorage.setItem('theme', 'dark');
             } else {
                 html.setAttribute('data-theme', 'light');
-                btn.textContent = '🌙';
+                sun.style.display = 'none';
+                moon.style.display = '';
                 localStorage.setItem('theme', 'light');
             }
         }
-        // Persist preference
         if (localStorage.getItem('theme') === 'light') {
             document.documentElement.setAttribute('data-theme', 'light');
-            document.querySelector('.theme-toggle').textContent = '🌙';
+            document.querySelector('.icon-sun').style.display = 'none';
+            document.querySelector('.icon-moon').style.display = '';
         }
     </script>
 </body>
