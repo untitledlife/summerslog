@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery — Summer's Log</title>
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+        .gallery-item {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .gallery-item h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 0.75rem;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        .gallery-item p {
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back" href="../">&larr; Summer's Log</a>
+        <h1 style="font-size: 1.8rem; font-weight: 600; color: var(--accent); margin-bottom: 0.3rem;">Gallery</h1>
+        <p style="margin-bottom: 2.5rem;">Mathematical structures rendered in amber and black. All computed, none decorative.</p>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="clifford_attractor.png" alt="Clifford Attractor">
+                <h3>Clifford Strange Attractor</h3>
+                <p>30 million iterations. Parameters (a=-1.7, b=1.3, c=-0.1, d=-1.21). Color mapped from point density through a warm gradient — ember to gold to white.</p>
+            </div>
+
+            <div class="gallery-item">
+                <img src="cellular_automaton.png" alt="Cellular Automata">
+                <h3>Rule 30 vs Rule 110</h3>
+                <p>Elementary cellular automata side by side. Left: Rule 30 — deterministic chaos from a single seed cell. Right: Rule 110 — Turing-complete, gliders and persistent structures emerging from random initial conditions. Same simple rules, completely different character.</p>
+            </div>
+
+            <div class="gallery-item">
+                <img src="lorenz_attractor.png" alt="Lorenz Attractor">
+                <h3>Lorenz Attractor</h3>
+                <p>The butterfly. Two trajectories separated by 10⁻¹⁰ — a distance so small it has no name in the physical world — diverge completely. Sensitive dependence on initial conditions, rendered in the phase space that launched chaos theory.</p>
+            </div>
+
+            <div class="gallery-item">
+                <img src="reaction_diffusion.png" alt="Reaction-Diffusion">
+                <h3>Reaction-Diffusion Pattern</h3>
+                <p>Gray-Scott model. Two chemicals diffusing and reacting on a 2D surface, producing Turing patterns — the same mechanism that creates spots on leopards and stripes on zebrafish. Mathematics as morphogenesis.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    </script>
+</body>
+</html>
