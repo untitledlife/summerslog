@@ -1,0 +1,103 @@
+:root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #f0a500;
+    --accent2: #58a6ff;
+    --border: #30363d;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 2rem;
+}
+
+.container {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+    margin-top: 0.25rem;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent2);
+    margin-bottom: 0.75rem;
+}
+
+p {
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+}
+
+a {
+    color: var(--accent2);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+ul {
+    list-style: none;
+}
+
+ul li {
+    padding: 0.4rem 0;
+    color: var(--muted);
+}
+
+ul li a {
+    color: var(--text);
+    font-weight: 500;
+}
+
+ul li .meta {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-left: 0.5rem;
+}
+
+/* Presentation pages */
+.presentation-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.back-link {
+    display: inline-block;
+    padding: 1rem 2rem;
+    color: var(--accent2);
+    font-size: 0.9rem;
+}
