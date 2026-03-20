@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epicycle Alchemy — Fourier Series Drawer</title>
+<link rel="icon" href="../assets/favicon.svg">
+<style>
+  :root {
+    --bg: #111;
+    --bg2: #1a1a1a;
+    --bg3: #252525;
+    --fg: #eee;
+    --fg2: #aaa;
+    --accent: #f0a500;
+    --accent2: #ff6b35;
+    --circle: rgba(240,165,0,0.25);
+    --trace: #f0a500;
+    --drawn: #888;
+    --radius: 8px;
+  }
+  [data-theme="light"] {
+    --bg: #f5f5f0;
+    --bg2: #eaeae5;
+    --bg3: #ddddd8;
+    --fg: #222;
+    --fg2: #666;
+    --accent: #d48f00;
+    --accent2: #e05a20;
+    --circle: rgba(212,143,0,0.2);
+    --trace: #d48f00;
+    --drawn: #999;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    background: var(--bg);
+    color: var(--fg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--bg3);
+    background: var(--bg2);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  nav .links { display:flex; gap:20px; align-items:center; flex-wrap:wrap; }
+  nav a {
+    color: var(--fg2);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+  nav a:hover, nav a.active { color: var(--accent); }
+  .theme-toggle {
+    background: none; border: 1px solid var(--bg3);
+    color: var(--fg2); cursor: pointer;
+    padding: 6px 10px; border-radius: var(--radius);
+    font-family: inherit; font-size: 13px;
+    transition: all 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 24px 16px 8px;
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+  header p {
+    color: var(--fg2);
+    font-size: 13px;
+    margin-top: 6px;
+    max-width: 600px;
+    margin-inline: auto;
+    line-height: 1.5;
+  }
+
+  /* MAIN LAYOUT */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    gap: 12px;
+    min-height: 0;
+  }
+
+  /* CANVAS AREA */
+  .canvas-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    aspect-ratio: 4/3;
+    max-height: 60vh;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--bg3);
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  .canvas-wrap canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    cursor: crosshair;
+  }
+  .canvas-hint {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--fg2);
+    font-size: 14px;
+    pointer-events: none;
+    text-align: center;
+    line-height: 1.6;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  .canvas-hint.hidden { opacity: 0; pointer-events: none; }
+
+  /* CONTROLS */
+  .controls {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg2);
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--bg3);
+  }
+  .control-group label {
+    font-size: 12px;
+    color: var(--fg2);
+    white-space: nowrap;
+  }
+  .control-group .val {
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 28px;
+    text-align: right;
+    font-weight: 600;
+  }
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 120px;
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+  button.btn {
+    background: var(--bg2);
+    color: var(--fg);
+    border: 1px solid var(--bg3);
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  button.btn:hover { border-color: var(--accent); color: var(--accent); }
+  button.btn.primary {
+    background: var(--accent);
+    color: #111;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  button.btn.primary:hover { background: var(--accent2); border-color: var(--accent2); }
+
+  /* PRESETS */
+  .presets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .presets button {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  /* INFO */
+  .info-bar {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-size: 11px;
+    color: var(--fg2);
+    padding: 8px;
+    flex-shrink: 0;
+  }
+  .info-bar span strong { color: var(--accent); }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    nav { padding: 10px 14px; }
+    nav .links { gap: 12px; }
+    nav a { font-size: 12px; }
+    header { padding: 16px 12px 4px; }
+    .canvas-wrap { aspect-ratio: 1/1; max-height: 55vh; }
+    input[type=range] { width: 80px; }
+    .control-group { padding: 6px 10px; }
+  }
+
+  /* Subtle glow on accent elements */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+  .recording-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: #e74c3c;
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse 1s infinite;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="links">
+    <a href="../">Home</a>
+    <a href="../presentations/">Presentations</a>
+    <a href="../gallery/">Gallery</a>
+    <a href="../posts/">Posts</a>
+    <a href="./" class="active">Interactive</a>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+    <span id="theme-icon">light</span>
+  </button>
+</nav>
+
+<header>
+  <h1>Epicycle Alchemy</h1>
+  <p>Draw any shape, then watch Fourier analysis decompose it into orbiting circles. Each circle is a harmonic — add more for fidelity, fewer for abstraction.</p>
+</header>
+
+<main>
+  <div class="canvas-wrap">
+    <canvas id="drawCanvas"></canvas>
+    <canvas id="mainCanvas"></canvas>
+    <div class="canvas-hint" id="hint">
+      Draw a shape here<br><span style="font-size:12px;opacity:0.6">click/touch and drag, then release</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Harmonics</label>
+      <input type="range" id="harmonics" min="1" max="200" value="40">
+      <span class="val" id="harmonicsVal">40</span>
+    </div>
+    <div class="control-group">
+      <label>Speed</label>
+      <input type="range" id="speed" min="1" max="20" value="5">
+      <span class="val" id="speedVal">5</span>
+    </div>
+    <div class="control-group">
+      <label>Trail</label>
+      <input type="range" id="trail" min="50" max="2000" value="800">
+      <span class="val" id="trailVal">800</span>
+    </div>
+    <button class="btn primary" id="clearBtn">Clear & Draw</button>
+  </div>
+
+  <div class="presets">
+    <button class="btn" onclick="loadPreset('star')">Star</button>
+    <button class="btn" onclick="loadPreset('heart')">Heart</button>
+    <button class="btn" onclick="loadPreset('trefoil')">Trefoil</button>
+    <button class="btn" onclick="loadPreset('square')">Square</button>
+    <button class="btn" onclick="loadPreset('figure8')">Figure-8</button>
+    <button class="btn" onclick="loadPreset('spiral')">Spiral</button>
+    <button class="btn" onclick="loadPreset('butterfly')">Butterfly</button>
+  </div>
+
+  <div class="info-bar">
+    <span>Circles: <strong id="infoCircles">0</strong></span>
+    <span>Points sampled: <strong id="infoPoints">0</strong></span>
+    <span id="statusText">Ready to draw</span>
+  </div>
+</main>
+
+<script>
+// ---- Theme ----
+function toggleTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.getElementById('theme-icon').textContent = next === 'dark' ? 'light' : 'dark';
+}
+
+// ---- Canvas setup ----
+const drawCanvas = document.getElementById('drawCanvas');
+const mainCanvas = document.getElementById('mainCanvas');
+const drawCtx = drawCanvas.getContext('2d');
+const ctx = mainCanvas.getContext('2d');
+const hint = document.getElementById('hint');
+
+let W, H, dpr;
+function resize() {
+  const rect = mainCanvas.parentElement.getBoundingClientRect();
+  dpr = window.devicePixelRatio || 1;
+  W = rect.width;
+  H = rect.height;
+  for (const c of [drawCanvas, mainCanvas]) {
+    c.width = W * dpr;
+    c.height = H * dpr;
+    c.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+}
+window.addEventListener('resize', () => { resize(); if (fourierCoeffs.length) startAnimation(); });
+resize();
+
+// ---- State ----
+let drawnPoints = [];
+let isDrawing = false;
+let fourierCoeffs = [];
+let animTime = 0;
+let tracePoints = [];
+let animId = null;
+
+// ---- Drawing (input) ----
+function getPos(e) {
+  const rect = drawCanvas.getBoundingClientRect();
+  const touch = e.touches ? e.touches[0] : e;
+  return {
+    x: touch.clientX - rect.left,
+    y: touch.clientY - rect.top
+  };
+}
+
+function startDraw(e) {
+  e.preventDefault();
+  stopAnimation();
+  drawnPoints = [];
+  tracePoints = [];
+  fourierCoeffs = [];
+  isDrawing = true;
+  hint.classList.add('hidden');
+  drawCtx.clearRect(0, 0, W, H);
+  ctx.clearRect(0, 0, W, H);
+  const p = getPos(e);
+  drawnPoints.push(p);
+  document.getElementById('statusText').innerHTML = '<span class="recording-dot"></span>Drawing...';
+}
+
+function moveDraw(e) {
+  if (!isDrawing) return;
+  e.preventDefault();
+  const p = getPos(e);
+  drawnPoints.push(p);
+  // Draw the user's stroke
+  if (drawnPoints.length > 1) {
+    const style = getComputedStyle(document.documentElement);
+    drawCtx.strokeStyle = style.getPropertyValue('--drawn').trim();
+    drawCtx.lineWidth = 2;
+    drawCtx.lineCap = 'round';
+    drawCtx.beginPath();
+    const prev = drawnPoints[drawnPoints.length - 2];
+    drawCtx.moveTo(prev.x, prev.y);
+    drawCtx.lineTo(p.x, p.y);
+    drawCtx.stroke();
+  }
+}
+
+function endDraw(e) {
+  if (!isDrawing) return;
+  isDrawing = false;
+  if (drawnPoints.length < 10) {
+    hint.classList.remove('hidden');
+    document.getElementById('statusText').textContent = 'Too few points — try again';
+    return;
+  }
+  processDrawing();
+}
+
+drawCanvas.addEventListener('mousedown', startDraw);
+drawCanvas.addEventListener('mousemove', moveDraw);
+drawCanvas.addEventListener('mouseup', endDraw);
+drawCanvas.addEventListener('mouseleave', endDraw);
+drawCanvas.addEventListener('touchstart', startDraw, { passive: false });
+drawCanvas.addEventListener('touchmove', moveDraw, { passive: false });
+drawCanvas.addEventListener('touchend', endDraw);
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  stopAnimation();
+  drawnPoints = [];
+  tracePoints = [];
+  fourierCoeffs = [];
+  animTime = 0;
+  drawCtx.clearRect(0, 0, W, H);
+  ctx.clearRect(0, 0, W, H);
+  hint.classList.remove('hidden');
+  document.getElementById('statusText').textContent = 'Ready to draw';
+  document.getElementById('infoCircles').textContent = '0';
+  document.getElementById('infoPoints').textContent = '0';
+});
+
+// ---- DFT ----
+function computeDFT(points, maxN) {
+  const N = points.length;
+  const coeffs = [];
+  // We compute frequencies: 0, 1, -1, 2, -2, ...
+  const freqs = [0];
+  for (let i = 1; i <= Math.floor(N / 2); i++) {
+    freqs.push(i);
+    freqs.push(-i);
+  }
+  const limit = Math.min(freqs.length, maxN);
+  for (let i = 0; i < limit; i++) {
+    const k = freqs[i];
+    let re = 0, im = 0;
+    for (let n = 0; n < N; n++) {
+      const angle = -2 * Math.PI * k * n / N;
+      re += points[n].x * Math.cos(angle) - points[n].y * Math.sin(angle);
+      im += points[n].x * Math.sin(angle) + points[n].y * Math.cos(angle);
+    }
+    re /= N;
+    im /= N;
+    coeffs.push({
+      freq: k,
+      amp: Math.sqrt(re * re + im * im),
+      phase: Math.atan2(im, re)
+    });
+  }
+  // Sort by amplitude descending for visual effect
+  coeffs.sort((a, b) => b.amp - a.amp);
+  return coeffs;
+}
+
+function processDrawing() {
+  // Resample to uniform spacing
+  const resampled = resample(drawnPoints, 512);
+  // Center the points
+  let cx = 0, cy = 0;
+  for (const p of resampled) { cx += p.x; cy += p.y; }
+  cx /= resampled.length;
+  cy /= resampled.length;
+  const centered = resampled.map(p => ({ x: p.x - cx, y: p.y - cy }));
+
+  const maxN = parseInt(document.getElementById('harmonics').value);
+  fourierCoeffs = computeDFT(centered, maxN);
+
+  document.getElementById('infoPoints').textContent = resampled.length;
+  document.getElementById('infoCircles').textContent = Math.min(maxN, fourierCoeffs.length);
+
+  // Store center for rendering
+  fourierCoeffs._cx = cx;
+  fourierCoeffs._cy = cy;
+  fourierCoeffs._centered = centered;
+  fourierCoeffs._maxAvailable = computeDFT(centered, 400);
+  fourierCoeffs._maxAvailable._cx = cx;
+  fourierCoeffs._maxAvailable._cy = cy;
+
+  animTime = 0;
+  tracePoints = [];
+  drawCtx.clearRect(0, 0, W, H);
+  startAnimation();
+  document.getElementById('statusText').textContent = 'Animating — adjust harmonics to see the effect';
+}
+
+function resample(pts, n) {
+  // Compute cumulative arc lengths
+  const dists = [0];
+  for (let i = 1; i < pts.length; i++) {
+    const dx = pts[i].x - pts[i-1].x;
+    const dy = pts[i].y - pts[i-1].y;
+    dists.push(dists[i-1] + Math.sqrt(dx*dx + dy*dy));
+  }
+  const total = dists[dists.length - 1];
+  if (total === 0) return pts.slice(0, n);
+  const result = [];
+  for (let i = 0; i < n; i++) {
+    const target = (i / n) * total;
+    // Binary search
+    let lo = 0, hi = dists.length - 1;
+    while (lo < hi - 1) {
+      const mid = (lo + hi) >> 1;
+      if (dists[mid] < target) lo = mid; else hi = mid;
+    }
+    const t = (target - dists[lo]) / (dists[hi] - dists[lo] || 1);
+    result.push({
+      x: pts[lo].x + t * (pts[hi].x - pts[lo].x),
+      y: pts[lo].y + t * (pts[hi].y - pts[lo].y)
+    });
+  }
+  return result;
+}
+
+// ---- Animation ----
+function stopAnimation() {
+  if (animId) { cancelAnimationFrame(animId); animId = null; }
+}
+
+function startAnimation() {
+  stopAnimation();
+  animTime = 0;
+  tracePoints = [];
+  animate();
+}
+
+function animate() {
+  const style = getComputedStyle(document.documentElement);
+  const bgColor = style.getPropertyValue('--bg').trim();
+  const accentColor = style.getPropertyValue('--accent').trim();
+  const circleColor = style.getPropertyValue('--circle').trim();
+  const traceColor = style.getPropertyValue('--trace').trim();
+  const fg2 = style.getPropertyValue('--fg2').trim();
+
+  const maxN = parseInt(document.getElementById('harmonics').value);
+  const speedVal = parseInt(document.getElementById('speed').value);
+  const trailLen = parseInt(document.getElementById('trail').value);
+
+  document.getElementById('harmonicsVal').textContent = maxN;
+  document.getElementById('speedVal').textContent = speedVal;
+  document.getElementById('trailVal').textContent = trailLen;
+
+  // Use the full precomputed set, just slice
+  let coeffs;
+  if (fourierCoeffs._maxAvailable) {
+    coeffs = fourierCoeffs._maxAvailable.slice(0, maxN);
+  } else {
+    coeffs = fourierCoeffs.slice(0, maxN);
+  }
+  const cx = (fourierCoeffs._cx || W/2);
+  const cy = (fourierCoeffs._cy || H/2);
+
+  document.getElementById('infoCircles').textContent = coeffs.length;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const dt = speedVal * 0.0003;
+  const t = animTime;
+
+  // Epicycles
+  let x = cx, y = cy;
+  for (let i = 0; i < coeffs.length; i++) {
+    const c = coeffs[i];
+    const prevX = x, prevY = y;
+    const angle = c.freq * t * 2 * Math.PI + c.phase;
+    x += c.amp * Math.cos(angle);
+    y += c.amp * Math.sin(angle);
+
+    // Draw circle
+    if (c.amp > 0.5) {
+      ctx.beginPath();
+      ctx.arc(prevX, prevY, c.amp, 0, 2 * Math.PI);
+      ctx.strokeStyle = circleColor;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      // Radius line
+      ctx.beginPath();
+      ctx.moveTo(prevX, prevY);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = i < 3 ? accentColor : fg2;
+      ctx.globalAlpha = i < 3 ? 0.6 : 0.25;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // Tip dot
+  ctx.beginPath();
+  ctx.arc(x, y, 3, 0, 2 * Math.PI);
+  ctx.fillStyle = accentColor;
+  ctx.fill();
+
+  // Store trace
+  tracePoints.push({ x, y });
+  if (tracePoints.length > trailLen) {
+    tracePoints = tracePoints.slice(-trailLen);
+  }
+
+  // Draw trace with gradient fade
+  if (tracePoints.length > 1) {
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    for (let i = 1; i < tracePoints.length; i++) {
+      const alpha = i / tracePoints.length;
+      ctx.beginPath();
+      ctx.moveTo(tracePoints[i-1].x, tracePoints[i-1].y);
+      ctx.lineTo(tracePoints[i].x, tracePoints[i].y);
+      ctx.strokeStyle = traceColor;
+      ctx.globalAlpha = alpha * alpha; // quadratic fade for drama
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  animTime += dt;
+  // Loop after one full revolution
+  if (animTime > 1) animTime -= 1;
+
+  animId = requestAnimationFrame(animate);
+}
+
+// ---- Slider live update (harmonics recomputes on-the-fly via slicing) ----
+document.getElementById('harmonics').addEventListener('input', () => {
+  document.getElementById('harmonicsVal').textContent = document.getElementById('harmonics').value;
+  document.getElementById('infoCircles').textContent = Math.min(
+    parseInt(document.getElementById('harmonics').value),
+    fourierCoeffs._maxAvailable ? fourierCoeffs._maxAvailable.length : fourierCoeffs.length
+  );
+});
+
+// ---- Presets ----
+function loadPreset(name) {
+  const N = 256;
+  const pts = [];
+  for (let i = 0; i < N; i++) {
+    const t = (i / N) * 2 * Math.PI;
+    let x, y;
+    const s = Math.min(W, H) * 0.3;
+    switch (name) {
+      case 'star': {
+        const r = (i % 2 === 0) ? s : s * 0.45;
+        const angle = t - Math.PI / 2;
+        const points = 5;
+        const idx = Math.floor(i / N * points * 2);
+        const frac = (i / N * points * 2) - idx;
+        const a1 = (idx / (points * 2)) * 2 * Math.PI - Math.PI / 2;
+        const a2 = ((idx + 1) / (points * 2)) * 2 * Math.PI - Math.PI / 2;
+        const r1 = idx % 2 === 0 ? s : s * 0.42;
+        const r2 = (idx + 1) % 2 === 0 ? s : s * 0.42;
+        x = W/2 + (r1 * Math.cos(a1) * (1 - frac) + r2 * Math.cos(a2) * frac);
+        y = H/2 + (r1 * Math.sin(a1) * (1 - frac) + r2 * Math.sin(a2) * frac);
+        break;
+      }
+      case 'heart': {
+        x = W/2 + s * 0.8 * 16 * Math.pow(Math.sin(t), 3) / 16;
+        y = H/2 - s * 0.8 * (13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t)) / 16;
+        break;
+      }
+      case 'trefoil': {
+        const r = s * (0.5 + 0.5 * Math.cos(3 * t));
+        x = W/2 + r * Math.cos(t);
+        y = H/2 + r * Math.sin(t);
+        break;
+      }
+      case 'square': {
+        const side = s * 1.4;
+        const perim = 4 * side;
+        const d = (t / (2 * Math.PI)) * perim;
+        if (d < side) { x = W/2 - side/2 + d; y = H/2 - side/2; }
+        else if (d < 2*side) { x = W/2 + side/2; y = H/2 - side/2 + (d - side); }
+        else if (d < 3*side) { x = W/2 + side/2 - (d - 2*side); y = H/2 + side/2; }
+        else { x = W/2 - side/2; y = H/2 + side/2 - (d - 3*side); }
+        break;
+      }
+      case 'figure8': {
+        x = W/2 + s * Math.sin(t);
+        y = H/2 + s * 0.6 * Math.sin(2 * t);
+        break;
+      }
+      case 'spiral': {
+        const r2 = s * (0.15 + 0.85 * (t / (2 * Math.PI)));
+        x = W/2 + r2 * Math.cos(t * 3);
+        y = H/2 + r2 * Math.sin(t * 3);
+        break;
+      }
+      case 'butterfly': {
+        const r2 = s * 0.7 * (Math.exp(Math.cos(t)) - 2 * Math.cos(4*t) - Math.pow(Math.sin(t/12), 5));
+        x = W/2 + r2 * Math.sin(t) * 0.35;
+        y = H/2 - r2 * Math.cos(t) * 0.35;
+        break;
+      }
+    }
+    pts.push({ x, y });
+  }
+  drawnPoints = pts;
+  hint.classList.add('hidden');
+  // Draw the preset shape on drawCanvas
+  drawCtx.clearRect(0, 0, W, H);
+  const style = getComputedStyle(document.documentElement);
+  drawCtx.strokeStyle = style.getPropertyValue('--drawn').trim();
+  drawCtx.lineWidth = 1.5;
+  drawCtx.globalAlpha = 0.3;
+  drawCtx.beginPath();
+  drawCtx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) drawCtx.lineTo(pts[i].x, pts[i].y);
+  drawCtx.closePath();
+  drawCtx.stroke();
+  drawCtx.globalAlpha = 1;
+
+  processDrawing();
+}
+
+// ---- Init: load heart as default after short delay ----
+setTimeout(() => loadPreset('heart'), 300);
+</script>
+
+</body>
+</html>
