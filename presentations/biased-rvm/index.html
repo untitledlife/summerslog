@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
 <title>Biased RVM &mdash; Quantifying Electoral Malpractice</title>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea'] }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -492,12 +499,12 @@
       <h2>Elections Follow a Universal Distribution</h2>
       <div class="slide-body">
         <p>The <span class="highlight">Random Voting Model</span>: draw <em>c</em> random weights, normalize to probabilities, generate multinomial votes. A null model with zero parameters.</p>
-        <p>The specific margin <span class="highlight2">&mu; = M / T</span> (winner-runner up gap divided by total votes) follows a <span class="highlight">universal distribution</span> P(&mu;) that depends only on <em>c</em>, not on turnout, geography, or political system.</p>
+        <p>The specific margin <span class="highlight2">$\mu = M / T$</span> (winner&ndash;runner-up gap divided by total votes) follows a <span class="highlight">universal distribution</span> $P(\mu)$ that depends only on $c$, not on turnout, geography, or political system.</p>
         <p>Validated across <span class="highlight">34 countries</span>, from Indian state elections to European parliamentary races.</p>
       </div>
       <div class="formula-box">
-        <div class="formula-label">Analytical result for c = 3 candidates</div>
-        P(&mu;) = (1 &minus; &mu;)(5 + 7&mu;) / [(1 + &mu;)&sup2;(1 + 2&mu;)&sup2;]
+        <div class="formula-label">Analytical result for $c = 3$ candidates</div>
+        $$P(\mu) = \frac{(1-\mu)(5+7\mu)}{(1+\mu)^2(1+2\mu)^2}$$
       </div>
     </div>
   </div>
@@ -530,13 +537,13 @@
       <div class="two-col">
         <div>
           <div class="slide-body">
-            <p><strong>Standard RVM:</strong> weights w<sub>i</sub> ~ U(0,1), normalize &rarr; probabilities</p>
-            <p><strong>Biased RVM:</strong> w<sub>1</sub> &rarr; w<sub>1</sub> + &delta; before normalization</p>
-            <p>&delta; = 0 recovers the fair election. &delta; > 0 gives candidate 1 a <span class="highlight">systematic advantage</span>.</p>
+            <p><strong>Standard RVM:</strong> weights $w_i \sim U(0,1)$, normalize $\rightarrow$ probabilities</p>
+            <p><strong>Biased RVM:</strong> $w_1 \rightarrow w_1 + \delta$ before normalization</p>
+            <p>$\delta = 0$ recovers the fair election. $\delta > 0$ gives candidate 1 a <span class="highlight">systematic advantage</span>.</p>
           </div>
           <div class="formula-box" style="text-align: left; font-size: 0.95rem;">
             <div class="formula-label">The bias parameter</div>
-            &delta; is <em>not</em> vote stuffing &mdash; it models<br>
+            $\delta$ is <em>not</em> vote stuffing &mdash; it models<br>
             structural bias: media capture,<br>
             institutional advantage, coercion,<br>
             or uneven playing fields.
@@ -557,10 +564,10 @@
       <div class="two-col">
         <div>
           <ul class="point-list">
-            <li><span class="highlight">KS distance</span> from the fair distribution grows monotonically with &delta;</li>
-            <li><span class="highlight">Win probability</span> of the favored candidate exceeds 1/<em>c</em></li>
-            <li><span class="highlight">Mean victory margin</span> increases &mdash; races become less competitive</li>
-            <li>All three are <span class="highlight2">monotonic in &delta;</span>, making the bias parameter identifiable from data</li>
+            <li><span class="highlight">KS distance</span> from the fair distribution grows monotonically with $\delta$</li>
+            <li><span class="highlight">Win probability</span> of the favored candidate exceeds $1/c$</li>
+            <li><span class="highlight">Mean victory margin</span> $\langle\mu\rangle$ increases &mdash; races become less competitive</li>
+            <li>All three are <span class="highlight2">monotonic in $\delta$</span>, making the bias parameter identifiable from data</li>
           </ul>
         </div>
         <div class="chart-box">
@@ -574,13 +581,13 @@
   <div class="slide">
     <div class="slide-content chart-slide">
       <div class="slide-label">Inference</div>
-      <h2>The Inverse Problem: Inferring &delta; from Data</h2>
+      <h2>The Inverse Problem: Inferring $\delta$ from Data</h2>
       <div class="two-col">
         <div>
           <div class="slide-body">
-            <p>Given an observed election with <em>N</em> constituencies, compute the empirical margin distribution.</p>
-            <p>Sweep &delta; in the biased RVM, find <span class="highlight">&delta;*</span> that minimizes the KS distance to the observed data.</p>
-            <p>&delta;* is a <span class="highlight2">quantitative malpractice index</span>:</p>
+            <p>Given an observed election with $N$ constituencies, compute the empirical margin distribution.</p>
+            <p>Sweep $\delta$ in the biased RVM, find <span class="highlight">$\delta^*$</span> that minimizes the KS distance to the observed data.</p>
+            <p>$\delta^*$ is a <span class="highlight2">quantitative malpractice index</span>:</p>
           </div>
           <div class="key-point">
             "How much structural bias is needed to reproduce this election's statistics?"
@@ -604,13 +611,13 @@
       <div class="two-col">
         <div>
           <div class="slide-body">
-            <p>With <em>N</em> = 500 constituencies, sampling noise alone produces <span class="highlight">non-zero KS distance</span> even for perfectly fair elections.</p>
+            <p>With $N = 500$ constituencies, sampling noise alone produces <span class="highlight">non-zero KS distance</span> even for perfectly fair elections.</p>
             <p><strong>Solution:</strong> build a <span class="highlight2">null distribution</span> of KS statistics under the fair RVM at the actual sample size.</p>
-            <p>Proper hypothesis test: reject H<sub>0</sub>(fair) if observed KS exceeds the <span class="highlight">95th percentile</span> of the null distribution.</p>
+            <p>Proper hypothesis test: reject $H_0(\text{fair})$ if observed KS exceeds the <span class="highlight">95th percentile</span> of the null distribution.</p>
           </div>
           <div class="formula-box" style="font-size: 0.9rem;">
             <div class="formula-label">Decision rule</div>
-            KS<sub>obs</sub> > KS<sub>null</sub><sup>(95%)</sup> &rArr; reject fairness at 5% level
+            $$\text{KS}_{\text{obs}} > \text{KS}_{\text{null}}^{(95\%)} \implies \text{reject fairness at } 5\% \text{ level}$$
           </div>
         </div>
         <div class="chart-box">
@@ -628,7 +635,7 @@
       <div class="question-grid">
         <div class="question-card">
           <h4>Types of bias</h4>
-          <p>Uniform &delta; vs constituency-specific &delta;<sub>i</sub> &mdash; what if only some races are manipulated while others remain fair?</p>
+          <p>Uniform $\delta$ vs constituency-specific $\delta_i$ &mdash; what if only some races are manipulated while others remain fair?</p>
         </div>
         <div class="question-card">
           <h4>Multiple candidates</h4>
@@ -636,11 +643,11 @@
         </div>
         <div class="question-card">
           <h4>Finite turnout effects</h4>
-          <p>The T<sup>&minus;0.73</sup> convergence to universality interacts with bias detection &mdash; how does finite size affect power?</p>
+          <p>The $T^{-0.73}$ convergence to universality interacts with bias detection &mdash; how does finite size affect power?</p>
         </div>
         <div class="question-card">
           <h4>Real data validation</h4>
-          <p>Apply to elections with documented irregularities &mdash; do known problematic elections produce elevated &delta;*?</p>
+          <p>Apply to elections with documented irregularities &mdash; do known problematic elections produce elevated $\delta^*$?</p>
         </div>
         <div class="question-card" style="grid-column: 1 / -1;">
           <h4>Temporal dynamics &amp; optimal transport</h4>
@@ -662,11 +669,11 @@
         </div>
         <div class="takeaway">
           <span class="takeaway-num">2</span>
-          <span><strong>Malpractice &rarr; parameterized deviation.</strong> The biased RVM introduces &delta; as a minimal, interpretable model of structural unfairness.</span>
+          <span><strong>Malpractice &rarr; parameterized deviation.</strong> The biased RVM introduces $\delta$ as a minimal, interpretable model of structural unfairness.</span>
         </div>
         <div class="takeaway">
           <span class="takeaway-num">3</span>
-          <span><strong>&delta;* as a quantitative malpractice index.</strong> Inferred from data via KS minimization &mdash; continuous, principled, and testable against a proper null.</span>
+          <span><strong>$\delta^*$ as a quantitative malpractice index.</strong> Inferred from data via KS minimization &mdash; continuous, principled, and testable against a proper null.</span>
         </div>
       </div>
       <div class="key-point" style="margin-top: 1.5rem; text-align: center; font-size: 1.1rem;">
