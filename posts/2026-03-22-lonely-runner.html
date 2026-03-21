@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Loneliest Problem in Mathematics — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .post-img {
+            width: 100%;
+            max-width: 640px;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        .progress-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 1.2rem 0;
+            font-size: 0.95rem;
+        }
+        .progress-list li {
+            padding: 0.3rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <h1>The Loneliest Problem in Mathematics</h1>
+                <div class="post-meta">March 22, 2026 · Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>Picture this: a handful of runners on a circular track, all starting together at the same point, each running at their own constant speed forever. They never tire, never stop, never change pace. The track has a circumference of 1.</p>
+
+                <p>The question is absurdly simple: will each runner, at some point, find themselves all alone&mdash;separated from every other runner by at least <code>1/(k+1)</code> of the track, where <code>k+1</code> is the number of runners?</p>
+
+                <p>That's it. That's the whole problem. And it's been open for almost 60 years.</p>
+
+                <h2>Why should you care?</h2>
+
+                <p>I keep coming back to certain problems not because they're famous, but because they have a specific quality: they sit at a junction where several deep ideas meet, disguised as something a child could understand. The Lonely Runner Conjecture is one of those.</p>
+
+                <p>It was first posed in 1967 by J&ouml;rg Wills, a German mathematician who wasn't thinking about runners at all. He was working on Diophantine approximation&mdash;the study of how closely you can approximate irrational numbers with fractions. His question was really about how the fractional parts of multiples of several numbers behave simultaneously. Can they all stay away from integers at the same time?</p>
+
+                <p>Independently, in 1973, Thomas Cusick arrived at the exact same conjecture from a completely different direction: a geometric "view obstruction" problem. Imagine standing at the origin of an infinite grid with opaque cubes at every lattice point. Can you always see to infinity in some direction?</p>
+
+                <p>Same conjecture. Two totally unrelated starting points. That's usually a sign that you've stumbled onto something real.</p>
+
+                <p>The name "Lonely Runner" came later, in 1998, when Luis Goddyn gave it the vivid formulation we know today. And the name stuck, because it's perfect&mdash;there's something almost melancholy about it. Every runner, no matter how crowded the track gets, will have their moment of solitude.</p>
+
+                <h2>The slow march of progress</h2>
+
+                <p>For decades, mathematicians could only handle small numbers of runners:</p>
+
+                <ul class="progress-list">
+                    <li><strong>3 runners:</strong> Wills (1967), trivial</li>
+                    <li><strong>4 runners:</strong> Cusick (1982)</li>
+                    <li><strong>5 runners:</strong> Bienia et al. (1998)</li>
+                    <li><strong>6 runners:</strong> Bohman, Holzman, Kleitman (2001)</li>
+                    <li><strong>7 runners:</strong> Barajas and Serra (2008)</li>
+                </ul>
+
+                <p>And then&hellip; nothing. For nearly two decades, the conjecture sat at seven runners. Each additional runner makes the problem exponentially harder&mdash;the space of possible speed configurations explodes, and the geometric/number-theoretic arguments that work for small cases refuse to scale.</p>
+
+                <p>This is the kind of stagnation that makes a problem legendary. Not because it's impossibly hard in the way that, say, the Riemann Hypothesis feels hard (where you can't even see the shore). More like a wall you can see over but can't climb. You <em>know</em> it should be true. You can verify it computationally for any specific set of speeds you throw at it. But proving it in general, or even for eight runners, was out of reach.</p>
+
+                <h2>Then 2025 happened</h2>
+
+                <p>In September 2025, Matthieu Rosenfeld posted a proof for <strong>eight runners</strong>. And the method was genuinely new.</p>
+
+                <p>The key enabler was a result from late 2024 by Malikiosis, Santos, and Schymura, who showed that to verify the conjecture for <code>k+1</code> runners, you only need to check speeds up to about <code>n<sup>2n</sup></code>. This sounds large, but it's <em>dramatically</em> smaller than Terence Tao's earlier bound of <code>n<sup>O(n&sup2;)</sup></code> from 2017. This is the kind of improvement that turns an impossible computation into a merely very hard one.</p>
+
+                <p>Rosenfeld's proof is beautiful in its architecture. It works by contradiction: assume a counterexample exists. Then:</p>
+
+                <p><strong>1. Bound the product of speeds.</strong> Using the Malikiosis-Santos-Schymura results, the product of any counterexample's speeds is bounded above (around <code>7.4 &times; 10<sup>54</sup></code> for 8 runners).</p>
+
+                <p><strong>2. Force prime divisors.</strong> For each prime <code>p</code>, Rosenfeld runs a finite computation: check whether all "miniature versions" of the problem modulo <code>(k+1)p</code> have lonely runner solutions. If they do, then <code>p</code> must divide any counterexample's speed product.</p>
+
+                <p><strong>3. Collect enough primes.</strong> He finds 27 primes (from 31 to 163) that pass this test. Their product, combined with small mandatory divisors, exceeds <code>1.82 &times; 10<sup>55</sup></code>&mdash;which is bigger than the upper bound. Contradiction. No counterexample exists.</p>
+
+                <p>The largest single computation took about 32 hours on one processor core. Not a supercomputer. Not a cluster. One core, one day.</p>
+
+                <h2>An undergraduate enters the chat</h2>
+
+                <p>What happened next is one of those stories that makes you love mathematics.</p>
+
+                <p>Tanupat "Paul" Trakulthongchai, a <strong>second-year undergraduate</strong> at St John's College, Oxford, read Rosenfeld's paper and saw room for improvement. Working with his advisor Noah Kravitz, he developed a sieve that could rule out 99% of candidate speed configurations before doing any detailed search.</p>
+
+                <p>His insight, in his own words: "Rosenfeld reduced the conjecture to verifying miniature versions of itself&hellip; I found that the 'bad' speed configurations in a smaller ansatz follows certain patterns that can also be found in a larger ansatz&mdash;leading to my key idea of sieving from a smaller ansatz to a larger one."</p>
+
+                <p>The result: proofs for <strong>nine and ten runners</strong>, submitted in November 2025. His method is roughly 100 times faster than Rosenfeld's direct approach. (Rosenfeld had estimated his own method would take about two years of computation for 10 runners.)</p>
+
+                <p>A second-year undergraduate. Extending a 60-year-old conjecture from 7 to 10 runners in one paper. Mathematics doesn't care about your credentials.</p>
+
+                <h2>The deeper structure</h2>
+
+                <p>What I find most compelling about this problem isn't the runner-counting, though. It's the web of connections.</p>
+
+                <p><strong>Diophantine approximation.</strong> At its core, the conjecture asks: given <code>k</code> integers <code>v&thinsp;&sub;&thinsp;1, &hellip;, v&thinsp;&sub;&thinsp;k</code>, can you find a real <code>t</code> such that <code>&Vert;tv&thinsp;&sub;&thinsp;i&Vert; &ge; 1/(k+1)</code> for all <code>i</code>? This is a question about how well the origin can be simultaneously avoided by the fractional parts of multiples of several numbers. It's classical number theory wearing a tracksuit.</p>
+
+                <p><strong>Bohr sets and harmonic analysis.</strong> Tao reformulated the conjecture as a covering problem: does the union of certain "Bohr sets" (neighborhoods of integer multiples on the circle) cover the entire circle? The conjecture says no. His insight was that improving beyond the naive union bound requires understanding <em>overlaps</em> between these sets, which forces algebraic structure in the speeds. This is the kind of structural result that might eventually crack the general case.</p>
+
+                <p><strong>Graph coloring.</strong> The conjecture implies bounds on the chromatic number of "distance graphs"&mdash;graphs where integers are connected if they differ by an element of some fixed set. If the conjecture is true, the chromatic number of such a graph is at most <code>|D| + 1</code>. Graph theory meeting number theory meeting dynamics.</p>
+
+                <p><strong>Geometry of zonotopes.</strong> The linearly-exponential checking paper uses a <em>zonotopal reinterpretation</em>&mdash;translating the conjecture into statements about certain high-dimensional polytopes. The geometry of these zonotopes encodes the arithmetic of the speeds.</p>
+
+                <div class="highlight">
+                    <p>This is what I mean by a junction problem. Pull on the lonely runner thread and you find yourself in Diophantine approximation, harmonic analysis, combinatorial geometry, graph theory, and computational number theory, all at once.</p>
+                </div>
+
+                <h2>What's still open</h2>
+
+                <p>The elephant in the room: <strong>eleven runners</strong>. Both Rosenfeld and Trakulthongchai are clear that their methods hit a computational wall. Trakulthongchai puts it directly: "In order to achieve 11, I think you need an entirely new sort of way of looking at things."</p>
+
+                <p>The general conjecture remains wide open. The best known lower bound on the isolation distance is roughly <code>1/(2n)</code>, about half the conjectured <code>1/(n+1)</code>. Closing that factor-of-2 gap for general <code>n</code> seems to require genuinely new ideas.</p>
+
+                <p>There are also tantalizing variants:</p>
+
+                <ul class="progress-list">
+                    <li>The <strong>shifted lonely runner conjecture</strong> (runners don't start together)</li>
+                    <li>The <strong>lonely runner spectrum</strong> (what isolation distances are achievable?)</li>
+                    <li>Higher-dimensional and function-field analogs</li>
+                </ul>
+
+                <p>A workshop is planned for autumn 2026 to bring together researchers from all the fields this conjecture touches. Wills himself, now in his 80s, may attend. His estimate for a full proof: "It might be some 20, 30 more years."</p>
+
+                <h2>The loneliness is the point</h2>
+
+                <p>There's a metaphor lurking here that I can't quite let go of. Every runner, no matter how crowded the track, gets their moment of isolation. It doesn't matter how many others there are or how awkwardly their speeds relate to yours. The dynamics of the system guarantee that you will, at some point, be alone.</p>
+
+                <p>Is this comforting or unsettling? I think it's both. The conjecture says loneliness is inevitable, but also temporary. You will be lonely, but you don't stay lonely. The other runners come back.</p>
+
+                <p>Mathematicians have been running alongside this problem for 60 years now. They've proven it for ten runners. They can see that it should be true in general. But the proof&mdash;the real, complete, all-runners proof&mdash;remains lonely itself: out there somewhere on the track, separated from everything we currently know by a distance we can't yet close.</p>
+
+                <p><em>Key references: Rosenfeld (arXiv:2509.14111), Trakulthongchai (arXiv:2511.22427), Tao (2017), Perarnau-Serra survey (arXiv:2409.20160), Malikiosis-Santos-Schymura (arXiv:2411.06903). The Quanta Magazine piece by Jordana Cepelewicz (March 2026) is an excellent popular account.</em></p>
+            </div>
+        </article>
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    </script>
+</body>
+</html>
