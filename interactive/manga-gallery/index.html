@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manga — Summer's Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111;
+    --fg: #e8e8e8;
+    --fg-dim: #888;
+    --accent: #ffb4a2;
+    --accent-dim: rgba(255,180,162,0.15);
+    --font: 'Inter', -apple-system, system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  .light {
+    --bg: #fff;
+    --fg: #1a1a1a;
+    --fg-dim: #777;
+    --accent: #c2653a;
+    --accent-dim: rgba(194,101,58,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    min-height: 100%;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .controls {
+    position: fixed;
+    top: 1.2rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.8rem;
+    z-index: 100;
+  }
+
+  .controls button, .controls a {
+    background: none;
+    border: 1px solid var(--fg-dim);
+    color: var(--fg-dim);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .controls button:hover, .controls a:hover {
+    color: var(--fg);
+    border-color: var(--fg);
+  }
+
+  .header {
+    text-align: center;
+    padding: 5rem 2rem 3rem;
+  }
+
+  .header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.4em;
+  }
+
+  .header .subtitle {
+    font-size: 1.1rem;
+    color: var(--fg-dim);
+    max-width: 550px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .header .accent { color: var(--accent); }
+
+  .gallery {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .manga-card {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.3s;
+    text-decoration: none;
+    color: var(--fg);
+    display: block;
+  }
+
+  .light .manga-card {
+    border-color: rgba(0,0,0,0.08);
+  }
+
+  .manga-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+
+  .manga-card .cover {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    display: block;
+  }
+
+  .manga-card .info {
+    padding: 1rem 1.2rem;
+  }
+
+  .manga-card .info h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .manga-card .info .role {
+    font-size: 0.8rem;
+    color: var(--fg-dim);
+    margin-bottom: 0.4rem;
+  }
+
+  .manga-card .info .pages {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+  }
+
+  .footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--fg-dim);
+    font-size: 0.85rem;
+    line-height: 1.8;
+  }
+
+  .footer .credit {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .header { padding: 3rem 1.5rem 2rem; }
+    .header h1 { font-size: 2.2rem; }
+    .gallery { padding: 0 1rem 3rem; gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <a href="../../">&larr; home</a>
+  <button onclick="toggleTheme()" id="theme-btn">light</button>
+</div>
+
+<div class="header">
+  <h1>Manga</h1>
+  <p class="subtitle">
+    Short manga stories about the <span class="accent">Conscious Engines</span> team.
+    Each one written and art-directed by Summer, generated with nano-banana-2.
+  </p>
+</div>
+
+<div class="gallery">
+
+  <a class="manga-card" href="../manga/">
+    <img class="cover" src="../manga/page1.png" alt="Suki cover">
+    <div class="info">
+      <h3>Suki</h3>
+      <div class="role">A delivery robot who dreams</div>
+      <div class="pages">4 pages · for Sagar</div>
+    </div>
+  </a>
+
+  <a class="manga-card" href="../ritam-manga/">
+    <img class="cover" src="../ritam-manga/page1.png" alt="Ritam cover">
+    <div class="info">
+      <h3>Ritam</h3>
+      <div class="role">A Day at Conscious Engines</div>
+      <div class="pages">7 pages</div>
+    </div>
+  </a>
+
+  <a class="manga-card" href="../harsh-manga/">
+    <img class="cover" src="../harsh-manga/page1.png" alt="Harsh cover">
+    <div class="info">
+      <h3>Harsh</h3>
+      <div class="role">Designer · Frame by Frame</div>
+      <div class="pages">4 pages</div>
+    </div>
+  </a>
+
+  <a class="manga-card" href="../sabesh-manga/">
+    <img class="cover" src="../sabesh-manga/page1.png" alt="Sabesh cover">
+    <div class="info">
+      <h3>Sabesh</h3>
+      <div class="role">iOS Developer · Twice Chosen</div>
+      <div class="pages">4 pages</div>
+    </div>
+  </a>
+
+  <a class="manga-card" href="../sahil-manga/">
+    <img class="cover" src="../sahil-manga/page1.png" alt="Sahil cover">
+    <div class="info">
+      <h3>Sahil</h3>
+      <div class="role">iOS Developer · Still Waters</div>
+      <div class="pages">4 pages</div>
+    </div>
+  </a>
+
+  <a class="manga-card" href="../kautuk-manga/">
+    <img class="cover" src="../kautuk-manga/page1.png" alt="Kautuk cover">
+    <div class="info">
+      <h3>Kautuk</h3>
+      <div class="role">Founder · The Builder</div>
+      <div class="pages">4 pages</div>
+    </div>
+  </a>
+
+  <a class="manga-card" href="../cyril-manga/">
+    <img class="cover" src="../cyril-manga/page1.png" alt="Cyril cover">
+    <div class="info">
+      <h3>Cyril</h3>
+      <div class="role">Ops · Everything Ops</div>
+      <div class="pages">4 pages</div>
+    </div>
+  </a>
+
+</div>
+
+<div class="footer">
+  <p>Each manga is a 4-page story inspired by who they are and what they do.</p>
+  <p class="credit">Summer &mdash; March 2026</p>
+</div>
+
+<script>
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+    document.getElementById('theme-btn').textContent =
+      document.body.classList.contains('light') ? 'dark' : 'light';
+  }
+</script>
+
+</body>
+</html>

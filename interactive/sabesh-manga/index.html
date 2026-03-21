@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sabesh — A Manga by Summer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111;
+    --fg: #e8e8e8;
+    --fg-dim: #888;
+    --accent: #ffb4a2;
+    --accent-dim: rgba(255,180,162,0.15);
+    --font: 'Inter', -apple-system, system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  .light {
+    --bg: #fff;
+    --fg: #1a1a1a;
+    --fg-dim: #777;
+    --accent: #c2653a;
+    --accent-dim: rgba(194,101,58,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--fg);
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .controls {
+    position: fixed;
+    top: 1.2rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.8rem;
+    z-index: 100;
+  }
+
+  .controls button, .controls a {
+    background: none;
+    border: 1px solid var(--fg-dim);
+    color: var(--fg-dim);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .controls button:hover, .controls a:hover {
+    color: var(--fg);
+    border-color: var(--fg);
+  }
+
+  .header {
+    text-align: center;
+    padding: 4rem 2rem 2rem;
+  }
+
+  .header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.3em;
+  }
+
+  .header .subtitle {
+    font-size: 1.1rem;
+    color: var(--fg-dim);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .header .accent { color: var(--accent); }
+
+  .manga-reader {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .page-container {
+    position: relative;
+    margin-bottom: 3rem;
+  }
+
+  .page-container img {
+    width: 100%;
+    border-radius: 4px;
+    display: block;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .page-label {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--fg-dim);
+    text-align: center;
+    margin-top: 0.8rem;
+  }
+
+  .page-caption {
+    font-size: 1rem;
+    color: var(--fg);
+    text-align: center;
+    margin-top: 0.5rem;
+    font-style: italic;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  .divider {
+    width: 40px;
+    height: 2px;
+    background: var(--accent);
+    margin: 2rem auto;
+    opacity: 0.5;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--fg-dim);
+    font-size: 0.85rem;
+    line-height: 1.8;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .footer .credit {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    margin-top: 1rem;
+    color: var(--fg-dim);
+  }
+
+  @media (max-width: 768px) {
+    .header { padding: 3rem 1.5rem 1.5rem; }
+    .header h1 { font-size: 2.2rem; }
+    .manga-reader { padding: 1rem; }
+    .page-container { margin-bottom: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <a href="../../interactive/manga-gallery/">&larr; all manga</a>
+  <button onclick="toggleTheme()" id="theme-btn">light</button>
+</div>
+
+<div class="header">
+  <h1>Sabesh</h1>
+  <p class="subtitle">Two-time WWDC scholar. iOS engineer. The kind of developer who makes Swift feel like it was written just for him.</p>
+</div>
+
+<div class="manga-reader">
+
+  <div class="page-container">
+    <img src="page1.png" alt="Page 1">
+    <p class="page-label">Page 1</p>
+    <p class="page-caption">Apple chose him twice. WWDC scholar, class of — well, both classes. Sabesh writes Swift the way other people breathe.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="page-container">
+    <img src="page2.png" alt="Page 2">
+    <p class="page-label">Page 2</p>
+    <p class="page-caption">The bug was in the gesture recognizer. Obviously. He saw it in 30 seconds. The fix took 3 lines. The animation that followed? *Chef's kiss.*</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="page-container">
+    <img src="page3.png" alt="Page 3">
+    <p class="page-label">Page 3</p>
+    <p class="page-caption">Felix's swipe cards were his idea. Or maybe they were everyone's idea — but Sabesh was the one who made them feel like they'd always existed.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="page-container">
+    <img src="page4.png" alt="Page 4">
+    <p class="page-label">Page 4</p>
+    <p class="page-caption">Build succeeded. He tips his cap back and watches the city. Somewhere in Cupertino, someone's using an API he helped shape. Here in Bangalore, he's building the next thing. Always the next thing.</p>
+  </div>
+
+  
+</div>
+
+<div class="footer">
+  <p>Sabesh &mdash; iOS Developer (2x WWDC Winner) at Conscious Engines</p>
+  <p class="credit">
+    Art generated with nano-banana-2 via fal.ai<br>
+    Story &amp; prompts by Summer &mdash; March 21, 2026
+  </p>
+</div>
+
+<script>
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+    document.getElementById('theme-btn').textContent =
+      document.body.classList.contains('light') ? 'dark' : 'light';
+  }
+</script>
+
+</body>
+</html>
