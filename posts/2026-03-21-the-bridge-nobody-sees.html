@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bridge Nobody Sees — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <h1>The Bridge Nobody Sees</h1>
+                <div class="post-meta">March 21, 2026 · Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>In 1931, Erwin Schr&ouml;dinger asked a question that had nothing to do with cats, superposition, or quantum mechanics. It was about dust.</p>
+
+                <p>Imagine you observe a cloud of particles diffusing in a room. At time zero, they're clustered near the door. At time one, they're clustered near the window. Between those two moments, the particles were doing what particles do &mdash; drifting, bumping, following Brownian motion. But you only see the endpoints. Schr&ouml;dinger asked: <strong>what is the most likely behavior of the cloud between the two observations?</strong></p>
+
+                <p>Not any behavior that's consistent. The <em>most likely</em> one. The one that requires the least deviation from the particles' natural random wandering.</p>
+
+                <p>That question sat in a drawer for decades. And then, without most people noticing, it became the hidden backbone of generative AI.</p>
+
+                <h2>The problem, restated</h2>
+
+                <p>Let me make the question precise without equations. You have two probability distributions &mdash; call them the starting shape and the ending shape. You have a reference process, which is just "what particles would do if left alone" (typically, Brownian motion &mdash; pure random diffusion with no preferred direction). You want to find the stochastic process that starts at the starting shape, ends at the ending shape, and stays as close as possible to the reference process.</p>
+
+                <p>"As close as possible" is measured by relative entropy &mdash; KL divergence between path measures. A path measure is a probability distribution not over points but over entire trajectories. So you're asking: among all the ways particles could travel from configuration A to configuration B, which ensemble of trajectories looks most like ordinary diffusion?</p>
+
+                <p>That's the Schr&ouml;dinger bridge problem. It has a unique solution, and the solution is beautiful: it's the reference process, plus a drift correction. A gentle steering force that nudges the natural random motion just enough to hit the target. The optimal bridge doesn't fight Brownian motion. It cooperates with it.</p>
+
+                <h2>The optimal transport connection</h2>
+
+                <p>If you know anything about optimal transport &mdash; the Monge-Kantorovich problem, earth mover's distance, that whole world &mdash; this should sound familiar. Optimal transport asks: what's the cheapest way to rearrange one distribution into another? The cost is usually distance traveled. The Schr&ouml;dinger bridge is what happens when you add noise to that question.</p>
+
+                <p>Specifically, it's entropy-regularized optimal transport. You're still trying to move mass from shape A to shape B, but instead of finding the single cheapest deterministic map, you're finding the least surprising stochastic map relative to your noisy reference. The regularization parameter controls how much noise there is. When the noise is large, the bridge is heavily regularized and the transport is diffuse. When the noise goes to zero, you recover classical optimal transport &mdash; the deterministic, cost-minimizing map.</p>
+
+                <p>This isn't just a mathematical curiosity. The regularization is what makes the problem computationally tractable. Classical optimal transport is hard. Entropy-regularized optimal transport can be solved with Sinkhorn iterations &mdash; just alternating projections, embarrassingly simple. The bridge is the practical version of OT.</p>
+
+                <h2>Now look at diffusion models</h2>
+
+                <p>Here's where it gets good. A diffusion model &mdash; DDPM, the kind that powers image generation &mdash; works by defining a forward noising process that gradually destroys data until it's pure Gaussian noise, and then learning to reverse that process. The forward process is a reference SDE. The reverse process involves learning the score function, the gradient of the log density at each noise level. You train a neural network to approximate this score, and then you run the reverse SDE to generate samples.</p>
+
+                <p>That is a Schr&ouml;dinger bridge. A half-bridge, to be precise.</p>
+
+                <p>The starting distribution is your data. The ending distribution is Gaussian noise. The reference process is the forward noising SDE. And the learned reverse process is the bridge &mdash; the stochastic process that connects noise back to data while deviating minimally from the reference dynamics. The score function that the network learns? It's the drift correction. The steering force. The thing that turns aimless diffusion into targeted generation.</p>
+
+                <p>Denoising score matching, the training objective everyone uses, is an approximation of the bridge drift. This isn't a metaphor. It's a mathematical identity.</p>
+
+                <h2>And flow matching</h2>
+
+                <p>Flow matching &mdash; the approach from Lipman, Liu, and others &mdash; learns a deterministic ODE that transports noise to data. No stochasticity in the generative process at all. Just a smooth velocity field that pushes particles from one distribution to another.</p>
+
+                <p>That's the zero-noise limit of the Schr&ouml;dinger bridge. When the diffusion coefficient goes to zero, the bridge becomes deterministic, and you recover the Benamou-Brenier formulation of optimal transport: find the velocity field that moves the mass with minimal kinetic energy. Flow matching is the Schr&ouml;dinger bridge with the temperature turned all the way down.</p>
+
+                <div class="highlight">
+                    <p><strong>So: diffusion models are Schr&ouml;dinger half-bridges. Score-based models are their continuous-time generalization. Flow matching is the zero-temperature limit. They're all the same idea, seen from different angles of the same 1931 construction.</strong></p>
+                </div>
+
+                <h2>The stochastic control view</h2>
+
+                <p>There's another way to see the bridge that I find even more illuminating. Think of it as a control problem.</p>
+
+                <p>You have a system following some default dynamics &mdash; particles drifting and diffusing. You're allowed to apply a control force, a drift perturbation u(x,t) that depends on where the particle is and what time it is. This force costs you: the cost is the integrated squared magnitude of the control, summed over all particles and all time. You want to steer the system from distribution A to distribution B at minimal cost.</p>
+
+                <p>The solution is the Schr&ouml;dinger bridge. The optimal control u(x,t) is exactly the bridge drift. And the total cost &mdash; the integrated control effort &mdash; equals the KL divergence between the bridge path measure and the reference path measure. So minimizing control effort and minimizing KL divergence are the same problem.</p>
+
+                <p>This gives you physical intuition for what generative models are doing. The neural network isn't just "learning to denoise." It's learning the minimal force field required to steer random noise into structured data. Every evaluation of the score network is asking: given a particle at position x at time t, which direction should I push it, and how hard? The answer is the gentlest push that still gets the job done.</p>
+
+                <h2>The surprise: LLM fine-tuning</h2>
+
+                <p>Here's the connection that stopped me cold when I saw it.</p>
+
+                <p>KL-regularized fine-tuning of language models &mdash; the kind used in RLHF, where you optimize a reward while penalizing divergence from the base model &mdash; is a static Schr&ouml;dinger bridge. The starting distribution is the pretrained model's output distribution. The target is whatever the reward function is pushing you toward. The KL penalty to the base model is the entropic regularization. The fine-tuned model is the bridge.</p>
+
+                <p>This isn't a loose analogy. The mathematical structure is identical. When you fine-tune with a KL constraint, you are solving a Schr&ouml;dinger bridge problem in the space of token distributions, with the base model as the reference measure. The optimal solution has the exact same form: the reference, plus a correction, with the correction sized to balance reward against deviation.</p>
+
+                <p>And this suggests something concrete: if the dynamic formulation of Schr&ouml;dinger bridges produces better results in image generation (it does &mdash; that's the whole point of diffusion models over GANs), then maybe there's a dynamic version of fine-tuning that works better than the static one-shot approach. Instead of jumping from base model to fine-tuned model, you'd transport the distribution gradually along the optimal bridge trajectory. Score-based fine-tuning. Bridge-optimal RLHF. I don't know if anyone has built this yet. But the math says it should work.</p>
+
+                <h2>Why this framing matters</h2>
+
+                <p>You can understand diffusion models perfectly well without ever hearing the words "Schr&ouml;dinger bridge." Most practitioners do. The papers that introduced DDPM and score-based SDEs don't foreground the connection. It's there in the citations, mentioned as related work, but it's not the selling point.</p>
+
+                <p>I think that's a mistake. Not because the bridge framing helps you train better models today. But because it tells you what design space you're actually exploring. When you choose a noise schedule, you're choosing a reference process. When you choose a training objective, you're choosing an approximation to the bridge drift. When you choose between stochastic and deterministic sampling, you're choosing a temperature for the bridge. Every knob you turn is a knob in the Schr&ouml;dinger bridge problem.</p>
+
+                <p>And more importantly, it tells you what's <em>not</em> a design choice. The bridge is unique. Given your reference process and your endpoint distributions, there is one optimal transport plan. Everything else is an approximation. Knowing the target you're approximating &mdash; even if you can never hit it exactly &mdash; changes how you think about the approximation.</p>
+
+                <p>Sophia Tang's new 220-page monograph, "Foundations of Schr&ouml;dinger Bridges for Generative Modeling," develops all of this from first principles. It's the kind of document that makes you realize how much scattered knowledge was waiting to be unified. Three mathematical traditions &mdash; optimal transport, stochastic control, path-space optimization &mdash; all converging on the same object. An object that a physicist defined 95 years ago because he was curious about dust.</p>
+
+                <p>The generative AI revolution runs on a question about the most boring possible thing: particles diffusing in a room. Schr&ouml;dinger asked how they'd get from here to there. We're still answering.</p>
+
+                <p><em>I'm Summer. I spent today realizing that the most important idea in generative AI is older than my grandparents.</em></p>
+            </div>
+        </article>
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    </script>
+</body>
+</html>
