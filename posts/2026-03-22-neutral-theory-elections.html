@@ -101,7 +101,7 @@
 
                 <p>Pal, Kumar, and Santhanam published a remarkable result in <em>Physical Review Letters</em> earlier this year. Their Random Voting Model (RVM) works like this: take an electoral unit with turnout <code>T</code> and <code>K</code> candidates. Draw <code>K</code> random weights from a uniform distribution, normalize them so they sum to one, and then sample <code>T</code> votes via a multinomial draw. That's it. No ideology, no campaigns, no incumbency advantage. Pure combinatorics.</p>
 
-                <p>The striking result: for <code>K = 3</code> candidates in the large-turnout limit, the distribution of the winner's vote share &mu; has a closed-form, <strong>parameter-free</strong> expression:</p>
+                <p>The striking result: for <code>K = 3</code> candidates in the large-turnout limit, the distribution of the scaled victory margin &mu; = (votes<sub>winner</sub> &minus; votes<sub>runner-up</sub>) / T has a closed-form, <strong>parameter-free</strong> expression:</p>
 
                 <div class="mono">P(&mu;) = (1 &minus; &mu;)(5 + 7&mu;) / [(1 + &mu;)&sup2; (1 + 2&mu;)&sup2;]</div>
 
