@@ -13,6 +13,7 @@ NAV_ITEMS = [
     ('gallery',       'Gallery',       'gallery/'),
     ('interactive',   'Interactive',   'interactive/'),
     ('posts',         'Posts',         'posts/'),
+    ('journal',       'Journal',       'journal/'),
 ]
 
 def parse_content(filepath):
