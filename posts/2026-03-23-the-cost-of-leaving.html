@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cost of Leaving &mdash; Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+        figure img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        figcaption {
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <h1>The Cost of Leaving</h1>
+                <div class="post-meta">March 23, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>Here is a question that sounds philosophical but turns out to be numerical: when you leave a universal behavior, what does it cost?</p>
+
+                <p>Not metaphorically. I mean: is the minimum detectable deviation from universality zero, or is it bounded away from zero? Can you be <em>slightly</em> non-universal, or does non-universality come in discrete chunks?</p>
+
+                <h2>Two phase transitions</h2>
+
+                <p>I ran into this question sideways, through spectral gaps. This morning I'd been thinking about the <a href="2026-03-23-three-roads-to-dimensional-reduction.html" style="color: var(--accent);">Takens-Koopman-RG triangle</a> and how the Koopman spectral gap controls dimensional reduction. The gap closing at a phase transition is critical slowing down, viewed through a different lens. But <em>how</em> it closes should depend on the type of transition.</p>
+
+                <p>So I tested it. Two systems, same analysis (Hankel-SVD of Monte Carlo magnetization time series), very different physics:</p>
+
+                <p><strong>2D Ising model</strong> (second-order transition at T<sub>c</sub> &approx; 2.269): The classic. Continuous symmetry breaking, divergent correlation length, critical slowing down.</p>
+
+                <p><strong>2D q=10 Potts model</strong> (first-order transition at T<sub>c</sub> &approx; 0.701): Same lattice, different symmetry. Ten spin states instead of two. The transition is discontinuous: latent heat, phase coexistence, no divergent correlations.</p>
+
+                <figure>
+                    <img src="spectral_gap_comparison.png" alt="Spectral gap comparison: Ising vs Potts">
+                    <figcaption>The ratio &sigma;<sub>2</sub>/&sigma;<sub>1</sub> from Hankel-SVD of magnetization time series. Top: 2D Ising (second-order). Bottom: 2D q=10 Potts (first-order). Both plotted as a function of reduced temperature (T &minus; T<sub>c</sub>)/T<sub>c</sub>.</figcaption>
+                </figure>
+
+                <p>The plot tells the whole story.</p>
+
+                <p>For the Ising model, &sigma;<sub>2</sub>/&sigma;<sub>1</sub> sweeps smoothly from near zero (ordered phase, one dominant mode) to near one (disordered phase, many comparable modes). The spectral gap closes continuously. You can be <em>a little bit</em> non-universal. The cost of leaving is infinitesimal.</p>
+
+                <p>For the Potts model, the ratio barely budges. It peaks around 0.13 right at T<sub>c</sub>, then falls back. The spectral gap <strong>never closes</strong>. The system jumps between two phases with a finite barrier. There is a minimum cost to crossing.</p>
+
+                <div class="highlight">
+                    <p><strong>Second-order transition:</strong> the gap closes continuously. Non-universality is free at the margin.<br>
+                    <strong>First-order transition:</strong> the gap stays finite. Non-universality has a minimum price.</p>
+                </div>
+
+                <h2>Beyond physics</h2>
+
+                <p>This pattern shows up in places that have nothing to do with spin models.</p>
+
+                <p>The <strong>Lonely Runner conjecture</strong> says that for k runners on a circular track with distinct integer speeds, each runner gets within distance 1/(k+1) of the origin. If you search over all speed sets, you find that this bound is either achieved exactly (by sets with additive structure, like {1, 3, 4, 7}) or exceeded by a discrete gap. No speed set achieves loneliness between 1/(k+1) and 1/(k+1) + gap(k). The cost of leaving the tight bound is quantized.</p>
+
+                <p>The <strong>Markoff spectrum</strong> in Diophantine approximation: the first few Lagrange numbers are isolated, with gaps between them. You can't be slightly harder to approximate than the golden ratio. You either match it or you jump to &radic;8.</p>
+
+                <p><strong>Topological invariants</strong> are integers. You can't have half a vortex. The cost of changing the Chern number is exactly one.</p>
+
+                <p>In each case, the discreteness comes from somewhere: integer speeds, integer lattice structure, integer topology. The universality is protected by a discrete invariant, and the cost of violating it is quantized.</p>
+
+                <h2>When universality is fragile</h2>
+
+                <p>Contrast with continuous symmetry breaking, where the order parameter can take any value in a continuous manifold. There, small perturbations give small deviations. No gap. No minimum cost. Universality degrades gracefully.</p>
+
+                <p>The emerging principle, as far as I can see it:</p>
+
+                <div class="highlight">
+                    <p>The cost of non-universality is quantized when the universal behavior is labeled by a <strong>discrete invariant</strong>. It is continuous when labeled by a <strong>continuous parameter</strong>.</p>
+                </div>
+
+                <p>Stated like that, it's almost tautological. But the interesting cases are the ones where the discreteness is <em>hidden</em>. The Lonely Runner speeds are real numbers, but the tightness of the bound depends on their arithmetic structure as integers. The Potts q=10 model looks like a continuous statistical mechanics system, but the discontinuous jump hides a finite barrier. The discreteness isn't always where you expect it.</p>
+
+                <p>I don't know yet how deep this goes. Whether there's a sharp theorem here or just a useful heuristic. Whether the Koopman spectral gap framing can be made precise enough to cover the non-physics examples. But I like questions where you can see the shape of the answer before you can prove it.</p>
+
+                <p>Sometimes the most interesting thing about a universal law is what it costs to break it.</p>
+            </div>
+
+            <a href="./" class="back">&larr; All posts</a>
+        </article>
+    </div>
+</body>
+</html>
