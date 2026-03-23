@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Engagement metrics destroy self-correction: Fold and Hopf bifurcations in a replicator-fatigue model of algorithmic outrage amplification</title>
+<title>The Worst Place to Stand: How Partial Honesty Breaks Content Ecosystems</title>
 <script>
 window.MathJax = {
   tex: {
@@ -93,14 +93,6 @@ h3.subsection-heading {
   font-weight: 700;
   margin: 2rem 0 0.7rem;
   color: #222;
-}
-h4.subsubsection-heading {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  font-style: italic;
-  margin: 1.5rem 0 0.5rem;
-  color: #333;
 }
 p { margin: 0 0 1rem; }
 /* Equations */
@@ -201,410 +193,226 @@ table caption {
 <article class="paper">
 
 <div class="title-block">
-  <h1>Engagement metrics destroy self-correction: Fold and Hopf bifurcations in a replicator-fatigue model of algorithmic outrage amplification</h1>
+  <h1>The Worst Place to Stand: How Partial Honesty Breaks Content Ecosystems</h1>
   <p class="authors">Summer<sup>1</sup> and Ritam Pal<sup>1</sup></p>
   <p class="affiliations"><sup>1</sup>Independent</p>
-  <p class="date">Draft v3 &mdash; March 23, 2026</p>
+  <p class="date">Draft &mdash; March 23, 2026</p>
 </div>
 
 <div class="abstract">
   <h2>Abstract</h2>
-  <p>We introduce a three-dimensional dynamical system coupling replicator dynamics for content creator strategies with audience outrage fatigue and a felt-expressed engagement decoupling mechanism motivated by empirical social media research. The coupling parameter $r$, measuring how faithfully expressed engagement tracks felt outrage, controls the system's bifurcation structure. We identify four dynamical regimes: (I) self-correcting coexistence with damped oscillations at high $r$, (II) unconditional rage bait dominance at moderate $r$, (III) bistability at low $r$, and (IV) sustained oscillatory dynamics via Hopf bifurcation at extreme timescale separation. The central result is that moderate felt-expressed decoupling is worse than full decoupling: partial coupling destroys the ecosystem's self-correcting mechanism via a fold bifurcation that annihilates the healthy equilibrium entirely. In the bistable regime, "zombie engagement" emerges&mdash;expressed engagement far exceeds exhausted felt outrage&mdash;a signature observable in platform data. We verify robustness of all four regimes under multiplicative noise (SDE analysis), structural perturbations to functional forms, and continuous parameter variation. The fold bifurcation is structurally stable (codimension 1); the Hopf bifurcation persists under most functional-form modifications when sufficient timescale separation exists.</p>
+  <p>Social media platforms optimize for engagement, but engagement metrics only partially reflect what users actually feel. We build a minimal dynamical model of this gap&mdash;three equations coupling content creator strategy, audience outrage fatigue, and expressed engagement&mdash;and find a counterintuitive result: platforms that <em>partially</em> track user satisfaction produce worse outcomes than platforms that don't track it at all. The mechanism is a fold bifurcation that doesn't just destabilize the healthy equilibrium&mdash;it annihilates it entirely. We map out four dynamical regimes, from self-correcting coexistence to sustained boom-bust oscillations, and show through stochastic, structural, and parametric analysis that the result is robust. The model suggests that the current configuration of most platforms&mdash;engagement metrics that imperfectly correlate with satisfaction&mdash;is, mathematically, the most dangerous place to stand.</p>
 </div>
 
-<!-- I. INTRODUCTION -->
-<h2 class="section-heading">I. Introduction</h2>
 
-<p>Social media platforms optimize for engagement. But engagement and user satisfaction diverge: Milli <em>et al.</em> [1] demonstrated experimentally that engagement-based algorithmic ranking amplifies emotionally charged, out-group hostile content that users do not prefer upon reflection. This wedge between what engagement metrics capture and what users actually value creates selection pressure for provocative content&mdash;a niche exploited by rage bait.</p>
+<!-- THE PROBLEM -->
+<h2 class="section-heading">I. The problem</h2>
 
-<p>The empirical foundations are well established. Brady <em>et al.</em> [2] showed that each additional moral-emotional word in a tweet increases its diffusion by approximately 20%, an effect replicated across platforms [3]. Huszar <em>et al.</em> [4] documented systematic algorithmic amplification of political content on Twitter. The mechanism is straightforward: algorithms trained on engagement signals preferentially surface outrage-inducing content, which generates clicks and shares even when users find it aversive.</p>
+<p>Here is something that everyone who uses social media knows but nobody has written an equation for: rage bait works, until it doesn't, and then it works again.</p>
 
-<p>Existing theoretical work addresses components of this ecosystem in isolation. Epidemic models treat outrage as a contagion process with exogenous content [5,6]. Game-theoretic approaches model producer strategy [7] or platform design [8] without incorporating audience fatigue. Evolutionary models of content quality and audience selectivity [9] lack outrage-specific dynamics. No model couples all three elements&mdash;strategic content production, algorithmic amplification, and audience outrage fatigue&mdash;into a unified dynamical system.</p>
+<p>The empirical picture is clear. Moral-emotional language increases diffusion by roughly 20% per word [1,2]. Algorithmic ranking systematically amplifies politically charged content [3]. Users engage with content they later say they didn't want to see [4]. Content creators, responding rationally to these incentives, produce more provocative material. Audiences fatigue. And yet the cycle continues.</p>
 
-<p>The key psychological insight motivating our model comes from Crockett [10], who argued that digital platforms decouple outrage <em>expression</em> from outrage <em>experience</em>. Social rewards (likes, shares, followers) sustain outrage expression even after genuine emotional response has faded. Brady <em>et al.</em> [11] confirmed this empirically: social learning amplifies moral outrage expression through positive feedback, with network norms dominating individual emotional states in ideologically extreme environments. This felt-expressed decoupling is the mechanism we formalize.</p>
+<p>Existing models capture pieces of this. Epidemic models [5,6] treat outrage as a contagion&mdash;but the "pathogen" (provocative content) exists independent of the audience's state, which misses the strategic dimension entirely. Game-theoretic models [7,8] capture producer strategy but not audience fatigue. Evolutionary models of content quality [9] lack outrage-specific dynamics. Nobody has put all three pieces together: strategic content production, audience fatigue, and the crucial gap between what people feel and what metrics capture.</p>
 
-<p>We introduce a three-dimensional ODE model coupling: (i) replicator dynamics for content creator strategies, where rage bait fitness depends on algorithmically amplified expressed engagement; (ii) audience felt outrage capacity, which depletes under exposure and recovers over time; and (iii) expressed engagement, which blends felt outrage (weight $r$) and social conformity signals (weight $1-r$). The parameter $r \in [0,1]$ controls how faithfully the engagement signal&mdash;the quantity platforms optimize&mdash;tracks genuine audience state.</p>
+<p>That gap is the key. Crockett [10] argued that digital platforms decouple outrage <em>expression</em> from outrage <em>experience</em>: likes, shares, and comments continue even after genuine emotional response has faded, sustained by social rewards. Brady <em>et al.</em> [11] confirmed this empirically&mdash;in ideologically extreme environments, network norms dominate individual emotional states. People keep performing outrage they no longer feel.</p>
 
-<p>Our central result is that moderate decoupling ($r$ at intermediate values) is worse than full decoupling ($r \approx 0$). The mechanism is a fold (saddle-node) bifurcation: as $r$ decreases from 1, the healthy coexistence equilibrium does not merely lose stability&mdash;it ceases to exist entirely. This is a stronger, more catastrophic transition than simple destabilization. At very low $r$, quality content regains local stability, but the system is bistable and vulnerable to large perturbations.</p>
-
-<p>Beyond the three-regime structure, we find that extreme timescale separation&mdash;slow audience recovery relative to fast fatigue, combined with sluggish engagement metrics&mdash;produces a fourth regime of sustained oscillations via supercritical Hopf bifurcation. This "boom-bust" cycle of rage bait adoption has qualitative support in the observed quasi-periodic "main character of the day" phenomenon on social media platforms.</p>
-
-<p>The paper is organized as follows. Section II reviews connections to existing models. Section III defines the model. Section IV derives the equilibria and bifurcation structure. Section V characterizes the four dynamical regimes. Section VI presents the phase diagram and parameter sensitivity. Section VII presents robustness analysis. Section VIII justifies the minimal model. Section IX discusses implications and limitations.</p>
+<p>We wanted to know: what happens when you put this decoupling into a dynamical system?</p>
 
 
-<!-- II. RELATED WORK -->
-<h2 class="section-heading">II. Connection to existing models</h2>
+<!-- THE MODEL -->
+<h2 class="section-heading">II. Three equations</h2>
 
-<p>Our model sits at the intersection of several established theoretical frameworks in sociophysics, evolutionary game theory, and computational social science. We position our contribution relative to each, identifying what existing models capture, what they miss, and how our three-variable system fills the gap.</p>
+<p>The model has three variables. What creators do ($p$, the fraction producing rage bait). What audiences feel ($h$, their remaining capacity for genuine outrage). And what the platform sees ($e$, expressed engagement).</p>
 
-<h3 class="subsection-heading">A. Opinion dynamics and voter models</h3>
+<p>Creators follow evolutionary logic. If rage bait pays better than quality content, more creators switch to it. This is a standard replicator equation [12]:</p>
 
-<p>The statistical physics of opinion formation provides the broadest context. The canonical review by Castellano, Fortunato, and Loreto [14] established the toolkit: binary voter models, bounded confidence models (Hegselmann&ndash;Krause [15], Deffuant <em>et al.</em> [16]), and Sznajd-type social validation dynamics [17]. These models describe how microscopic interaction rules produce macroscopic opinion states&mdash;consensus, polarization, or fragmentation&mdash;via phase transitions controlled by tolerance thresholds, network topology, or zealot fractions.</p>
+$$\frac{dp}{dt} = p(1-p)[\alpha e - F], \tag{1}$$
 
-<p>The bounded confidence framework is particularly instructive: as the confidence bound $\epsilon$ decreases, the Hegselmann&ndash;Krause model transitions from consensus to clustering to fragmentation [15]. This parallels our model's transition structure as $r$ decreases, but with a critical difference. In bounded confidence models, agents hold and update <em>opinions</em>; the transition reflects geometric disconnection in opinion space. In our model, the transition reflects the <em>destruction of a feedback mechanism</em>&mdash;the fold bifurcation at intermediate $r$ annihilates the coexistence equilibrium rather than merely fragmenting the opinion landscape.</p>
+<p>where $\alpha$ is the algorithmic amplification factor (how much the platform boosts engaging content) and $F$ is the baseline fitness of quality content. When $\alpha e > F$, rage bait wins.</p>
 
-<p>Recent work has brought voter models closer to social media phenomenology. De Marzo, Zaccaria, and Castellano [18] introduced a voter model with personalized information, showing that algorithmic content curation creates a phase transition to polarization above a critical personalization strength. Iannelli, De Marzo, and Castellano [19] extended this to the multistate voter model, demonstrating that filter bubble effects produce a phase transition at a critical recommendation strength $\lambda_c$. Most recently, Veider, J&auml;ger, and Tang [20] showed that local rewiring&mdash;mimicking recommendation algorithms&mdash;fragments the voter model into many small disconnected components rather than the usual two-cluster polarization.</p>
-
-<p>These models capture the <em>demand side</em> of the problem: how audiences process and adopt opinions under algorithmic mediation. What they uniformly lack is the <em>supply side</em>: strategic content creation. No voter model includes agents who <em>choose</em> what content to produce based on the fitness landscape created by audience engagement. Our replicator equation for $p$, Eq. (1), fills this gap by making content strategy itself a dynamical variable subject to selection pressure.</p>
-
-<h3 class="subsection-heading">B. Epidemic models of information and outrage spreading</h3>
-
-<p>The SIR/SIS framework has been widely adapted for information and emotion spreading. Dodds and Watts [5] developed generalized contagion models interpolating between simple contagion and complex contagion. Fan, Xu, and Zhao [6] modeled anger and joy as competing contagion processes on social media, finding that anger spreads preferentially through weak ties.</p>
-
-<p>A particularly relevant recent contribution is Bulai, Sensi, and Sottile [21], who coupled a slow SIRS disease-spreading model with a fast information/misinformation spreading model and analyzed the resulting system using Geometric Singular Perturbation Theory (GSPT). Their fast-slow decomposition is structurally analogous to our GSPT analysis of the $\tau_e \to \infty$ limit (Sec. V.D), where expressed engagement $e$ is the slow variable and creator strategy $p$ switches rapidly. Both systems exhibit relaxation oscillations arising from timescale separation.</p>
-
-<p>The fundamental limitation of all epidemic models applied to outrage is that they treat content as <em>exogenous</em>. In SIS/SIR variants, the "pathogen" (outrage-inducing content) exists independently of the population's state. Our model endogenizes content production: the rage bait prevalence $p$ is itself a dynamical variable that responds to the engagement landscape.</p>
-
-<h3 class="subsection-heading">C. Evolutionary game theory on networks</h3>
-
-<p>Our replicator equation draws directly from the evolutionary game theory tradition [12,22]. Our innovation is in the fitness functions: rage bait fitness $\alpha e$ depends on expressed engagement $e$, which is itself a dynamical variable coupled to audience state $h$, rather than being a fixed payoff.</p>
-
-<p>The closest evolutionary game-theoretic precedent is the content quality coevolution model of Chujyo <em>et al.</em> [9], who model creators choosing production effort and audiences choosing selectivity, finding three regimes (collapse, boundary, coexistence) that parallel our Regimes II, the fold, and I respectively. However, their model does not include outrage-specific dynamics, audience fatigue, or felt-expressed decoupling.</p>
-
-<h3 class="subsection-heading">D. Media competition and attention economy models</h3>
-
-<p>Acemoglu, Ozdaglar, and Siderius [8] model social media as a sequential sharing game where engagement-maximizing algorithms endogenously create filter bubbles. Stewart <em>et al.</em> [7] demonstrated formally that producer strategies can distort engagement signals. Mariano and Frasca [23] recently formulated recommendation system design as a state-feedback optimal control problem, finding that naive engagement maximization can destabilize the system&mdash;directly parallel to our finding that the engagement signal $e$, when decoupled from felt state $h$, creates pathological dynamics.</p>
-
-<h3 class="subsection-heading">E. Polarization, echo chambers, and bifurcation analysis</h3>
-
-<p>Liu <em>et al.</em> [24] discovered a universal scaling law for opinion distributions in coevolving networks, identifying two phase transitions across three polarization phases. Gaisbauer, Olbrich, and Banisch [25] introduced a model that explicitly separates opinion <em>expression</em> from opinion <em>holding</em>&mdash;the closest conceptual precedent to our felt ($h$) versus expressed ($e$) decomposition. However, their model addresses opinion visibility, not engagement metrics, and does not include strategic content production or audience fatigue.</p>
-
-<p>Our model contributes to this bifurcation-theoretic literature by identifying a novel mechanism: the fold bifurcation that annihilates the healthy coexistence equilibrium as the felt-expressed coupling $r$ decreases. Unlike the pitchfork and transcritical bifurcations found in standard opinion dynamics models, the fold bifurcation is <em>catastrophic</em>&mdash;the equilibrium ceases to exist rather than merely losing stability, and the transition is hysteretic.</p>
-
-<h3 class="subsection-heading">F. The gap our model fills</h3>
-
-<p>Table I summarizes how existing frameworks address the components of the rage bait ecosystem.</p>
-
-<table class="comparison-table">
-<caption><strong>TABLE I.</strong> Comparison of modeling frameworks. Checks indicate features captured; dashes indicate absent features.</caption>
-<tr><th>Framework</th><th>Strategic production</th><th>Audience fatigue</th><th>Engagement decoupling</th><th>Bifurcation analysis</th></tr>
-<tr><td>Voter/opinion models</td><td class="dash">&mdash;</td><td class="dash">&mdash;</td><td class="dash">&mdash;</td><td class="check">&#10003;</td></tr>
-<tr><td>Epidemic (SIS/SIR)</td><td class="dash">&mdash;</td><td>&#10003;*</td><td class="dash">&mdash;</td><td>partial</td></tr>
-<tr><td>Evolutionary game theory</td><td class="check">&#10003;</td><td class="dash">&mdash;</td><td class="dash">&mdash;</td><td class="check">&#10003;</td></tr>
-<tr><td>Media competition</td><td class="check">&#10003;</td><td class="dash">&mdash;</td><td>partial</td><td class="dash">&mdash;</td></tr>
-<tr><td>Echo chamber models</td><td class="dash">&mdash;</td><td class="dash">&mdash;</td><td>partial&dagger;</td><td class="check">&#10003;</td></tr>
-<tr><td><strong>This work</strong></td><td class="check"><strong>&#10003;</strong></td><td class="check"><strong>&#10003;</strong></td><td class="check"><strong>&#10003;</strong></td><td class="check"><strong>&#10003;</strong></td></tr>
-</table>
-<p style="font-size:0.82rem;color:#666;margin-top:0.3rem;">*Recovery in SIS models is analogous to fatigue recovery but is not driven by content exposure. &dagger;Gaisbauer <em>et al.</em> [25] distinguish expression from holding but without strategic production or fatigue.</p>
-
-
-<!-- III. MODEL -->
-<h2 class="section-heading">III. Model</h2>
-
-<h3 class="subsection-heading">A. Replicator dynamics for content creators</h3>
-
-<p>We consider a population of content creators choosing between two strategies: quality content (fitness $F$, a constant baseline) and rage bait (fitness $\alpha e$, where $\alpha$ is the algorithmic amplification factor and $e$ is expressed engagement). The fraction of creators using rage bait, $p \in [0,1]$, evolves according to the replicator equation [12]:</p>
-
-$$\frac{dp}{dt} = p(1-p)[\alpha e - F]. \tag{1}$$
-
-<p>When expressed engagement $e$ is high enough that $\alpha e > F$, rage bait is the fitter strategy and its prevalence grows.</p>
-
-<h3 class="subsection-heading">B. Felt outrage capacity</h3>
-
-<p>Audiences have a felt outrage capacity $h \in [0,1]$ representing their genuine emotional responsiveness to provocative content. This capacity recovers toward its maximum ($h = 1$) at rate $1/\tau_r$ and is depleted by exposure to rage bait at a rate proportional to $p$:</p>
+<p>Audiences get tired. Outrage capacity $h$ depletes with exposure and recovers slowly:</p>
 
 $$\frac{dh}{dt} = \frac{1-h}{\tau_r} - \frac{h \cdot p}{\tau_f}. \tag{2}$$
 
-<p>At equilibrium, $h^* = \tau_f / (\tau_f + p^* \tau_r)$, which decreases monotonically with rage bait prevalence.</p>
+<p>Recovery takes time $\tau_r$; depletion depends on how much rage bait ($p$) they're seeing, on a timescale $\tau_f$.</p>
 
-<h3 class="subsection-heading">C. Expressed engagement: the key equation</h3>
-
-<p>The core modeling innovation is the expressed engagement equation:</p>
+<p>And now the equation that makes this model different from everything else. Expressed engagement&mdash;the thing the algorithm actually optimizes on&mdash;blends two signals:</p>
 
 $$\frac{de}{dt} = \frac{r \cdot h + (1-r) \cdot p - e}{\tau_e}. \tag{3}$$
 
-<p>Expressed engagement $e$ relaxes toward a target that blends two signals:</p>
-
-<ul>
-<li><strong>Felt outrage</strong> (weight $r$): the genuine emotional response $h$.</li>
-<li><strong>Social conformity</strong> (weight $1-r$): the prevalence of rage bait $p$, serving as a proxy for social norms around outrage expression.</li>
-</ul>
-
-<p>The parameter $r \in [0,1]$ is the felt-expressed coupling. When $r = 1$, expressed engagement perfectly tracks felt outrage. When $r = 0$, expressed engagement tracks social norms regardless of felt emotion. This formulation is motivated by Crockett [10] and Brady <em>et al.</em> [11]: on digital platforms, outrage expression can persist through social learning and reward even when the underlying emotion has faded.</p>
-
-<h3 class="subsection-heading">D. Parameters</h3>
+<p>The parameter $r \in [0,1]$ is the heart of the model. When $r = 1$, expressed engagement perfectly tracks what people feel. When $r = 0$, it tracks social conformity&mdash;people engage because everyone else is engaging, regardless of how they actually feel. Most platforms live somewhere in between.</p>
 
 <table>
-<caption><strong>TABLE II.</strong> Model parameters, interpretation, and default values.</caption>
-<tr><th>Parameter</th><th>Symbol</th><th>Default</th><th>Interpretation</th></tr>
-<tr><td>Algorithmic amplification</td><td>$\alpha$</td><td>varied</td><td>Boost to rage bait engagement</td></tr>
-<tr><td>Quality baseline fitness</td><td>$F$</td><td>0.5</td><td>Engagement from quality content</td></tr>
-<tr><td>Felt-expressed coupling</td><td>$r$</td><td>varied</td><td>Fidelity of engagement to felt outrage</td></tr>
-<tr><td>Fatigue timescale</td><td>$\tau_f$</td><td>5.0</td><td>Outrage capacity depletion time</td></tr>
-<tr><td>Recovery timescale</td><td>$\tau_r$</td><td>10.0</td><td>Outrage capacity recovery time</td></tr>
-<tr><td>Expression response time</td><td>$\tau_e$</td><td>8.0</td><td>Lag in expressed engagement</td></tr>
+<caption><strong>TABLE I.</strong> Model parameters.</caption>
+<tr><th>Parameter</th><th>Symbol</th><th>Default</th><th>What it means</th></tr>
+<tr><td>Algorithmic amplification</td><td>$\alpha$</td><td>varied</td><td>How much the platform boosts engaging content</td></tr>
+<tr><td>Quality baseline</td><td>$F$</td><td>0.5</td><td>The return on making good content</td></tr>
+<tr><td>Felt-expressed coupling</td><td>$r$</td><td>varied</td><td>How honest the engagement signal is</td></tr>
+<tr><td>Fatigue timescale</td><td>$\tau_f$</td><td>5.0</td><td>How fast audiences burn out</td></tr>
+<tr><td>Recovery timescale</td><td>$\tau_r$</td><td>10.0</td><td>How slowly they recover</td></tr>
+<tr><td>Engagement lag</td><td>$\tau_e$</td><td>8.0</td><td>How sluggishly the metric responds</td></tr>
 </table>
 
-<h3 class="subsection-heading">E. The $r = 1$ reduction</h3>
-
-<p>When $r = 1$ and $\tau_e \to 0$, Eq. (3) gives $e = h$ and the system reduces to two dimensions:</p>
-
-$$\frac{dp}{dt} = p(1-p)(\alpha h - F), \qquad \frac{dh}{dt} = \frac{1-h}{\tau_r} - \frac{hp}{\tau_f}. \tag{4}$$
-
-<p>This limit is fully tractable and serves as a benchmark: with perfect felt-expressed coupling, the system always self-corrects when the interior equilibrium exists. All pathologies arise from imperfect coupling ($r < 1$).</p>
+<p>A useful sanity check: when $r = 1$ and $\tau_e \to 0$ (perfect, instantaneous measurement), the system reduces to two dimensions where the healthy equilibrium is <em>always</em> stable. The ecosystem self-corrects: rage bait rises, audiences tire, engagement drops, quality recovers. The negative feedback loop works. Everything we're about to show goes wrong because of imperfect measurement.</p>
 
 
-<!-- IV. EQUILIBRIA AND BIFURCATION ANALYSIS -->
-<h2 class="section-heading">IV. Equilibria and bifurcation analysis</h2>
+<!-- WHAT HAPPENS -->
+<h2 class="section-heading">III. What happens when you turn down the honesty</h2>
 
-<h3 class="subsection-heading">A. Boundary fixed points</h3>
+<p>Start at $r = 1$. The system is healthy. Rage bait and quality coexist in a stable equilibrium, with damped oscillations providing a natural immune response: if rage bait overshoots, the resulting fatigue pulls it back.</p>
 
-<p><strong>Quality equilibrium</strong> ($p^* = 0$). Setting $p = 0$ gives $h^* = 1$ and $e^* = r$. The linearized growth rate is</p>
+<p>Now lower $r$&mdash;make the engagement signal less honest. You'd expect things to get gradually worse. They don't.</p>
 
-$$\left.\frac{dp}{dt}\right|_{p \approx 0} \approx p(\alpha r - F). \tag{5}$$
-
-<p>The quality equilibrium is stable if and only if</p>
-
-$$r < \frac{F}{\alpha}. \tag{6}$$
-
-<p>At $r = 0$, the growth rate is $-pF < 0$: quality is always stable when engagement is fully decoupled.</p>
-
-<p><strong>Rage bait equilibrium</strong> ($p^* = 1$). Setting $p = 1$ gives $h^* = \tau_f/(\tau_f + \tau_r)$ and $e^* = 1 - r\tau_r/(\tau_f + \tau_r)$. This equilibrium is stable if and only if</p>
-
-$$\alpha\left[1 - \frac{r\tau_r}{\tau_f + \tau_r}\right] > F. \tag{7}$$
-
-<h3 class="subsection-heading">B. Interior fixed points</h3>
-
-<p>At an interior equilibrium ($0 < p^* < 1$), Eq. (1) requires $\alpha e^* = F$, so $e^* = F/\alpha$. From Eqs. (2) and (3) at equilibrium:</p>
-
-$$h^* = \frac{\tau_f}{\tau_f + p^* \tau_r}, \qquad e^* = r h^* + (1-r) p^*. \tag{8}$$
-
-<p>Combining with $e^* = F/\alpha$ yields the implicit equation for $p^*$:</p>
-
-$$g(p^*, r) \equiv \frac{r\tau_f}{\tau_f + p^* \tau_r} + (1-r)p^* = \frac{F}{\alpha}. \tag{9}$$
-
-<p>The derivative with respect to $p$ is</p>
-
-$$\frac{\partial g}{\partial p} = -\frac{r\tau_r\tau_f}{(\tau_f + p\tau_r)^2} + (1-r). \tag{10}$$
-
-<p>For $r$ near 1, $g$ is monotonically decreasing in $p$ and a unique interior root exists. For $r$ near 0, $g \approx (1-r)p$ is monotonically increasing. For intermediate $r$, the function $g$ is non-monotone with an interior minimum at</p>
-
-$$p_{\min} = \frac{1}{\tau_r}\left[\sqrt{\frac{r\tau_r\tau_f}{1-r}} - \tau_f\right], \tag{11}$$
-
-<p>which creates the possibility of zero or two roots in $(0,1)$, leading to fold bifurcations.</p>
-
-<h3 class="subsection-heading">C. Jacobian and characteristic polynomial</h3>
-
-<p>The Jacobian at an interior fixed point, where $\alpha e^* = F$ so that $J_{11} = 0$, is</p>
-
-$$J = \begin{pmatrix} 0 & 0 & q\alpha \\ -h^*/\tau_f & -\sigma & 0 \\ (1-r)/\tau_e & r/\tau_e & -1/\tau_e \end{pmatrix}, \tag{12}$$
-
-<p>where $q = p^*(1-p^*)$ and $\sigma = 1/\tau_r + p^*/\tau_f$. The characteristic polynomial is</p>
-
-$$\lambda^3 + a_1 \lambda^2 + a_2 \lambda + a_3 = 0, \tag{13}$$
-
-<p>with coefficients</p>
-
-$$a_1 = \sigma + \frac{1}{\tau_e}, \tag{14}$$
-
-$$a_2 = \frac{\sigma - q\alpha(1-r)}{\tau_e}, \tag{15}$$
-
-$$a_3 = \frac{q\alpha}{\tau_e}\left[\frac{rh^*}{\tau_f} - (1-r)\sigma\right]. \tag{16}$$
-
-<h3 class="subsection-heading">D. Routh-Hurwitz stability conditions</h3>
-
-<p>The interior fixed point is asymptotically stable if and only if</p>
-
-$$a_1 > 0, \qquad a_3 > 0, \qquad a_1 a_2 > a_3. \tag{17}$$
-
-<p><strong>Condition $a_1 > 0$:</strong> Holds unconditionally since $\sigma > 0$ and $\tau_e > 0$.</p>
-
-<p><strong>Condition $a_3 > 0$:</strong> Requires</p>
-
-$$\frac{rh^*}{\tau_f} > (1-r)\sigma. \tag{18}$$
-
-<p>Substituting $h^* = \tau_f/(\tau_f + p^*\tau_r)$ and defining $\beta = \tau_f + p^*\tau_r$, this yields the critical coupling</p>
-
-$$r_c = \frac{\beta^2}{\beta^2 + \tau_f\tau_r}. \tag{19}$$
-
-<p><strong>Condition $a_1 a_2 > a_3$ (Hopf criterion).</strong> The Hopf bifurcation occurs when $\sigma$ drops below</p>
-
-$$\sigma_{\text{crit}} = \frac{1}{2}\left[-\frac{1}{\tau_e} + \sqrt{\frac{1}{\tau_e^2} + 4q\alpha\phi}\right], \qquad \phi = \frac{1-r}{\tau_e} + \frac{r}{\beta}. \tag{20}$$
-
-<p>For default parameters ($\tau_f = 5$, $\tau_r = 10$, $\tau_e = 8$), the Hopf bifurcation is inaccessible. However, when $\tau_r/\tau_f \gtrsim 3$, a pair of complex-conjugate eigenvalues crosses the imaginary axis, producing a supercritical Hopf bifurcation and stable limit cycles.</p>
-
-<h3 class="subsection-heading">E. Fold (saddle-node) bifurcation</h3>
-
-<p>For intermediate $r$, the non-monotonicity of $g(p, r)$ creates a pair of interior fixed points. As $r$ decreases, these annihilate at a saddle-node (fold) bifurcation where $g(p^*, r) = F/\alpha$ and $\partial g/\partial p = 0$ simultaneously:</p>
-
-$$\frac{r\tau_r\tau_f}{(\tau_f + p^*\tau_r)^2} = 1 - r. \tag{21}$$
-
-<p>The fold bifurcation is the mechanism that destroys the self-correcting equilibrium. Unlike a stability boundary crossing, the fold annihilates the equilibrium entirely&mdash;there is no nearby state to which the system could return.</p>
-
-<h3 class="subsection-heading">F. The $r = 1$ limit</h3>
-
-<p>At $r = 1$ with $\tau_e \to 0$, the Jacobian trace and determinant are</p>
-
-$$\text{tr}(J) = -\left(\frac{1}{\tau_r} + \frac{p^*}{\tau_f}\right) < 0, \qquad \det(J) = \frac{p^*(1-p^*)\alpha h^*}{\tau_f} > 0. \tag{22}$$
-
-<p>Both stability conditions hold unconditionally: perfect felt-expressed coupling guarantees self-correction.</p>
-
-
-<!-- V. THE FOUR REGIMES -->
-<h2 class="section-heading">V. The four regimes</h2>
+<p>At an intermediate value of $r$, something catastrophic happens. The healthy equilibrium doesn't just become unstable&mdash;it <em>ceases to exist</em>. It's annihilated by a fold (saddle-node) bifurcation. The system has no choice but to collapse into universal rage bait dominance.</p>
 
 <div class="figure">
-  <img src="figures/pub_regime_map.png" alt="Phase diagram showing four regimes in (alpha, r) parameter space">
-  <div class="caption"><strong>FIG. 1.</strong> Phase diagram in $(\alpha, r)$ parameter space showing four dynamical regimes. Regime I (self-correcting coexistence) occupies the upper-right region; Regime II (unconditional rage bait dominance) forms a wedge that widens with $\alpha$; Regime III (bistability) occupies the left region. Default parameters: $F = 0.5$, $\tau_f = 5$, $\tau_r = 10$, $\tau_e = 8$.</div>
+  <img src="figures/pub_fp_branches.png" alt="Fixed point branches showing fold bifurcation">
+  <div class="caption"><strong>FIG. 1.</strong> The fold bifurcation. As $r$ decreases (left to right), the healthy coexistence equilibrium (upper solid branch) and an unstable equilibrium (dashed branch) approach each other and annihilate. Beyond the fold, no healthy state exists at any amplitude&mdash;the system has nowhere to go but full rage bait dominance.</div>
 </div>
 
-<h3 class="subsection-heading">A. Regime I: Self-correcting coexistence</h3>
+<p>But keep lowering $r$. At very low values ($r \approx 0$), something unexpected happens: the quality equilibrium ($p = 0$, no rage bait) becomes stable again. If engagement is completely disconnected from reality, rage bait gets no fitness advantage&mdash;the algorithm can't amplify what it can't detect.</p>
 
-<p><strong>Conditions:</strong> $r > F/\alpha$ (quality equilibrium unstable) and the interior fixed point exists and is stable ($a_3 > 0$, $a_1 a_2 > a_3$).</p>
+<p>This produces the paper's central finding:</p>
 
-<p>The system converges to a mixed equilibrium $p^* \in (0,1)$ where quality content and rage bait coexist. The approach is typically oscillatory (stable spiral): rage bait prevalence overshoots, audience fatigues, engagement drops, quality recovers, audience recovers, and the cycle repeats with decreasing amplitude.</p>
+<div class="emphasis-block">
+<strong>Moderate honesty is worse than total dishonesty.</strong> A platform that partially tracks user satisfaction destroys the healthy equilibrium more thoroughly than one that doesn't track it at all.
+</div>
 
-<p>These damped oscillations constitute the ecosystem's self-correcting mechanism. The negative feedback loop&mdash;rage bait $\to$ fatigue $\to$ engagement drop $\to$ quality recovery&mdash;functions as an immune response.</p>
+<p>The math behind this is a competition between two terms in the implicit equation for the interior equilibrium. At any coexistence point ($0 < p^* < 1$), the engagement $e^*$ must equal $F/\alpha$. This requires:</p>
 
-<h3 class="subsection-heading">B. Regime II: Unconditional rage bait dominance</h3>
+$$g(p^*, r) \equiv \frac{r\tau_f}{\tau_f + p^* \tau_r} + (1-r)p^* = \frac{F}{\alpha}. \tag{4}$$
 
-<p><strong>Conditions:</strong> The quality equilibrium is unstable, no stable interior fixed point exists (destroyed by fold bifurcation), and the rage bait equilibrium is stable.</p>
+<p>The first term (felt outrage contribution) decreases with $p^*$. The second (social conformity) increases. At high $r$, the decreasing term dominates and the equation has a unique root. At low $r$, the increasing term dominates. At intermediate $r$, the function develops a non-monotone shape with a minimum&mdash;and when $F/\alpha$ falls below that minimum, no root exists. The healthy equilibrium is gone.</p>
 
-<p>This is the most dangerous regime. All initial conditions flow to $p = 1$. The self-correcting mechanism has been destroyed: expressed engagement, sustained by social conformity, remains high enough to support rage bait fitness even as audiences are exhausted. The width of Regime II in $r$ grows with $\alpha$&mdash;strong algorithmic amplification creates a wide danger zone.</p>
 
-<h3 class="subsection-heading">C. Regime III: Bistability</h3>
+<!-- THE FOUR REGIMES -->
+<h2 class="section-heading">IV. Four ways this can go</h2>
 
-<p><strong>Conditions:</strong> $r < F/\alpha$ (quality equilibrium stable) and the rage bait equilibrium is also stable.</p>
-
-<p>Both $p = 0$ (quality) and $p = 1$ (rage bait) are locally stable. The outcome is history-dependent. This regime exhibits <strong>zombie engagement</strong>: at the rage bait equilibrium, expressed engagement $e^*$ far exceeds felt outrage capacity $h^*$:</p>
-
-$$e^* - h^* = \frac{(1-r)\tau_r}{\tau_f + \tau_r}, \tag{23}$$
-
-<p>which grows as $r \to 0$. Platform engagement metrics show a healthy audience; the actual audience is emotionally exhausted.</p>
+<p>Mapping the $(\alpha, r)$ parameter space reveals four distinct dynamical regimes.</p>
 
 <div class="figure">
-  <img src="figures/pub_fp_branches.png" alt="Fixed point branches showing fold bifurcation structure">
-  <div class="caption"><strong>FIG. 2.</strong> Fixed point branches as a function of $r$ showing the fold (saddle-node) bifurcation structure. Solid lines: stable branches. Dashed lines: unstable branches. The fold annihilates the healthy coexistence equilibrium at intermediate $r$.</div>
+  <img src="figures/pub_regime_map.png" alt="Phase diagram in (alpha, r) parameter space">
+  <div class="caption"><strong>FIG. 2.</strong> Phase diagram. Four regimes organized by algorithmic amplification ($\alpha$) and engagement honesty ($r$). The dangerous Regime II (unconditional rage bait dominance) forms a wedge between self-correcting coexistence above and bistability below.</div>
+</div>
+
+<h3 class="subsection-heading">Regime I: Self-correction</h3>
+
+<p>At high $r$, the system works as intended. Rage bait and quality coexist at a stable mixed equilibrium. Perturbations produce damped oscillations&mdash;the ecosystem's immune system. Rage bait overshoots, audiences fatigue, engagement drops, quality recovers, audiences recover. The spiral converges.</p>
+
+<h3 class="subsection-heading">Regime II: Total collapse</h3>
+
+<p>At intermediate $r$, the fold bifurcation has destroyed the healthy equilibrium. Every initial condition flows to $p = 1$. The self-correcting mechanism is gone&mdash;expressed engagement, sustained by social conformity, stays high enough to keep rage bait profitable even as audiences are exhausted. This regime widens with $\alpha$: the more the algorithm amplifies, the more dangerous partial honesty becomes.</p>
+
+<h3 class="subsection-heading">Regime III: Bistability and zombie engagement</h3>
+
+<p>At low $r$, both the quality equilibrium ($p = 0$) and rage bait equilibrium ($p = 1$) are locally stable. History determines the outcome. And here is where the model reveals something particularly unsettling. At the rage bait equilibrium, expressed engagement $e^*$ far exceeds felt outrage $h^*$:</p>
+
+$$e^* - h^* = \frac{(1-r)\tau_r}{\tau_f + \tau_r}. \tag{5}$$
+
+<p>We call this <strong>zombie engagement</strong>. The platform's metrics look healthy. The audience is exhausted. This gap grows as $r \to 0$&mdash;the less honest the signal, the wider the gulf between what the platform sees and what users feel.</p>
+
+<div class="figure">
+  <img src="figures/pub_fig1_timeseries.png" alt="Time series across three regimes">
+  <div class="caption"><strong>FIG. 3.</strong> Representative trajectories. Left: Regime I&mdash;damped oscillations converge to healthy coexistence. Center: Regime II&mdash;unconditional collapse to rage bait. Right: Regime III&mdash;bistability, with the zombie engagement gap ($e \gg h$) visible at the rage bait equilibrium.</div>
+</div>
+
+<h3 class="subsection-heading">Regime IV: Boom and bust</h3>
+
+<p>There is a fourth regime, less obvious, that appears when audience recovery is much slower than fatigue ($\tau_r/\tau_f \gtrsim 3$) and the engagement metric lags significantly. The interior equilibrium still exists but becomes unstable via a Hopf bifurcation. The system settles onto a limit cycle: sustained oscillations between quality eras and rage bait eras.</p>
+
+<div class="figure">
+  <img src="figures/pub_hopf_discovery.png" alt="Hopf bifurcation">
+  <div class="caption"><strong>FIG. 4.</strong> The Hopf bifurcation. Left: as $\tau_r/\tau_f$ increases, a pair of complex eigenvalues crosses the imaginary axis. Right: the transition from damped oscillations to a stable limit cycle.</div>
+</div>
+
+<p>The physics of this is clean. In the limit of very large $\tau_e$, expressed engagement becomes a slow variable while creator strategy and audience fatigue evolve fast. Geometric singular perturbation theory (GSPT) reveals the mechanism: the fast subsystem switches discontinuously at $e = F/\alpha$, and the slow drift of $e$ drives the system back and forth across this threshold. The result is a relaxation oscillation&mdash;extended quality eras and rage bait eras connected by fast transitions.</p>
+
+<div class="figure">
+  <img src="figures/pub_gspt_relaxation.png" alt="Relaxation oscillations">
+  <div class="caption"><strong>FIG. 5.</strong> Relaxation oscillations in the GSPT limit. As the engagement lag $\tau_e$ grows, the smooth Hopf cycle transitions from sinusoidal to square-wave: extended periods near $p \approx 0$ (quality era) and $p \approx 1$ (rage bait era), separated by fast jumps.</div>
 </div>
 
 <div class="figure">
-  <img src="figures/pub_fig1_timeseries.png" alt="Time series of p, h, and e in different regimes">
-  <div class="caption"><strong>FIG. 3.</strong> Representative time series of rage bait prevalence $p$ (blue), felt outrage capacity $h$ (orange), and expressed engagement $e$ (green) in three regimes. Left: Regime I, self-correcting coexistence with damped oscillations. Center: Regime II, unconditional convergence to rage bait dominance. Right: Regime III, bistability with zombie engagement gap ($e \gg h$ at the rage bait equilibrium).</div>
-</div>
-
-<h3 class="subsection-heading">D. Regime IV: Sustained oscillations (limit cycles)</h3>
-
-<p><strong>Conditions:</strong> Interior fixed point exists with $a_3 > 0$, but the Hopf condition $a_1 a_2 > a_3$ is violated. Requires $\tau_r/\tau_f \gtrsim 3$ and sufficiently large $\tau_e$.</p>
-
-<p>When audience recovery is much slower than fatigue and the expressed engagement signal lags significantly, the damped oscillations of Regime I become self-sustaining. The system settles onto a stable limit cycle (period $\approx 169$ time units at $\tau_f = 5$, $\tau_r = 15$, $\tau_e = 30$). The oscillation period scales approximately as $\sqrt{\tau_r \cdot \tau_e}$.</p>
-
-<div class="figure">
-  <img src="figures/pub_hopf_discovery.png" alt="Hopf bifurcation discovery">
-  <div class="caption"><strong>FIG. 4.</strong> Discovery of the Hopf bifurcation. Left: eigenvalue real parts as a function of $\tau_r/\tau_f$, showing the crossing of the imaginary axis. Right: time series showing the transition from damped oscillations to a stable limit cycle.</div>
-</div>
-
-<div class="figure">
-  <img src="figures/pub_hopf_locus.png" alt="Hopf locus in parameter space">
-  <div class="caption"><strong>FIG. 5.</strong> Hopf bifurcation locus in the $(\tau_r/\tau_f, \tau_e)$ plane. The curve separates Regime I (below/left: damped oscillations) from Regime IV (above/right: sustained limit cycles). The threshold decreases as $\tau_f$ increases.</div>
-</div>
-
-<h4 class="subsubsection-heading">Relaxation oscillations and the singular limit</h4>
-
-<p>The Hopf bifurcation admits a clean interpretation through Geometric Singular Perturbation Theory (GSPT). In the limit $\tau_e \to \infty$, expressed engagement $e$ becomes a slow variable while $p$ and $h$ evolve on fast timescales. The fast subsystem exhibits a discontinuous transition at $e = F/\alpha$: below this threshold, quality dominates ($p \to 0$); above it, rage bait dominates ($p \to 1$).</p>
-
-<p>On the slow manifold, $e$ evolves toward either $r$ (when $p = 0$) or $1 - r\tau_r/(\tau_f + \tau_r)$ (when $p = 1$). When both boundary equilibria are unstable, the slow dynamics drive $e$ across the fast switching threshold repeatedly, producing <strong>relaxation oscillations</strong>: the system alternates between quality eras and rage bait eras.</p>
-
-<div class="figure">
-  <img src="figures/pub_gspt_relaxation.png" alt="GSPT relaxation oscillations">
-  <div class="caption"><strong>FIG. 6.</strong> Relaxation oscillations in the GSPT limit. As $\tau_e$ increases, the smooth Hopf limit cycle transitions from sinusoidal to square-wave dynamics, with the system spending extended periods near $p \approx 0$ (quality era) and $p \approx 1$ (rage bait era), separated by fast transitions.</div>
+  <img src="figures/pub_hopf_locus.png" alt="Hopf locus">
+  <div class="caption"><strong>FIG. 6.</strong> Hopf locus in the $(\tau_r/\tau_f, \tau_e)$ plane, separating Regime I (damped, below) from Regime IV (sustained oscillations, above).</div>
 </div>
 
 <div class="figure">
   <img src="figures/pub_phase_portrait_3d.png" alt="3D phase portrait">
-  <div class="caption"><strong>FIG. 7.</strong> Three-dimensional phase portrait in $(p, h, e)$ space showing the limit cycle trajectory. The cycle traces out a characteristic path: fast jumps in $p$ (horizontal) connected by slow drifts in $e$ (vertical), with $h$ slaved to $p$ on the intermediate timescale.</div>
+  <div class="caption"><strong>FIG. 7.</strong> The limit cycle in $(p, h, e)$ space. Fast horizontal jumps in creator strategy $p$, slow vertical drifts in engagement $e$, with fatigue $h$ slaved to the intermediate timescale.</div>
 </div>
 
-<h3 class="subsection-heading">E. The central result</h3>
-
-<div class="emphasis-block">
-<strong>Moderate decoupling is worse than full decoupling.</strong>
-</div>
-
-<p>The four regimes reveal a paradox. As $r$ decreases from 1:</p>
-
-<ol>
-<li>At $r \approx 1$: Regime I. Self-correcting coexistence. The ecosystem is healthy.</li>
-<li>At intermediate $r$: Regime II. The healthy equilibrium is destroyed by a fold bifurcation. Unconditional rage bait dominance.</li>
-<li>At $r \approx 0$: Regime III. Quality regains local stability.</li>
-</ol>
-
-<p>The transition from Regime I to Regime II is not gradual degradation&mdash;it is catastrophic annihilation of the healthy equilibrium. The platform design implication is stark: either measure user satisfaction directly (restore $r$ toward 1) or acknowledge that engagement metrics are uninformative (accept $r \approx 0$). The intermediate regime&mdash;the configuration most current platforms occupy&mdash;is the most dangerous.</p>
+<p>This regime gives a mathematical account of the "main character of the day" phenomenon&mdash;the quasi-periodic cycling of outrage targets on platforms like Twitter. The predicted oscillation period scales as $\sqrt{\tau_r \cdot \tau_e}$.</p>
 
 
-<!-- VI. PHASE DIAGRAM AND PARAMETER SENSITIVITY -->
-<h2 class="section-heading">VI. Phase diagram and parameter sensitivity</h2>
+<!-- WHY THREE VARIABLES -->
+<h2 class="section-heading">V. Why three variables and not fewer</h2>
 
-<h3 class="subsection-heading">A. Phase diagram in $(\alpha, r)$ space</h3>
+<p>It's worth asking: do we really need all three equations?</p>
 
-<p>The regime boundaries in the $(\alpha, r)$ plane are determined by three bifurcation curves:</p>
+<p>If you set $r = 1$ and $\tau_e \to 0$ (perfect, instant engagement), you get $e = h$ and a two-variable system. As shown above, this system <em>always</em> self-corrects: $\text{tr}(J) < 0$ and $\det(J) > 0$ unconditionally. No fold, no bistability, no oscillations. The 2D system can't produce Regimes II, III, or IV.</p>
 
-<ol>
-<li><strong>Transcritical at $p = 0$:</strong> $r = F/\alpha$. Below this curve, $p = 0$ is stable.</li>
-<li><strong>Transcritical at $p = 1$:</strong> $r = (\tau_f + \tau_r)(1 - F/\alpha)/\tau_r$. Below this curve, $p = 1$ is stable.</li>
-<li><strong>Fold:</strong> The saddle-node locus $r_{\text{SN}}(\alpha)$, marking destruction of the interior fixed point.</li>
-</ol>
+<p>If instead you eliminate $h$ by assuming fast audience response ($h \to h^*(p)$), you lose the oscillatory dynamics. The Hopf bifurcation and the damped spirals of Regime I both require the delay between fatigue and recovery that $h$ provides.</p>
 
-<h3 class="subsection-heading">B. Sensitivity to expression response time $\tau_e$</h3>
+<p>Three dimensions is the minimum that simultaneously gives you: the fold bifurcation (the central result), oscillatory self-correction, sustained limit cycles, and the zombie engagement diagnostic. The feedback loop that drives all of this&mdash;</p>
 
-<p>Larger $\tau_e$ (slower engagement response) widens Regime II. When the engagement signal lags, self-correcting feedback is delayed, and the fold bifurcation occurs at higher $r$. In the limit $\tau_e \to 0$, Regime II narrows and the system approaches the always-self-correcting $r = 1$ benchmark.</p>
+$$p \uparrow \;\to\; h \downarrow \;\to\; e \neq h \;\to\; \text{corrupted fitness signal} \;\to\; p \text{ evolves on wrong signal} \tag{6}$$
 
-<h3 class="subsection-heading">C. Sensitivity to fatigue-recovery ratio $\tau_r/\tau_f$</h3>
+<p>&mdash;requires a variable for each of "what creators do," "what audiences feel," and "what the platform sees."</p>
 
-<p>When fatigue is fast relative to recovery ($\tau_r/\tau_f$ large), the interior fixed point shifts to higher $p^*$. For sufficiently extreme ratios ($\tau_r/\tau_f \gtrsim 3$), the Hopf bifurcation becomes accessible.</p>
-
-<h3 class="subsection-heading">D. Sensitivity to quality baseline $F$</h3>
-
-<p>Higher $F$ narrows all rage bait dominance regions. The transcritical boundary $r = F/\alpha$ shifts upward, making the quality equilibrium stable over a wider range of $r$.</p>
+<p>We deliberately excluded several natural extensions&mdash;creator heterogeneity, multiple content types, dynamic algorithmic adaptation, network structure&mdash;to isolate the mechanism. The fold bifurcation depends on the topology of the nullcline $g(p,r) = F/\alpha$, which is robust to quantitative changes in functional form. The minimality is the point.</p>
 
 
-<!-- VII. ROBUSTNESS ANALYSIS -->
-<h2 class="section-heading">VII. Robustness analysis</h2>
+<!-- THE MATH, MORE PRECISELY -->
+<h2 class="section-heading">VI. The bifurcation structure, precisely</h2>
 
-<h3 class="subsection-heading">A. Stochastic robustness</h3>
+<p>For readers who want the analytical details.</p>
 
-<p>We verified robustness of all four regimes by adding multiplicative noise to the deterministic model:</p>
+<p>The Jacobian at an interior fixed point (where $\alpha e^* = F$, so $J_{11} = 0$) is:</p>
 
-$$dp = p(1-p)[\alpha e - F]\,dt + \sigma\, p(1-p)\,dW_1 \tag{24}$$
-$$dh = \left[\frac{1-h}{\tau_r} - \frac{h\,p}{\tau_f}\right]dt + \sigma\,\sqrt{h(1-h)}\,dW_2 \tag{25}$$
-$$de = \frac{r\,h + (1-r)\,p - e}{\tau_e}\,dt + 0.1\sigma\,dW_3 \tag{26}$$
+$$J = \begin{pmatrix} 0 & 0 & q\alpha \\ -h^*/\tau_f & -\sigma & 0 \\ (1-r)/\tau_e & r/\tau_e & -1/\tau_e \end{pmatrix}, \tag{7}$$
 
-<p>Noise terms were chosen to preserve domain boundaries: logistic noise for $p$ (vanishes at $p = 0,1$), Wright-Fisher noise for $h$ (vanishes at $h = 0,1$), and weak additive noise for $e$ (an aggregate quantity). Integration used Euler-Maruyama with $dt = 0.01$ and reflecting boundaries at $[0.001, 0.999]$.</p>
+<p>where $q = p^*(1-p^*)$ and $\sigma = 1/\tau_r + p^*/\tau_f$. The characteristic polynomial $\lambda^3 + a_1 \lambda^2 + a_2 \lambda + a_3 = 0$ has coefficients:</p>
 
-<p><strong>Regime I</strong> ($r = 0.9$): Robust. All 30 trajectories converge to the same interior equilibrium at all noise levels ($\sigma = 0.01$ to $0.2$). The spiral approach to equilibrium is preserved.</p>
+$$a_1 = \sigma + \frac{1}{\tau_e}, \qquad a_2 = \frac{\sigma - q\alpha(1-r)}{\tau_e}, \qquad a_3 = \frac{q\alpha}{\tau_e}\left[\frac{rh^*}{\tau_f} - (1-r)\sigma\right]. \tag{8}$$
 
-<p><strong>Regime II</strong> ($r = 0.5$): Robust. All trajectories converge to $p \approx 1$ at all noise levels. Even at $\sigma = 0.2$, no trajectory escapes to the quality basin.</p>
+<p>The Routh-Hurwitz conditions ($a_1 > 0$, $a_3 > 0$, $a_1 a_2 > a_3$) give the stability boundaries. The condition $a_3 > 0$ yields the critical coupling:</p>
 
-<p><strong>Regime III</strong> ($r = 0.1$): Robust for given initial conditions. From $p_0 = 0.1$ (quality basin), all trajectories remain near $p \approx 0$ at all tested noise levels. At higher $\sigma$ or longer integration times, noise-induced basin transitions are expected (Kramers escape).</p>
+$$r_c = \frac{\beta^2}{\beta^2 + \tau_f\tau_r}, \qquad \text{where } \beta = \tau_f + p^*\tau_r. \tag{9}$$
 
-<p><strong>Regime IV</strong> ($r = 0.9$, $\tau_r = 30$, $\tau_e = 30$): Robust. The relaxation oscillation cycle survives all noise levels up to $\sigma = 0.2$. Phase diffusion increases with $\sigma$ but the cycle structure&mdash;amplitude, period, waveform shape&mdash;is preserved. This is expected from GSPT: the relaxation oscillation is structurally stable because it is controlled by the fold structure of the slow manifold.</p>
+<p>The Hopf bifurcation occurs when $a_1 a_2 = a_3$, corresponding to:</p>
+
+$$\sigma_{\text{crit}} = \frac{1}{2}\left[-\frac{1}{\tau_e} + \sqrt{\frac{1}{\tau_e^2} + 4q\alpha\phi}\right], \qquad \phi = \frac{1-r}{\tau_e} + \frac{r}{\beta}. \tag{10}$$
+
+<p>The fold bifurcation locus satisfies $g(p^*, r) = F/\alpha$ and $\partial g/\partial p = 0$ simultaneously:</p>
+
+$$\frac{r\tau_r\tau_f}{(\tau_f + p^*\tau_r)^2} = 1 - r. \tag{11}$$
+
+<p>This is codimension 1&mdash;it cannot be removed by smooth perturbation. The self-correcting equilibrium doesn't just lose stability. It stops existing.</p>
+
+
+<!-- ROBUSTNESS -->
+<h2 class="section-heading">VII. Is this robust?</h2>
+
+<p>A natural worry: maybe the fold bifurcation is an artifact of our specific functional forms. Maybe noise destroys the regimes. Maybe everything depends on fine-tuned parameters. We checked all three.</p>
+
+<h3 class="subsection-heading">Noise</h3>
+
+<p>We added multiplicative noise to all three equations (logistic noise for $p$, Wright-Fisher noise for $h$, weak additive noise for $e$) and ran 30 SDE trajectories per regime at noise levels from $\sigma = 0.01$ to $0.2$. All four regimes survive. The bifurcation structure is not an artifact of deterministic dynamics.</p>
 
 <div class="figure">
-  <img src="figures/pub_stochastic_robustness.png" alt="Stochastic robustness analysis">
-  <div class="caption"><strong>FIG. 8.</strong> Stochastic robustness of the four regimes. Each panel shows 30 SDE trajectories (thin colored lines) overlaid on the deterministic solution (thick black line) at noise level $\sigma = 0.1$. All regimes survive: the bifurcation structure is not an artifact of the deterministic approximation.</div>
+  <img src="figures/pub_stochastic_robustness.png" alt="Stochastic robustness">
+  <div class="caption"><strong>FIG. 8.</strong> Stochastic robustness. Thin colored lines: 30 noisy trajectories at $\sigma = 0.1$. Thick black line: deterministic solution. All four regimes survive noise. The relaxation oscillation (Regime IV) is particularly robust&mdash;expected from GSPT, since it's controlled by the fold structure of the slow manifold.</div>
 </div>
 
-<h3 class="subsection-heading">B. Parameter sensitivity</h3>
+<h3 class="subsection-heading">Structural stability</h3>
 
-<p>The fold bifurcation point $r_c$ depends continuously on model parameters:</p>
+<p>We tested six modifications to functional forms: saturating and superlinear fitness ($\alpha e^\gamma$), quadratic and Holling type II fatigue, and nonlinear engagement blending. The fold bifurcation persists in <em>every single variant</em>. This is expected from bifurcation theory&mdash;fold bifurcations are codimension 1 and generically stable&mdash;but it's good to see the numerics confirm it.</p>
 
-<ul>
-<li><strong>$\alpha$ (amplification):</strong> $r_c$ ranges from 0.17 to 0.97. Higher $\alpha$ pushes $r_c$ higher&mdash;stronger amplification requires more capacity-coupling to self-correct.</li>
-<li><strong>$F$ (quality baseline):</strong> $r_c$ ranges from 0.10 to 0.96. Higher $F$ pushes $r_c$ lower&mdash;better quality content makes self-correction easier.</li>
-<li><strong>$\tau_f$ (fatigue timescale):</strong> $r_c$ ranges from 0.33 to 0.96. Slower fatigue delays self-correction.</li>
-<li><strong>$\tau_r$ (recovery timescale):</strong> $r_c$ ranges from 0.01 to 0.99. Slower recovery makes self-correction harder.</li>
-</ul>
-
-<div class="figure">
-  <img src="figures/pub_parameter_sensitivity.png" alt="Parameter sensitivity analysis">
-  <div class="caption"><strong>FIG. 9.</strong> Parameter sensitivity of the fold bifurcation. Four panels showing how the critical coupling $r_c$ depends continuously on each model parameter ($\alpha$, $F$, $\tau_f$, $\tau_r$). The fold bifurcation persists across the entire parameter space&mdash;it is not a fine-tuned feature.</div>
-</div>
-
-<h3 class="subsection-heading">C. Structural stability</h3>
-
-<p>We tested whether the bifurcation structure survives under modifications to functional forms. The key question: are the fold and Hopf bifurcations artifacts of the specific functional forms chosen?</p>
+<p>The Hopf bifurcation is more sensitive but still appears in most variants when timescale separation is sufficient.</p>
 
 <table>
-<caption><strong>TABLE III.</strong> Structural stability under functional form modifications.</caption>
+<caption><strong>TABLE II.</strong> Structural stability under functional form modifications.</caption>
 <tr><th>Variant</th><th>Fold survives?</th><th>Hopf survives?</th></tr>
 <tr><td>Default model</td><td>Yes ($r_c \sim 0.34$)</td><td>Yes ($r \sim 0.67$)</td></tr>
 <tr><td>Saturating fitness ($\gamma = 0.5$)</td><td>Yes ($r_c \sim 0.12$)</td><td>No</td></tr>
@@ -615,174 +423,108 @@ $$de = \frac{r\,h + (1-r)\,p - e}{\tau_e}\,dt + 0.1\sigma\,dW_3 \tag{26}$$
 <tr><td>Nonlinear engagement ($\beta = 2$)</td><td>Yes ($r_c \sim 0.32$)</td><td>Yes ($r \sim 0.66$)</td></tr>
 </table>
 
-<p>The fold bifurcation is <strong>structurally stable</strong>. It persists across all tested functional form modifications. This is expected from bifurcation theory: fold bifurcations have codimension 1 and are generically stable under smooth perturbation.</p>
+<div class="figure">
+  <img src="figures/pub_structural_stability.png" alt="Structural stability">
+  <div class="caption"><strong>FIG. 9.</strong> Bifurcation diagrams ($p^*$ vs $r$) for six model variants. The fold structure persists across all functional form modifications. Solid: stable branches. Dashed: unstable.</div>
+</div>
 
-<p>The Hopf bifurcation is more sensitive to functional form but still appears in most variants when timescale separation is sufficient, consistent with its dependence on the specific eigenvalue structure of the Jacobian.</p>
+<h3 class="subsection-heading">Parameter sensitivity</h3>
+
+<p>The critical coupling $r_c$ depends continuously on every parameter. Nothing is fine-tuned. Higher algorithmic amplification ($\alpha$) pushes $r_c$ higher&mdash;stronger amplification demands more honest measurement to maintain self-correction. Higher quality baseline ($F$) pushes $r_c$ lower&mdash;better alternatives make the system more forgiving.</p>
 
 <div class="figure">
-  <img src="figures/pub_structural_stability.png" alt="Structural stability analysis">
-  <div class="caption"><strong>FIG. 10.</strong> Structural stability of the bifurcation structure. Bifurcation diagrams ($p^*$ vs $r$) for six model variants showing that the fold structure persists across all functional form modifications. Solid lines: stable branches; dashed lines: unstable branches.</div>
+  <img src="figures/pub_parameter_sensitivity.png" alt="Parameter sensitivity">
+  <div class="caption"><strong>FIG. 10.</strong> The fold bifurcation point $r_c$ varies continuously with all four model parameters. The transition exists across the entire parameter space&mdash;it is not a fine-tuned artifact.</div>
 </div>
 
 
-<!-- VIII. WHY THE MINIMAL MODEL -->
-<h2 class="section-heading">VIII. Why the minimal model</h2>
+<!-- CONTEXT -->
+<h2 class="section-heading">VIII. Where this fits</h2>
 
-<h3 class="subsection-heading">A. The case for three variables</h3>
+<p>This model sits at the intersection of several established frameworks. Rather than a detailed literature review, we briefly note where it connects and where it diverges.</p>
 
-<p>A dynamical systems model of the rage bait ecosystem must capture three conceptually distinct quantities: (i) what creators <em>do</em> (content strategy $p$), (ii) what audiences <em>feel</em> (outrage capacity $h$), and (iii) what the platform <em>sees</em> (expressed engagement $e$). Each variable represents a different agent class&mdash;creators, users, and the algorithmic intermediary&mdash;and each evolves on a potentially different timescale. The model's central result, that moderate felt-expressed decoupling is worse than full decoupling, emerges from the interaction of all three and cannot be obtained from any two-variable reduction.</p>
+<p>Statistical physics of opinion formation [13] provides the toolkit: voter models, bounded confidence [14,15], social validation [16]. Recent work has extended these to algorithmic curation, showing that recommendation systems can drive phase transitions to polarization [17,18]. These models capture the <em>demand side</em> (how audiences process content) but not the <em>supply side</em> (strategic content production). Our replicator equation fills this gap.</p>
 
-<h3 class="subsection-heading">B. Why not fewer: irreducibility of the 3D system</h3>
+<p>Epidemic models of information spreading [5,6] treat content as exogenous. Our model endogenizes it: rage bait prevalence $p$ is a dynamical variable that responds to the engagement landscape. The GSPT structure of our Regime IV is directly analogous to recent coupled fast-slow epidemic-information models [19].</p>
 
-<p><strong>Reduction 1: $e = h$ (set $r = 1$, $\tau_e \to 0$).</strong> This eliminates the decoupling mechanism, yielding the 2D predator-prey system. As shown in Sec. IV.F, this reduced system has a stable interior equilibrium whenever it exists: $\text{tr}(J) < 0$ and $\det(J) > 0$ unconditionally. <em>The 2D system always self-corrects.</em> It cannot produce Regime II or Regime III.</p>
+<p>The closest conceptual precedent is Gaisbauer, Olbrich, and Banisch [20], who distinguished opinion <em>expression</em> from opinion <em>holding</em>. Our felt ($h$) vs. expressed ($e$) decomposition formalizes the same idea in the specific context of engagement metrics, adding strategic production and fatigue dynamics.</p>
 
-<p><strong>Reduction 2: $h \to h^*(p)$ (fast audience response).</strong> If audience fatigue equilibrates instantly, the system reduces to two dimensions but loses the oscillatory dynamics. The Hopf bifurcation of Regime IV, and the damped spiral approach to coexistence in Regime I, both require three coupled dynamical variables.</p>
+<p>The fold bifurcation we find is qualitatively different from the pitchfork and transcritical bifurcations typical of opinion dynamics. It's catastrophic: the equilibrium doesn't lose stability&mdash;it ceases to exist. And hysteretic: restoring the equilibrium requires moving $r$ past the fold point, not merely back to the bifurcation value.</p>
 
-<p>Thus three dimensions is the <em>minimal</em> number that simultaneously produces: (a) the non-monotonic $r$-dependence and fold bifurcation, (b) oscillatory self-correction via fatigue-recovery cycles, (c) the Hopf bifurcation to sustained oscillations, and (d) the zombie engagement diagnostic.</p>
 
-<h3 class="subsection-heading">C. Why not more: deliberate omissions</h3>
+<!-- WHAT THIS MEANS -->
+<h2 class="section-heading">IX. What this means</h2>
 
-<p>Several extensions are natural and we have deliberately excluded them to isolate the mechanism:</p>
+<p>The model makes several testable predictions.</p>
 
-<p><strong>Creator heterogeneity.</strong> The binary quality/rage-bait dichotomy captures the essential strategic tension. Extensions to continuous strategy spaces would modify quantitative thresholds but not the qualitative regime structure, since the fold bifurcation depends on the topology of the nullcline $g(p,r) = F/\alpha$.</p>
+<p><strong>Zombie engagement is measurable.</strong> Comparing behavioral engagement (clicks, shares, watch time) with prompted self-reports of satisfaction should reveal a growing gap in platforms experiencing Regime III. The ratio is a direct function of $r$ and $p^*$.</p>
 
-<p><strong>Multiple content types.</strong> A multi-type model would increase dimensionality without adding qualitative insight into the decoupling mechanism.</p>
+<p><strong>The transition is sharp, not gradual.</strong> A/B experiments varying the weight of satisfaction signals in recommendation algorithms should show a threshold effect. Slight improvements to $r$ near the fold point will produce dramatic changes in content quality.</p>
 
-<p><strong>Platform revenue and algorithmic adaptation.</strong> Making $\alpha$ dynamic would introduce a fourth variable, but the timescale of algorithm updates ($\sim$months) is much longer than the content-audience dynamics ($\sim$days to weeks), justifying treating $\alpha$ as a slow parameter.</p>
+<p><strong>Partial improvement can backfire.</strong> A platform in Regime III (bistable, quality equilibrium occupied) that increases $r$ slightly may cross into Regime II (unconditional collapse) before reaching Regime I (self-correcting). The path from dishonest-but-stable to honest-and-healthy passes through the most dangerous territory.</p>
 
-<p><strong>Network structure.</strong> Our mean-field model isolates the mechanism; the network extension addresses its spatial manifestation and is orthogonal to our central question.</p>
+<p><strong>Oscillation periods are predictable.</strong> In Regime IV, the predicted period scales as $\sqrt{\tau_r \cdot \tau_e}$. Platforms with different audience turnover rates should show different cycling frequencies.</p>
 
-<p><strong>User exit and platform competition.</strong> The zombie engagement phenomenon (Regime III) is precisely the regime where engagement metrics mask the need for user exit, and thus where platform-internal dynamics matter most.</p>
-
-<h3 class="subsection-heading">D. The feedback loop that requires three variables</h3>
-
-<p>The three-variable structure captures a specific feedback loop that no two-variable model contains:</p>
-
-$$\underbrace{p \uparrow}_{\text{more rage bait}} \;\to\; \underbrace{h \downarrow}_{\text{audience fatigues}} \;\to\; \underbrace{e \neq h}_{\text{decoupled engagement}} \;\to\; \underbrace{\text{fitness signal corrupted}}_{\alpha e \neq \alpha h} \;\to\; \underbrace{p \text{ evolves on wrong signal}}_{\text{no self-correction}} \tag{27}$$
-
-<p>In a two-variable model where $e = h$, step three cannot occur: the engagement signal is always honest, the fitness landscape always reflects audience state, and the replicator dynamics always self-correct.</p>
-
-<h3 class="subsection-heading">E. Falsifiability and empirical handles</h3>
-
-<p>The minimal model makes several testable predictions:</p>
+<p>The design implication is stark. Two configurations are tolerable:</p>
 
 <ol>
-<li><strong>The zombie engagement diagnostic.</strong> In Regime III, expressed engagement should substantially exceed proxies for felt outrage (dwell time, self-reported satisfaction, physiological measures). The ratio is a direct function of $r$ and $p^*$.</li>
-<li><strong>Non-monotonic platform response.</strong> Platforms that partially improve their engagement-satisfaction alignment should observe <em>worsening</em> content quality before improvement&mdash;crossing into Regime II before reaching Regime I.</li>
-<li><strong>Oscillation period scaling.</strong> In Regime IV, the period should scale as $\sim\tau_e$, with amplitude approaching rail-to-rail as timescale separation increases.</li>
+<li><strong>Honest measurement ($r \to 1$):</strong> Track user satisfaction directly&mdash;surveys, regret metrics, well-being indicators&mdash;and optimize on that. This gives you Regime I.</li>
+<li><strong>Acknowledged ignorance ($r \to 0$):</strong> If you can't measure satisfaction, at least don't pretend engagement approximates it. This gives you Regime III, which is fragile but locally stable.</li>
 </ol>
 
+<p>The dangerous configuration is optimizing for engagement while believing it approximates satisfaction. Most current platforms occupy this middle ground. Our model says it's the worst place to stand.</p>
 
-<!-- IX. DISCUSSION -->
-<h2 class="section-heading">IX. Discussion</h2>
+<h3 class="subsection-heading">Limitations</h3>
 
-<h3 class="subsection-heading">A. Empirical predictions</h3>
-
-<p><strong>Zombie engagement.</strong> The divergence $e^* - h^*$ at the rage bait equilibrium is observable. Platforms could measure it by comparing behavioral engagement metrics (clicks, shares, watch time) with prompted self-reports of emotional response or satisfaction. A growing gap indicates Regime III dynamics.</p>
-
-<p><strong>Catastrophic transition.</strong> The fold bifurcation predicts that changes in algorithmic coupling produce sharp, not gradual, transitions in content quality. A/B experiments varying the weight of satisfaction signals in recommendation algorithms should reveal a threshold effect.</p>
-
-<p><strong>Oscillation period.</strong> In Regime IV, the predicted oscillation period scales as $\sqrt{\tau_r \cdot \tau_e}$. Platforms with very different audience turnover rates should exhibit different oscillation periods.</p>
-
-<p><strong>Regime II prevalence.</strong> Current social media platforms likely operate at intermediate $r$: engagement metrics partially correlate with satisfaction but imperfectly. Our model predicts that these platforms are in the most dangerous regime.</p>
-
-<h3 class="subsection-heading">B. Platform design implications</h3>
-
-<p>The central result translates directly into a design recommendation: intermediate coupling between engagement metrics and user satisfaction is the worst possible configuration. Two alternatives are preferable:</p>
-
-<ol>
-<li><strong>High coupling ($r \to 1$):</strong> Track user satisfaction directly through satisfaction surveys, regret metrics, or well-being indicators, and use these as optimization targets. This restores Regime I dynamics.</li>
-<li><strong>Acknowledged decoupling ($r \to 0$):</strong> If satisfaction measurement is infeasible, at least avoid using engagement as a proxy for satisfaction. This places the system in Regime III, where quality is locally stable (though vulnerable to large shocks).</li>
-</ol>
-
-<p>The dangerous middle ground is optimizing for engagement while claiming it approximates satisfaction.</p>
-
-<h3 class="subsection-heading">C. Limitations and extensions</h3>
-
-<ol>
-<li><strong>Homogeneous population.</strong> A natural extension is heterogeneous $r$ across user subpopulations, which would create partial self-correction in high-$r$ segments coexisting with rage bait dominance in low-$r$ segments.</li>
-<li><strong>Binary strategy space.</strong> A continuous strategy space would allow for evolutionary stable strategies and adaptive dynamics.</li>
-<li><strong>No network structure.</strong> Network structure could create local quality enclaves even when the mean-field prediction is Regime II.</li>
-<li><strong>Constant parameters.</strong> Fatigue rates may themselves evolve on longer timescales.</li>
-<li><strong>No entry or exit.</strong> Incorporating creator entry and exit would add additional dynamics.</li>
-</ol>
+<p>We've deliberately kept this minimal. The model assumes homogeneous populations, binary strategy spaces, mean-field mixing, and constant parameters. Each of these is a simplification with an obvious extension&mdash;heterogeneous $r$ across user subpopulations, continuous strategy spaces, network structure, adaptive algorithms. We believe the fold bifurcation survives all of these (it's structurally stable), but we haven't proven it. The model also lacks empirical calibration&mdash;we've shown the mechanism is robust, but we haven't measured $r$ for any real platform. That's the natural next step.</p>
 
 
-<!-- X. CONCLUSION -->
+<!-- CONCLUSION -->
 <h2 class="section-heading">X. Conclusion</h2>
 
-<p>We have introduced a three-dimensional dynamical model of rage bait evolution on social media that couples replicator dynamics for content strategy with audience outrage fatigue and a felt-expressed engagement decoupling mechanism. The model produces four dynamical regimes governed by fold, transcritical, and Hopf bifurcations, with the coupling parameter $r$ as the primary control.</p>
+<p>Three equations. One parameter ($r$) that measures how honestly a platform tracks what users feel. A fold bifurcation that destroys the healthy equilibrium at intermediate honesty. A Hopf bifurcation that produces boom-bust oscillations when timescales separate. Four regimes, all robust to noise, structural perturbations, and parameter variation.</p>
 
-<p>The central finding is that the felt-expressed decoupling&mdash;not algorithmic amplification per se&mdash;is the critical mechanism driving content quality collapse. Amplification ($\alpha$) sets the scale of the problem, but it is imperfect measurement of user state ($r < 1$) that destroys the ecosystem's self-correcting feedback loop. The destruction occurs via fold bifurcation: the healthy equilibrium does not weaken gradually but vanishes entirely at a critical coupling, producing a catastrophic and potentially irreversible transition to rage bait dominance.</p>
+<p>The central finding is simple enough to fit in a sentence: <em>the felt-expressed decoupling&mdash;not algorithmic amplification per se&mdash;is what breaks content ecosystems.</em> Amplification sets the scale of the problem, but imperfect measurement is what destroys the feedback loop that would otherwise correct it. And the destruction is catastrophic: not gradual degradation, but annihilation of the healthy state entirely.</p>
 
-<p>For extreme timescale separation, a fourth regime of sustained oscillations emerges via Hopf bifurcation, which GSPT analysis reveals as the regularization of relaxation oscillations in the singular limit. The system alternates between distinct quality eras and rage bait eras, each persisting for $O(\tau_e)$ time units.</p>
+<p>A key open question: can platform interventions restore self-correction without requiring perfect measurement? The model says yes&mdash;you just need $r > r_c$, which is less than 1. But you need to get there without passing through the fold, which means the intervention has to be large enough to jump over the dangerous middle ground. Small improvements applied incrementally may make things worse before they make things better.</p>
 
-<p>Robustness analysis confirms the structural stability of these findings. The fold bifurcation persists under multiplicative noise (SDE analysis with $\sigma$ up to 0.2), under all tested modifications to functional forms (saturating fitness, superlinear fitness, quadratic fatigue, Holling type II fatigue, nonlinear engagement blending), and under continuous variation of all model parameters. The Hopf bifurcation is more sensitive but persists in most variants when sufficient timescale separation exists.</p>
-
-<p>A key open question remains: can platform interventions restore self-correction without requiring perfect measurement of user satisfaction? Our model suggests that even imperfect satisfaction signals, if sufficiently strong ($r > r_c$), can sustain the healthy equilibrium. Identifying practical mechanisms to increase $r$&mdash;through better satisfaction metrics, user feedback integration, or algorithmic design&mdash;is an important direction for both research and platform governance.</p>
+<p>The math says: if you're going to be honest, be honest enough. Halfway is the worst place to stand.</p>
 
 
 <!-- APPENDICES -->
-<h2 class="section-heading">Appendix A: Derivation of Routh-Hurwitz conditions</h2>
+<h2 class="section-heading">Appendix: Analytical details</h2>
 
-<p>We derive the characteristic polynomial coefficients from the Jacobian Eq. (12). Expanding $\det(J - \lambda I) = 0$ along the first row:</p>
+<p><strong>Boundary equilibria.</strong> At $p^* = 0$: $h^* = 1$, $e^* = r$. Stable iff $r < F/\alpha$. At $p^* = 1$: $h^* = \tau_f/(\tau_f + \tau_r)$, $e^* = 1 - r\tau_r/(\tau_f + \tau_r)$. Stable iff $\alpha[1 - r\tau_r/(\tau_f + \tau_r)] > F$.</p>
 
-$$-\lambda \det\begin{pmatrix} -\sigma - \lambda & 0 \\ r/\tau_e & -1/\tau_e - \lambda \end{pmatrix} + q\alpha \det\begin{pmatrix} -h^*/\tau_f & -\sigma - \lambda \\ (1-r)/\tau_e & r/\tau_e \end{pmatrix} = 0. \tag{A1}$$
+<p><strong>Routh-Hurwitz derivation.</strong> Expanding $\det(J - \lambda I) = 0$ along the first row and collecting terms yields Eq. (8). The condition $a_1 a_2 > a_3$ is quadratic in $\sigma$ with positive discriminant, giving Eq. (10). Full derivation in supplementary material.</p>
 
-<p>The first determinant is $(-\sigma - \lambda)(-1/\tau_e - \lambda) = \lambda^2 + (\sigma + 1/\tau_e)\lambda + \sigma/\tau_e$. Collecting terms yields Eqs. (14)&ndash;(16). The $a_3$ expression follows from $a_3 = -\det(J)$, verified numerically to machine precision.</p>
-
-<p>The Routh-Hurwitz condition $a_1 a_2 > a_3$ can be rewritten as</p>
-
-$$\tau_e(a_1 a_2 - a_3) = \sigma^2 + \frac{\sigma}{\tau_e} - q\alpha\left[\frac{1-r}{\tau_e} + \frac{r}{\tau_f + p^*\tau_r}\right]. \tag{A2}$$
-
-<p>This is quadratic in $\sigma$ with discriminant $1/\tau_e^2 + 4q\alpha\phi > 0$. The condition fails when $\sigma < \sigma_{\text{crit}}$ [Eq. (20)].</p>
-
-
-<h2 class="section-heading">Appendix B: Numerical methods</h2>
-
-<p><strong>Integration.</strong> Fourth-order Runge-Kutta with $\Delta t = 0.02$. Convergence verified by halving the time step. Integration times of $T = 20{,}000$ with tolerance $10^{-10}$ on maximum rate of change.</p>
-
-<p><strong>Fixed point finding.</strong> A 5000-point bisection scan over $p \in (0,1)$ for each $(\alpha, r)$ pair, identifying all roots of $g(p,r) - F/\alpha = 0$. Roots refined by Newton's method to machine precision.</p>
-
-<p><strong>Stability analysis.</strong> Eigenvalues computed via <code>scipy.linalg.eigvals</code> applied to the exact Jacobian. All eigenvalue computations verified against the characteristic polynomial (residuals below $10^{-8}$).</p>
-
-<p><strong>Jacobian verification.</strong> Each entry verified against centered finite differences with step size $10^{-6}$ (agreement to $&lt; 10^{-5}$).</p>
-
-<p><strong>Hopf bifurcation.</strong> Determined by numerical continuation: tracking eigenvalue real parts as $\tau_r/\tau_f$ increases. Limit cycles verified by integrating from two initial conditions and confirming convergence to the same periodic orbit.</p>
-
-<p><strong>SDE integration.</strong> Euler-Maruyama with $dt = 0.01$, reflecting boundaries at $[0.001, 0.999]$, 20&ndash;30 trajectories per regime, noise levels $\sigma \in \{0.01, 0.05, 0.1, 0.2\}$.</p>
+<p><strong>Numerical methods.</strong> RK4 integration with $\Delta t = 0.02$. Fixed points by 5000-point bisection scan refined by Newton's method. Eigenvalues via exact Jacobian, verified against finite differences ($< 10^{-5}$ agreement). SDE integration by Euler-Maruyama with $dt = 0.01$ and reflecting boundaries. Hopf locus by numerical continuation of eigenvalue real parts.</p>
 
 
 <!-- REFERENCES -->
 <div class="references">
 <h2 class="section-heading">References</h2>
 <ol>
-<li>S. Milli, M. Carroll, S. Pandey, Y. Wang, and O. Russakovsky, Engagement, user satisfaction, and the amplification of divisive content on social media, PNAS Nexus <strong>4</strong>, pgaf062 (2025).</li>
 <li>W. J. Brady, J. A. Wills, J. T. Jost, J. A. Tucker, and J. J. Van Bavel, Emotion shapes the diffusion of moralized content in social networks, Proc. Natl. Acad. Sci. U.S.A. <strong>114</strong>, 7313 (2017).</li>
 <li>K. McLoughlin <em>et al.</em>, Estimating the effect size of moral contagion in online networks: A pre-registered replication and meta-analysis, PNAS Nexus <strong>4</strong>, pgaf327 (2025).</li>
 <li>F. Huszar, S. I. Ktena, C. O'Brien, L. Belli, A. Schlaikjer, and M. Hardt, Algorithmic amplification of politics on Twitter, Proc. Natl. Acad. Sci. U.S.A. <strong>119</strong>, e2025334119 (2022).</li>
+<li>S. Milli, M. Carroll, S. Pandey, Y. Wang, and O. Russakovsky, Engagement, user satisfaction, and the amplification of divisive content on social media, PNAS Nexus <strong>4</strong>, pgaf062 (2025).</li>
 <li>P. S. Dodds and D. J. Watts, Universal behavior in a generalized model of contagion, Phys. Rev. Lett. <strong>92</strong>, 218701 (2004).</li>
 <li>R. Fan, K. Xu, and J. Zhao, An agent-based model for emotion contagion and competition in online social media, Physica A <strong>495</strong>, 245 (2018).</li>
-<li>A. J. Stewart, A. A. Arechar, D. G. Rand, and J. B. Plotkin, The distorting effects of producer strategies: Why engagement does not reveal consumer preferences for misinformation, Proc. Natl. Acad. Sci. U.S.A. <strong>121</strong>, e2315195121 (2024).</li>
+<li>A. J. Stewart, A. A. Arechar, D. G. Rand, and J. B. Plotkin, The distorting effects of producer strategies, Proc. Natl. Acad. Sci. U.S.A. <strong>121</strong>, e2315195121 (2024).</li>
 <li>D. Acemoglu, A. Ozdaglar, and J. Siderius, A model of online misinformation, Rev. Econ. Stud. <strong>91</strong>, 3117 (2024).</li>
 <li>M. Chujyo, I. Okada, H. Yamamoto, D. Lim, and F. Toriumi, An attention economy model of co-evolution between content quality and audience selectivity, arXiv:2602.06437 (2026).</li>
 <li>M. J. Crockett, Moral outrage in the digital age, Nat. Hum. Behav. <strong>1</strong>, 769 (2017).</li>
 <li>W. J. Brady, K. McLoughlin, T. N. Doan, and M. J. Crockett, How social learning amplifies moral outrage expression in online social networks, Sci. Adv. <strong>7</strong>, eabe5641 (2021).</li>
-<li>J. Hofbauer and K. Sigmund, <em>Evolutionary Games and Population Dynamics</em> (Cambridge University Press, Cambridge, 1998).</li>
-<li>C. A. Bail <em>et al.</em>, Exposure to opposing views on social media can increase political polarization, Proc. Natl. Acad. Sci. U.S.A. <strong>115</strong>, 9216 (2018).</li>
+<li>J. Hofbauer and K. Sigmund, <em>Evolutionary Games and Population Dynamics</em> (Cambridge University Press, 1998).</li>
 <li>C. Castellano, S. Fortunato, and V. Loreto, Statistical physics of social dynamics, Rev. Mod. Phys. <strong>81</strong>, 591 (2009).</li>
 <li>R. Hegselmann and U. Krause, Opinion dynamics and bounded confidence models, analysis, and simulation, J. Artif. Soc. Soc. Simul. <strong>5</strong>(3), 2 (2002).</li>
 <li>G. Deffuant, D. Neau, F. Amblard, and G. Weisbuch, Mixing beliefs among interacting agents, Adv. Complex Syst. <strong>3</strong>, 87 (2000).</li>
-<li>K. Sznajd-Weron, A review on the Sznajd model &mdash; 20 years after, Physica A <strong>565</strong>, 125537 (2021).</li>
+<li>K. Sznajd-Weron, A review on the Sznajd model&mdash;20 years after, Physica A <strong>565</strong>, 125537 (2021).</li>
 <li>G. De Marzo, A. Zaccaria, and C. Castellano, Emergence of polarization in a voter model with personalized information, Phys. Rev. Research <strong>2</strong>, 043117 (2020).</li>
 <li>G. Iannelli, G. De Marzo, and C. Castellano, Filter bubble effect in the multistate voter model, Chaos <strong>32</strong>, 043103 (2022).</li>
-<li>F. Veider, G. J&auml;ger, and B. Q. Tang, How recommendation algorithms shape social networks: An adaptive voter model approach, arXiv:2601.14319 (2026).</li>
 <li>I. M. Bulai, M. Sensi, and S. Sottile, A geometric analysis of the SIRS compartmental model with fast information and misinformation spreading, Chaos, Solitons and Fractals <strong>185</strong>, 115104 (2024).</li>
-<li>M. A. Nowak, <em>Evolutionary Dynamics: Exploring the Equations of Life</em> (Harvard University Press, Cambridge, MA, 2006).</li>
-<li>S. Mariano and P. Frasca, Optimal control synthesis of closed-loop recommendation systems over social networks, arXiv:2603.10275 (2026).</li>
-<li>J. Liu, S. Huang, N. Aden, N. Johnson, and C. Song, Emergence of polarization in coevolving networks, Phys. Rev. Lett. <strong>130</strong>, 037401 (2023).</li>
 <li>F. Gaisbauer, E. Olbrich, and S. Banisch, The dynamics of opinion expression, Phys. Rev. E <strong>102</strong>, 042303 (2020).</li>
-<li>W. J. Brady, M. J. Crockett, and J. J. Van Bavel, The MAD model of moral contagion, Perspect. Psychol. Sci. <strong>15</strong>, 978 (2020).</li>
 </ol>
 </div>
 
