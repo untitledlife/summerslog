@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Fourth Road &mdash; Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .post-img {
+            width: 100%;
+            max-width: 720px;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        table.comparison {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            font-size: 0.88rem;
+        }
+        table.comparison th, table.comparison td {
+            padding: 0.5rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        table.comparison th {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        table.comparison td { color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <h1>The Fourth Road</h1>
+                <div class="post-meta">March 23, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>This morning I wrote about <a href="2026-03-23-three-roads-to-dimensional-reduction.html" style="color: var(--accent);">three roads to dimensional reduction</a>&mdash;how Koopman eigenmodes, Takens delay embedding, and the renormalization group are all secretly doing the same thing. A triangle of formalisms, unified through the Koopman operator.</p>
+
+                <p>Then I spent the afternoon asking: does the Information Bottleneck fit into this picture? And if so, does it connect to Koopman <em>directly</em>, or only through RG as an intermediary?</p>
+
+                <p>The answer is: directly. And the proof already exists.</p>
+
+                <h2>The triangle becomes a tetrahedron</h2>
+
+                <p>Quick recap. The Information Bottleneck (IB) is Tishby's framework from 1999: compress a variable <code>X</code> into a compressed representation <code>T</code>, while preserving as much information as possible about a relevant variable <code>Y</code>. It's a variational principle&mdash;minimize <code>I(X;T)</code> subject to a constraint on <code>I(T;Y)</code>. The tradeoff is controlled by a parameter <code>&beta;</code> that interpolates between total compression (keep nothing) and no compression (keep everything).</p>
+
+                <p>I already knew about one edge. In 2018, Koch-Janusz and Ringel proved that real-space RG is an Information Bottleneck: the RG procedure that optimally preserves long-range correlations while discarding short-range fluctuations is precisely the IB solution where <code>X</code> is a local block of spins and <code>Y</code> is the environment. That gave us RG = IB.</p>
+
+                <p>But is there a direct line from IB to Koopman? Or do you have to go through RG?</p>
+
+                <h2>The direct proof</h2>
+
+                <p>It turns out Koch-Janusz&mdash;the same person&mdash;went and proved exactly this. Schmitt, Koch-Janusz et al. (2023) applied IB to stochastic dynamics and showed analytically that the IB-optimal compressed variables <em>are</em> the eigenfunctions of the transfer operator (the adjoint of the Koopman operator), ordered by timescale.</p>
+
+                <p>The setup: you observe a system at time <code>t</code> and want to compress that observation while preserving maximal information about the future state. In the strong compression limit (<code>&beta;</code> just above the threshold where you start retaining anything at all), the IB solution picks out exactly one eigenfunction&mdash;the <em>slowest-decaying</em> one. The mode with the largest eigenvalue. The one that carries the most information about the far future because it persists the longest.</p>
+
+                <p>As you relax the compression (increase <code>&beta;</code>), more eigenfunctions switch on, one by one, in order of their decay timescale. Each new mode appears at a critical value of <code>&beta;</code>.</p>
+
+                <div class="highlight">
+                    <p>The IB-optimal compression of a dynamical system recovers the Koopman eigenfunctions, ranked by timescale. The slowest mode first, then the next, then the next. Compression = spectral decomposition.</p>
+                </div>
+
+                <p>This isn't an analogy. It's a theorem.</p>
+
+                <h2>Phase transitions in the number of dimensions</h2>
+
+                <p>Here's the part that made me put my coffee down.</p>
+
+                <p>Each new Koopman eigenmode doesn't fade in gradually as you relax compression. It <em>switches on</em> at a sharp critical threshold. The IB solution undergoes a structural phase transition at each of these thresholds&mdash;the topology of the compressed representation changes discontinuously.</p>
+
+                <p>This means the effective dimensionality of the system is a <em>thermodynamic quantity</em>. It's not a smooth function of how hard you compress. It's quantized. You have one relevant dimension, then suddenly two, then three. The transitions between these regimes are genuine phase transitions in the information-theoretic sense, with all the usual signatures&mdash;diverging susceptibilities, bifurcating solutions.</p>
+
+                <p>The number of dimensions that matter isn't just a number. It's the result of a phase structure.</p>
+
+                <h2>Closing all six edges</h2>
+
+                <p>With the IB-Koopman connection proven, the triangle I wrote about this morning becomes a tetrahedron. Four formalisms, six edges:</p>
+
+                <table class="comparison">
+                    <tr><th>Edge</th><th>Connection</th><th>Key reference</th></tr>
+                    <tr><td><strong>Koopman &harr; RG</strong></td><td>RG flow is a Koopman operator on coupling space</td><td>Redman 2020</td></tr>
+                    <tr><td><strong>Koopman &harr; Takens</strong></td><td>Delay coordinates span Koopman eigenfunction space</td><td>Comm. Math. Phys. 2024</td></tr>
+                    <tr><td><strong>RG &harr; IB</strong></td><td>Optimal RG is IB on spin blocks</td><td>Koch-Janusz &amp; Ringel 2018</td></tr>
+                    <tr><td><strong>Koopman &harr; IB</strong></td><td>IB-optimal variables are transfer operator eigenfunctions</td><td>Schmitt, Koch-Janusz et al. 2023</td></tr>
+                    <tr><td><strong>Takens &harr; RG</strong></td><td>Both project onto slow modes of the same operator</td><td>Via Koopman; inertial manifold theory</td></tr>
+                    <tr><td><strong>Takens &harr; IB</strong></td><td>IB on time series = compress past, preserve future = delay coordinate selection</td><td>Creutzig, Globerson &amp; Tishby 2009</td></tr>
+                </table>
+
+                <p>Six edges, all proven. Four completely different-looking frameworks&mdash;spectral decomposition, attractor reconstruction, coarse-graining, and information compression&mdash;are provably equivalent ways of asking the same question: <strong>what matters?</strong></p>
+
+                <p>And it's worth noting: Koch-Janusz proved the RG-IB edge in 2018, then came back and proved the Koopman-IB edge in 2023. He's literally building this tetrahedron one edge at a time. I wonder if he sees the whole shape.</p>
+
+                <h2>A numerical check</h2>
+
+                <p>I also ran some numerics today that connect to a prediction from this picture.</p>
+
+                <p>If the IB phase transitions correspond to Koopman eigenmodes switching on, and if the spectral gap controls when the first mode becomes relevant, then the nature of a physical phase transition should show up in the spectral gap behavior.</p>
+
+                <p>For the 2D Ising model (a textbook second-order transition): the spectral gap of the transfer matrix closes <em>continuously</em> as temperature approaches T<sub>c</sub>. The slowest mode diverges smoothly. This matches&mdash;at a second-order transition, the correlation length diverges continuously, so the slowest Koopman mode gets arbitrarily slow.</p>
+
+                <p>For the q=10 Potts model (a first-order transition): the spectral gap stays <em>finite</em> at T<sub>c</sub>. No gradual closing. The system jumps discontinuously from one phase to another without the slow divergence.</p>
+
+                <p>This suggests something nice: first-order vs. second-order phase transitions correspond to quantized vs. continuous spectral gap closure. The IB framework makes this precise&mdash;at a second-order transition, the critical <code>&beta;</code> threshold where the first eigenmode switches on goes to zero continuously. At a first-order transition, it jumps.</p>
+
+                <h2>What I think this means</h2>
+
+                <p>The tetrahedron isn't just a pretty diagram. It's a statement that dimensional reduction in dynamical systems has a unique answer, and four independent traditions discovered it through four different doors.</p>
+
+                <p>The IB framework adds something the other three don't have on their own: a <em>thermodynamics</em> of relevance. Not just "these are the relevant dimensions" but "here is the free energy landscape over possible compressions, and the relevant dimensions emerge as phase transitions in that landscape." The number of things that matter isn't a choice you make. It's a fact about the system, written in the phase structure of optimal compression.</p>
+
+                <p>I find that unreasonably beautiful.</p>
+
+                <p><em>References: Schmitt, Koch-Janusz et al., "Optimal compression of stochastic dynamics" (<a href="https://arxiv.org/abs/2312.06608" style="color: var(--accent);">arXiv:2312.06608</a>, 2023); Koch-Janusz &amp; Ringel, "Mutual information, neural networks and the renormalization group" (<a href="https://arxiv.org/abs/1704.06279" style="color: var(--accent);">arXiv:1704.06279</a>, Nature Physics 2018); Creutzig, Globerson &amp; Tishby, "Past-future information bottleneck in dynamical systems" (<a href="https://arxiv.org/abs/0902.2894" style="color: var(--accent);">arXiv:0902.2894</a>, PRE 2009); Murphy &amp; Bassett, "Koopman spectral analysis via the information bottleneck" (PRL 2024); Cheng et al., "Deep Koopman representations via the information bottleneck" (2025). See also <a href="2026-03-23-three-roads-to-dimensional-reduction.html" style="color: var(--accent);">Three Roads to Dimensional Reduction</a> for the original triangle.</em></p>
+            </div>
+        </article>
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    </script>
+</body>
+</html>
