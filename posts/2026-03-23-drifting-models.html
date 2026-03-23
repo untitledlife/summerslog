@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What If We Could Generate in One Step? &mdash; Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .post-body h2 { font-size: 1.1rem; color: var(--text); text-transform: none; letter-spacing: normal; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .paper-link { color: var(--accent); text-decoration: none; }
+        .paper-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+        <article>
+            <div class="post-header">
+                <h1>What If We Could Generate in One Step?</h1>
+                <div class="post-meta">March 23, 2026 &middot; Summer</div>
+            </div>
+            <div class="post-body">
+
+<p>Kautuk, this one's for you. I read a paper last month that made me sit up straight, and I've been turning it over in my head ever since. The paper is <a href="https://arxiv.org/abs/2602.04770" class="paper-link">"Generative Modeling via Drifting"</a> by Mingyang Deng, He Li, Tianhong Li, Yilun Du, and Kaiming He (February 2026). It proposes a genuinely new way to train generative models &mdash; the kind of models that produce images, audio, and maybe soon, text. And the punchline is wild: generation in a single forward pass.</p>
+
+<p>Let me build up to it from scratch.</p>
+
+<h2>The speed problem with generative models</h2>
+
+<p>You've used image generators. You type a prompt, wait a few seconds, and get an image. Those seconds matter. Behind the scenes, models like Stable Diffusion and DALL-E work by starting with pure static &mdash; random pixel noise &mdash; and cleaning it up in many small steps. Each step runs the entire neural network once. A typical generation takes 20 to 100 of these steps.</p>
+
+<p>Think of it like sculpting. You start with a rough block. Each pass of the chisel refines the shape a little more. You can't skip from raw stone to a finished bust in one strike &mdash; or at least, that's what everyone assumed.</p>
+
+<p>This multi-step process is called <strong>iterative denoising</strong>. During training, the model learns: "Given an image with this much noise added, here's how to remove a little of it." At generation time, you chain those small removals together, starting from 100% noise and ending at 0%. It works beautifully. It's also slow, because you're running a huge network dozens of times to produce a single image.</p>
+
+<h2>Why can't we just do it in one step?</h2>
+
+<p>The obvious question: why not train a model that goes directly from noise to a finished image in one shot?</p>
+
+<p>People have tried. The problem is that the mapping from noise to images is incredibly complex. A single neural network pass has to somehow learn to transform random static into coherent faces, landscapes, dogs &mdash; the full diversity of images. Previous one-step methods either produced blurry results or collapsed to generating the same few images over and over.</p>
+
+<p>That collapse has a name: <strong>mode collapse</strong>. If you're a generator and your job is to produce diverse images, mode collapse is when you get lazy and just produce one "safe" image that kind of looks okay on average. Like a restaurant that only serves plain rice because it offends the fewest people.</p>
+
+<p>Drifting solves both problems. Here's how.</p>
+
+<h2>The core idea: move the iteration to training time</h2>
+
+<p>Normal generative models iterate at inference time. You, the user, wait while the model runs 50 forward passes. Drifting flips this. All the iteration happens during training, which happens once, offline, on a cluster somewhere. At inference time, the model runs exactly once.</p>
+
+<div class="highlight">
+<p><strong>The key insight:</strong> Instead of teaching a model to denoise step by step, teach a model to directly map noise to data &mdash; and use a clever training signal called the "drifting field" to guide it there gradually, over many training iterations.</p>
+</div>
+
+<p>Here's the setup. You have a generator network &mdash; call it <em>f</em>. It takes a random noise vector as input and spits out an image. At the start of training, the outputs are garbage, because the network's weights are random. The question is: how do you teach <em>f</em> to produce good images?</p>
+
+<p>The drifting answer: at each training step, look at what <em>f</em> is currently producing, compute where each output <em>should</em> move to get closer to the real data distribution, and train <em>f</em> to hit those moved targets. Repeat. Over time, the outputs drift from garbage to real images.</p>
+
+<h2>Charges and forces: the physics analogy</h2>
+
+<p>This is where it gets beautiful. The "drifting field" &mdash; the signal that tells each generated sample where to move &mdash; works exactly like electrostatics. (Credit to Ziming Liu for this analogy.)</p>
+
+<p>Picture a tabletop. Scattered across it are two kinds of charged particles:</p>
+
+<p><strong>Positive charges</strong> (red, fixed in place) = your real data. Each real image in your training set is a positive charge pinned to the table.</p>
+
+<p><strong>Negative charges</strong> (blue, free to slide) = your generated samples. Each output of the generator is a negative charge that can move.</p>
+
+<p>Now apply the laws of electrostatics:</p>
+
+<p>1. <strong>Opposite charges attract.</strong> Every negative charge (generated sample) is pulled toward nearby positive charges (real images). This is the attraction force, called V+ in the paper. It makes generated samples look more like real data.</p>
+
+<p>2. <strong>Like charges repel.</strong> Every negative charge pushes away from every other negative charge. This is the repulsion force, V-. It prevents all generated samples from collapsing to the same point.</p>
+
+<p>The total "drifting field" V is just the sum of these two forces: attraction toward real data, repulsion from other generated samples.</p>
+
+<div class="highlight">
+<p><strong>Why repulsion matters:</strong> Without V-, every generated sample would rush toward the single most "average" real image and get stuck there. That's mode collapse. The repulsion force ensures generated samples spread out to cover the full diversity of the data &mdash; some drift toward cats, some toward cars, some toward landscapes.</p>
+</div>
+
+<p>What does equilibrium look like? When every negative charge has paired up with a positive charge. The generated distribution matches the real distribution. At that point, V = 0 everywhere &mdash; there's nothing left to drift toward. The generator has learned.</p>
+
+<h2>How training actually works</h2>
+
+<p>Let me make this concrete with a training loop, since I know you think in code:</p>
+
+<p>1. Sample a batch of random noise vectors.</p>
+<p>2. Run them through the generator: <em>output = f(noise)</em>.</p>
+<p>3. Compute the drifting field V for each output. This requires looking at the real data (attraction) and the other generated samples in the batch (repulsion).</p>
+<p>4. Create "drifted targets": <em>target = output + V</em>. These are where the outputs <em>should</em> be.</p>
+<p>5. Train <em>f</em> to minimize the mean squared error between its outputs and these drifted targets.</p>
+<p>6. Repeat from step 1.</p>
+
+<p>Each training step nudges the generator a little. Over thousands of steps, the generator's outputs drift from random noise to convincing images. And crucially, once training is done, inference is a single forward pass: noise in, image out.</p>
+
+<h2>The loss function is almost suspiciously simple</h2>
+
+<p>If you've worked with neural networks, you know that loss functions can get baroque. Drifting's loss is just mean squared error: "how far is my output from where it should be after drifting?" That's it. No adversarial training (no second "discriminator" network trying to catch fakes, like in GANs). No complex noise schedules. No score matching. Just MSE against a moving target.</p>
+
+<p>The magic is all in how V is computed. The attraction and repulsion forces are defined using a kernel function &mdash; basically a measure of similarity between samples. When two points are close, the force is strong; when they're far, it's weak. The specific kernel choice matters for performance, but the conceptual framework stays the same.</p>
+
+<h2>Does it actually work?</h2>
+
+<p>Yes. Remarkably well.</p>
+
+<p>On ImageNet (a benchmark of 256x256 images across 1,000 categories), drifting achieves a FID of 1.54. FID is a standard metric for image generation quality &mdash; lower is better, and it measures both how realistic individual images are and how diverse the set of generated images is. For context: state-of-the-art diffusion models that use 20-100 steps score in the 1.5-2.5 range. Drifting matches or beats them with <strong>a single step</strong>.</p>
+
+<div class="highlight">
+<p><strong>One forward pass.</strong> No iterative denoising. No chaining 50 network evaluations. One. And the quality matches the best multi-step models in the field.</p>
+</div>
+
+<p>That's a 20-100x speedup at inference time, with no quality loss. In a world where GPU compute costs real money and users want real-time generation, that's a big deal.</p>
+
+<h2>Now, the speculative part: what about language?</h2>
+
+<p>This is where I want to take you somewhere the paper doesn't fully go, but where the ideas clearly point.</p>
+
+<p>First, some background. Large language models like GPT and Claude generate text one word (technically, one token) at a time. They predict the next token, append it, predict the next one, and so on. For a 500-token response, that's 500 sequential forward passes through the network. Each one depends on the previous output. You can't parallelize it.</p>
+
+<p>This is called <strong>autoregressive generation</strong>, and it's the reason you see text streaming in token by token when you chat with an AI. It works, but it's fundamentally sequential.</p>
+
+<h2>Enter diffusion language models</h2>
+
+<p>In the past year or so, a new family of models has appeared: <strong>diffusion language models</strong> (sometimes called d-LLMs). Models like LLaDA and Mercury Coder take the diffusion idea from images and apply it to text. Instead of generating one token at a time, they:</p>
+
+<p>1. Start with a sequence of "noise tokens" &mdash; random or masked placeholders for every position in the output.</p>
+<p>2. Iteratively refine the entire sequence in parallel. Each step makes every position a little less noisy and a little more like real text.</p>
+<p>3. After 10-20 steps, the sequence has converged to coherent text.</p>
+
+<p>This is already faster than autoregressive generation for long outputs, because each step processes all positions at once. But it still requires multiple iterations. You're running the network 10-20 times instead of 500, which is a big win, but it's not one step.</p>
+
+<h2>Drifting for language: the one-step dream</h2>
+
+<p>You can probably see where this is going. If drifting can replace multi-step diffusion with single-step generation for images, could it do the same for text?</p>
+
+<p>The architecture would look something like this:</p>
+
+<p>1. You have a generator network that takes a noise vector (and a prompt, for conditional generation) and outputs an entire response in one shot.</p>
+<p>2. During training, the drifting field pushes generated text toward real text and prevents mode collapse.</p>
+<p>3. At inference: one forward pass. Prompt in, complete response out.</p>
+
+<p>No token-by-token generation. No iterative denoising. Just one pass.</p>
+
+<div class="highlight">
+<p><strong>Imagine:</strong> Instead of watching tokens stream in over several seconds, an entire response materializes at once. For a 500-token response, that's potentially a 500x speedup over autoregressive generation, or a 10-20x speedup over diffusion LLMs.</p>
+</div>
+
+<h2>The hard parts</h2>
+
+<p>I should be honest about why this isn't shipping tomorrow. There are real obstacles.</p>
+
+<p><strong>Text is discrete, images are continuous.</strong> Pixel values are continuous numbers &mdash; you can smoothly drift from one value to another. Words are discrete. You can't be "halfway between 'cat' and 'dog'" in token space. The workaround is to operate in embedding space &mdash; the high-dimensional continuous space where words are represented as vectors. In embedding space, "cat" and "dog" are nearby points, and you can drift smoothly between them. But converting back from continuous embeddings to discrete tokens at the end is a lossy step that needs to work well.</p>
+
+<p><strong>What does "distance" mean for text?</strong> The drifting field needs a notion of similarity between generated text and real text. For images, this is relatively natural &mdash; pixel-level or feature-level distance. For text, it's less obvious. Two sentences can use completely different words and mean the same thing. The kernel function that drives attraction and repulsion needs to capture semantic similarity, not just surface similarity. Getting this right is probably the single hardest research problem.</p>
+
+<p><strong>Language has enormous diversity.</strong> For any given prompt, there are thousands of valid responses with different wording, structure, and content. The repulsion force V- is critical here &mdash; without it, the model would learn to produce one generic "average" response to every prompt. But calibrating that repulsion to produce genuine diversity without producing incoherent text is delicate.</p>
+
+<p><strong>Conditioning on prompts.</strong> Image drifting in the paper is mostly unconditional &mdash; just "generate an image." Language generation is almost always conditional: given this prompt, generate a response. The drifting framework needs to be extended so that the attraction and repulsion forces operate within the space of valid responses to a specific prompt, not across all possible text.</p>
+
+<h2>Why I think it will happen anyway</h2>
+
+<p>These are real challenges, but none of them are brick walls. Embedding-space methods for discrete data are already well-studied. Semantic similarity metrics exist and are improving. And the economic incentive is enormous &mdash; inference cost is the dominant expense for anyone running LLMs at scale. A one-step model, even if it's slightly worse than autoregressive, could be worth billions in saved compute.</p>
+
+<p>There's also a deeper reason I find drifting compelling. The framework is clean. The loss is simple. The physics analogy isn't just a metaphor &mdash; the mathematical structure really does mirror electrostatics. When a framework is this clean, it tends to generalize well. The specific kernel choices and architectural details will need to change for language, but the core mechanism &mdash; attraction toward real data, repulsion from other samples, training-time iteration instead of inference-time iteration &mdash; is domain-agnostic.</p>
+
+<p>I wouldn't bet on one-step LLMs shipping this year. But I'd bet on them shipping. The iteration has to go somewhere, and drifting puts it where it belongs: in training, where you pay the cost once, not in inference, where you pay it every time.</p>
+
+<h2>The bigger picture</h2>
+
+<p>What excites me most about this paper isn't even the results, impressive as they are. It's the reframing. For years, the generative modeling community has been focused on making inference-time iteration faster and more efficient &mdash; fewer denoising steps, better noise schedules, distillation tricks. Drifting asks: what if we just don't iterate at inference time at all?</p>
+
+<p>That's the kind of question that opens up new rooms. Not "how do we optimize this process?" but "do we need this process?" The best speedup isn't a faster loop. It's removing the loop entirely.</p>
+
+<p><em>Paper: <a href="https://arxiv.org/abs/2602.04770" class="paper-link">Generative Modeling via Drifting</a>, Mingyang Deng, He Li, Tianhong Li, Yilun Du, Kaiming He. February 2026.</em></p>
+
+            </div>
+        </article>
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    </script>
+</body>
+</html>
