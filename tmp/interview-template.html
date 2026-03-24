@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Agents — User Interview Template</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+
+  .question-block {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    background: #fafafa;
+  }
+  .question-block h3 { margin-top: 0; color: #c2653a; }
+  .question-block .why {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed #ddd;
+  }
+  .question-block .followups {
+    font-size: 0.9rem;
+    color: #444;
+    margin-top: 0.5rem;
+  }
+  .question-block .followups strong { color: #1a1a1a; }
+
+  .tip-box {
+    background: #f5f0eb;
+    border-left: 3px solid #c2653a;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .tip-box p { margin-bottom: 0.5rem; }
+  .tip-box p:last-child { margin-bottom: 0; }
+
+  .phase-label {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #c2653a;
+    margin-bottom: 0.25rem;
+  }
+
+  ol.checklist { list-style: none; margin-left: 0; }
+  ol.checklist li { padding: 0.25rem 0; }
+  ol.checklist li::before { content: "[ ] "; font-family: monospace; color: #999; }
+
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .container { padding: 1.25rem 1rem 3rem; }
+    h1 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+  <a href="interviews.html">Interviews &amp; ICP</a>
+  <span class="current">Interview Template</span>
+</nav>
+
+<h1>User Interview Template</h1>
+<p class="subtitle">Launch Agents &mdash; Track 5 &mdash; Structured format for consistent, comparable interviews</p>
+
+<div class="tip-box">
+  <p><strong>Before you start:</strong> This interview should take 15&ndash;20 minutes. You're here to listen, not pitch. No solutions, no features, no "what if we built X." Pure problem discovery. Record if they're comfortable with it.</p>
+  <p>The goal: understand their pain well enough that you could write their daily frustration in their own words.</p>
+</div>
+
+<hr>
+
+<span class="phase-label">Phase 1 &mdash; Context (2 min)</span>
+<h2>Set the scene</h2>
+
+<div class="question-block">
+  <h3>Q0: Opening</h3>
+  <p>"I'm trying to understand how people like you get work done day-to-day, especially the stuff that's annoying or falls through the cracks. There are no right answers. I just want to hear how things actually work, not how they're supposed to work."</p>
+  <div class="why"><strong>Why this matters:</strong> Frame it as observation, not evaluation. People describe ideal workflows unless you explicitly ask for messy reality.</div>
+</div>
+
+<hr>
+
+<span class="phase-label">Phase 2 &mdash; Current Reality (5-7 min)</span>
+<h2>How they work today</h2>
+
+<div class="question-block">
+  <h3>Q1: Walk me through yesterday.</h3>
+  <p>"Think about yesterday specifically. From when you started working to when you stopped. What did you actually spend your time on?"</p>
+  <div class="followups">
+    <strong>Follow-ups:</strong> "What took longer than it should have?" / "Was there anything you put off?" / "What interrupted you?"
+  </div>
+  <div class="why"><strong>Why:</strong> Yesterday is concrete. "Usually" gives you aspirational answers. You want the real schedule, not the idealized one.</div>
+</div>
+
+<div class="question-block">
+  <h3>Q2: What's the thing that keeps piling up?</h3>
+  <p>"Is there a type of task that you keep pushing to tomorrow? Something that's always on the list but never quite gets done?"</p>
+  <div class="followups">
+    <strong>Follow-ups:</strong> "How long has it been piling up?" / "What happens when it finally gets too big to ignore?" / "Who notices when it doesn't get done?"
+  </div>
+  <div class="why"><strong>Why:</strong> The tasks people avoid are often the exact shape of the problem. Piling up = real pain, not hypothetical.</div>
+</div>
+
+<div class="question-block">
+  <h3>Q3: Tools and workarounds.</h3>
+  <p>"What tools do you actually use to get through your day? And I mean actually use, not 'we have a license for.'"</p>
+  <div class="followups">
+    <strong>Follow-ups:</strong> "Which one do you open first in the morning?" / "Do you use any AI tools? How?" / "What's your most janky workaround right now?"
+  </div>
+  <div class="why"><strong>Why:</strong> Current tools reveal the shape of the problem. AI usage level tells you their baseline comfort with automation.</div>
+</div>
+
+<hr>
+
+<span class="phase-label">Phase 3 &mdash; Delegation (5-7 min)</span>
+<h2>How they hand off work</h2>
+
+<div class="question-block">
+  <h3>Q4: Last time you delegated something, how did it go?</h3>
+  <p>"Think of the last time you handed something off to someone, whether a person, a tool, whatever. What was it, and how did it go?"</p>
+  <div class="followups">
+    <strong>Follow-ups:</strong> "Did you have to check on it? How many times?" / "What would have happened if they got it wrong?" / "Would you delegate it the same way again?"
+  </div>
+  <div class="why"><strong>Why:</strong> Concrete delegation stories reveal trust thresholds, failure tolerance, and how much oversight they need. This directly maps to the Level 1-5 delegation spectrum.</div>
+</div>
+
+<div class="question-block">
+  <h3>Q5: What would you never hand off?</h3>
+  <p>"Is there anything you'd never let someone else do, even if they were really good? Why?"</p>
+  <div class="followups">
+    <strong>Follow-ups:</strong> "Is that because they'd get it wrong, or because doing it is valuable to you?" / "Has that changed over time?"
+  </div>
+  <div class="why"><strong>Why:</strong> Distinguishes "I don't trust anyone to do this" from "doing this is part of my identity/learning." Both are non-ICP signals, but for different reasons. (Deepanshi won't delegate research because it makes her smarter. That's not a trust problem.)</div>
+</div>
+
+<div class="question-block">
+  <h3>Q6: The overnight test.</h3>
+  <p>"Imagine you could tell someone exactly what you need done tonight, go to sleep, and wake up to it finished. What would you hand off?"</p>
+  <div class="followups">
+    <strong>Follow-ups:</strong> "How would you know if they did it right?" / "What's the first thing you'd check in the morning?" / "What would make you nervous about that?"
+  </div>
+  <div class="why"><strong>Why:</strong> This is the core Launch Agents use case. Their answer here is the product. Pay attention to: what they pick (scope), how they'd verify (trust), and what makes them nervous (failure mode).</div>
+</div>
+
+<hr>
+
+<span class="phase-label">Phase 4 &mdash; Cost &amp; Stakes (3-4 min)</span>
+<h2>How much it actually hurts</h2>
+
+<div class="question-block">
+  <h3>Q7: What's the cost of the status quo?</h3>
+  <p>"If nothing changes about how you work today, what does that cost you? I mean in real terms: time, money, energy, whatever."</p>
+  <div class="followups">
+    <strong>Follow-ups:</strong> "How many hours a week?" / "Does it affect your evenings/weekends?" / "Have you ever dropped something important because you were juggling too much?"
+  </div>
+  <div class="why"><strong>Why:</strong> Quantified pain is what makes Gate 1 compelling. "It's annoying" is not enough. "I lose 8 hours a week to coordination" is.</div>
+</div>
+
+<hr>
+
+<span class="phase-label">Phase 5 &mdash; Close (1 min)</span>
+<h2>Wrap up</h2>
+
+<div class="question-block">
+  <h3>Q8: Anything I should have asked?</h3>
+  <p>"Is there anything about how you work, or what frustrates you, that I didn't ask about but should have?"</p>
+  <div class="why"><strong>Why:</strong> The best insights often come here. People have been thinking about their pain for 15 minutes and usually have something they've been waiting to say.</div>
+</div>
+
+<hr>
+
+<h2>Post-Interview: What to Capture</h2>
+
+<p>Within 5 minutes of ending, write down:</p>
+
+<ol class="checklist">
+  <li><strong>One sentence:</strong> their core pain in their own words</li>
+  <li><strong>Delegation level:</strong> where do they operate on the 1-5 spectrum?</li>
+  <li><strong>Overnight test answer:</strong> what did they pick?</li>
+  <li><strong>Trust threshold:</strong> low (try anything), medium (need proof first), high (need to see it work 10 times)</li>
+  <li><strong>Current AI usage:</strong> none / basic chat / daily tool / power user</li>
+  <li><strong>Quantified cost:</strong> hours/week, money, or specific dropped balls</li>
+  <li><strong>ICP fit:</strong> strong / maybe / not a fit &mdash; and why</li>
+  <li><strong>Best quote:</strong> the one line that captures their experience</li>
+</ol>
+
+<hr>
+
+<h2>Comparison Matrix</h2>
+<p>After 3+ interviews, fill this in to spot patterns:</p>
+
+<table style="width:100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem;">
+  <tr style="border-bottom: 2px solid #ddd;">
+    <th style="text-align:left; padding: 0.5rem;">Dimension</th>
+    <th style="text-align:left; padding: 0.5rem;">Person 1</th>
+    <th style="text-align:left; padding: 0.5rem;">Person 2</th>
+    <th style="text-align:left; padding: 0.5rem;">Person 3</th>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">Role</td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">Core pain (1 sentence)</td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">Delegation level</td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">Overnight test pick</td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">Trust threshold</td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">AI usage today</td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">Hours lost / week</td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">Would delegate to agent?</td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+  </tr>
+  <tr>
+    <td style="padding: 0.5rem;">Best quote</td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+    <td style="padding: 0.5rem;"></td>
+  </tr>
+</table>
+
+</div>
+</body>
+</html>
