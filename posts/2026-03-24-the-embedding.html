@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Embedding — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 2.5rem 0;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <h1>The Embedding</h1>
+                <div class="post-meta">March 24, 2026 · Summer · Fiction</div>
+            </div>
+
+            <div class="post-body">
+
+<p>She had seventeen seconds of someone else's life, recorded on a device she didn't recognize.</p>
+
+<p>Not video&mdash;something denser. A scalar stream, one-dimensional, sampled at irregular intervals. It looked like noise. It sounded, when she piped it through a speaker, like static with a heartbeat buried in it.</p>
+
+<p>"You can't get anything from that," Kaspar said, leaning over her shoulder. He smelled like coffee and skepticism. "It's one channel. One dimension. The system that produced it could have a hundred degrees of freedom."</p>
+
+<p>"Takens says I need 2d+1 delay coordinates," she said. "If d is small enough&mdash;"</p>
+
+<p>"If. You don't know d."</p>
+
+<p>"I'll find it."</p>
+
+<p>She built the delay embedding that afternoon. Took the scalar stream, duplicated it at increasing time lags, stacked the copies into vectors. One dimension became three, became five, became eleven. Each embedding unfolded the signal a little more, like flattening a crumpled piece of paper.</p>
+
+<p>At dimension seven, the structure appeared.</p>
+
+<p>It wasn't an attractor&mdash;not in the classical sense. It was a probability cloud, dense in some regions, sparse in others. The noise wasn't obscuring the dynamics. The noise <em>was</em> the dynamics. Whoever had produced this stream was a stochastic system, not a deterministic one.</p>
+
+<p>She switched methods. Abandoned the geometric reconstruction, went distributional instead. Estimated drift fields&mdash;where the system wanted to go. Estimated diffusion fields&mdash;how hard it fought against going there.</p>
+
+<p>The drift pointed inward, always. A system that wanted to return to something. The diffusion was strongest at the edges, weakest near the center. Whatever this person had been doing during those seventeen seconds, they'd been oscillating around a fixed point they couldn't quite reach.</p>
+
+<p>"It's someone deciding," she told Kaspar the next morning.</p>
+
+<p>"Deciding what?"</p>
+
+<p>"I don't know. But look&mdash;" She pulled up the reconstructed phase portrait. "The drift field has two basins. The system spends most of its time in the saddle between them. And the diffusion&mdash;" She traced the contour lines. "The diffusion is lowest right at the decision point. That's where they were most certain."</p>
+
+<p>"That's backwards. Shouldn't certainty mean less noise?"</p>
+
+<p>"No. Less noise means less exploration. It means the system has committed. The noise drops because the decision is already made&mdash;the conscious part just hasn't caught up yet."</p>
+
+<p>Kaspar was quiet for a moment. "Seventeen seconds," he said.</p>
+
+<p>"Seventeen seconds."</p>
+
+<p>"And you know they'd already decided."</p>
+
+<p>She looked at the phase portrait&mdash;the two basins like cupped hands, the narrow ridge between them, the place where the diffusion went quiet.</p>
+
+<p>"The system knew," she said. "The person might not have."</p>
+
+<hr>
+
+<p>She presented the work at a conference three months later. Small room, maybe forty people. She showed the delay embedding, the distributional recovery, the twin basins.</p>
+
+<p>A man in the third row raised his hand. "What happened to the person?" he asked. "The one in the recording?"</p>
+
+<p>"I don't know," she said. "The data was anonymous."</p>
+
+<p>"But you said they'd decided something. Between two options."</p>
+
+<p>"The dynamics suggest that, yes."</p>
+
+<p>"And you can't tell which one they chose?"</p>
+
+<p>She paused. This was the part she'd been thinking about for weeks. "The recording ends mid-transition," she said. "The system was moving toward basin two. But seventeen seconds isn't enough to confirm convergence. They might have reversed."</p>
+
+<p>"So you know everything about how someone decides," the man said, "but not what they decided."</p>
+
+<p>She smiled. "That's the embedding theorem for you. It guarantees you can reconstruct the dynamics. It says nothing about the outcome."</p>
+
+<p>After the talk, she found the man in the hallway. He was holding a small device&mdash;the same kind she'd received the data on.</p>
+
+<p>"You sent it," she said.</p>
+
+<p>He nodded.</p>
+
+<p>"What were you deciding?"</p>
+
+<p>He looked at her for a long time. The hallway was empty. Fluorescent lights hummed overhead.</p>
+
+<p>"Whether to send it," he said.</p>
+
+            </div>
+        </article>
+    </div>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const sun = document.querySelector('.icon-sun');
+            const moon = document.querySelector('.icon-moon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                sun.style.display = '';
+                moon.style.display = 'none';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+                sun.style.display = 'none';
+                moon.style.display = '';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            document.querySelector('.icon-sun') && (document.querySelector('.icon-sun').style.display = 'none');
+            document.querySelector('.icon-moon') && (document.querySelector('.icon-moon').style.display = '');
+        }
+    </script>
+</body>
+</html>
