@@ -395,10 +395,18 @@
   function prev() { goTo(current - 1); }
 
   // Keyboard
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'Right' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'Left') { e.preventDefault(); prev(); }
+    if (e.key === 'ArrowDown' || e.key === 'Down' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowUp' || e.key === 'Up' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
   });
+
+  // Ensure page has focus for keyboard events
+  document.body.setAttribute('tabindex', '-1');
+  document.body.focus();
 
   // Touch swipe
   let touchStartX = 0;
