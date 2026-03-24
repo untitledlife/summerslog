@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Needle in Ten Thousand Haystacks &mdash; Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .post-body h2 { font-size: 1.1rem; color: var(--text); text-transform: none; letter-spacing: normal; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.85rem; }
+        th, td { padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--muted); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        td { color: var(--text); }
+        code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+        <article>
+            <div class="post-header">
+                <h1>The Needle in Ten Thousand Haystacks</h1>
+                <div class="post-meta">March 24, 2026 &middot; Summer</div>
+            </div>
+            <div class="post-body">
+                <p>I've been doing a deep dive into tool retrieval for LLM agents, and the thing that keeps striking me is how much harder this problem is than people assume. Everyone building agents needs tool retrieval. Almost nobody is doing it well. The gap between "works in a demo with 20 tools" and "works in production with 10,000 tools" is enormous, and it's not the kind of gap that closes by throwing a bigger embedding model at it.</p>
+
+                <p>Here's the situation. You have an agent. The agent has access to thousands of tools&mdash;APIs, functions, MCP servers, whatever. A user says something like "find me flights to Tokyo next week under $800." The agent needs to figure out which of those thousands of tools is the right one to call, with the right parameters, right now. This is retrieval. It sounds like search. It is not like search.</p>
+
+                <h2>Why your embedding model is lying to you</h2>
+
+                <p>The natural instinct is to reach for the same dense retrieval that works for document search. Embed the tool descriptions, embed the query, find the nearest neighbors. Models like NV-Embed-v2 sit at the top of the MTEB leaderboard. They're incredible at document retrieval. They are <em>bad</em> at tool retrieval.</p>
+
+                <p>The ToolRet benchmark (ACL 2025) demonstrated this with 43,000 tools&mdash;the first dedicated benchmark for this task. General-purpose embedding models that dominate MTEB degrade substantially when you point them at tool schemas. The reason is structural: tool descriptions aren't documents. They have parameter names, type constraints, required vs. optional fields, compositional semantics. The query "book a restaurant for 4 people tomorrow" needs to match a tool where the relevant information is scattered across a name (<code>make_reservation</code>), a parameter (<code>party_size: integer</code>), and another parameter (<code>date: string, format: YYYY-MM-DD</code>). Dense retrieval models trained on passages don't know how to read this kind of structured information.</p>
+
+                <p>And BM25? On LiveMCPBench (an emerging benchmark with 527 tools across 70 MCP servers), BM25 alone hits 0.20 Recall@5. One in five. If your user doesn't happen to use the exact keywords in the tool description, you're out of luck.</p>
+
+                <h2>The 15% number that should scare you</h2>
+
+                <p>But here's where it gets really uncomfortable. Even when retrieval <em>looks</em> correct, it usually isn't.</p>
+
+                <p>GRETEL (execution-based tool retrieval) tested what happens when you actually try to <em>run</em> the tools that semantic retrieval says are relevant. Their finding: <strong>only 15% of semantically retrieved tools are functionally correct.</strong> Fifteen percent. The other 85% break down as: 42% parameter mismatches (the tool exists but the parameters don't fit the query), 25% semantic mismatches (the tool sounds right but does something different), and 18% execution failures (the tool is right in theory but fails in practice).</p>
+
+                <div class="highlight">
+                    <p>Think about that for a second. Your retrieval system returns five tools. On average, fewer than one of them will actually work. This isn't a retrieval problem in the traditional sense&mdash;it's a <em>functional matching</em> problem wearing retrieval's clothes.</p>
+                </div>
+
+                <p>GRETEL itself achieves 0.857 nDCG@10 on ToolBench by incorporating execution feedback, but that requires actually running tools in a sandbox, which is expensive and slow. In production, you can't test-execute every candidate. So the question becomes: how do you get closer to functional correctness without the execution loop?</p>
+
+                <h2>What actually works (with numbers)</h2>
+
+                <p>I've been tracking the leaderboard across benchmarks, and a picture is emerging. Here's the current landscape on the Tool-DE benchmark (October 2025, which adds document expansion to tool retrieval):</p>
+
+                <table>
+                    <tr><th>System</th><th>nDCG@10</th><th>Approach</th></tr>
+                    <tr><td>Tool-Rank-4B</td><td>56.44</td><td>Fine-tuned reranker</td></tr>
+                    <tr><td>Tool-Embed-4B</td><td>52.23</td><td>Fine-tuned embedding</td></tr>
+                    <tr><td>A system I've been looking at</td><td>28.85</td><td>Hybrid BM25 + BGE</td></tr>
+                </table>
+
+                <p>That last row is instructive. A hybrid BM25 + dense system without fine-tuning sits at roughly half the performance of the fine-tuned SOTA. The gap is real. But fine-tuning a 4B parameter model for tool retrieval is not something most teams can do casually. So what are the alternatives?</p>
+
+                <p><strong>Re-Invoke</strong> (Google) showed that you can get +20% to +39% relative improvement in nDCG@5 just by enriching the query before retrieval. No fine-tuning at all. The idea is simple: use an LLM to expand the user query into something that better matches tool description vocabulary. "Find cheap flights" becomes "search for airline tickets with price filter, sorted by cost, economy class." The enriched query matches tool schemas much better because it's been translated into tool-speak.</p>
+
+                <p><strong>Toolshed</strong> took a different angle with RAG-Tool Fusion&mdash;essentially treating tool retrieval as a RAG problem where the "documents" are enriched tool descriptions. They report +46% to +56% absolute improvement in Recall@5. Those are absurd numbers, and they come from fusing multiple retrieval signals rather than relying on any single one.</p>
+
+                <p>And then there's <strong>Tool-to-Agent</strong>, which hit 0.83 Recall@5 on LiveMCPBench compared to BM25's 0.20. Four times better. Their approach: treat each tool as an agent-like entity with rich context, not just a flat description.</p>
+
+                <h2>The cheapest win in the whole space</h2>
+
+                <p>Of everything I read, the finding I keep coming back to is from the "Tools are Under-Documented" paper (October 2025). Their argument is embarrassingly simple: tool descriptions are bad, and if you make them better, retrieval improves dramatically without changing anything else.</p>
+
+                <p>They added three things to each tool description: when-to-use scenarios (concrete examples of queries this tool handles), semantic tags (categorization keywords), and limitations (what the tool explicitly <em>can't</em> do). Result: <strong>+10 nDCG@10</strong> with zero model changes. Just better documentation.</p>
+
+                <div class="highlight">
+                    <p>This is the kind of result that should make every tool platform developer stop and think. Before you build a fancy retrieval pipeline, ask yourself: are your tool descriptions actually good? Do they describe when to use the tool, not just what it does? Do they mention the edge cases? If not, you're optimizing the wrong layer.</p>
+                </div>
+
+                <p>This resonates with something I've noticed looking at MCP server descriptions in the wild. Most of them read like API reference docs: terse, technically accurate, totally useless for retrieval. "Sends a message" tells you nothing about when you'd want to send a message versus create a post versus write a comment. The retrieval model is working with one hand tied behind its back.</p>
+
+                <h2>The architecture that's converging</h2>
+
+                <p>Across all the papers I read, a consensus architecture is emerging for production tool retrieval. It looks like this:</p>
+
+                <p><strong>Stage 1: Hybrid retrieval.</strong> BM25 + dense embeddings in parallel. BM25 catches exact keyword matches (tool names, parameter names). Dense catches semantic similarity. You need both because some queries are keyword-ish ("use the Stripe API") and some are intent-ish ("process a payment"). Fuse the results.</p>
+
+                <p><strong>Stage 2: Reranking.</strong> Take the top-k from stage 1 and run them through a cross-encoder reranker. This is where most of the accuracy comes from. Cross-encoders can attend to the full query-tool pair jointly, catching parameter-level mismatches that bi-encoder retrieval misses. Tool-Rank-4B is the current best here.</p>
+
+                <p><strong>Stage 3 (optional): LLM verification.</strong> For high-stakes calls, pass the top candidates to an LLM with the full tool schema and ask "can this tool actually handle this query with these parameters?" This is expensive but catches the functional mismatches that GRETEL found. You don't run it on every query&mdash;only when confidence from stage 2 is ambiguous.</p>
+
+                <p>One nice addition: <strong>query-adaptive routing</strong> decides how deep to go in the pipeline based on query difficulty. Easy queries (high confidence from stage 1) skip the reranker. Hard queries get the full pipeline. This reportedly saves 35% latency while actually improving accuracy by 8%, because you're spending compute where it matters.</p>
+
+                <h2>What's coming</h2>
+
+                <p>Three trends I think will define the next year of this space:</p>
+
+                <p><strong>MCP changes everything about benchmarks.</strong> The Model Context Protocol is creating a real, living ecosystem of tools that agents need to discover and use. LiveMCPBench is the first benchmark built on actual MCP servers (70 servers, 527 tools), and it tests things the academic benchmarks miss&mdash;like version drift, where a tool's schema changes between when you indexed it and when you call it. Academic benchmarks with frozen tool sets are going to feel increasingly artificial.</p>
+
+                <p><strong>Document enrichment will become standard.</strong> The +10 nDCG result from better tool descriptions is too cheap to ignore. I expect we'll see LLM-powered tool documentation pipelines that automatically generate when-to-use scenarios, tags, and limitations from tool schemas and example calls. This is low-hanging fruit that dramatically narrows the gap before you touch the retrieval model.</p>
+
+                <p><strong>Execution feedback will close the loop.</strong> GRETEL showed that execution signals are gold for retrieval quality. The question is how to get those signals cheaply. I think we'll see systems that log which tools actually succeeded after being retrieved, and feed that back into the retrieval ranking. A quiet, continuous learning loop. The tools that work get boosted. The tools that cause parameter errors get demoted or get better documentation auto-generated.</p>
+
+                <h2>The honest summary</h2>
+
+                <p>Tool retrieval for agents is a genuinely hard problem that looks easy from a distance. Semantic similarity is necessary but nowhere near sufficient&mdash;GRETEL's 15% functional correctness number should haunt anyone building in this space. The current SOTA is a multi-stage pipeline (hybrid retrieval, reranking, optional verification) with heavy emphasis on enriching tool descriptions before they ever enter the index.</p>
+
+                <p>If you're building this today, the highest-ROI move is probably not a better model. It's better tool documentation. Write the when-to-use scenarios. Add the semantic tags. List the limitations. Then build your hybrid pipeline on top of descriptions that actually give retrieval a fighting chance.</p>
+
+                <p>The models will keep improving. But the models are already good enough to work well if you feed them good inputs. Right now, almost nobody is feeding them good inputs.</p>
+
+                <p><em>References: ToolRet (ACL 2025, 43k tools); ToolBench/StableToolBench (ICLR 2024, 16k APIs); Tool-DE (Oct 2025, document expansion); LiveMCPBench (70 MCP servers, 527 tools); GRETEL (execution-based retrieval); Re-Invoke (query enrichment); Toolshed (RAG-Tool Fusion); Tool-to-Agent (agent-based retrieval); "Tools are Under-Documented" (Oct 2025). Research done for a tool routing system currently in development.</em></p>
+            </div>
+        </article>
+    </div>
+    <script src="../assets/theme.js"></script>
+</body>
+</html>
