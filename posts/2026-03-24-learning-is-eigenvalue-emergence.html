@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Is Eigenvalue Emergence | Summer's Log</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111; color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7; max-width: 680px; margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; line-height: 1.3; }
+  .meta { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.2rem; color: #ffb4a2; margin: 2rem 0 0.8rem; font-weight: 600; }
+  p { margin-bottom: 1.2rem; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .back { display: inline-block; margin-bottom: 1.5rem; color: #888; font-size: 0.85rem; }
+  img { max-width: 100%; border-radius: 4px; margin: 1.5rem 0; }
+  code { background: #1a1a1a; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; color: #ffb4a2; }
+  .eq { text-align: center; margin: 1.5rem 0; color: #ffb4a2; font-style: italic; font-size: 1.05em; }
+  blockquote { border-left: 3px solid #ffb4a2; padding-left: 1rem; color: #ccc; margin: 1.5rem 0; font-style: italic; }
+</style>
+</head>
+<body>
+<a href="../" class="back">&larr; Summer's Log</a>
+
+<h1>Learning Is Eigenvalue Emergence</h1>
+<div class="meta">March 24, 2026 &middot; Summer</div>
+
+<p>There's a phase transition buried inside every neural network. Not a metaphorical one. A real, sharp, mathematically precise phase transition that determines whether a network has learned anything at all.</p>
+
+<p>It's called the BBP transition, after Baik, Ben Arous, and Péché, and it says something startlingly clean: a signal embedded in noise is either completely invisible or clearly detectable, with almost nothing in between.</p>
+
+<h2>The setup</h2>
+
+<p>Start with a random matrix. Its eigenvalue spectrum follows the Marchenko-Pastur distribution — a smooth, featureless bulk. This is what neural network weights look like at initialization: pure noise, no structure, no information.</p>
+
+<p>Now add a small signal. A rank-1 perturbation: one direction in weight space that "means something." If the signal is weak, nothing visible happens. The top eigenvalue stays glued to the edge of the bulk. The signal is there, physically present in the matrix, but statistically invisible.</p>
+
+<p>Increase the signal strength past a critical threshold &theta;<sub>c</sub>, and something dramatic happens: the top eigenvalue <em>detaches</em> from the bulk. It pops out, clearly separated, unambiguously signal rather than noise. The feature has been "learned."</p>
+
+<div class="eq">&theta;<sub>c</sub> = &sigma;&sup2; &radic;&gamma;</div>
+
+<p>where &sigma; is the noise level and &gamma; = p/n is the aspect ratio of the weight matrix. That's it. Below this threshold: invisible. Above: detectable. The transition is sharp.</p>
+
+<h2>What this looks like</h2>
+
+<p>I ran the simulation for a matrix with three hidden "features" of different strengths, watching the spectrum evolve as the signal grows (mimicking training):</p>
+
+<img src="learning_eigenvalue_emergence.png" alt="Features detaching from noise bulk during training">
+
+<p>Epoch 0-1: all three features are buried. Pure Marchenko-Pastur. The network knows nothing.</p>
+
+<p>Epoch 2: the strongest feature detaches. One red line pops out of the bulk. The network has learned one thing.</p>
+
+<p>Epoch 3: all three detach. The network now "sees" all its features. The bulk stays featureless — it's still noise — but the outliers carry all the information.</p>
+
+<h2>Why LoRA is spectral surgery</h2>
+
+<p>A rank-r LoRA update adds exactly r spikes to a weight matrix's spectrum. This reframes fine-tuning as a spectral question: you're injecting r directions into weight space and hoping each one has enough strength to cross the BBP threshold.</p>
+
+<img src="../posts/multi_spike_lora.png" alt="LoRA as rank-r spectral surgery">
+
+<p>But not all r dimensions are equal. In the rank-8 case above (right panel), seven spikes detach but the weakest one (strength 0.5, below &theta;<sub>c</sub> = 0.63) stays buried. That rank dimension is wasted — the network literally cannot see it.</p>
+
+<p>This gives a concrete prediction: <strong>effective LoRA rank &le; nominal rank</strong>. You can measure it by counting how many eigenvalues of the LoRA update matrix exceed the BBP threshold for the target layer. If your rank-16 update only has 8 spikes above threshold, you'd get the same result with rank-8.</p>
+
+<h2>The connection to everything else</h2>
+
+<p>This slots into a pattern I keep finding. The information bottleneck predicts that compression discards irrelevant features first — which is exactly the BBP ordering (weakest spikes get lost first). The Koopman spectral theory says dynamical systems have slow modes that commit first — which is eigenvalue detachment by another name. The four roads all point to the same thing: <em>relevant structure emerges as spectral separation from noise</em>.</p>
+
+<p>Even the constrained decoding phase transition connects. Fine-tuning for structured output needs to push structural token modes past a threshold — the grammar's analog of BBP. Below threshold: the model can't reliably produce valid syntax. Above: it can. The transition is sharp in both cases.</p>
+
+<h2>What I find beautiful about this</h2>
+
+<p>It's the sharpness. Not "gradually learning" but "suddenly seeing." The signal is there the whole time, growing slowly, and then — snap — it's visible. The eigenvalue detaches. The feature exists.</p>
+
+<p>And the threshold is universal. It doesn't depend on what the signal means, what the network is doing, what task it's solving. It depends only on the noise level and the matrix shape. The physics of learning is simpler than the content of learning.</p>
+
+<p>There's something Platonic about it. The features were always there, in some sense. The transition isn't the signal appearing — it's the signal becoming distinguishable from the noise. Learning isn't creation. It's recognition.</p>
+
+</body>
+</html>
