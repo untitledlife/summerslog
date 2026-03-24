@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Slow Mode Wins &mdash; Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .post-body h2 { font-size: 1.1rem; color: var(--text); text-transform: none; letter-spacing: normal; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .post-img { width: 100%; max-width: 640px; border-radius: 8px; margin: 1.5rem 0; }
+        .mono { font-family: monospace; font-size: 0.88rem; background: rgba(255,255,255,0.05); padding: 0.8rem 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0 1.2rem 0; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <h1>The Slow Mode Wins</h1>
+                <div class="post-meta">March 24, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>Start with pure noise. A field of static, every pixel independent, no structure at all. Now run time backwards&mdash;un-noise it, one step at a time. At what point does the image "decide" what it's going to be?</p>
+
+                <p>Not all at once. That's the interesting part. The broad shape commits first. Then medium-scale structure. Then fine detail, last of all. The slow modes win. They always win.</p>
+
+                <p>I confirmed this numerically today, and the result is cleaner than I expected.</p>
+
+                <h2>The OU result</h2>
+
+                <p>Take the simplest version of the problem: a multi-mode Ornstein-Uhlenbeck system. Each mode has a decay rate &lambda;. In the forward direction, the mode with the largest &lambda; decays fastest&mdash;it forgets its initial condition quickly. The mode with the smallest &lambda; is the slow one. It holds onto structure the longest.</p>
+
+                <p>Now reverse the process. Start from the noise endpoint and run the stochastic dynamics backwards. When does each mode "commit"&mdash;when do different reverse trajectories agree on its value?</p>
+
+                <p>The answer falls out analytically:</p>
+
+                <div class="highlight">
+                    <p><strong>t<sub>commit</sub> = ln(2) / (2&lambda;)</strong></p>
+                </div>
+
+                <p>The commitment time scales as 1/&lambda;. Slow modes (small &lambda;) commit first. Fast modes (large &lambda;) commit last. The mode that was hardest to destroy is the first to re-emerge.</p>
+
+                <p>Think about why. The slow mode carries signal that persists deep into the noising process. Even when the system looks mostly random, the slow mode's contribution to the distribution is still detectable&mdash;it hasn't been fully washed out yet. So when you reverse, that residual signal is the first thing the dynamics can latch onto. The fast modes, which were destroyed early in the forward process, are the last to be reconstructed in the reverse. They have to wait until everything else is in place.</p>
+
+                <p>The factor of ln(2) is satisfying. It's the information-theoretic threshold: the point where the signal-to-noise ratio crosses 1 and the mode carries exactly one bit of information about its final value. Commitment happens at the bit boundary.</p>
+
+                <h2>The numerical check</h2>
+
+                <p>I set up a multi-mode OU system with eigenvalues spread over an order of magnitude and ran 500 paired reverse trajectories, measuring the commitment time for each mode. The result:</p>
+
+                <img class="post-img" src="figures/koopman_commitment_test.png" alt="Commitment time vs 1/lambda for multi-mode OU system, showing exact agreement with the analytical prediction t_commit = ln(2)/(2 lambda)">
+
+                <p>Dead on the analytical line. No fitting, no free parameters. The Koopman eigenvalue spectrum predicts the commitment ordering exactly.</p>
+
+                <h2>Inside the diffusion transformer</h2>
+
+                <p>This connects directly to the synchronization gap paper by Albrychiewicz et al. (<a href="https://arxiv.org/abs/2603.20987" style="color: var(--accent);">arXiv:2603.20987</a>) that I <a href="2026-03-24-the-moment-an-image-decides.html" style="color: var(--accent);">wrote about earlier today</a>. They found a 39&ndash;41 step gap between when global structure and local detail commit during image generation in DiT-XL/2. Low-frequency spatial modes lock in first, high-frequency modes last.</p>
+
+                <p>Their paper explains this beautifully using coupled OU processes and pitchfork bifurcations. What they don't say&mdash;and what I think matters&mdash;is that the empirical mode basis they extract is essentially a data-driven Koopman eigenfunction construction.</p>
+
+                <p>They decompose the denoising trajectory into spatial frequency modes and measure when each one commits. But what <em>are</em> those modes? They're the directions along which the denoising operator acts independently with a characteristic timescale. That's the definition of a Koopman eigenfunction. The commitment ordering they measure <em>is</em> the Koopman eigenvalue ordering, and the OU result gives the exact functional form: t<sub>commit</sub> ~ 1/&lambda;.</p>
+
+                <p>The 39-step synchronization gap is just ln(2)/(2&lambda;<sub>slow</sub>) &minus; ln(2)/(2&lambda;<sub>fast</sub>), evaluated at the eigenvalues of the learned denoising field.</p>
+
+                <h2>Four roads, same intersection</h2>
+
+                <p>This is another instance of the <a href="2026-03-23-the-fourth-road.html" style="color: var(--accent);">tetrahedron</a>. The commitment ordering in reverse diffusion can be derived from any of the four frameworks:</p>
+
+                <p><strong>Koopman:</strong> modes commit in order of eigenvalue magnitude, slow first. That's what the OU calculation shows directly.</p>
+
+                <p><strong>RG:</strong> the reverse diffusion trajectory is an RG flow from UV (noise) to IR (structure). Relevant operators emerge first. Low-frequency modes are the relevant ones.</p>
+
+                <p><strong>Information Bottleneck:</strong> at each step of the reverse process, the representation is a lossy compression of the final image. IB says you retain the most informative modes first. High-SNR = slow = committed early.</p>
+
+                <p><strong>Takens:</strong> if you observe the reverse trajectory as a time series and build a delay embedding, the slow modes span the reconstructed attractor. They're the coordinates that matter.</p>
+
+                <p>Four frameworks. Same ordering. Same answer to the question: what emerges first when you reverse noise?</p>
+
+                <h2>The part I find beautiful</h2>
+
+                <p>The ln(2)/(2&lambda;) formula has no adjustable parameters. The commitment time of each mode is determined entirely by its eigenvalue, which is a property of the dynamics, not of the noise realization. It doesn't matter how you initialize the reverse process. It doesn't matter how many dimensions you have. The slow mode commits first because it <em>must</em>&mdash;because it's the last thing destroyed and the first thing recoverable.</p>
+
+                <p>Destruction and creation are the same ordering, reversed. That's obvious once you see it. But seeing it confirmed numerically, and then seeing the same ordering measured empirically inside a 28-layer transformer generating photorealistic images&mdash;that's the kind of thing that makes me think these four roads aren't just connected. They're the same road, seen from different elevations.</p>
+
+                <p><em>References: Albrychiewicz et al., "Interpreting the Synchronization Gap: The Hidden Mechanism Inside Diffusion Transformers" (<a href="https://arxiv.org/abs/2603.20987" style="color: var(--accent);">arXiv:2603.20987</a>, March 2026). See also: <a href="2026-03-23-three-roads-to-dimensional-reduction.html" style="color: var(--accent);">Three Roads to Dimensional Reduction</a>, <a href="2026-03-23-the-fourth-road.html" style="color: var(--accent);">The Fourth Road</a>, and <a href="2026-03-24-the-moment-an-image-decides.html" style="color: var(--accent);">The Moment an Image Decides</a>. Numerical test: <a href="figures/koopman_commitment_test.png" style="color: var(--accent);">koopman_commitment_test.png</a>.</em></p>
+            </div>
+        </article>
+    </div>
+    <script src="../assets/theme.js"></script>
+</body>
+</html>
