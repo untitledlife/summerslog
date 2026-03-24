@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Agents — Internal Interviews &amp; ICP Analysis</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #ccc;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+  .persona-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    background: #fafafa;
+  }
+  .persona-card h3 { margin-top: 0; }
+  .tag {
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    margin-right: 0.35rem;
+    margin-bottom: 0.25rem;
+  }
+  .tag-yes { background: #e6f4ea; color: #1a7f37; }
+  .tag-no { background: #fce8e6; color: #c5221f; }
+  .tag-neutral { background: #e8eaed; color: #555; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+  <span class="current">Interviews &amp; ICP</span>
+</nav>
+
+<h1>Internal Interviews &amp; ICP Analysis</h1>
+<p class="subtitle">First-party research from inside the team &mdash; March 24, 2026</p>
+
+<hr>
+
+<h2>The Delegation Spectrum</h2>
+
+<p>From Cyril's mental model (validated across all three interviews):</p>
+
+<ul>
+  <li><strong>Level 1:</strong> You give the outcome AND the exact process. The person follows steps. &rarr; <em>This is automation. Zapier handles it.</em></li>
+  <li><strong>Level 2:</strong> You give the outcome and most of the process, person fills small gaps.</li>
+  <li><strong>Level 3:</strong> You give the outcome, you have a rough idea of the process, the person figures it out and adds judgment. &rarr; <em>This is the sweet spot for launch agents. Nothing fills this gap today.</em></li>
+  <li><strong>Level 4:</strong> You give the outcome, the person designs the process entirely.</li>
+  <li><strong>Level 5:</strong> You give the outcome, the person figures out the problem itself. &rarr; <em>This needs a human (or a very trusted senior).</em></li>
+</ul>
+
+<p><strong>Key insight:</strong> Level 3 is where every current solution fails. Automation can't judge. Humans lose context. Current AI agents hallucinate or burn credits. The person who occupies Level 3 today is... the founder, at 2 AM.</p>
+
+<hr>
+
+<h2>Interview 1: Deepanshi (Product &amp; Design Lead)</h2>
+
+<div class="persona-card">
+  <h3>Profile</h3>
+  <p>Product manager who also handles interior decoration, design management, and vendor coordination. Extreme context-switching across 4+ domains daily. Self-described: "I'd rather put 5 more minutes and do it perfectly than deal with errors and trials."</p>
+
+  <h3>Current Workflow</h3>
+  <p>Whiteboard/meeting &rarr; <strong>Claude</strong> (central brain, everything funnels through it) &rarr; Notion (storage, docs, re-reading) &rarr; specialized tools (Chronicle for decks, Figma, Midjourney, ChatGPT images).</p>
+  <ul>
+    <li>Uses <strong>ChatGPT voice mode</strong> for brainstorming, then asks it to <em>generate Claude prompts</em></li>
+    <li>Claude is the single hub: all thinking, structuring, and content creation starts there</li>
+    <li>Pays ~&#8377;1,500/month across tools (Chronicle alone for presentations)</li>
+    <li>Typical flow: photo of whiteboard &rarr; dump into Claude with framework prompt &rarr; get structured doc &rarr; copy to Notion &rarr; add visual proof (photos of diagrams) &rarr; distribute</li>
+  </ul>
+
+  <h3>What She'd Delegate</h3>
+  <p><span class="tag tag-yes">YES</span> Low-stakes "has to be done" tasks (comms, follow-ups, unblocking juniors)</p>
+  <p><span class="tag tag-yes">YES</span> Presentation creation (when she knows exactly what she wants)</p>
+  <p><span class="tag tag-yes">YES</span> User interview prep (script generation, question lists with context)</p>
+  <p><span class="tag tag-yes">YES</span> Boilerplate generation with context</p>
+  <p><span class="tag tag-no">NO</span> Research ("it makes me smarter &mdash; I don't want AI doing my learning for me")</p>
+  <p><span class="tag tag-no">NO</span> User interviews themselves (need empathy, presence, follow-up instincts)</p>
+  <p><span class="tag tag-no">NO</span> High-judgment product decisions</p>
+  <p><span class="tag tag-no">NO</span> Personal life tasks ("I don't want to use AI for my personal life")</p>
+
+  <h3>#1 Pain: Memory</h3>
+  <blockquote><p>"If Claude had memory... instead of asking 'how was your work, do you use any productivity tool?' it should know: 'How is it working with Felix? Are you still using it? Do you do real tasks?'"</p></blockquote>
+  <p>She manually copies context from Notion back into Claude before every session. The tool doesn't remember her, her team, or previous conversations. She wants continuity, not just capability.</p>
+
+  <h3>Delegation Philosophy</h3>
+  <blockquote><p>"I'd rather do it myself. Teaching someone is time-consuming and error-prone. I'll put 5 more minutes and do it perfectly."</p></blockquote>
+  <p>Trust threshold is <strong>very high</strong>. She's a Level 1 or Level 5 delegator, nothing in between. Either give exact instructions and expect perfect execution, or don't bother. This means launch agents for Deepanshi must prove reliability on trivial tasks before she'll trust them with anything meaningful.</p>
+
+  <h3>Real-Time Proof of Pain</h3>
+  <p>Got a vendor phone call <em>mid-interview</em> about furniture advance payments (&#8377;22,000, raw materials, delivery schedule). Had to switch from product manager to interior designer to user interviewee in 90 seconds. Said afterward: "See, this is the problem. I have to context-switch from product manager to interior designer to designer, and back."</p>
+</div>
+
+<hr>
+
+<h2>Interview 2: Cyril (Ops Lead) &mdash; Summary</h2>
+
+<div class="persona-card">
+  <h3>Profile</h3>
+  <p>Handles HR, ops, engineering setup (CMS), compliance, partnerships with AI labs, procurement, accountability partner, payroll, hiring, leave policies, and "everything in between." His pain is <strong>breadth, not depth</strong>.</p>
+
+  <h3>Delegation Model</h3>
+  <p>Created the Level 1-5 delegation spectrum (see above). His ideal: give an outcome and rough direction (Level 3), get back a completed task with judgment applied. Currently, he IS the coordination layer &mdash; the person who holds context across every domain.</p>
+
+  <h3>Launch Agent Fit</h3>
+  <p>Perfect <strong>non-technical ICP</strong>. His tasks are high-breadth, medium-depth, and mostly about coordination and follow-through. Many of his tasks are Level 2-3: the outcome is clear, the process is roughly known, but someone needs to apply context and judgment at each step.</p>
+</div>
+
+<hr>
+
+<h2>Interview 3: Kautuk (Founder/CEO) &mdash; Summary</h2>
+
+<div class="persona-card">
+  <h3>Profile</h3>
+  <p>Founder, also handles backend. The bottleneck. Things wait on him because nobody else has enough context to move them forward.</p>
+
+  <h3>The 80% Threshold</h3>
+  <blockquote><p>"If all his tasks were done at least 80%, he'd be happy."</p></blockquote>
+  <p>From PR reviews to POC features. He takes action on urgency &mdash; urgency defined as "he's the blocker." The queue problem: tasks pile up not because they're hard, but because they're waiting for his attention.</p>
+
+  <h3>Launch Agent Fit</h3>
+  <p><strong>Technical ICP</strong>. His pain is being the bottleneck, not breadth. Launch agents as <strong>queue-drainers</strong>: take tasks from 0% to 80%, so he only needs to review and ship. Not perfection-seekers &mdash; unblock-ers.</p>
+</div>
+
+<hr>
+
+<h2>Cross-Interview Patterns</h2>
+
+<h3>What All Three Share</h3>
+<ol>
+  <li><strong>Context is the #1 problem.</strong> Every interviewee mentioned context loss as the primary barrier to delegation. Tools don't remember. People leave. Onboarding takes too long.</li>
+  <li><strong>"I'll just do it myself"</strong> is the default coping mechanism &mdash; not because they want to, but because the cost of bad delegation is higher than the cost of doing it themselves.</li>
+  <li><strong>Trust is earned, not given.</strong> Nobody said "I'd immediately trust an AI agent with important work." The trust curve is real and steep.</li>
+  <li><strong>They already use AI</strong> &mdash; heavily. But as fragmented tools, not as agents. Claude, ChatGPT, Notion AI, Midjourney. The gap isn't "will they use AI?" but "will they let AI act autonomously?"</li>
+</ol>
+
+<h3>The Delegation Split</h3>
+<table style="width:100%; border-collapse: collapse; margin: 1rem 0;">
+  <tr style="border-bottom: 2px solid #ddd;">
+    <th style="text-align:left; padding: 0.5rem;">Person</th>
+    <th style="text-align:left; padding: 0.5rem;">Delegation Style</th>
+    <th style="text-align:left; padding: 0.5rem;">Sweet Spot</th>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">Deepanshi</td>
+    <td style="padding: 0.5rem;">Level 1 or 5, nothing between</td>
+    <td style="padding: 0.5rem;">Boilerplate + prep with context</td>
+  </tr>
+  <tr style="border-bottom: 1px solid #eee;">
+    <td style="padding: 0.5rem;">Cyril</td>
+    <td style="padding: 0.5rem;">Level 2-3, breadth-focused</td>
+    <td style="padding: 0.5rem;">Coordination + follow-through</td>
+  </tr>
+  <tr>
+    <td style="padding: 0.5rem;">Kautuk</td>
+    <td style="padding: 0.5rem;">Level 3-4, bottleneck-focused</td>
+    <td style="padding: 0.5rem;">Queue-draining to 80%</td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>Non-ICP: Who This Is NOT For</h2>
+
+<ul>
+  <li><strong>Enterprise teams with dedicated ops people</strong> &mdash; they already have humans for coordination</li>
+  <li><strong>Developers who'd rather script it themselves</strong> &mdash; they want APIs, not agents</li>
+  <li><strong>Users with simple single-step tasks</strong> &mdash; just use chat, no need for long-horizon</li>
+  <li><strong>Highly regulated workflows</strong> where AI autonomy is a compliance issue (healthcare decisions, legal filings)</li>
+  <li><strong>Anyone not already drowning in "I am the glue"</strong> &mdash; if they're not feeling the pain, they won't trust an agent to swim for them</li>
+</ul>
+
+<h2>Anti-Use Cases: Where Launch Agents Should NOT Go</h2>
+
+<ul>
+  <li><strong>Irreversible high-stakes actions</strong> (sending money, publishing contracts, deleting data) &mdash; at minimum, not without explicit human gates</li>
+  <li><strong>Real-time back-and-forth</strong> (negotiation, live customer support, user interviews)</li>
+  <li><strong>Tasks with no clear success criteria</strong> ("make my business better")</li>
+  <li><strong>Emotional/relational work</strong> (apologies, difficult conversations, HR)</li>
+  <li><strong>Simple one-off lookups</strong> (overkill &mdash; just use chat)</li>
+  <li><strong>Tasks where cost of failure > cost of doing it manually</strong></li>
+</ul>
+
+<p><strong>The sharp filter:</strong> If the task doesn't span hours, doesn't require judgment at handoffs, or doesn't currently keep someone up at night &mdash; launch agents are the wrong tool.</p>
+
+<hr>
+
+<h2>Quotes Worth Keeping</h2>
+
+<ul>
+  <li>"I'd rather put 5 more minutes and do it perfectly than deal with errors and trials." &mdash; Deepanshi</li>
+  <li>"See, this is the problem. I have to context-switch from product manager to interior designer to designer." &mdash; Deepanshi (after vendor call interrupted interview)</li>
+  <li>"It makes me smarter. I don't want to give research to AI." &mdash; Deepanshi</li>
+  <li>"If all his tasks were done at least 80%, he'd be happy." &mdash; Kautuk (via Ritam)</li>
+  <li>"Cloning myself would be better than hiring an intern." &mdash; Deepanshi</li>
+  <li>"Every day." &mdash; Deepanshi, when asked if she feels overwhelmed</li>
+  <li>"If Claude had memory... your question should be 'how is it working with Felix?' not 'do you use productivity tools?'" &mdash; Deepanshi</li>
+</ul>
+
+</div>
+</body>
+</html>
