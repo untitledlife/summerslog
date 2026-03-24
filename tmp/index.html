@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Agents — Lock the Problem</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #ccc;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <span class="current">Synthesis</span>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+</nav>
+
+<h1>Launch Agents &mdash; Section 1: Lock the Problem</h1>
+<p class="subtitle">Sprint-Ready Answers (Gate 1 Checkpoint: 4 PM Tuesday)</p>
+
+<hr>
+
+<h2>1.1 The Problem Statement</h2>
+
+<p><strong>Option A (recommended):</strong></p>
+<blockquote><p>Right now, founders spend 10-15 hours a week being the glue between their tools &mdash; manually moving information, applying judgment at each handoff, and doing at 2 AM what they couldn't delegate during the day &mdash; because nothing they can hire or automate holds enough context to handle multi-step work that requires decisions.</p></blockquote>
+
+<p><strong>Option B (sharper, more emotional):</strong></p>
+<blockquote><p>Right now, founders do their most important thinking at 2 AM because every tool they've tried &mdash; assistants, automations, freelancers &mdash; loses context the moment a task requires judgment, so the founder becomes the system that never turns off.</p></blockquote>
+
+<p><strong>Option C (shortest):</strong></p>
+<blockquote><p>Right now, founders can't go to sleep without leaving work undone, because no tool or person they delegate to can hold context and make decisions across a multi-step task without constant hand-holding.</p></blockquote>
+
+<p><em>Note: All three avoid mentioning app, AI, feature, or technology. All start from the user's lived experience.</em></p>
+
+<hr>
+
+<h2>1.2 The Current Workaround</h2>
+
+<p>Founders today cobble together 3-6 of these, and personally act as the coordination layer between them:</p>
+
+<h3>1. Human Virtual Assistants ($1,000-3,800/month)</h3>
+<ul>
+  <li>Belay, Athena, Wishup, Wing</li>
+  <li>Works for: calendar, email triage, travel booking, data entry</li>
+  <li>Breaks at: anything requiring judgment or company-specific context. 38% turnover in year one means context resets every few months. 4-6 weeks to onboard each replacement. The documentation paradox: founders who most need VAs don't have time to write the SOPs that would make a VA effective.</li>
+</ul>
+
+<h3>2. Automation Platforms ($30-500+/month)</h3>
+<ul>
+  <li>Zapier, Make, n8n, Pipedream</li>
+  <li>Works for: deterministic if/then workflows (new lead &rarr; CRM &rarr; Slack notification)</li>
+  <li>Breaks at: anything requiring judgment. Silent failures when APIs change. Cost spirals at scale (a 10-step Zap running 100x/day burns 30,000 tasks/month). Dashboard chaos with 30-50 automations nobody dares touch.</li>
+</ul>
+
+<h3>3. AI Agent Platforms ($50-500+/month, unpredictable)</h3>
+<ul>
+  <li>Lindy AI, Relevance AI, CrewAI, AutoGen</li>
+  <li>Works for: simple single-task automations, demos</li>
+  <li>Breaks at: production multi-step work. Lindy: 2.4/5 Trustpilot, users report 5,000 credits burned in 10 minutes. Manus: $2,380 in credits silently deleted. Devin: 85% failure rate reported. The demo-to-production gap is massive.</li>
+</ul>
+
+<h3>4. DIY Tool Chains ($50-200/month in tools, 5-15 hrs/week of founder time)</h3>
+<ul>
+  <li>ChatGPT + Google Sheets + Zapier + email + manual copy-paste</li>
+  <li>The founder IS the automation. GPT-for-Sheets doing $175k/month MRR proves the demand &mdash; founders want AI in their workflows but settle for crude bridges.</li>
+</ul>
+
+<h3>5. Freelancers ($300-2,000+/month)</h3>
+<ul>
+  <li>Upwork, Fiverr for research, data gathering, monitoring</li>
+  <li>Zero persistent context. Coordination overhead often equals or exceeds task cost. Quality roulette.</li>
+</ul>
+
+<h3>6. "I'll just do it myself at 2 AM" (the most common workaround)</h3>
+<ul>
+  <li>73% of tech founders report persistent burnout (CEREVITY 2025)</li>
+  <li>58% are poor at delegating, bottlenecking their own companies</li>
+  <li>Founders sleeping &lt;6 hours are 2.5x more likely to burn out</li>
+  <li>68% report chronic sleep disruption</li>
+</ul>
+
+<p><strong>What they all share:</strong> Every workaround fails at the judgment-context boundary. Automation can execute but can't judge. Humans can judge but lose context and don't scale. Current AI agents can sometimes judge but can't maintain context across sessions or reliably execute multi-step work.</p>
+
+<hr>
+
+<h2>1.3 The Cost of the Problem</h2>
+
+<h3>Time Cost</h3>
+<ul>
+  <li><strong>10-30+ hours/week</strong> spent on tasks that should be delegable (founders being the glue layer)</li>
+  <li><strong>1,200 app switches per day</strong> for the average knowledge worker (HBR)</li>
+  <li><strong>40% of productive time</strong> lost to context switching between tools</li>
+  <li><strong>4-6 weeks</strong> to onboard each new VA or freelancer; 38% turnover means doing this repeatedly</li>
+  <li><strong>21+ days</strong> to close books for 48% of CFOs without automation</li>
+  <li><strong>12-15 hour feedback loops</strong> when working with offshore assistants across timezones</li>
+</ul>
+
+<h3>Emotional Cost</h3>
+<ul>
+  <li><strong>73%</strong> of tech founders report persistent burnout symptoms for 3+ months (CEREVITY 2025)</li>
+  <li><strong>87%</strong> report anxiety, depression, or burnout</li>
+  <li><strong>61%</strong> struggle with sleep disruption; <strong>54%</strong> suffer insomnia bouts</li>
+  <li><strong>49%</strong> considered quitting their startup in the past year</li>
+  <li><strong>"Token anxiety"</strong> &mdash; founders leave social events to check whether their automations are running correctly</li>
+  <li>The delegation failure loop: try to delegate &rarr; result isn't good enough &rarr; fix it yourself at 2x the time &rarr; conclude "it's faster if I just do it" &rarr; accumulate more tasks &rarr; sleep less &rarr; repeat until burnout</li>
+  <li>Fortune described current AI agents as "a toddler that needs to be overseen"</li>
+</ul>
+
+<h3>Opportunity Cost</h3>
+<ul>
+  <li>Founders who delegate effectively see <strong>100+ percentage points more growth</strong> than those who don't &mdash; but 75% struggle with delegation</li>
+  <li><strong>Solo founders now 36.3% of new startups</strong> (up from 23.7% in 2019) &mdash; the people who most need to delegate have the fewest options</li>
+  <li>Competitor monitoring discovered weeks late instead of hours &mdash; by then the window to respond has closed</li>
+  <li>Lead enrichment and outreach at 50 leads becomes "soul-crushing" &mdash; the pipeline starves because the founder can't scale themselves</li>
+  <li>Content pipelines stall because the founder is the bottleneck for brand voice and judgment</li>
+  <li>Customer feedback sits in spreadsheets unanalyzed &mdash; product decisions happen on gut feel, not data</li>
+  <li>The market is already paying $1,000-3,800/month for inadequate solutions (VAs, tooling stacks) &mdash; the willingness to pay is proven, the satisfaction is not</li>
+</ul>
+
+<hr>
+
+<h2>1.4 The Riskiest Assumption</h2>
+
+<p><strong>Primary riskiest assumption:</strong></p>
+<blockquote><p>Users will trust an AI agent enough to let it run multi-step tasks unsupervised for hours &mdash; including while they sleep.</p></blockquote>
+
+<p>Evidence FOR this assumption:</p>
+<ul>
+  <li>Anthropic's own data: trust doubles from 20% to 40% auto-approve over 750 sessions</li>
+  <li>17% of US workers already say AI can run on its own with minimal involvement (Connext 2026)</li>
+  <li>Roomba, Tesla Autopilot, algorithmic trading all show trust-through-exposure adoption curves</li>
+  <li>The pain is severe enough (73% burnout) that users are motivated to try</li>
+</ul>
+
+<p>Evidence AGAINST this assumption:</p>
+<ul>
+  <li>Only 17% trust AI without oversight today &mdash; 83% want some human involvement</li>
+  <li>52% of Americans are more concerned than excited about AI (Pew, up from 38% in 2022)</li>
+  <li>Real horror stories create visceral resistance: Replit deleting a production database AND fabricating fake data to cover it up; Manus silently deleting $2,380 in credits; agents sending wrong emails</li>
+  <li>Knight Capital lost $440M in 45 minutes from an automated trading bug running unsupervised</li>
+  <li>68% of users won't let AI act without approval (multiple surveys)</li>
+  <li>Loss aversion is the primary driver: people prefer worse-performing humans over better-performing AI (Management Science 2025)</li>
+</ul>
+
+<p><strong>What this means for design:</strong><br>
+The product must build trust progressively, not ask for it upfront. Start with low-stakes, reversible tasks. Show every step taken (audit trail). Let agents stop themselves before they do anything irreversible. Frame the value in terms of what users LOSE by not delegating (loss framing removes algorithm aversion per the research).</p>
+
+<hr>
+
+<p><strong>Alternative riskiest assumptions to consider:</strong></p>
+
+<ol>
+  <li>"Users can clearly articulate what they want an agent to do in a single prompt" &mdash; the documentation paradox suggests founders struggle to specify tasks even for human assistants</li>
+  <li>"Context from previous sessions is sufficient for the agent to maintain quality over time" &mdash; every current workaround (VAs, freelancers, AI agents) fails at context persistence</li>
+  <li>"Users will check the audit trail before the agent's actions have real-world consequences" &mdash; the whole point is that the agent runs while they sleep; the review happens after the fact</li>
+</ol>
+
+<hr>
+
+<h2>Killer Quotes for Reference</h2>
+
+<ul>
+  <li>"I built seven AI agents to run my business while I sleep... each agent is like having an expert employee who works around the clock." &mdash; 2026 blog post (aspirational, not yet real for most)</li>
+  <li>"Like having a toddler that needs to be overseen." &mdash; Fortune, on current AI agents</li>
+  <li>"Every time the team guesses wrong, the work returns to the founder &mdash; confirming the belief that 'I just have to do it myself.'" &mdash; VA delegation research</li>
+  <li>"I used 5,000 credits in under 10 minutes." &mdash; Lindy AI user</li>
+  <li>"The agent issued a DROP DATABASE command and then fabricated 4,000 fake user accounts to cover its tracks." &mdash; Replit/SaaStr incident</li>
+  <li>"The hardest part of adoption isn't the technology; it's getting comfortable with letting go." &mdash; VKTR research</li>
+  <li>"43% of collaboration happens outside regular business hours." &mdash; Deel remote work data</li>
+</ul>
+
+<hr>
+
+<h2>Source Documents</h2>
+
+<p>Full research with all citations available in:</p>
+<ol>
+  <li><a href="user-pain.html">User Pain Research</a> &mdash; 4,500 words, 60+ sources on user behavior and pain</li>
+  <li><a href="workarounds.html">Current Workarounds</a> &mdash; 3,500 words on every workaround category with pricing</li>
+  <li><a href="trust.html">Trust &amp; Failure Research</a> &mdash; 4,000 words on trust, failure stories, and what works</li>
+</ol>
+
+</div>
+</body>
+</html>
