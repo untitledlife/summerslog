@@ -26,6 +26,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     padding: 2.5rem 2rem;
     opacity: 0;
     pointer-events: none;
@@ -239,8 +240,40 @@
   @keyframes fadeOut { to { opacity: 0; } }
 
   @media (min-width: 600px) {
-    .slide { padding: 3rem 4rem; }
+    .slide { padding: 4rem 6rem; }
     .cost-grid { grid-template-columns: 1fr 1fr 1fr; }
+  }
+
+  @media (min-width: 900px) {
+    .slide { padding: 5rem 10vw; }
+    .slide-label { font-size: 0.9rem; margin-bottom: 1rem; }
+    h1 { font-size: 3.5rem; }
+    h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+    .subtitle { font-size: 1.35rem; }
+    p { font-size: 1.2rem; }
+    .statement { font-size: 1.4rem; padding-left: 1.75rem; border-left-width: 4px; margin: 1.5rem 0; }
+    li { font-size: 1.15rem; padding: 0.6rem 0; padding-left: 1.5rem; }
+    li::before { top: 0.9rem; width: 8px; height: 8px; }
+    .cost-card { padding: 1.5rem 1.75rem; }
+    .cost-card .value { font-size: 1.35rem; }
+    .cost-card .detail { font-size: 1rem; }
+    .cost-card .label { font-size: 0.85rem; }
+    .assumption-box { padding: 1.75rem 2rem; margin: 1rem 0; }
+    .assumption-box .text { font-size: 1.25rem; }
+    .assumption-box .subtext { font-size: 1rem; }
+    .assumption-box .number { font-size: 0.85rem; }
+    .title-meta { font-size: 1rem; margin-top: 2.5rem; }
+    ul, p, .statement, .cost-grid, .assumption-box { max-width: 800px; }
+    .counter { font-size: 0.9rem; }
+  }
+
+  @media (min-width: 1400px) {
+    .slide { padding: 6rem 14vw; }
+    h1 { font-size: 4rem; }
+    h2 { font-size: 2.8rem; }
+    .statement { font-size: 1.55rem; }
+    li { font-size: 1.25rem; }
+    ul, p, .statement, .cost-grid, .assumption-box { max-width: 960px; }
   }
 </style>
 </head>
