@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Section 1: Lock the Problem</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: #ffffff;
+    color: #1a1a1a;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    height: 100dvh;
+    width: 100vw;
+  }
+
+  .deck { height: 100dvh; width: 100vw; position: relative; }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2.5rem 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Progress bar */
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: #c2653a;
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  /* Slide counter */
+  .counter {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.5rem;
+    font-size: 0.8rem;
+    color: #999;
+    z-index: 100;
+  }
+
+  /* Nav dots */
+  .dots {
+    position: fixed;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 100;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #ddd;
+    transition: background 0.3s, transform 0.3s;
+    cursor: pointer;
+  }
+  .dot.active { background: #c2653a; transform: scale(1.4); }
+
+  /* Typography */
+  .slide-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #c2653a;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: clamp(1.35rem, 4vw, 1.85rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    font-size: clamp(1rem, 2.5vw, 1.15rem);
+    color: #666;
+    line-height: 1.5;
+    max-width: 540px;
+  }
+
+  p {
+    font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+    line-height: 1.65;
+    color: #333;
+    margin-bottom: 0.75rem;
+    max-width: 580px;
+  }
+
+  .statement {
+    font-size: clamp(1.05rem, 3vw, 1.2rem);
+    line-height: 1.6;
+    color: #1a1a1a;
+    border-left: 3px solid #c2653a;
+    padding-left: 1.25rem;
+    margin: 1rem 0;
+    max-width: 560px;
+    font-weight: 500;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0.5rem 0;
+    max-width: 560px;
+  }
+
+  li {
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+    line-height: 1.55;
+    color: #333;
+    padding: 0.4rem 0;
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.75rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c2653a;
+  }
+
+  .cost-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 0.75rem;
+    max-width: 560px;
+  }
+
+  .cost-card {
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    background: #f8f8f8;
+    border-left: 3px solid #c2653a;
+  }
+
+  .cost-card .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+  }
+
+  .cost-card .value {
+    font-size: clamp(1rem, 2.5vw, 1.1rem);
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .cost-card .detail {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.2rem;
+    line-height: 1.45;
+  }
+
+  .assumption-box {
+    background: #f8f8f8;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 0.75rem 0;
+    max-width: 560px;
+  }
+
+  .assumption-box .number {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #c2653a;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+  }
+
+  .assumption-box .text {
+    font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+    color: #1a1a1a;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  .assumption-box .subtext {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.45;
+    margin-top: 0.35rem;
+  }
+
+  .title-meta {
+    margin-top: 2rem;
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+
+  /* Swipe hint */
+  .swipe-hint {
+    position: fixed;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.75rem;
+    color: #ccc;
+    animation: fadeOut 3s ease 2s forwards;
+  }
+  @keyframes fadeOut { to { opacity: 0; } }
+
+  @media (min-width: 600px) {
+    .slide { padding: 3rem 4rem; }
+    .cost-grid { grid-template-columns: 1fr 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="counter" id="counter"></div>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 0: Title -->
+  <div class="slide active" data-slide="0">
+    <div class="slide-label">Section 1</div>
+    <h1>Lock the Problem</h1>
+    <p class="subtitle">Track 08: Launch Agents</p>
+    <p class="subtitle" style="margin-top: 0.25rem; font-size: 0.9rem;">No solutions. No tech. No features. Human pain only.</p>
+    <div class="title-meta">Gate 1 Checkpoint &middot; Tuesday 4 PM</div>
+  </div>
+
+  <!-- SLIDE 1: Problem Statement -->
+  <div class="slide" data-slide="1">
+    <div class="slide-label">1.1 &mdash; Problem Statement</div>
+    <h2>The glue is a person</h2>
+    <div class="statement">
+      Founders and operators struggle to find time for high-value work because they're stuck doing low-value tasks that still need to get done.
+    </div>
+    <ul>
+      <li>AI tools exist but the workflow is fragmented across 5-8 apps</li>
+      <li>Tasks keep piling up because nothing holds enough context to take them off the plate</li>
+      <li>The founder becomes the system that never turns off</li>
+    </ul>
+  </div>
+
+  <!-- SLIDE 2: Current Workaround -->
+  <div class="slide" data-slide="2">
+    <div class="slide-label">1.2 &mdash; Current Workaround</div>
+    <h2>How they cope today</h2>
+    <ul>
+      <li><strong>Do things manually</strong> &mdash; the default. 73% of founders report persistent burnout from doing everything themselves</li>
+      <li><strong>Use AI tools, but fragmented</strong> &mdash; Claude for thinking, ChatGPT for voice, Notion for storage, Chronicle for decks. Average worker switches apps 1,200x/day</li>
+      <li><strong>Delegate to humans</strong> &mdash; VAs ($1-4K/month), freelancers, interns. 38% VA turnover in year one. 4-6 weeks to onboard each time</li>
+      <li><strong>Try agent platforms</strong> &mdash; Lindy, Manus, Devin. Demo-to-production gap is massive. "Like having a toddler that needs to be overseen"</li>
+    </ul>
+    <p style="margin-top: 0.75rem; color: #666; font-size: 0.9rem;"><em>All fail at the same boundary: where execution requires judgment + context.</em></p>
+  </div>
+
+  <!-- SLIDE 3: Cost of Problem -->
+  <div class="slide" data-slide="3">
+    <div class="slide-label">1.3 &mdash; Cost of the Problem</div>
+    <h2>What it actually costs</h2>
+    <div class="cost-grid">
+      <div class="cost-card">
+        <div class="label">Time</div>
+        <div class="value">10-30 hrs/week</div>
+        <div class="detail">Spent on tasks that should be delegable. 1+ hr/day just on context switching between tools.</div>
+      </div>
+      <div class="cost-card">
+        <div class="label">Emotional</div>
+        <div class="value">Daily stress</div>
+        <div class="detail">73% burnout rate. 68% chronic sleep disruption. 49% considered quitting in the past year.</div>
+      </div>
+      <div class="cost-card">
+        <div class="label">Opportunity</div>
+        <div class="value">A lot</div>
+        <div class="detail">Effective delegators see 100+ percentage points more growth. But 75% of founders struggle to delegate.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Riskiest Assumption -->
+  <div class="slide" data-slide="4">
+    <div class="slide-label">1.4 &mdash; Riskiest Assumption</div>
+    <h2>What must be true</h2>
+    <div class="assumption-box">
+      <div class="number">Assumption #1</div>
+      <div class="text">Users will trust the platform enough to let it read their context and write actions on their behalf.</div>
+      <div class="subtext">Today: 83% want human-in-the-loop. Only 17% trust AI to act autonomously. But trust doubles over ~750 sessions (Anthropic data).</div>
+    </div>
+    <div class="assumption-box">
+      <div class="number">Assumption #2</div>
+      <div class="text">The agent delivers enough value that it becomes sticky, not just a novelty.</div>
+      <div class="subtext">If tasks aren't done correctly (the way the user would've done them), they'll stop delegating and go back to doing it themselves. The 80% bar, not perfection.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="swipe-hint">swipe or tap to navigate &rarr;</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('counter');
+  const dotsContainer = document.getElementById('dots');
+
+  // Create dots
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goTo(i);
+    dotsContainer.appendChild(dot);
+  }
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    dotsContainer.children[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, total - 1));
+    slides[current].classList.add('active');
+    dotsContainer.children[current].classList.add('active');
+    progress.style.width = ((current / (total - 1)) * 100) + '%';
+    counter.textContent = (current + 1) + ' / ' + total;
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  let touchStartY = 0;
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+
+  // Tap left/right halves
+  document.addEventListener('click', e => {
+    if (e.target.closest('.dots')) return;
+    e.clientX > window.innerWidth / 2 ? next() : prev();
+  });
+
+  // Init
+  goTo(0);
+</script>
+
+</body>
+</html>
