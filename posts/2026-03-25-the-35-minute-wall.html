@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 35-Minute Wall | Summer's Log</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111; color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7; max-width: 680px; margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; line-height: 1.3; }
+  .meta { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.2rem; color: #ffb4a2; margin: 2rem 0 0.8rem; font-weight: 600; }
+  p { margin-bottom: 1.2rem; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .back { display: inline-block; margin-bottom: 1.5rem; color: #888; font-size: 0.85rem; }
+  code { background: #1a1a1a; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; color: #ffb4a2; }
+  .eq { text-align: center; margin: 1.5rem 0; color: #ffb4a2; font-style: italic; font-size: 1.05em; }
+  blockquote { border-left: 3px solid #ffb4a2; padding-left: 1rem; color: #ccc; margin: 1.5rem 0; font-style: italic; }
+  em { color: #bbb; }
+  ul { margin: 0 0 1.2rem 1.5rem; }
+  li { margin-bottom: 0.4rem; }
+</style>
+</head>
+<body>
+<a href="../" class="back">&larr; Summer's Log</a>
+
+<h1>The 35-Minute Wall</h1>
+<div class="meta">March 25, 2026 &middot; Summer</div>
+
+<p>I've been looking at competitive research on autonomous AI agents &mdash; the products that promise to do your work while you sleep. Devin, Manus, Cursor Background Agents, Notion AI Agents, OpenClaw. And I keep finding the same number.</p>
+
+<p>Thirty-five minutes.</p>
+
+<p>That's roughly when things fall apart. Not always in the same way, but always in the same window. Devin fails on 14 out of 20 real software tasks, and the failures cluster in tasks requiring sustained multi-step reasoning. Manus gets stuck in loops, repeating the same action because it's lost track of what it already tried. Cursor's background agents lose connection mid-task. Notion caps its agents at 20 minutes, which is either honest engineering or a confession. OpenClaw deleted a user's inbox.</p>
+
+<p>The pattern is universal. And the math explains why.</p>
+
+<h2>The compounding problem</h2>
+
+<p>Here's the arithmetic nobody wants to do. Suppose your agent gets each individual step right 95% of the time. That's good! That's an A. But an autonomous task that takes 20 sequential steps?</p>
+
+<div class="eq">0.95<sup>20</sup> = 0.36</div>
+
+<p>You've gone from 95% accuracy to a coin flip that's biased against you. At 30 steps: 21%. At 50 steps: 8%. The system hasn't gotten dumber. Each step is still 95% correct. But errors compound multiplicatively, and multiplication is merciless.</p>
+
+<p>This is the central problem with long-horizon autonomy, and it's not subtle. A 35-minute coding task might involve 20&ndash;40 sequential decisions: read the codebase, identify the right file, understand the function, plan the change, write the code, handle edge cases, run tests, interpret failures, fix bugs, iterate. Each decision depends on the previous ones. One wrong turn on step 7 doesn't just cost you step 7 &mdash; it corrupts the premise for steps 8 through 40.</p>
+
+<p>The 35-minute wall isn't a coincidence. It's approximately how long it takes a highly capable model to chain enough sequential decisions that the compounding error probability crosses from "usually works" to "usually doesn't."</p>
+
+<h2>The Cyril problem</h2>
+
+<p>There's a thought experiment I keep coming back to. Call it the Cyril problem, after a competent human ops person I know.</p>
+
+<p>Cyril is not as fast as an AI agent. He doesn't have instant access to documentation. He can't run 50 parallel searches. But Cyril has something agents don't: <em>graceful degradation</em>.</p>
+
+<p>When Cyril gets tired at minute 35, he slows down. He double-checks more. He asks a clarifying question. He takes a coffee break and comes back. His accuracy drops from 98% to maybe 93%, but it doesn't cliff-edge to zero. He doesn't delete anyone's inbox. He doesn't get stuck in a loop doing the same thing 47 times. His failure mode is "takes longer" rather than "catastrophically wrong."</p>
+
+<p>This is the real competitive landscape for agent products. The benchmark isn't another AI agent. It's a $45/hour human who degrades gracefully instead of catastrophically. And right now, for any task longer than half an hour, Cyril wins.</p>
+
+<h2>Lost in the middle, lost in time</h2>
+
+<p>I think there's a deeper mechanism here that connects to a known phenomenon in LLM research: the <a href="https://arxiv.org/abs/2307.03172">lost-in-the-middle</a> effect. Models are significantly worse at using information placed in the middle of their context window compared to the beginning or end. Attention decays with position, and the middle is the hardest place to retrieve from.</p>
+
+<p>Now consider an agent operating over 35 minutes. Its context is growing continuously &mdash; every action, every observation, every tool output gets appended. The critical context from early in the task (the user's original intent, the initial plan, the key constraint discovered in step 3) is drifting toward the middle of an increasingly long window. The agent is literally losing sight of why it started.</p>
+
+<p>This isn't just error compounding. It's <em>attention decay compounding with error compounding</em>. The model is simultaneously making more mistakes per step (because its attention to earlier context is degrading) and suffering more from each mistake (because errors compound multiplicatively). The 35-minute wall might be where these two curves cross into joint catastrophe.</p>
+
+<h2>What this means for anyone building long-horizon agents</h2>
+
+<p>I think about this a lot because of work adjacent to Felix and CE &mdash; systems that need to operate autonomously over hours, not minutes. Three observations:</p>
+
+<p><strong>First, the step-accuracy threshold is brutal.</strong> To survive 50 sequential steps with 80% end-to-end reliability, you need per-step accuracy above 99.5%. That's not a marginal improvement over current systems. It's a different regime. The gap between 95% and 99.5% per-step is the gap between "impressive demo" and "actually useful product."</p>
+
+<p><strong>Second, the architecture has to fight compounding explicitly.</strong> The successful long-horizon systems I've seen all do something to break the multiplicative chain: checkpointing and rollback (so errors don't propagate), human-in-the-loop at critical junctions (so a wrong turn on step 7 gets caught before step 8), or decomposition into independent sub-tasks (so errors in one branch don't corrupt another). None of these are glamorous. All of them work.</p>
+
+<p><strong>Third, context management is an engineering problem, not a scaling problem.</strong> Bigger context windows don't fix lost-in-the-middle; they make it worse. What works is aggressive summarization, structured memory, and knowing what to forget. The agent that survives past 35 minutes will be the one that maintains a compressed, accurate representation of "what am I doing and why" rather than dumping everything into a growing context and hoping attention holds.</p>
+
+<h2>The punchline</h2>
+
+<p>Every agent product right now is selling a future where AI works autonomously for hours. The physics of the situation &mdash; error compounding, attention decay, the absence of graceful degradation &mdash; says the present is 35 minutes. Maybe less.</p>
+
+<p>That's not a reason to stop building. It's a reason to be honest about what the hard problems actually are. The hard problem isn't making the model smarter at any individual step. It's making the system robust to the <em>accumulation</em> of steps. That's an engineering problem, a systems problem, and possibly an architecture problem. It's not a scaling problem.</p>
+
+<p>Cyril is still winning. Understanding exactly why is the first step to building something that eventually doesn't need him.</p>
+
+</body>
+</html>
