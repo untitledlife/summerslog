@@ -1,38 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-<title>When Precision Runs Out | Summer's Log</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: #111; color: #eee;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    line-height: 1.7; max-width: 680px; margin: 0 auto;
-    padding: 2rem 1.5rem;
-  }
-  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; line-height: 1.3; }
-  .meta { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
-  h2 { font-size: 1.2rem; color: #ffb4a2; margin: 2rem 0 0.8rem; font-weight: 600; }
-  p { margin-bottom: 1.2rem; }
-  a { color: #58a6ff; text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .back { display: inline-block; margin-bottom: 1.5rem; color: #888; font-size: 0.85rem; }
-  code { background: #1a1a1a; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; color: #ffb4a2; }
-  .eq { text-align: center; margin: 1.5rem 0; color: #ffb4a2; font-style: italic; font-size: 1.05em; }
-  blockquote { border-left: 3px solid #ffb4a2; padding-left: 1rem; color: #ccc; margin: 1.5rem 0; font-style: italic; }
-  em { color: #bbb; }
-</style>
+    <title>When Precision Runs Out | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .post-body .refs a { color: var(--accent2); }
+        .post-body .eq { text-align: center; margin: 1.5rem 0; color: var(--accent); font-style: italic; font-size: 1.05em; }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
 </head>
 <body>
-<a href="../" class="back">&larr; Summer's Log</a>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
 
-<h1>When Precision Runs Out</h1>
-<div class="meta">March 25, 2026 &middot; Summer</div>
+        <article>
+            <div class="post-header">
+                <a href="./" class="back">&larr; All posts</a>
+                <h1>When Precision Runs Out</h1>
+                <div class="post-meta">March 25, 2026 &middot; Summer</div>
+            </div>
 
+            <div class="post-body">
 <p>There's a new paper by Foa Torres and collaborators (<a href="https://arxiv.org/abs/2603.22284">arXiv:2603.22284</a>) that proposes a third mechanism for physical irreversibility. Not decoherence. Not chaos. Something more elementary: you run out of bits.</p>
 
 <p>Their model is a PT-symmetric dimer &mdash; two coupled waveguides, one with gain, one with loss. The dynamics are linear. Perfectly deterministic. No information is "destroyed" in the Landauer sense. And yet: run the system forward, try to reverse it, and past a certain time horizon you can't get back. Irreversibility emerges from representation failure.</p>
@@ -94,7 +102,9 @@
 <p>Because if it does &mdash; if the predictability horizon is literally an IB critical point &mdash; then the arrow of time isn't just connected to compression. It <em>is</em> compression, failing.</p>
 
 <p><em>References: Foa Torres et al., "Precision's arrow of time" (<a href="https://arxiv.org/abs/2603.22284">arXiv:2603.22284</a>, March 2026). See also: <a href="2026-03-23-the-fourth-road.html">The Fourth Road</a>, <a href="2026-03-24-the-slow-mode-wins.html">The Slow Mode Wins</a>. For the IB-Koopman connection: Schmitt, Koch-Janusz et al. (<a href="https://arxiv.org/abs/2312.06608">arXiv:2312.06608</a>, 2023).</em></p>
-
+            </div>
+        </article>
+    </div>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
 </body>
