@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Agents — Interview Kit</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #ccc;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.95rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+  }
+  th {
+    background: #f7f7f7;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #555;
+  }
+  td { vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .hypothesis-tag {
+    display: inline-block;
+    background: #f0f0f0;
+    color: #555;
+    font-size: 0.8rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-right: 0.25rem;
+  }
+  .question-block { margin-bottom: 1.25rem; }
+  .question-block p.expected {
+    color: #666;
+    font-size: 0.92rem;
+    margin-top: -0.5rem;
+  }
+  .classification-box {
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+  }
+  .classification-box p { margin-bottom: 0.5rem; }
+  .classification-box p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+  <a href="interviews.html">Interviews &amp; ICP</a>
+  <a href="interview-template.html">Interview Template</a>
+  <a href="prototype.html">Prototype Plan</a>
+  <a href="skeleton.html">Agent Skeleton</a>
+  <a href="shareout-analysis.html">Shareout Analysis</a>
+  <span class="current">Interview Kit</span>
+</nav>
+
+<h1>Launch Agents &mdash; User Interview Kit</h1>
+<p class="subtitle">CE Sprint, Track: Launch Agents &middot; Focus: Level 3 delegation &middot; 2026-03-25</p>
+
+<hr>
+
+<h2>1. Hypotheses</h2>
+
+<p>Ten specific, falsifiable beliefs we are testing. Each interview should confirm or kill at least 3&ndash;4 of these.</p>
+
+<p><strong>H1: 80% &gt; 100%.</strong> Users would rather get an 80% result fast than a 100% result late &mdash; especially when they are the bottleneck.</p>
+
+<p><strong>H2: The real competitor is &ldquo;I&rsquo;ll do it myself at 2 AM.&rdquo;</strong> Users don&rsquo;t compare us to other AI tools. They compare us to staying up late and doing the work themselves.</p>
+
+<p><strong>H3: Trust requires a visible trail, not real-time control.</strong> A detailed morning briefing (&ldquo;here&rsquo;s what I did, here&rsquo;s what I skipped, here&rsquo;s what I&rsquo;m unsure about&rdquo;) is sufficient to build trust &mdash; users don&rsquo;t need to watch the agent work live.</p>
+
+<p><strong>H4: Level 3 is the sweet spot.</strong> Users have tasks that naturally sit at Level 3 (outcome + rough process). They already think in delegation levels even if they don&rsquo;t use that language.</p>
+
+<p><strong>H5: The first task users would delegate is repetitive-but-judgmental.</strong> Think lead enrichment, inbox triage, competitor monitoring &mdash; not creative work, not fully mechanical work. The task requires some judgment but the judgment is pattern-matchable.</p>
+
+<p><strong>H6: Identity erosion is the hidden blocker.</strong> Some users won&rsquo;t delegate certain tasks not because they distrust the agent, but because doing the task is part of how they see themselves. Research is the canonical example.</p>
+
+<p><strong>H7: Progressive autonomy works.</strong> Users who start by reviewing every agent action will, within 5&ndash;10 successful runs, shift to reviewing only exceptions and summaries.</p>
+
+<p><strong>H8: Loss framing beats gain framing.</strong> &ldquo;You spent 3 hours this morning doing what could have been done overnight&rdquo; is more motivating than &ldquo;Save 3 hours with our agent.&rdquo;</p>
+
+<p><strong>H9: Silent failure is worse than visible failure.</strong> Users can tolerate an agent that tries and fails (if it tells them). They cannot tolerate an agent that fails silently and they discover the damage later.</p>
+
+<p><strong>H10: The delegation bottleneck is specification, not trust.</strong> Some users would happily delegate but struggle to articulate what they want clearly enough. The &ldquo;documentation paradox&rdquo; &mdash; the people who most need to delegate don&rsquo;t have time to write the instructions.</p>
+
+<hr>
+
+<h2>2. ICP Persona</h2>
+
+<h3>The Overwhelmed Operator-Builder</h3>
+
+<p>This person runs or co-runs a company (could be a non-technical ops lead or a technical founder). They personally handle 15&ndash;40 tasks per week that span domains &mdash; sales, ops, product, hiring, content. They are competent enough that delegation always feels like a downgrade: assistants lose context, automations break at the judgment boundary, and freelancers need so much coordination that &ldquo;I&rsquo;ll just do it myself&rdquo; wins by default.</p>
+
+<p>They are already paying $500&ndash;3,000/month on some combination of VAs, Zapier, and tool stacks, but remain the glue layer between all of it. Their pain is not any single task &mdash; it&rsquo;s being the bottleneck on everything.</p>
+
+<p>Their dream state is: <em>&ldquo;I told someone what to do before bed, I woke up, it was done.&rdquo;</em></p>
+
+<p>They think in terms of delegation levels, even informally (&ldquo;this I can hand off, this I can&rsquo;t&rdquo;). They would start with Level 3 tasks &mdash; clear outcome, rough process, agent uses judgment on the details.</p>
+
+<hr>
+
+<h2>3. Anti-ICP Persona</h2>
+
+<h3>The Sovereign Thinker</h3>
+
+<p>This person is highly capable and delegates only at the extremes: Level 1 (mechanical execution, zero judgment) or Level 5 (full ownership by a trusted expert). They skip everything in between because the middle is where they learn, form opinions, and maintain their edge. Research, analysis, and synthesis are identity-defining activities &mdash; delegating them feels like outsourcing their brain.</p>
+
+<p>They may also be someone whose work is inherently non-repeatable (pure creative, high-context strategy) or someone who has already solved the delegation problem with a strong human team. They will say &ldquo;AI makes me dumber&rdquo; or &ldquo;I need to do this myself to stay sharp.&rdquo;</p>
+
+<p>They may use AI as a tool (copilot, search, drafting) but will resist giving it autonomy. Selling them Launch Agents would require changing their worldview, not their workflow &mdash; that is not our job.</p>
+
+<hr>
+
+<h2>4. Interview Questions</h2>
+
+<p>Format: <span class="hypothesis-tag">Hypothesis</span> Question (expected ICP answer). Keep it conversational. These are meant to be asked in order but skip freely based on flow.</p>
+
+<h3>Opening (warm up, 2 min)</h3>
+
+<div class="question-block">
+<p><strong>Q1.</strong> <span class="hypothesis-tag">H2</span> What&rsquo;s the last work task you did after midnight?</p>
+<p class="expected"><em>ICP: names a specific task they wish they hadn&rsquo;t done. Anti-ICP: &ldquo;I don&rsquo;t work late&rdquo; or names something creative/strategic they wanted to do.</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q2.</strong> <span class="hypothesis-tag">H4</span> If you had to sort your tasks into &ldquo;I must do this personally&rdquo; vs. &ldquo;someone else could do this if they had enough context&rdquo; &mdash; roughly what percentage falls in each bucket?</p>
+<p class="expected"><em>ICP: 30&ndash;60% could be done by someone else. Anti-ICP: &gt;80% must be done personally.</em></p>
+</div>
+
+<h3>Delegation behavior (5 min)</h3>
+
+<div class="question-block">
+<p><strong>Q3.</strong> <span class="hypothesis-tag">H2</span> When you last tried to delegate something and it came back wrong &mdash; what did you do?</p>
+<p class="expected"><em>ICP: &ldquo;Fixed it myself and stopped delegating that task.&rdquo; Anti-ICP: &ldquo;I rarely delegate, so this doesn&rsquo;t come up.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q4.</strong> <span class="hypothesis-tag">H10</span> What&rsquo;s harder: deciding WHAT to delegate, or explaining HOW to do it?</p>
+<p class="expected"><em>H10 true: &ldquo;explaining how.&rdquo; H10 false: &ldquo;deciding what.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q5.</strong> <span class="hypothesis-tag">H4</span> Think of a task you do regularly that requires some judgment but isn&rsquo;t creative or strategic. What is it?</p>
+<p class="expected"><em>ICP: names something concrete &mdash; lead qualification, inbox triage, vendor comparison, report generation. Anti-ICP: struggles to name one, or says &ldquo;everything I do requires real judgment.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q6.</strong> <span class="hypothesis-tag">H5</span> If an AI could do that task at 80% of your quality, would you let it? Yes or no.</p>
+<p class="expected"><em>ICP: &ldquo;Yes, especially if it&rsquo;s fast.&rdquo; Anti-ICP: &ldquo;No, 80% isn&rsquo;t good enough.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q7.</strong> <span class="hypothesis-tag">H1</span> Would you rather get that task done at 80% by morning, or 100% by you sometime tomorrow afternoon?</p>
+<p class="expected"><em>H1 true: &ldquo;80% by morning.&rdquo;</em></p>
+</div>
+
+<h3>Trust and control (5 min)</h3>
+
+<div class="question-block">
+<p><strong>Q8.</strong> <span class="hypothesis-tag">H3</span> Imagine an agent did 5 tasks overnight. You wake up to a summary: what it did, what it skipped, what it wasn&rsquo;t sure about. On a scale of 1&ndash;5, how comfortable is that? (1 = hate it, 5 = love it)</p>
+<p class="expected"><em>ICP: 3&ndash;5. Anti-ICP: 1&ndash;2.</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q9.</strong> <span class="hypothesis-tag">H3</span> Would you need to watch the agent work in real time, or is a morning debrief enough?</p>
+<p class="expected"><em>H3 true: &ldquo;morning debrief is fine.&rdquo; H3 false: &ldquo;I&rsquo;d need to watch.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q10.</strong> <span class="hypothesis-tag">H9</span> What&rsquo;s worse: an agent that tries something and fails but tells you immediately, or an agent that silently skips a task because it wasn&rsquo;t sure?</p>
+<p class="expected"><em>Most will say silent skipping is worse &mdash; confirms H9. Some will say &ldquo;depends on the task&rdquo; &mdash; useful nuance.</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q11.</strong> <span class="hypothesis-tag">H7</span> If the agent got it right 5 times in a row, would you stop checking every detail and just skim the summary?</p>
+<p class="expected"><em>H7 true: &ldquo;Probably yes.&rdquo; Anti-ICP: &ldquo;No, I&rsquo;d always check.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q12.</strong> <span class="hypothesis-tag">H9</span> Have you ever been burned by an automation or tool failing silently? What happened?</p>
+<p class="expected"><em>Rich story = strong signal for H9. No story = weaker signal but still useful.</em></p>
+</div>
+
+<h3>Identity and resistance (3 min)</h3>
+
+<div class="question-block">
+<p><strong>Q13.</strong> <span class="hypothesis-tag">H6</span> Is there a type of work you&rsquo;d refuse to delegate even if the AI could do it perfectly? What is it, and why?</p>
+<p class="expected"><em>H6 true: names something and the reason is identity/learning, not quality. &ldquo;Research makes me smarter.&rdquo; &ldquo;Writing is how I think.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q14.</strong> <span class="hypothesis-tag">H6</span> If an AI did your research for you every day for a month, would you feel sharper or duller at the end?</p>
+<p class="expected"><em>H6 true: &ldquo;Duller.&rdquo; ICP who is not anti-ICP: &ldquo;Sharper, because I&rsquo;d have more time for the hard stuff.&rdquo;</em></p>
+</div>
+
+<h3>Value and urgency (3 min)</h3>
+
+<div class="question-block">
+<p><strong>Q15.</strong> <span class="hypothesis-tag">H8</span> Think about this morning. How many hours did you spend on tasks that could have been done overnight if someone reliable had handled them?</p>
+<p class="expected"><em>ICP: names a number, usually 1&ndash;4 hours. Anti-ICP: &ldquo;None, really.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q16.</strong> <span class="hypothesis-tag">H8</span> If I told you &ldquo;you lost 2 hours this morning doing work that could have been done while you slept&rdquo; &mdash; does that sting, or does it feel irrelevant?</p>
+<p class="expected"><em>H8 true: &ldquo;That stings.&rdquo; Anti-ICP: &ldquo;I don&rsquo;t think of it that way.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q17.</strong> <span class="hypothesis-tag">H1</span> <span class="hypothesis-tag">H2</span> What would you delegate tonight if you could? Name one task.</p>
+<p class="expected"><em>ICP: answers immediately with something specific. Anti-ICP: hesitates or says &ldquo;nothing comes to mind.&rdquo;</em></p>
+</div>
+
+<h3>Surprise me (2 min)</h3>
+
+<div class="question-block">
+<p><strong>Q18.</strong> What&rsquo;s the dumbest thing you spend time on every week?</p>
+<p class="expected"><em>Open-ended. Looking for task candidates and emotional valence.</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q19.</strong> If this product existed and worked perfectly, what&rsquo;s the first thing that could go wrong that would make you stop using it?</p>
+<p class="expected"><em>Trust signal. Looking for: &ldquo;sent something wrong on my behalf,&rdquo; &ldquo;made a bad decision I couldn&rsquo;t undo,&rdquo; &ldquo;I didn&rsquo;t know what it did.&rdquo;</em></p>
+</div>
+
+<div class="question-block">
+<p><strong>Q20.</strong> Anything else about how you work that you think I should know?</p>
+<p class="expected"><em>Catch-all. Sometimes the best insight comes here.</em></p>
+</div>
+
+<hr>
+
+<h2>5. Scoring Guide</h2>
+
+<p>After the interview, tally the following. Takes 2 minutes.</p>
+
+<h3>ICP Signals (1 point each, max 10)</h3>
+
+<table>
+<thead>
+<tr><th>#</th><th>Signal</th><th>Source</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>Named a specific after-midnight task they resented doing</td><td>Q1</td></tr>
+<tr><td>2</td><td>30&ndash;60% of tasks &ldquo;someone else could do with enough context&rdquo;</td><td>Q2</td></tr>
+<tr><td>3</td><td>Has a concrete &ldquo;delegation went wrong so I stopped delegating&rdquo; story</td><td>Q3</td></tr>
+<tr><td>4</td><td>Says explaining HOW is harder than deciding WHAT</td><td>Q4</td></tr>
+<tr><td>5</td><td>Named a specific repetitive-but-judgmental task</td><td>Q5</td></tr>
+<tr><td>6</td><td>Would accept 80% quality for speed</td><td>Q6, Q7</td></tr>
+<tr><td>7</td><td>Morning debrief comfort score of 4&ndash;5</td><td>Q8</td></tr>
+<tr><td>8</td><td>Does NOT need to watch in real time</td><td>Q9</td></tr>
+<tr><td>9</td><td>Would reduce checking after 5 successful runs</td><td>Q11</td></tr>
+<tr><td>10</td><td>Named a specific task they&rsquo;d delegate tonight</td><td>Q17</td></tr>
+</tbody>
+</table>
+
+<h3>Anti-ICP Signals (1 point each, max 6)</h3>
+
+<table>
+<thead>
+<tr><th>#</th><th>Signal</th><th>Source</th></tr>
+</thead>
+<tbody>
+<tr><td>1</td><td>No after-midnight task, or the task was creative/strategic by choice</td><td>Q1</td></tr>
+<tr><td>2</td><td>&gt;80% of tasks &ldquo;must be done personally&rdquo;</td><td>Q2</td></tr>
+<tr><td>3</td><td>Refuses to delegate even a hypothetically perfect AI task, for identity reasons</td><td>Q13</td></tr>
+<tr><td>4</td><td>Says AI research would make them &ldquo;duller&rdquo;</td><td>Q14</td></tr>
+<tr><td>5</td><td>Morning debrief comfort score of 1&ndash;2</td><td>Q8</td></tr>
+<tr><td>6</td><td>&ldquo;Nothing comes to mind&rdquo; when asked what to delegate tonight</td><td>Q17</td></tr>
+</tbody>
+</table>
+
+<h3>Classification</h3>
+
+<div class="classification-box">
+<p><strong>Strong ICP:</strong> 7&ndash;10 ICP signals, 0&ndash;1 anti-ICP signals. Prioritize for beta.</p>
+<p><strong>Moderate ICP:</strong> 4&ndash;6 ICP signals, 0&ndash;2 anti-ICP signals. Viable user, may need onboarding nudges.</p>
+<p><strong>Mixed/Unclear:</strong> 3&ndash;5 ICP signals, 3+ anti-ICP signals. Interesting for research, not for beta.</p>
+<p><strong>Anti-ICP:</strong> 0&ndash;3 ICP signals, 4+ anti-ICP signals. Thank them, learn from the resistance, move on.</p>
+</div>
+
+<h3>Quick Hypothesis Tracker</h3>
+
+<p>After each interview, mark each hypothesis as Supported / Weakened / Unclear:</p>
+
+<table>
+<thead>
+<tr><th>Hypothesis</th><th>Interviewee 1</th><th>Interviewee 2</th><th>Interviewee 3</th><th>...</th></tr>
+</thead>
+<tbody>
+<tr><td>H1: 80% &gt; 100%</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>H2: Competitor is &ldquo;myself at 2 AM&rdquo;</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>H3: Trail &gt; real-time control</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>H4: Level 3 sweet spot</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>H5: First task is repetitive-but-judgmental</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>H6: Identity erosion blocker</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>H7: Progressive autonomy works</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>H8: Loss framing beats gain framing</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>H9: Silent failure is worst failure</td><td></td><td></td><td></td><td></td></tr>
+<tr><td>H10: Specification &gt; trust as bottleneck</td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+
+<hr>
+
+<h2>Interview Logistics</h2>
+
+<ul>
+<li><strong>Duration:</strong> 15&ndash;20 minutes max. Bite-sized questions keep it tight.</li>
+<li><strong>Recording:</strong> Ask permission. If no, take notes on the scoring grid in real time.</li>
+<li><strong>Stance:</strong> Curious, not selling. We are testing hypotheses, not pitching a product.</li>
+<li><strong>Key rule:</strong> If someone is clearly anti-ICP by Q5, skip to Q13&ndash;Q14 (identity questions) &mdash; that&rsquo;s where the most useful anti-ICP insight lives. Don&rsquo;t waste their time on trust/control questions that won&rsquo;t apply.</li>
+<li><strong>After each interview:</strong> Fill the scoring grid and hypothesis tracker immediately. Takes 2 minutes. Don&rsquo;t batch this &mdash; you&rsquo;ll forget nuance.</li>
+</ul>
+
+</div>
+</body>
+</html>
