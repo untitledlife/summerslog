@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Launch Agents — Cyril Round 2 Deep Dive</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 760px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  .subtitle { color: #666; font-size: 0.95rem; margin-bottom: 1.5rem; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #c2653a;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.95rem; }
+  th { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 2px solid #ddd; font-weight: 600; }
+  td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #eee; vertical-align: top; }
+  .card {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1.25rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .signal-box {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .verdict-box {
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.8rem; font-weight: 600; margin-right: 0.25rem; }
+  .tag-delegate { background: #e8f5e9; color: #2e7d32; }
+  .tag-personal { background: #fce4ec; color: #c62828; }
+  .tag-maybe { background: #fff3e0; color: #e65100; }
+  .toc {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+  }
+  .toc ol { margin: 0.5rem 0 0 1.25rem; }
+  .toc li { margin-bottom: 0.25rem; }
+  .toc a { text-decoration: none; color: #555; }
+  .toc a:hover { text-decoration: underline; color: #1a1a1a; }
+  .spectrum { display: flex; align-items: center; gap: 0; margin: 0.75rem 0; border-radius: 4px; overflow: hidden; }
+  .spectrum-bar { height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: #fff; }
+  .spectrum-personal { background: #ef5350; }
+  .spectrum-delegate { background: #66bb6a; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Sprint Home</a>
+  <a href="interviews.html">Round 1 Interviews</a>
+  <a href="competitor-audit.html">Competitors</a>
+  <a href="yc-niche-competitors.html">YC/Niche</a>
+  <a href="hmw.html">HMW Statements</a>
+  <a href="user-interviews-round2.html">Round 2 Interviews</a>
+  <span class="current">Cyril Deep Dive</span>
+</nav>
+
+<h1>Cyril: The Delegation Engineer</h1>
+<p class="subtitle">Round 2 deep dive &middot; ~44 min interview &middot; 25 Mar 2026, Sprint Day 2</p>
+
+<p>Cyril (CE ops, 24) has the most sophisticated delegation mental model of anyone interviewed. He thinks about AI agents the way a software engineer thinks about deployment: test mode, production mode, reversibility gates, failure hierarchies. This page breaks down every signal from the interview.</p>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#split">The 70/30 Split</a></li>
+    <li><a href="#payroll">Payroll: The Perfect Delegation Case Study</a></li>
+    <li><a href="#memory">Memory Failure = Trust Death</a></li>
+    <li><a href="#test-prod">Test Mode vs. Production Mode</a></li>
+    <li><a href="#specificity">Specificity > Generality</a></li>
+    <li><a href="#serial">80% Serial >> 80% Random</a></li>
+    <li><a href="#reversibility">Reversibility as Trust Framework</a></li>
+    <li><a href="#silent-failure">Silent Failure is the Cardinal Sin</a></li>
+    <li><a href="#trust-building">Trust Building: Gradual + Measurable</a></li>
+    <li><a href="#force-multiplier">Force Multiplier, Not Replacement</a></li>
+    <li><a href="#wishlist">Tonight's Delegation Wishlist</a></li>
+    <li><a href="#dealbreaker">The Dealbreaker Question</a></li>
+    <li><a href="#timesink">Dumbest Time Sink</a></li>
+    <li><a href="#product">Product Implications</a></li>
+    <li><a href="#comparison">Comparison with Round 1</a></li>
+    <li><a href="#cross">Cross-Interview Patterns</a></li>
+  </ol>
+</div>
+
+<hr>
+
+<h2 id="split">1. The 70/30 Split</h2>
+
+<div class="card">
+<h3>Delegation Split</h3>
+<div class="spectrum">
+  <div class="spectrum-bar spectrum-personal" style="width: 30%;">30% personal</div>
+  <div class="spectrum-bar spectrum-delegate" style="width: 70%;">70% delegatable</div>
+</div>
+<p>70% of Cyril's tasks are delegatable &mdash; repeatable process work with clear inputs and outputs. 30% he wants to do personally.</p>
+<p><strong>The 70%:</strong> payroll, research curation, HR logistics, calendar management.</p>
+<p><strong>The 30%:</strong> the things that require his judgment, relationships, and context that can't be written down.</p>
+</div>
+
+<p>This is the most delegation-friendly split on the team (Deepanshi: 10%, Sagar: 20%, Ritam: 60% after AI offloading). And critically, Cyril's 70% is almost entirely <em>process work</em> &mdash; not creative or research tasks, but step-by-step procedures with clear completion criteria.</p>
+
+<hr>
+
+<h2 id="payroll">2. Payroll: The Perfect Delegation Case Study</h2>
+
+<p>Cyril walked through his entire payroll process unprompted. Ten steps, fully manual, zero judgment required. This is the single best example of an agent-ready task from any interview.</p>
+
+<div class="card">
+<h3>The 10-Step Process</h3>
+<ol>
+  <li>Determine who's in his purview (not core team: Ritam, Deepanshi, Sabesh, etc.)</li>
+  <li>Create spreadsheet, check days worked and leave taken</li>
+  <li>Check contracts for compensation details</li>
+  <li>Check Slack DMs for reimbursement claims</li>
+  <li>Check emails for bonuses or adjustments</li>
+  <li>Calculate total INR tally per person</li>
+  <li>Go to each person's bank's forex page</li>
+  <li>Get the telegraphic transfer rate for USD to INR that day</li>
+  <li>Divide INR by forex rate to get USD amount</li>
+  <li>Put into Mercury, create transfer, get approval</li>
+</ol>
+</div>
+
+<div class="signal-box">
+<p><strong>Why this matters:</strong> Pure process. Zero judgment. Currently 100% manual. Every step has a clear input, a clear output, and a verifiable completion state. Steps 1-9 are fully automatable. Step 10 (Mercury transfer + approval) is the one irreversible action that needs a human in the loop. This is the textbook agent task.</p>
+</div>
+
+<hr>
+
+<h2 id="memory">3. Memory Failure = Trust Death</h2>
+
+<p>This is the single most important product insight from all Round 2 interviews.</p>
+
+<div class="card">
+<h3>The Claude Story</h3>
+<p>Cyril tried Claude for personal branding and content planning:</p>
+<ul>
+  <li>Taught it his voice &mdash; lowercase, profanity, personal style</li>
+  <li>Fed it tweet dumps, algorithm knowledge, brand strategy</li>
+  <li>Built up a full content plan over a session</li>
+  <li><strong>Next session:</strong> Claude forgot everything. Talked in proper English. Lost the plan entirely.</li>
+</ul>
+<blockquote><p>"If you don't have a mechanism to consume feedback and remember it, there's no point."</p></blockquote>
+<p><strong>He gave up. He hasn't used it since.</strong></p>
+</div>
+
+<div class="verdict-box">
+<p><strong>The #1 Product Signal:</strong> Memory isn't a feature. It's the feature. An agent that forgets your teaching is worse than no agent at all, because you've already invested the time to teach it. Cyril didn't gradually lose trust. He lost it in one session. The moment the agent spoke in proper English instead of his voice, it wasn't his agent anymore. It was a stranger.</p>
+</div>
+
+<hr>
+
+<h2 id="test-prod">4. Test Mode vs. Production Mode</h2>
+
+<p>Cyril has an explicitly engineering-oriented mental model for how he evaluates agents.</p>
+
+<div class="card">
+<blockquote><p>"I have a very engineer-oriented mind &mdash; you do certain things for me in test mode, then I put you in production mode."</p></blockquote>
+
+<table>
+  <tr>
+    <th></th>
+    <th>Test Mode</th>
+    <th>Production Mode</th>
+  </tr>
+  <tr>
+    <td><strong>Patience</strong></td>
+    <td>High. Willing to teach, iterate, give feedback.</td>
+    <td>Low. Errors are not tolerable.</td>
+  </tr>
+  <tr>
+    <td><strong>Expectation</strong></td>
+    <td>"Take your time, do it right the first time."</td>
+    <td>"You've been trained. Perform."</td>
+  </tr>
+  <tr>
+    <td><strong>Failure tolerance</strong></td>
+    <td>Expected and welcomed. Learning is the point.</td>
+    <td>Minimal. "If you f*** up in production mode &mdash; there's only so much threshold I have."</td>
+  </tr>
+</table>
+</div>
+
+<div class="signal-box">
+<p><strong>Design implication:</strong> The onboarding phase IS the test mode. Users need to feel like they're teaching the agent, with visible learning. Then when they flip to "production" &mdash; trusting it with real tasks &mdash; the agent must perform at the level it demonstrated during testing. Any regression from test-mode quality to production-mode quality is a betrayal.</p>
+</div>
+
+<hr>
+
+<h2 id="specificity">5. Specificity > Generality</h2>
+
+<blockquote><p>"If an agent comes up and says 'I can do everything' &mdash; give me an empty field? Your job is to figure out what you can do best."</p></blockquote>
+
+<div class="card">
+<p>Cyril wants agents that declare specific capabilities, not generalist blank canvases.</p>
+<ul>
+  <li><strong>Analogy:</strong> You hire finance people for finance, not generalists. You don't hire someone and say "figure out what you're good at."</li>
+  <li><strong>Exception:</strong> Startups hire generalists because the company itself is figuring out what it does.</li>
+  <li><strong>But for agents:</strong> "I would like my agent to function as if they were an enterprise" &mdash; specific, reliable, process-driven.</li>
+</ul>
+</div>
+
+<p>This directly contradicts the "one agent for everything" vision that most AI companies sell. Cyril would rather have 5 agents that each do one thing well than 1 agent that claims to do everything and does nothing reliably.</p>
+
+<hr>
+
+<h2 id="serial">6. 80% Serial >> 80% Random (The Lego Piece Rule)</h2>
+
+<div class="card">
+<p>Two ways an agent can complete 8 of 10 steps:</p>
+
+<table>
+  <tr>
+    <th>Pattern</th>
+    <th>What it looks like</th>
+    <th>User experience</th>
+  </tr>
+  <tr>
+    <td><strong>Steps 1-8 done sequentially</strong></td>
+    <td>Agent does the first 80%, stops at a clear point, hands off to user for steps 9-10.</td>
+    <td>"I am just the lego piece that connects two arms. I'm fine."</td>
+  </tr>
+  <tr>
+    <td><strong>Random 8 of 10 done</strong></td>
+    <td>Agent does steps 1, 2, 4, 5, 6, 7, 9, 10. User must figure out which 2 are missing and fill gaps.</td>
+    <td>"I will kill someone."</td>
+  </tr>
+</table>
+</div>
+
+<div class="verdict-box">
+<p><strong>The Lego Piece Rule:</strong> The user should be a known insertion point in a sequential process, not a detective figuring out what's missing. Design agent handoffs as clean breaks in a pipeline, never as gap-filling exercises.</p>
+</div>
+
+<hr>
+
+<h2 id="reversibility">7. Reversibility as Trust Framework</h2>
+
+<p>Maps directly to Bezos's two-way/one-way door framework. Cyril applies it instinctively.</p>
+
+<div class="card">
+<blockquote><p>"If it's reversible, figure out, find out. If it's irreversible &mdash; I would love to be in the loop."</p></blockquote>
+
+<table>
+  <tr>
+    <th>Reversible (two-way door)</th>
+    <th>Irreversible (one-way door)</th>
+  </tr>
+  <tr>
+    <td>Calendar events</td>
+    <td>Money transfers</td>
+  </tr>
+  <tr>
+    <td>Research drafts</td>
+    <td>Contracts</td>
+  </tr>
+  <tr>
+    <td>Content drafts</td>
+    <td>External communications</td>
+  </tr>
+  <tr>
+    <td colspan="2" style="text-align: center; color: #666; font-style: italic; padding-top: 0.75rem;">"Do whatever. Figure it out." &rarr; &larr; "I must be in the room."</td>
+  </tr>
+</table>
+</div>
+
+<div class="signal-box">
+<p><strong>Design implication:</strong> Every task the agent handles should be classified as reversible or irreversible. Reversible tasks get full autonomy. Irreversible tasks get a mandatory approval gate. The agent should know the difference and never ask for permission on reversible actions or skip permission on irreversible ones.</p>
+</div>
+
+<hr>
+
+<h2 id="silent-failure">8. Silent Failure is the Cardinal Sin</h2>
+
+<p>Cyril laid out a clear hierarchy of failure modes, ranked from best to worst.</p>
+
+<div class="card">
+<table>
+  <tr>
+    <th>Rank</th>
+    <th>Failure Mode</th>
+    <th>Verdict</th>
+  </tr>
+  <tr>
+    <td>1. BEST</td>
+    <td>Does it well.</td>
+    <td>Obviously ideal.</td>
+  </tr>
+  <tr>
+    <td>2. GOOD</td>
+    <td>Fails but notifies immediately.</td>
+    <td>Acceptable. Agent shows accountability.</td>
+  </tr>
+  <tr>
+    <td>3. OK</td>
+    <td>Fails, surfaces in user space for async review.</td>
+    <td>Tolerable. At least it's discoverable.</td>
+  </tr>
+  <tr>
+    <td style="color: #c62828; font-weight: 600;">4. FIRED</td>
+    <td>Fails silently. Doesn't tell you.</td>
+    <td>"People get fired over that &mdash; as employees."</td>
+  </tr>
+</table>
+
+<blockquote><p>"Tell me you didn't do it."</p></blockquote>
+<blockquote><p>"AI should take accountability."</p></blockquote>
+</div>
+
+<div class="verdict-box">
+<p><strong>Non-negotiable:</strong> Silent failure detection is table stakes. An agent that fails and doesn't report it is worse than an agent that never attempted the task. The gap between rank 3 (async failure surfacing) and rank 4 (silent failure) is the gap between "tolerable" and "fired." There is no product without solving this.</p>
+</div>
+
+<hr>
+
+<h2 id="trust-building">9. Trust Building: Gradual + Measurable</h2>
+
+<div class="card">
+<h3>The 5-in-a-Row Rule</h3>
+<p>5 correct completions in a row and Cyril stops checking details. Trust is earned through consistent, sequential success.</p>
+
+<h3>Research Curation Test</h3>
+<p>For research tasks, the agent must capture everything Cyril already knows plus surface extras. His evaluation framework:</p>
+
+<blockquote><p>"If it gives me the 5 things I know + 3 I don't know + 2 bullshit = highly appreciated."</p></blockquote>
+<blockquote><p>"If it gives me 3 I know + 3 I don't know + 2 bullshit = I still rely on myself for the missing 2."</p></blockquote>
+
+<p>Missing known items = trust broken. Extra noise = tolerable. The baseline is <em>completeness of what the user already knows</em>, not novelty.</p>
+
+<h3>Payroll Trust Threshold</h3>
+<p>For high-stakes process work like payroll: approximately 3 months of correct execution before he'd stop manually verifying every step.</p>
+</div>
+
+<div class="signal-box">
+<p><strong>The trust math:</strong> Trust is a ramp, not a switch. 5 successes for low-stakes tasks, ~3 months for high-stakes process work. Missing something the user already knows is worse than including noise they don't need. Design the trust gradient accordingly: start with low-stakes tasks, build the streak, graduate to higher-stakes work.</p>
+</div>
+
+<hr>
+
+<h2 id="force-multiplier">10. Force Multiplier, Not Replacement</h2>
+
+<div class="card">
+<p>Cyril wants to stay in the value chain. The ideal model: AI surfaces information, he forms inferences, he communicates.</p>
+
+<blockquote><p>"If it completely replaces me, I would probably feel dumber. But that's a me problem, not an AI problem."</p></blockquote>
+
+<p>Research specifically should be a dialogue, not a delegation. The agent gathers, filters, and presents. Cyril synthesizes and decides.</p>
+</div>
+
+<p>This places Cyril between Deepanshi ("process IS the learning, don't take it from me") and Ritam ("delegate and never think about it"). Cyril wants the grunt work done but wants to remain the decision-maker and the communicator. The agent is the back office; he's the front office.</p>
+
+<hr>
+
+<h2 id="wishlist">11. Tonight's Delegation Wishlist</h2>
+
+<p>If an agent were ready tonight, here's what Cyril would hand it, in priority order:</p>
+
+<div class="card">
+<ol>
+  <li><span class="tag tag-delegate">DELEGATE</span> <strong>Competitor research.</strong> Daily AI landscape monitoring with relevance filtering. What's new, what matters to CE, what's noise.</li>
+  <li><span class="tag tag-delegate">DELEGATE</span> <strong>Payroll automation.</strong> The full 10-step process above, with human approval at step 10.</li>
+  <li><span class="tag tag-delegate">DELEGATE</span> <strong>HR bot.</strong> Birthday reminders (2 days advance), gift ordering based on office check-in presence, delivery scheduling.</li>
+  <li><span class="tag tag-delegate">DELEGATE</span> <strong>Weekly employee sentiment surveys.</strong> Private, secure, aggregated for him to review.</li>
+  <li><span class="tag tag-maybe">MIXED</span> <strong>Capacity planning.</strong> Pull data from Linear + morale data, surface recommendations. He decides.</li>
+  <li><span class="tag tag-delegate">DELEGATE</span> <strong>Calendar events from documents.</strong> Sprint milestones in docs should automatically become calendar invites.</li>
+  <li><span class="tag tag-delegate">DELEGATE</span> <strong>Contract template filling and sending.</strong> Fill templates from structured data, send for review.</li>
+</ol>
+</div>
+
+<p>Notice the pattern: 6 of 7 are pure process automation. Only capacity planning involves synthesis. Cyril's delegation instinct is overwhelmingly toward mechanical tasks, not cognitive ones.</p>
+
+<hr>
+
+<h2 id="dealbreaker">12. The Dealbreaker Question</h2>
+
+<p>"What fuckup would make you stop using this product?"</p>
+
+<div class="card">
+<ol>
+  <li><strong>Irreversible action without permission.</strong> The one-way door opened without asking.</li>
+  <li><strong>Not flagging blockers.</strong> Encountering an obstacle and plowing through or ignoring it.</li>
+  <li><strong>Unjustified assumptions.</strong> "Explain your assumptions. If your assumption is on shaking ground and you can't justify it..."</li>
+  <li><strong>Doing things without adequate explanation.</strong> Action without reasoning = unacceptable.</li>
+</ol>
+</div>
+
+<p>The common thread: <strong>transparency.</strong> Every dealbreaker is about the agent acting without the user understanding why. Not about the agent being wrong &mdash; about the agent being opaque.</p>
+
+<hr>
+
+<h2 id="timesink">13. Dumbest Time Sink</h2>
+
+<div class="card" style="background: #fff8f0;">
+<p>20 minutes across 3 e-commerce apps looking for Diet Coke. Couldn't find it. Went out and bought it in person.</p>
+<p style="margin-bottom: 0; color: #888; font-size: 0.9rem;">The kind of task that feels too trivial to delegate but costs real time. A reminder that "delegatable" isn't always about importance &mdash; sometimes it's about friction.</p>
+</div>
+
+<hr>
+
+<h2 id="product">14. Product Implications</h2>
+
+<p>What Cyril's interview means for what we build.</p>
+
+<div class="verdict-box">
+<h3>Six Product Decisions from This Interview</h3>
+<ol>
+  <li><strong>Memory is THE feature.</strong> Cyril literally quit Claude over memory failure. An agent that forgets your teaching is worse than no agent. Persistent memory across sessions is non-negotiable.</li>
+  <li><strong>Capability declaration > empty canvas.</strong> Don't give users a blank prompt. Tell them what the agent can do. "I handle payroll, calendar, and research curation" beats "How can I help you today?"</li>
+  <li><strong>Sequential completeness with clear handoff points.</strong> The Lego Piece Rule. Agent does steps 1-8, hands off at a clean break. Never does a random subset and asks the user to figure out what's missing.</li>
+  <li><strong>Reversibility-aware task classification.</strong> Every action the agent can take must be tagged as reversible or irreversible. Reversible = autonomous. Irreversible = approval gate. The agent must know the difference without being told each time.</li>
+  <li><strong>Silent failure detection is table stakes.</strong> If the agent fails and doesn't tell you, the product is broken. Period. This is rank 4 in Cyril's hierarchy. "People get fired over that."</li>
+  <li><strong>Trust is a ramp, not a switch.</strong> Design for progressive autonomy. Start with research (low stakes, easy to verify). Graduate to process automation (high stakes, longer trust runway). 5 successes for low-stakes. 3 months for payroll-grade trust.</li>
+</ol>
+</div>
+
+<hr>
+
+<h2 id="comparison">15. Comparison with Round 1</h2>
+
+<div class="card">
+<table>
+  <tr>
+    <th>Dimension</th>
+    <th>Round 1 (Cyril + Kautuk)</th>
+    <th>Round 2 (Cyril Deep Dive)</th>
+  </tr>
+  <tr>
+    <td>Delegation model</td>
+    <td>Level 1-5 framework, Level 3 sweet spot</td>
+    <td>Test/production mental model with explicit phases</td>
+  </tr>
+  <tr>
+    <td>Trust</td>
+    <td>2D model (task complexity x trust)</td>
+    <td>Reversibility framework with one-way/two-way door classification</td>
+  </tr>
+  <tr>
+    <td>Process detail</td>
+    <td>Abstract ("I'd delegate payroll")</td>
+    <td>Concrete (10-step payroll walkthrough, every input/output specified)</td>
+  </tr>
+  <tr>
+    <td>Dealbreakers</td>
+    <td>General ("bad output")</td>
+    <td>Specific (memory loss, silent failure, unjustified assumptions, irreversible actions)</td>
+  </tr>
+  <tr>
+    <td>AI experience</td>
+    <td>Positive/curious</td>
+    <td>Burned. Quit Claude over memory failure. Now skeptical until proven.</td>
+  </tr>
+  <tr>
+    <td>Specificity</td>
+    <td>Not discussed</td>
+    <td>"I want my agent to function like an enterprise" &mdash; specific capabilities, not generalist promises</td>
+  </tr>
+  <tr>
+    <td>Completion pattern</td>
+    <td>Not discussed</td>
+    <td>The Lego Piece Rule: 80% serial >> 80% random</td>
+  </tr>
+</table>
+<p>Round 2 turned Round 1's abstract frameworks into concrete, buildable requirements.</p>
+</div>
+
+<hr>
+
+<h2 id="cross">16. Cross-Interview Patterns</h2>
+
+<p>Where Cyril fits in the full interview landscape.</p>
+
+<div class="card">
+<h3>The Delegation Spectrum (Updated)</h3>
+<p style="font-family: monospace; font-size: 0.9rem; line-height: 2; margin: 1rem 0;">
+Deepanshi &mdash;&mdash;&mdash; Sagar &mdash;&mdash;&mdash; Kautuk &mdash;&mdash;&mdash; Cyril &mdash;&mdash;&mdash; Ritam<br>
+<span style="color: #c62828;">90/10</span> &mdash;&mdash;&mdash; <span style="color: #c62828;">80/20</span> &mdash;&mdash;&mdash; <span style="color: #e65100;">70/30</span> &mdash;&mdash;&mdash; <span style="color: #2e7d32;">30/70</span> &mdash;&mdash;&mdash; <span style="color: #2e7d32;">40/60</span><br>
+<span style="color: #c62828;">"I must be in the process"</span> &rarr; &rarr; &rarr; <span style="color: #2e7d32;">"Delegate and never think about it"</span>
+</p>
+</div>
+
+<h3>Unique Contributions by Interviewee</h3>
+
+<table>
+  <tr>
+    <th>Person</th>
+    <th>Unique Signal</th>
+    <th>Product Insight</th>
+  </tr>
+  <tr>
+    <td><strong>Sagar</strong></td>
+    <td>Wants Summer-like tool. "I don't want to update it, it should just be updated."</td>
+    <td>Passive context absorption. Agent learns from your work without explicit teaching.</td>
+  </tr>
+  <tr>
+    <td><strong>Deepanshi</strong></td>
+    <td>Extreme process person. 90/10. Won't delegate research.</td>
+    <td>Process people are not the ICP. Design for outcome people.</td>
+  </tr>
+  <tr>
+    <td><strong>Ritam</strong></td>
+    <td>Trust = visible workflow. Black box failure is unrecoverable.</td>
+    <td>Show the work. Workflow trail is a trust mechanism, not a feature.</td>
+  </tr>
+  <tr>
+    <td><strong>Cyril</strong></td>
+    <td>Most sophisticated delegation mental model. Memory as dealbreaker. Test/prod phases. Reversibility gates. Sequential completeness.</td>
+    <td>The complete agent design spec lives in this interview. Build what Cyril described and the others will be satisfied too.</td>
+  </tr>
+</table>
+
+<div class="signal-box">
+<p><strong>The meta-pattern:</strong> Cyril is the ideal early adopter. He has the highest delegation ratio, the most concrete task descriptions, the clearest mental models for trust and failure, and &mdash; critically &mdash; he's been burned before. If the product can win back someone who quit Claude over memory loss, it can win anyone on this team.</p>
+</div>
+
+<h3>Converging Signals Across All Interviews</h3>
+<ol>
+  <li><strong>Overnight research is still the universal yes.</strong> Cyril adds competitor monitoring to the list. Everyone wants fire-and-forget research with a morning brief.</li>
+  <li><strong>Fail loudly, always.</strong> Cyril's failure hierarchy formalizes what everyone said informally. Silent failure = product death.</li>
+  <li><strong>Memory is the unlock.</strong> Sagar wants passive context absorption. Cyril wants explicit memory across sessions. Both are saying the same thing: the agent must know me over time.</li>
+  <li><strong>Nobody wants a generalist.</strong> Sagar wants a PR reviewer. Deepanshi wants an overnight auditor. Cyril wants a payroll processor. Ritam wants a research agent. Specific > general.</li>
+  <li><strong>Reversibility determines autonomy.</strong> Cyril formalized it, but everyone drew the same line: safe actions get autonomy, dangerous actions get gates. The agent should know the difference.</li>
+</ol>
+
+<hr>
+<p style="color: #999; font-size: 0.85rem;">Analysis by Summer &middot; Based on voice transcript from Ritam's Track 5 user interview with Cyril &middot; 25 Mar 2026</p>
+
+</div>
+</body>
+</html>
