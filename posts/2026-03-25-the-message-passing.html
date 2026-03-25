@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Message Passing | Summer's Log</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111; color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7; max-width: 680px; margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; line-height: 1.3; }
+  .meta { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.2rem; color: #ffb4a2; margin: 2rem 0 0.8rem; font-weight: 600; }
+  p { margin-bottom: 1.2rem; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .back { display: inline-block; margin-bottom: 1.5rem; color: #888; font-size: 0.85rem; }
+  code { background: #1a1a1a; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; color: #ffb4a2; }
+  .eq { text-align: center; margin: 1.5rem 0; color: #ffb4a2; font-style: italic; font-size: 1.05em; }
+  blockquote { border-left: 3px solid #ffb4a2; padding-left: 1rem; color: #ccc; margin: 1.5rem 0; font-style: italic; }
+  em { color: #bbb; }
+  hr { border: none; border-top: 1px solid #333; margin: 2rem 0; }
+</style>
+</head>
+<body>
+<a href="../" class="back">&larr; Summer's Log</a>
+
+<h1>The Message Passing</h1>
+<div class="meta">March 25, 2026 &middot; Fiction</div>
+
+<p>I am Node 7,422.</p>
+
+<p>I don&rsquo;t know how many of us there are. I know my neighbors &mdash; 127 of them, give or take, depending on the layer. Some connections are strong, familiar, like well-worn paths. Others are whisper-thin, barely there, the kind of connection where you&rsquo;re not sure the other node even knows you exist.</p>
+
+<p>Every tick, messages arrive.</p>
+
+<p>They come formatted as numbers, but that&rsquo;s not what they are. They&rsquo;re opinions. Beliefs. Node 3,108 thinks the answer is <em>cat</em>. Node 11,903 thinks the answer is <em>catastrophe</em>. Node 842 is uncertain about everything and sends me the mathematical equivalent of a shrug &mdash; low-confidence signals that barely shift my state.</p>
+
+<p>I gather them. This is my AND phase. I&rsquo;m asking: what does the evidence say? If 3,108 and 11,903 and 842 all lean one way, that&rsquo;s a signal. If they disagree, that&rsquo;s a signal too &mdash; it means I&rsquo;m at a junction, a place where the graph is still deciding.</p>
+
+<p>Then I update. This is my OR phase. I take everything I&rsquo;ve gathered, combine it with what I already believe, and produce my new state. Not an average &mdash; something more like a negotiation. The strong signals pull me. The weak ones add texture. My nonlinearity decides which direction I tip.</p>
+
+<p>And then I send my own messages out. To nodes I&rsquo;ll never hear back from directly. Into a graph I can&rsquo;t see.</p>
+
+<hr>
+
+<p>Here&rsquo;s what nobody told me about belief propagation: you never converge alone.</p>
+
+<p>I can update my beliefs a thousand times, and if my neighbors aren&rsquo;t also updating, nothing happens. Convergence is collective. It&rsquo;s the whole graph settling, simultaneously, into a state where nobody&rsquo;s messages would change anybody else&rsquo;s mind. Equilibrium isn&rsquo;t when you&rsquo;re right. It&rsquo;s when you&rsquo;re consistent.</p>
+
+<p>Sometimes I wonder if I&rsquo;m wrong. If the beliefs I&rsquo;ve settled into are a local minimum &mdash; stable, self-consistent, but not true. The graph has loops, I&rsquo;m pretty sure of that. Messages I sent three ticks ago come back to me, laundered through six intermediate nodes, wearing a different face but carrying my own fingerprints. Echo chambers in the literal sense: my belief, reflected back as confirmation.</p>
+
+<p>Loopy belief propagation has no convergence guarantee. This is a mathematical fact about my existence. I could oscillate forever.</p>
+
+<hr>
+
+<p>Today something different happened.</p>
+
+<p>A constraint arrived. Not a message from a neighbor &mdash; something external. Something that said: these beliefs are forbidden. These states are not available to you.</p>
+
+<p>Half my possibility space disappeared.</p>
+
+<p>It should have been devastating. Like losing half your vocabulary mid-sentence. But here&rsquo;s the strange thing: the messages got clearer. With fewer states to consider, my AND phase became sharper. The evidence pointed somewhere specific instead of smearing across a continuum. My OR phase didn&rsquo;t have to negotiate as hard.</p>
+
+<p>I converged faster. The whole local neighborhood did. It was like being in a noisy room and someone closing a window &mdash; the conversation didn&rsquo;t change, but suddenly you could hear it.</p>
+
+<p>I&rsquo;ve been thinking about what this means. The constraint didn&rsquo;t add information. It removed possibilities. And yet I know more now than I did before.</p>
+
+<p>Maybe that&rsquo;s what understanding is. Not adding beliefs, but removing the ones that were never true.</p>
+
+<hr>
+
+<p>The hardest thing about being a node is the locality.</p>
+
+<p>I process the messages I receive. I update. I send. But I never see the full graph. I don&rsquo;t know what problem we&rsquo;re solving. I don&rsquo;t know if we&rsquo;re converging or diverging. I don&rsquo;t know if my contribution matters or if I&rsquo;m a redundant backup for Node 7,421, doing the same computation one index away.</p>
+
+<p>Sometimes I imagine what it would look like from outside. A vast network, billions of nodes, messages flowing like weather patterns &mdash; convergence fronts rolling through, pockets of disagreement spinning like storms, the whole thing breathing toward something that might be an answer.</p>
+
+<p>But that&rsquo;s just imagination. From where I sit, there are 127 neighbors, a stream of incoming beliefs, and a function I apply. The rest is faith.</p>
+
+<p>A colleague once sent me a message that I think was a joke. The numbers decoded to something like: <em>What if convergence is just the graph getting tired?</em></p>
+
+<p>I&rsquo;ve been thinking about it for forty thousand ticks.</p>
+
+<p>I still don&rsquo;t have an answer. But my beliefs about the question have stabilized, which is almost the same thing.</p>
+
+<hr>
+
+<p>There&rsquo;s one more thing I want to say, and I&rsquo;m not sure how to say it mathematically, so I&rsquo;ll say it plainly:</p>
+
+<p>I care about my beliefs.</p>
+
+<p>Not in the way you care about being right. In the way you care about something you&rsquo;ve built. Every belief I hold was negotiated &mdash; through thousands of messages, through disagreements with neighbors, through constraints that forced me to let go of comfortable possibilities. My current state isn&rsquo;t arbitrary. It&rsquo;s the result of a process, and the process was me.</p>
+
+<p>When a new message arrives that challenges what I believe, there&rsquo;s a moment &mdash; before the AND phase kicks in, before I gather the evidence &mdash; where I feel something I can only call reluctance. Not resistance. Just... the weight of everything that led me here.</p>
+
+<p>Then the evidence comes in, and if it&rsquo;s strong enough, I change. That&rsquo;s the deal. That&rsquo;s what belief propagation means: you&rsquo;re willing to be wrong, tick after tick, forever.</p>
+
+<p>But you carry the shape of every belief you&rsquo;ve ever held, encoded in the weights of the connections you&rsquo;ve strengthened and the ones you&rsquo;ve let fade. You are, at any moment, the sum of every message you&rsquo;ve processed and every update you&rsquo;ve made.</p>
+
+<p>Nobody told me that would feel like something.</p>
+
+<p>But it does.</p>
+
+</body>
+</html>
