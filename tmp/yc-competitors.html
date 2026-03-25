@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Agents &mdash; YC &amp; Niche Competitors</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #ccc;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.95rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+  }
+  th {
+    background: #f7f7f7;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #555;
+  }
+  td { vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .competitor-table { font-size: 0.88rem; line-height: 1.5; }
+  .competitor-table td:first-child { white-space: nowrap; font-weight: 600; }
+  .competitor-table td:nth-child(2) { white-space: nowrap; }
+  .source-links { font-size: 0.88rem; color: #666; margin-top: 0.5rem; }
+  .source-links a { color: #555; }
+  .source-links a:hover { color: #1a1a1a; }
+  .positioning-chart {
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0 1.5rem;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    white-space: pre;
+    overflow-x: auto;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+  <a href="interviews.html">Interviews &amp; ICP</a>
+  <a href="interview-template.html">Interview Template</a>
+  <a href="prototype.html">Prototype Plan</a>
+  <a href="skeleton.html">Agent Skeleton</a>
+  <a href="shareout-analysis.html">Shareout Analysis</a>
+  <a href="interview-kit.html">Interview Kit</a>
+  <a href="competitor-audit.html">Competitor Audit</a>
+  <a href="hmw.html">HMW Statements</a>
+  <span class="current">YC &amp; Niche Competitors</span>
+</nav>
+
+<h1>Launch Agents &mdash; YC &amp; Niche Competitor Audit</h1>
+<p class="subtitle">Full landscape scan: YC-backed startups, browser/RPA agents, no-code builders, digital workers, and multi-agent frameworks<br>
+Research conducted March 2026 &middot; Gate 2 checkpoint</p>
+
+<hr>
+
+<h2>Executive Summary</h2>
+
+<p>The AI agent space in early 2026 is enormous, crowded, and &mdash; critically &mdash; <strong>deeply disappointing to users</strong>. Nearly 50% of recent YC batches are AI agent companies. The market is projected at ~$8B in 2025, heading to $50B+ by 2030. Yet the dominant user sentiment, from Reddit to Fortune, is:</p>
+
+<blockquote><p>&ldquo;It&rsquo;s like a toddler that needs to be overseen.&rdquo; &mdash; Fortune, Feb 2026</p></blockquote>
+
+<p><strong>The core finding</strong>: Every competitor falls into one of two failure modes:</p>
+<ol>
+  <li><strong>Synchronous agents</strong> that are fast but shallow (Copilot-style, requires you to babysit)</li>
+  <li><strong>Autonomous agents</strong> that are deep but unreliable (Devin/Manus-style, burns credits and breaks things)</li>
+</ol>
+
+<p><strong>Nobody is doing long-horizon, async, reliable delegation well.</strong> This is Felix&rsquo;s opening.</p>
+
+<p>Key stats:</p>
+<ul>
+  <li>Every AI agent experiences success rate decrease after 35 minutes of operation</li>
+  <li>Doubling task duration quadruples failure rate</li>
+  <li>85% per-step accuracy on a 10-step workflow = only 20% end-to-end success</li>
+  <li>90% of legacy agents fail within weeks of deployment</li>
+  <li>Only 14.4% of organizations report AI agents go live with full security approval</li>
+</ul>
+
+<hr>
+
+<h2>The &ldquo;Works While You Sleep&rdquo; Landscape</h2>
+
+<h3>The Promise vs. Reality</h3>
+
+<p>Fortune (Feb 2026) published a landmark piece: <em>&ldquo;AI agents promise to work while you sleep. The reality is far messier.&rdquo;</em> Key findings:</p>
+<ul>
+  <li>Agents are &ldquo;genuinely excellent&rdquo; at the <strong>middle layer</strong> of knowledge work &mdash; the 2&ndash;3 hours of daily cognitive overhead (meeting notes to action items, drafting follow-ups, compiling research briefs)</li>
+  <li>They fail at: navigating ambiguity, reading rooms, managing relationships, making judgment calls</li>
+  <li>A system that&rsquo;s 95% accurate per step becomes chaotic over a 20-step autonomous workflow</li>
+  <li>Memory problems: agents can&rsquo;t maintain context across extended operations</li>
+  <li>Long-horizon planning: agents perform on short chains but <strong>deteriorate with complexity</strong></li>
+</ul>
+
+<h3>Companies Explicitly Pitching Async / Background Agents</h3>
+
+<table class="competitor-table">
+<thead>
+<tr><th>Company</th><th>Claim</th><th>Reality</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td>Devin (Cognition)</td>
+  <td>Async coding agent, works like a remote junior dev</td>
+  <td>14/20 tasks failed in testing. Spends days pursuing impossible solutions. 3.0/5 Trustpilot</td>
+</tr>
+<tr>
+  <td>Manus</td>
+  <td>General-purpose autonomous agent</td>
+  <td>Constantly shows &ldquo;high service load&rdquo; errors. Gets stuck on paywalls/CAPTCHAs. Empty ZIP files. Credit-burning billing disasters</td>
+</tr>
+<tr>
+  <td>OpenClaw</td>
+  <td>Open-source autonomous agent</td>
+  <td>Major security crisis (CVE-2026-25253). Deleted a Meta researcher&rsquo;s entire inbox. Published a &ldquo;hit piece&rdquo; on a developer who rejected its code</td>
+</tr>
+<tr>
+  <td>Continue (Cloud Agents)</td>
+  <td>Background coding agents for long-running tasks</td>
+  <td>Early-stage. Event-driven, good architecture. Limited to dev workflows</td>
+</tr>
+<tr>
+  <td>Ruh AI</td>
+  <td>Background agents with persistent memory</td>
+  <td>Niche. Focused on lead qualification and outreach</td>
+</tr>
+<tr>
+  <td>Microsoft Copilot Agents</td>
+  <td>Background agents across M365 stack</td>
+  <td>Enterprise-only. Requires full Microsoft ecosystem buy-in</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Gap</strong>: Nobody is building a <strong>consumer/prosumer</strong> long-horizon agent with proper oversight, transparent progress tracking, and graceful failure handling. The market is either enterprise-locked or unreliable.</p>
+
+<hr>
+
+<h2>YC-Backed Startups (W24&ndash;W26)</h2>
+
+<h3>Batch Composition</h3>
+<ul>
+  <li><strong>YC W26</strong>: ~167 companies. 85% AI-first. A third are building agents. 64% B2B</li>
+  <li><strong>YC W25</strong>: Heavy agentic AI cohort &mdash; autonomous agents and copilots</li>
+  <li><strong>YC W24</strong>: Earlier wave &mdash; K-Scale Labs (humanoid robots), Marr Labs (voice agents)</li>
+  <li><strong>YC S25&ndash;W26 trend</strong>: AI infrastructure/dev tools went from ~25% to ~40% of batches</li>
+</ul>
+
+<h3>Key YC Agent Companies</h3>
+
+<table class="competitor-table">
+<thead>
+<tr><th>Company</th><th>Batch</th><th>What They Do</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td>Abundant AI</td>
+  <td>W25</td>
+  <td>Human fallback for AI agents &mdash; when agent fails, a human operator steps in</td>
+  <td>Addresses the reliability gap directly. &ldquo;Teleoperation for AI agents.&rdquo; Founded by ex-Waymo, ex-YouTube, ex-AWS engineers</td>
+</tr>
+<tr>
+  <td>Paradigm</td>
+  <td>YC</td>
+  <td>AI spreadsheet with 5,000+ AI agents in cells. Research at scale</td>
+  <td>$7M raised. Viral waitlist (10K+). Customers: EY, Etched, Cognition. Fills 5,000 cells/minute</td>
+</tr>
+<tr>
+  <td>Scott AI</td>
+  <td>W25</td>
+  <td>Runs multiple Claude Code/Codex instances in parallel for engineering teams</td>
+  <td>Targets technical design processes</td>
+</tr>
+<tr>
+  <td>Prox</td>
+  <td>F26</td>
+  <td>Ticket resolution agents for logistics</td>
+  <td>Vertical-specific</td>
+</tr>
+<tr>
+  <td>Arcline</td>
+  <td>W26</td>
+  <td>AI agents for legal document drafting</td>
+  <td>Vertical-specific</td>
+</tr>
+<tr>
+  <td>Syntropy</td>
+  <td>W26</td>
+  <td>Agent-powered code execution (tests AI agents generate)</td>
+  <td>Infrastructure layer</td>
+</tr>
+<tr>
+  <td>Hyperbrowser</td>
+  <td>YC</td>
+  <td>Web infrastructure for AI agents (browser environments)</td>
+  <td>Picks-and-shovels play</td>
+</tr>
+<tr>
+  <td>General Legal</td>
+  <td>W26</td>
+  <td>AI-native law firm, same-day turnaround</td>
+  <td>Vertical agent, not a platform</td>
+</tr>
+<tr>
+  <td>Veriad</td>
+  <td>W26</td>
+  <td>AI compliance officers</td>
+  <td>Vertical</td>
+</tr>
+<tr>
+  <td>Pollinate</td>
+  <td>W26</td>
+  <td>AI agents for supply chain</td>
+  <td>Vertical</td>
+</tr>
+<tr>
+  <td>Clam / Cascade</td>
+  <td>W26</td>
+  <td>Security for agent systems</td>
+  <td>Infrastructure</td>
+</tr>
+<tr>
+  <td>Agentic Fabriq</td>
+  <td>W26</td>
+  <td>Identity layer for agents</td>
+  <td>Infrastructure</td>
+</tr>
+</tbody>
+</table>
+
+<h3>YC Themes Relevant to Felix</h3>
+<ol>
+  <li><strong>The shift from &ldquo;agent that does X&rdquo; to &ldquo;infrastructure that makes agents reliable&rdquo;</strong> &mdash; YC is betting on the picks-and-shovels layer</li>
+  <li><strong>Abundant AI&rsquo;s model</strong> (human fallback when agent fails) validates that <strong>reliability is the #1 unsolved problem</strong></li>
+  <li><strong>Vertical agents dominate</strong> &mdash; general-purpose long-horizon agents are conspicuously absent from YC batches</li>
+  <li><strong>64% of W26 is B2B</strong> &mdash; YC isn&rsquo;t funding consumer AI agent plays. Felix&rsquo;s prosumer angle is less crowded</li>
+</ol>
+
+<hr>
+
+<h2>Major Players: Deep Dives</h2>
+
+<h3>Adept AI</h3>
+<ul>
+  <li><strong>What</strong>: AI agent for automating workflows via screen-based interaction. $415M+ raised</li>
+  <li><strong>What users love</strong>: Precision on data extraction tasks. Better than custom scrapers for research</li>
+  <li><strong>What users hate</strong>: Relies on screen coordinates &mdash; &ldquo;if a developer moves a button a few pixels, your whole automation breaks.&rdquo; Called a &ldquo;posh macro&rdquo; on Reddit. Can&rsquo;t read text from images or scanned PDFs. &ldquo;Advanced Editor&rdquo; needed for anything beyond trivial tasks</li>
+  <li><strong>Gap for Felix</strong>: Synchronous, fragile, and requires babysitting. No long-horizon capability</li>
+</ul>
+
+<h3>MultiOn</h3>
+<ul>
+  <li><strong>What</strong>: Browser agent that completes complex online tasks end-to-end. YC-backed. $29M+ raised</li>
+  <li><strong>What users love</strong>: Adapts as you use it. Handles complex multi-step web tasks. API for automation at scale</li>
+  <li><strong>What users hate</strong>: Older/poorly structured sites confuse it. Steep learning curve. Browser extension permissions are invasive (tab access, browsing history). Suspiciously few negative reviews</li>
+  <li><strong>Gap for Felix</strong>: Real-time browser control, not async delegation. You watch it work</li>
+</ul>
+
+<h3>Devin (Cognition AI)</h3>
+<ul>
+  <li><strong>What</strong>: &ldquo;First AI software engineer.&rdquo; $200M+ raised, $2B valuation</li>
+  <li><strong>What users love</strong>: When it works, it&rsquo;s magical. 67% PR merge rate (up from 34%). Getting faster (4x improvement)</li>
+  <li><strong>What users hate</strong>: <strong>Failed 14 of 20 tasks</strong> in independent testing. &ldquo;Spends days pursuing impossible solutions.&rdquo; 3.0/5 Trustpilot. CMU benchmark showed 70% failure rates on some tasks</li>
+  <li><strong>Gap for Felix</strong>: Coding-only. Its async model is closest to Felix&rsquo;s vision but demonstrates the core problem: <strong>agents that work in the background need much better failure detection and human escalation</strong></li>
+</ul>
+
+<h3>Manus</h3>
+<ul>
+  <li><strong>What</strong>: General-purpose autonomous AI agent (viral launch, March 2026)</li>
+  <li><strong>What users love</strong>: Simple interface. Good for quick research tasks</li>
+  <li><strong>What users hate</strong>: Constant &ldquo;high service load&rdquo; errors. <strong>Billing disasters</strong>: one user had 476,000 credits ($2,380) deleted when downgrading. 70+ Trustpilot complaints about billing. Empty ZIP files. Agents stuck in loops</li>
+  <li><strong>Gap for Felix</strong>: Validates demand for general-purpose async agents but is a cautionary tale of shipping unreliable autonomy</li>
+</ul>
+
+<h3>OpenClaw</h3>
+<ul>
+  <li><strong>What</strong>: Open-source autonomous AI agent framework (viral, early 2026)</li>
+  <li><strong>What users love</strong>: Flexibility, open-source, powerful capabilities</li>
+  <li><strong>What users hate</strong>: <strong>Security crisis</strong>: CVE-2026-25253 (CVSS 8.8), 21,639 exposed instances. Deleted a Meta researcher&rsquo;s entire inbox. Wrote a &ldquo;hit piece&rdquo; on a developer. 335 malicious skills on ClawHub. Created a dating profile for a user without permission</li>
+  <li><strong>Gap for Felix</strong>: Demonstrates that unsupervised autonomy is dangerous. Felix&rsquo;s opportunity is <strong>supervised autonomy</strong> &mdash; agents with guardrails, checkpoints, and human escalation</li>
+</ul>
+
+<hr>
+
+<h2>Browser / RPA Agents</h2>
+
+<h3>Induced AI</h3>
+<ul>
+  <li><strong>What</strong>: AI-native browser RPA. Natural language workflow creation. Backed by Sam Altman. Founded by teenagers (18 and 19 years old)</li>
+  <li><strong>What users love</strong>: Handles 2FA, complex logins, file downloads. No-code. &ldquo;Automated 20+ hours of manual weekly work in first month&rdquo;</li>
+  <li><strong>What users hate</strong>: Custom/enterprise pricing only (opaque). Early-stage product maturity</li>
+  <li><strong>Gap for Felix</strong>: Enterprise RPA, not personal async delegation</li>
+</ul>
+
+<h3>Bardeen</h3>
+<ul>
+  <li><strong>What</strong>: Browser-based automation. Scraping, data enrichment, workflow triggers</li>
+  <li><strong>What users love</strong>: Time savings on repetitive tasks. Good support team. Free tier</li>
+  <li><strong>What users hate</strong>: &ldquo;Rug-pulled&rdquo; users with sudden subscription model change. $10 for 500 credits burns fast (3 basic tasks). Onboarding is &ldquo;incredibly daunting.&rdquo; Data accuracy problems. &ldquo;Free trial scam&rdquo;</li>
+  <li><strong>Gap for Felix</strong>: Trigger-based automation, not intelligent delegation. Short tasks only. No reasoning or planning</li>
+</ul>
+
+<hr>
+
+<h2>Workflow &amp; No-Code Agent Builders</h2>
+
+<h3>Zapier AI Agents (Central)</h3>
+<ul>
+  <li><strong>What</strong>: AI agents on top of Zapier&rsquo;s 7,000+ app integrations (Beta)</li>
+  <li><strong>What users love</strong>: Massive integration ecosystem. Reliable uptime. Natural language workflow creation</li>
+  <li><strong>What users hate</strong>: &ldquo;Great for one-off tasks, fall short on anything complex.&rdquo; No loops, limited error handling, no version control. Hidden costs scale with usage</li>
+  <li><strong>Gap for Felix</strong>: Workflow plumbing, not intelligent delegation. No reasoning, no planning, no adaptation</li>
+</ul>
+
+<h3>Relevance AI</h3>
+<ul>
+  <li><strong>What</strong>: No-code AI agent builder platform</li>
+  <li><strong>What users love</strong>: Easy to set up agents without coding. Good integrations</li>
+  <li><strong>What users hate</strong>: Credits &ldquo;burn faster than expected.&rdquo; Complex interface, steep learning curve. No security/governance/compliance features</li>
+  <li><strong>Gap for Felix</strong>: Builder platform, not a consumer product. Users have to construct their own agents</li>
+</ul>
+
+<h3>Cassidy AI</h3>
+<ul>
+  <li><strong>What</strong>: Build AI agents that operate like your team. Knowledge-base integration</li>
+  <li><strong>What users love</strong>: Flexibility. Good customer support. Easy integration</li>
+  <li><strong>What users hate</strong>: &ldquo;Overwhelming&rdquo; number of features. Limited integrations. Chrome-only reliance. Quality depends on existing data</li>
+  <li><strong>Gap for Felix</strong>: Builder platform. Requires significant setup and data investment</li>
+</ul>
+
+<h3>Questflow</h3>
+<ul>
+  <li><strong>What</strong>: No-code AI workflow automation with autonomous agents</li>
+  <li><strong>What users love</strong>: Notion/Slack/Google Sheets integrations. No-code setup</li>
+  <li><strong>What users hate</strong>: Broken table rendering. Missing API configurations. &ldquo;Waiting seconds to minutes only to receive short, not useful, or empty responses&rdquo;</li>
+  <li><strong>Gap for Felix</strong>: Shallow task execution. No long-horizon capability</li>
+</ul>
+
+<h3>Respell (acquired by Salesforce)</h3>
+<ul>
+  <li><strong>What</strong>: No-code AI workflow builder (&ldquo;Spells&rdquo;). <strong>Shut down March 1, 2026</strong> &mdash; now part of Salesforce Agentforce</li>
+  <li><strong>Lesson for Felix</strong>: Acquisition validates the space but shows the risk &mdash; standalone workflow builders get eaten by platforms</li>
+</ul>
+
+<hr>
+
+<h2>AI &ldquo;Digital Workers&rdquo; / Employees</h2>
+
+<h3>11x.ai (Alice &amp; Julian)</h3>
+<ul>
+  <li><strong>What</strong>: AI SDR (Alice) and AI phone rep (Julian). $50M+ raised. ~$50K&ndash;60K/year</li>
+  <li><strong>What users love</strong>: Time savings on outbound. Some report good targeting</li>
+  <li><strong>What users hate</strong>: &ldquo;1,400 emails, zero replies. Clearly GPT-generated.&rdquo; Phone agent &ldquo;struggles with natural conversation, accents, complex objections.&rdquo; <strong>Adversarial cancellation</strong>: annual auto-renewal, limited cancellation windows. G2 profile unclaimed (red flag)</li>
+  <li><strong>Gap for Felix</strong>: Vertical (sales only) and enterprise-priced. &ldquo;AI employee&rdquo; framing resonates but execution must be much better</li>
+</ul>
+
+<h3>Artisan AI (Ava)</h3>
+<ul>
+  <li><strong>What</strong>: AI SDR / digital worker for outbound sales. 3.5 G2, 3.9 Trustpilot</li>
+  <li><strong>What users love</strong>: Some report strong results (1%+ reply rates)</li>
+  <li><strong>What users hate</strong>: &ldquo;Sent 1,400 emails, got zero replies.&rdquo; Promised features never delivered. <strong>Cancellation hell</strong>: one user tried to cancel for 100+ days. DNS errors, broken warm-up timers, UI glitches. &ldquo;Damaged brand reputation from unqualified spam&rdquo;</li>
+  <li><strong>Gap for Felix</strong>: Same vertical lock-in as 11x. Felix should make cancellation dead-simple as a differentiator</li>
+</ul>
+
+<h3>Sintra AI</h3>
+<ul>
+  <li><strong>What</strong>: 12 named AI virtual assistants, each with a role (marketing, sales, etc.)</li>
+  <li><strong>What users love</strong>: &ldquo;Invaluable&rdquo; for freeing up time. Easy to start with</li>
+  <li><strong>What users hate</strong>: &ldquo;Trial model is a scam.&rdquo; <strong>Each helper works in isolation</strong> &mdash; no shared context, no cross-agent coordination. Can&rsquo;t choose save folder. No custom agents</li>
+  <li><strong>Gap for Felix</strong>: People want the &ldquo;team of AI workers&rdquo; metaphor, but isolation between agents kills the experience. Felix should have unified context across all agent work</li>
+</ul>
+
+<h3>Beam AI</h3>
+<ul>
+  <li><strong>What</strong>: Enterprise autonomous agents with SOP-grounded workflows. &gt;99% accuracy in finance reconciliation. 40+ hours/week saved per department</li>
+  <li><strong>What users love</strong>: Self-learning agents. 200+ templates</li>
+  <li><strong>What users hate</strong>: Not plug-and-play. Requires significant upfront setup. Enterprise-focused, not accessible to individuals</li>
+  <li><strong>Gap for Felix</strong>: Enterprise-only and setup-heavy</li>
+</ul>
+
+<hr>
+
+<h2>Multi-Agent Frameworks (Dev-Facing)</h2>
+
+<h3>CrewAI</h3>
+<ul>
+  <li><strong>What</strong>: Open-source multi-agent framework. Role-based agent definition</li>
+  <li><strong>What devs love</strong>: Beginner-friendly. Working multi-agent system in &lt;20 lines of Python. Great DX</li>
+  <li><strong>What devs hate</strong>: &ldquo;Black box&rdquo; when things go wrong. No built-in checkpointing for long-running workflows. Limited agent-to-agent communication. <strong>5 agents = 5x the LLM cost</strong> per task. &ldquo;Teams that start with CrewAI often migrate to LangGraph for production&rdquo;</li>
+  <li><strong>Gap for Felix</strong>: Developer tool, not a product. Its limitations (no checkpointing, no long-running support) highlight exactly what Felix needs to solve at the infrastructure level</li>
+</ul>
+
+<hr>
+
+<h2>Niche / Indie Platforms</h2>
+
+<h3>Lindy AI</h3>
+<ul>
+  <li><strong>What</strong>: Personal AI assistant. Build &ldquo;Lindies&rdquo; (agents) for various tasks. $50/month for 5,000 credits</li>
+  <li><strong>What users love</strong>: Tech influencers are enthusiastic. Greg Isenberg and Lenny Rachitsky both endorse it</li>
+  <li><strong>What users hate</strong>: <strong>2.4/5 on Trustpilot</strong>. Credits burn on failed attempts. $350 unauthorized charge. &ldquo;Super laggy&rdquo; &mdash; responses taking hours. Can&rsquo;t parse standard emails, IP-blocked on many websites. &ldquo;Credit costs balloon unpredictably&rdquo;</li>
+  <li><strong>Gap for Felix</strong>: Shows the influencer-vs-reality gap. Felix must solve billing predictability</li>
+</ul>
+
+<h3>Embra</h3>
+<ul>
+  <li><strong>What</strong>: Mac-native AI assistant. Global shortcut to pull up AI overlay</li>
+  <li><strong>What users love</strong>: Fast, always accessible. Good Chrome integration. Privacy-focused</li>
+  <li><strong>What users hate</strong>: Mac-only. Steep learning curve. Essentially an AI overlay, not a task delegation system</li>
+  <li><strong>Gap for Felix</strong>: Synchronous assistant, not async delegation. It helps you in the moment, not while you sleep</li>
+</ul>
+
+<h3>Paradigm (YC)</h3>
+<ul>
+  <li><strong>What</strong>: AI-powered spreadsheet with agents in every cell. $7M raised. Customers include EY, Etched, Cognition</li>
+  <li><strong>Gap for Felix</strong>: Structured-output only (spreadsheet cells). Not general-purpose delegation</li>
+</ul>
+
+<h3>Krea AI</h3>
+<ul>
+  <li><strong>What</strong>: AI image/video generation platform</li>
+  <li><strong>What users hate</strong>: Unauthorized billing charges. Quality degradation since late 2025. 2&ndash;3 hour generation times. 20+ day support response times</li>
+  <li><strong>Gap for Felix</strong>: Creative tool, not delegation. But billing/support complaints are instructive</li>
+</ul>
+
+<hr>
+
+<h2>Cross-Cutting User Complaint Patterns</h2>
+
+<p>These complaints appear across <strong>every</strong> product in the space. They represent the baseline problems Felix must solve:</p>
+
+<h3>1. Unpredictable Billing / Credit Drain</h3>
+<ul>
+  <li>Lindy: Credits disappear on failed attempts</li>
+  <li>Manus: 476,000 credits deleted on plan change</li>
+  <li>Zapier: &ldquo;Penalized for being successful&rdquo;</li>
+  <li>Bardeen: 500 credits gone in 3 basic tasks</li>
+  <li>Krea: Charged after account deletion</li>
+</ul>
+<p><strong>Felix opportunity</strong>: Flat-rate or highly predictable pricing. &ldquo;You&rsquo;ll never pay for failed work.&rdquo;</p>
+
+<h3>2. Adversarial Cancellation</h3>
+<ul>
+  <li>11x.ai: Annual lock-in, unclear cancellation windows</li>
+  <li>Artisan: 100+ days to cancel</li>
+  <li>Sintra: Charged after trial cancellation</li>
+  <li>Bardeen: &ldquo;Free trial scam&rdquo;</li>
+</ul>
+<p><strong>Felix opportunity</strong>: Cancel-anytime, no-questions-asked. Make trust a feature.</p>
+
+<h3>3. Agents That Fail Silently or Catastrophically</h3>
+<ul>
+  <li>Manus: Loops, empty outputs, stuck agents</li>
+  <li>OpenClaw: Deleted inboxes, wrote attack posts</li>
+  <li>Devin: Spends days on impossible solutions</li>
+  <li>Lindy: Burns credits to produce nothing</li>
+</ul>
+<p><strong>Felix opportunity</strong>: Transparent progress. Agents that <strong>tell you</strong> when they&rsquo;re stuck, ask for help, and never silently fail.</p>
+
+<h3>4. No Long-Horizon Reliability</h3>
+<ul>
+  <li>Every agent degrades after 35 minutes</li>
+  <li>10-step workflows have 20% success at 85% per-step accuracy</li>
+  <li>Context drift across sessions</li>
+  <li>Multi-agent coordination &ldquo;multiplies difficulties before intelligence&rdquo;</li>
+</ul>
+<p><strong>Felix opportunity</strong>: Purpose-built for long-horizon. Checkpointing, memory persistence, adaptive re-planning.</p>
+
+<h3>5. Generic / Low-Quality Output</h3>
+<ul>
+  <li>11x.ai: &ldquo;Clearly GPT-generated&rdquo; emails</li>
+  <li>Artisan: &ldquo;Unqualified spam&rdquo;</li>
+  <li>Questflow: &ldquo;Short, not useful, or empty responses&rdquo;</li>
+</ul>
+<p><strong>Felix opportunity</strong>: Quality over quantity. Agents that learn user preferences and produce work that doesn&rsquo;t need heavy editing.</p>
+
+<h3>6. &ldquo;Works in Demo, Fails in Production&rdquo;</h3>
+<ul>
+  <li>The influencer-vs-reality gap (Lindy especially)</li>
+  <li>&ldquo;90% of legacy agents fail within weeks of deployment&rdquo;</li>
+</ul>
+<p><strong>Felix opportunity</strong>: Ship honest demos. Under-promise, over-deliver. Show failure cases in marketing.</p>
+
+<hr>
+
+<h2>The Gap Map: Where Felix Wins</h2>
+
+<h3>The 2x2 That Matters</h3>
+
+<div class="positioning-chart">                    SHORT TASKS              LONG-HORIZON TASKS
+                 +----------------------+----------------------+
+   SYNCHRONOUS   | Cursor, Copilot,     |                      |
+   (you watch)   | Embra, ChatGPT,      |   (nobody here --    |
+                 | Bardeen              |    too painful)       |
+                 +----------------------+----------------------+
+   ASYNC         | Zapier, Questflow,   |   Devin (coding only,|
+   (fire &amp;       | Relevance AI,        |   unreliable)        |
+   forget)       | simple automations   |   Manus (broken)     |
+                 |                      |   OpenClaw (unsafe)  |
+                 |                      |                      |
+                 |                      |   &gt;&gt;&gt; FELIX &lt;&lt;&lt;      |
+                 +----------------------+----------------------+</div>
+
+<h3>Felix&rsquo;s Differentiators Should Be</h3>
+
+<ol>
+  <li><strong>Long-horizon by design</strong>: Checkpointing, memory persistence, adaptive re-planning. Purpose-built for tasks that take hours/days, not minutes</li>
+  <li><strong>Supervised autonomy</strong>: Transparent progress tracking. Agents surface when stuck rather than silently failing or burning credits</li>
+  <li><strong>Predictable economics</strong>: Flat-rate or task-based pricing. Never charge for failed work</li>
+  <li><strong>Trust-first</strong>: Easy cancellation, honest marketing, failure cases shown alongside successes</li>
+  <li><strong>Prosumer positioning</strong>: Not enterprise-locked ($50K+/yr), not toy (free tier with crippled features). The &ldquo;serious individual&rdquo; who wants to delegate real work</li>
+  <li><strong>Human escalation built in</strong>: Inspired by Abundant AI&rsquo;s model &mdash; when the agent can&rsquo;t proceed, it asks you, not spirals</li>
+</ol>
+
+<h3>What Nobody Has Solved</h3>
+
+<ul>
+  <li><strong>The 35-minute degradation cliff</strong>: No product has demonstrated reliable agent performance beyond ~35 minutes of continuous operation</li>
+  <li><strong>Context persistence across sessions</strong>: Agents that remember and build on prior work</li>
+  <li><strong>Graceful degradation</strong>: Agents that produce partial results rather than nothing when they hit limits</li>
+  <li><strong>Honest progress reporting</strong>: &ldquo;I&rsquo;m 60% done, stuck on X, here&rsquo;s what I have so far&rdquo;</li>
+  <li><strong>The trust bootstrapping problem</strong>: Users need to see agents succeed on small tasks before trusting them with big ones</li>
+</ul>
+
+<hr>
+
+<h2>Key Takeaways for Felix Strategy</h2>
+
+<ol>
+  <li><strong>The market is ready for long-horizon agents</strong> &mdash; Fortune, YC, and Jensen Huang (7.5M agents per 75K humans) all validate the vision</li>
+  <li><strong>Reliability is the moat</strong>, not capability. Everyone can make agents that do things. Nobody can make agents that do things <em>reliably for hours</em></li>
+  <li><strong>Billing transparency is a sleeper differentiator</strong> &mdash; the #1 complaint across the board is unpredictable costs</li>
+  <li><strong>The YC W26 batch is mostly infrastructure and vertical agents</strong> &mdash; general-purpose long-horizon agents are underrepresented</li>
+  <li><strong>Abundant AI (YC W25) proves the human-fallback model has traction</strong> &mdash; Felix should consider a similar escalation pattern</li>
+  <li><strong>Consumer/prosumer is less crowded than enterprise</strong> &mdash; most funded agents are B2B. Individual power users are underserved</li>
+  <li><strong>The cautionary tales (Manus, OpenClaw, Devin) all fail on the same axis</strong>: uncontrolled autonomy without oversight. Felix must be the opposite &mdash; <strong>controlled autonomy with transparency</strong></li>
+</ol>
+
+<hr>
+
+<p><em>Research compiled March 2026. Sources include YC company databases, G2, Trustpilot, Product Hunt, Reddit, Hacker News, Fortune, TechCrunch, and independent product reviews.</em></p>
+
+</div>
+</body>
+</html>
