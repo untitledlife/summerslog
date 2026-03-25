@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Agents &mdash; HMW Statements</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #e0e0e0;
+    background: #111;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #333;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #888; text-decoration: none; }
+  nav a:hover { color: #e0e0e0; text-decoration: underline; }
+  nav .current { color: #e0e0e0; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; color: #fff; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; color: #fff; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; color: #fff; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #333; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #555;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #aaa;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; color: #fff; }
+  em { font-style: italic; color: #bbb; }
+  .subtitle { color: #888; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #e0e0e0; }
+
+  .hmw-card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.15s;
+  }
+  .hmw-card:hover { border-color: #444; }
+  .hmw-card .hmw-number {
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.35rem;
+  }
+  .hmw-card .hmw-text {
+    font-size: 1.05rem;
+    color: #e0e0e0;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+  .hmw-card .hmw-source {
+    font-size: 0.85rem;
+    color: #777;
+    font-style: italic;
+  }
+
+  .top-pick {
+    border-left: 3px solid #4a9eff;
+    border-color: #2a3a4a;
+    background: #141c24;
+  }
+  .top-pick .hmw-number { color: #4a9eff; }
+
+  .pick-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #4a9eff;
+    background: rgba(74, 158, 255, 0.1);
+    border: 1px solid rgba(74, 158, 255, 0.25);
+    border-radius: 4px;
+    padding: 0.15rem 0.5rem;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+
+  .reasoning {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #2a2a2a;
+  }
+
+  .gap-box {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+  .gap-box .gap-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #666;
+    margin-bottom: 0.75rem;
+  }
+  .gap-box p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #ccc;
+  }
+  .gap-box.alt { border-color: #333; background: #161616; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+  <a href="interviews.html">Interviews &amp; ICP</a>
+  <a href="interview-template.html">Interview Template</a>
+  <a href="prototype.html">Prototype Plan</a>
+  <a href="skeleton.html">Agent Skeleton</a>
+  <a href="shareout-analysis.html">Shareout Analysis</a>
+  <a href="interview-kit.html">Interview Kit</a>
+  <a href="competitor-audit.html">Competitor Audit</a>
+  <span class="current">HMW Statements</span>
+</nav>
+
+<h1>How Might We &mdash; 12 Statements</h1>
+<p class="subtitle">Sprint Day 2 &mdash; Gate 2 deliverable (2.4) &middot; Derived from competitor audit, user interviews, and research</p>
+
+<hr>
+
+<h2>All 12 HMW Statements</h2>
+
+<div class="hmw-card top-pick">
+  <div class="hmw-number">HMW #1 <span class="pick-badge">Top Pick #1</span></div>
+  <div class="hmw-text">How might we let users delegate tasks that require judgment without forcing them to write detailed instructions?</div>
+  <div class="hmw-source">Source: H10 (specification bottleneck), Deepanshi interview (won't delegate research), Cyril's L3 sweet spot</div>
+  <div class="reasoning"><strong>Why this is #1:</strong> This IS the specification bottleneck. Every competitor either requires a detailed workflow (Lindy, Notion) or fails at ambiguity (Devin, Manus). Solving this = solving Level 3.</div>
+</div>
+
+<div class="hmw-card top-pick">
+  <div class="hmw-number">HMW #2 <span class="pick-badge">Top Pick #2</span></div>
+  <div class="hmw-text">How might we make the agent's work visible enough to build trust, without requiring the user to watch it work in real time?</div>
+  <div class="hmw-source">Source: H3 (visible trail > real-time control), competitor failure pattern #2 (silent failure), Kautuk's "80% done" threshold</div>
+  <div class="reasoning"><strong>Why this is #2:</strong> Trust is THE adoption barrier. The audit trail / morning briefing is Felix's structural advantage over every competitor that fails silently.</div>
+</div>
+
+<div class="hmw-card">
+  <div class="hmw-number">HMW #3</div>
+  <div class="hmw-text">How might we price the product so users never feel anxious about experimenting?</div>
+  <div class="hmw-source">Source: Competitor pattern #1 (credit anxiety kills experimentation &mdash; Lindy, Manus, Notion), Athena's flat-rate model works psychologically</div>
+</div>
+
+<div class="hmw-card">
+  <div class="hmw-number">HMW #4</div>
+  <div class="hmw-text">How might we handle failure loudly enough that users trust us, without overwhelming them with noise?</div>
+  <div class="hmw-source">Source: H9 (silent failure is worse than visible failure), Cursor's silent code reversion, Manus empty ZIPs</div>
+</div>
+
+<div class="hmw-card top-pick">
+  <div class="hmw-number">HMW #5 <span class="pick-badge">Top Pick #3</span></div>
+  <div class="hmw-text">How might we bridge the gap between &ldquo;$0 chatbots&rdquo; and &ldquo;$3,000/month human EAs&rdquo; for non-technical professionals?</div>
+  <div class="hmw-source">Source: Market gap analysis &mdash; the empty quadrant (mid-cost, high-autonomy, judgment-based)</div>
+  <div class="reasoning"><strong>Why this is #3:</strong> This is the market positioning. Every other HMW is a feature; this one is the business.</div>
+</div>
+
+<div class="hmw-card">
+  <div class="hmw-number">HMW #6</div>
+  <div class="hmw-text">How might we help users start with simple delegation and naturally progress to trusting the agent with harder tasks?</div>
+  <div class="hmw-source">Source: H7 (progressive autonomy), Cyril's Level 1&ndash;5 framework (users start at L1 and move up)</div>
+</div>
+
+<div class="hmw-card">
+  <div class="hmw-number">HMW #7</div>
+  <div class="hmw-text">How might we frame overnight agent work as &ldquo;what you would have stayed up doing&rdquo; rather than &ldquo;a new AI feature&rdquo;?</div>
+  <div class="hmw-source">Source: H2 (real competitor is "I'll do it myself at 2 AM"), H8 (loss framing > gain framing)</div>
+</div>
+
+<div class="hmw-card">
+  <div class="hmw-number">HMW #8</div>
+  <div class="hmw-text">How might we let users delegate across different domains (research, ops, content) without building a separate workflow for each?</div>
+  <div class="hmw-source">Source: Ritam's L1 critique of hardcoded pipelines, Lindy/Notion = workflow builders not agents, Felix's toolbox approach</div>
+</div>
+
+<div class="hmw-card">
+  <div class="hmw-number">HMW #9</div>
+  <div class="hmw-text">How might we preserve user identity in areas where doing the work = being themselves, while still saving them time elsewhere?</div>
+  <div class="hmw-source">Source: H6 (identity erosion), Deepanshi won't delegate research ("makes me smarter"), anti-ICP persona</div>
+</div>
+
+<div class="hmw-card">
+  <div class="hmw-number">HMW #10</div>
+  <div class="hmw-text">How might we make the agent's judgment traceable so users can calibrate trust over time?</div>
+  <div class="hmw-source">Source: Competitor pattern #5 (no recourse when things go wrong), H3 (audit trail), Cyril's 2D model (task complexity &times; trust)</div>
+</div>
+
+<div class="hmw-card">
+  <div class="hmw-number">HMW #11</div>
+  <div class="hmw-text">How might we deliver &ldquo;I told someone, I came back, it was done&rdquo; at a price point 10&ndash;50x cheaper than a human EA?</div>
+  <div class="hmw-source">Source: Athena = gold standard UX at $36K/year, all three interviewees described this dream state</div>
+</div>
+
+<div class="hmw-card">
+  <div class="hmw-number">HMW #12</div>
+  <div class="hmw-text">How might we avoid the demo-to-reality gap that killed trust for Devin, Rabbit R1, and Humane AI Pin?</div>
+  <div class="hmw-source">Source: Competitor pattern #3 (demo vs reality), Devin HN backlash, Rabbit 95% abandonment</div>
+</div>
+
+<hr>
+
+<h2>The Gap Statement</h2>
+
+<div class="gap-box">
+  <div class="gap-label">Primary &mdash; Section 2.2</div>
+  <p><strong>No product today lets a non-technical professional delegate a multi-hour, judgment-requiring task to an AI agent that works asynchronously, uses its own judgment on process decisions, and delivers a completed result with a clear audit trail &mdash; at a price point between $0 (chatbots) and $3,000/month (human EAs).</strong></p>
+</div>
+
+<div class="gap-box alt">
+  <div class="gap-label">Alternative &mdash; shorter</div>
+  <p><strong>The gap between &ldquo;I'll just do it myself at 2 AM&rdquo; and &ldquo;I told someone, I came back, it was done&rdquo; has no affordable AI solution.</strong></p>
+</div>
+
+</div>
+</body>
+</html>
