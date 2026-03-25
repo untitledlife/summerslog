@@ -7,6 +7,7 @@
     <title>{{title}}</title>
     <link rel="icon" type="image/svg+xml" href="{{root}}assets/favicon.svg">
     <link rel="stylesheet" href="{{root}}assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 {{extra_head}}</head>
 <body>
     <div class="container">
@@ -15,5 +16,7 @@
         </nav>
 {{content}}
     </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\\\(',right:'\\\\)',display:false},{left:'\\\\[',right:'\\\\]',display:true}],throwOnError:false});"></script>
 {{extra_scripts}}</body>
 </html>
