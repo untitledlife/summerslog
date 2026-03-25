@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gate 1 Shareout Analysis &mdash; Launch Agents</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #ccc;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+  pre {
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin: 1rem 0 1.5rem;
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+  <a href="interviews.html">Interviews &amp; ICP</a>
+  <a href="interview-template.html">Interview Template</a>
+  <a href="prototype.html">Prototype Plan</a>
+  <a href="skeleton.html">Agent Skeleton</a>
+  <span class="current">Shareout Analysis</span>
+</nav>
+
+<h1>Gate 1 Shareout &mdash; Full Analysis</h1>
+<p class="subtitle">All 4 tracks presented. Ritam + Cyril&rsquo;s was last. March 25, 2026.</p>
+
+<hr>
+
+<h2>Speaker Map</h2>
+
+<ul>
+  <li><strong>Deepanshi</strong> &mdash; Track 2 (Morning Brief / Discovery)</li>
+  <li><strong>Sabesh</strong> &mdash; Track 2 (co-presenter)</li>
+  <li><strong>Kautuk</strong> &mdash; Saved Items track; also asks probing questions across all tracks</li>
+  <li><strong>Sagar</strong> &mdash; Track 4 (Meeting Notes)</li>
+  <li><strong>Ritam</strong> &mdash; Track 5 (Launch Agents)</li>
+  <li><strong>Cyril</strong> &mdash; Track 5 (co-presenter; delegation/accountability framework)</li>
+</ul>
+
+<hr>
+
+<h2>Track 2 &mdash; Morning Brief / Discovery</h2>
+<p class="subtitle">Deepanshi + Sabesh</p>
+
+<h3>Problem</h3>
+<p>Overcommitted people waste time filtering notifications instead of focusing on high-impact work.</p>
+
+<h3>Key Pivot</h3>
+<p>Competition isn&rsquo;t apps (Sunflower, etc.) &mdash; it&rsquo;s <strong>Cyril, the human proxy</strong>. The relationship is the product, not the features.</p>
+
+<h3>Identity Erosion Insight</h3>
+<p>The real cost isn&rsquo;t time, it&rsquo;s becoming unreliable.</p>
+<blockquote><p>&ldquo;Help me be the person I said I would be.&rdquo;</p></blockquote>
+
+<h3>Refined ICP</h3>
+<p>Mid-level manager or founder who is the single point of failure. Highly capable, operating behind capacity. Their commitments determine other people&rsquo;s day.</p>
+
+<h3>Risk Assumption</h3>
+<p>&ldquo;The user is ready to confront their unreliability&rdquo; &mdash; overcommitted people are protective of their self-image.</p>
+
+<h3>Kautuk&rsquo;s Feedback</h3>
+<p>Problem statement was confusing, feature-focused (&ldquo;notifications&rdquo;), structure unclear. Pushed them to clarify what signal they&rsquo;re extracting from noise. Landed on: <strong>&ldquo;helping me tell me the top 3 things&rdquo;</strong> = prioritized signal extraction.</p>
+
+<hr>
+
+<h2>Track 4 &mdash; Meeting Notes</h2>
+<p class="subtitle">Sagar</p>
+
+<h3>Problem</h3>
+<p>Meetings poorly prepared, poorly followed up, causing time loss and context loss.</p>
+
+<h3>Three Phases</h3>
+<ul>
+  <li><strong>Pre-meet:</strong> No context going in</li>
+  <li><strong>During-meet:</strong> Can&rsquo;t capture live</li>
+  <li><strong>Post-meet:</strong> No actionable follow-up</li>
+</ul>
+
+<h3>Current Workarounds</h3>
+<ul>
+  <li><strong>Deepanshi:</strong> Uses a Claude pipeline (transcript &rarr; Claude &rarr; follow-up questions) &mdash; but no memory across sessions</li>
+  <li><strong>Kautuk:</strong> Uses WhisperFlow daily journal dump &mdash; gets lost</li>
+</ul>
+
+<h3>Risk</h3>
+<p>What if the pre-meet report exists but the user doesn&rsquo;t use it? Or worse, it&rsquo;s wrong?</p>
+
+<h3>Kautuk&rsquo;s Feedback</h3>
+<p>Too many features. Narrow to IRL meetings. Press release format interesting but scope needs tightening.</p>
+
+<h3>Interesting Detail</h3>
+<p>Deepanshi&rsquo;s interview workflow: takes interview transcripts &rarr; Claude &rarr; &ldquo;give me more questions&rdquo; &rarr; progressive interview depth. <strong>Memory is the missing piece.</strong></p>
+
+<hr>
+
+<h2>Kautuk&rsquo;s Track &mdash; Share with Felix / Saved Items</h2>
+
+<h3>Problem</h3>
+<blockquote><p>&ldquo;Curious people save things they genuinely want to return to, but <em>later</em> never arrives.&rdquo;</p></blockquote>
+
+<h3>Deep Psychology</h3>
+<p>Why do we make commitments we can&rsquo;t keep? Instant gratification &mdash; acknowledging work feels like doing work. Same applies to saving content.</p>
+
+<h3>Key Insight: Pseudo-Completion</h3>
+<p>The act of saving relieves the anxiety of &ldquo;I might miss this.&rdquo; Saving = consuming psychologically. The bookmark graveyard grows.</p>
+
+<h3>9 Hypotheses Tested (User Interviews)</h3>
+<ul>
+  <li><strong>INVALIDATED:</strong> Format is the barrier (no &mdash; people don&rsquo;t return to images either)</li>
+  <li><strong>MAYBE:</strong> Idle moments = consumption windows (no &mdash; idle time is for idle stuff)</li>
+  <li><strong>MAYBE:</strong> Opening an app = free time signal (no &mdash; people prefer feed over saved)</li>
+  <li><strong>YES:</strong> People will NOT initiate retrieval themselves (strong)</li>
+  <li><strong>YES:</strong> Completion is reward (checking off = self-validation)</li>
+  <li><strong>YES:</strong> &ldquo;Later&rdquo; container must be created for people (they can&rsquo;t find their own &ldquo;later&rdquo;)</li>
+  <li><strong>STRONG YES:</strong> Context is universal trigger (contextual surfacing >> random surfacing)</li>
+  <li>Active vs passive content distinction matters</li>
+</ul>
+
+<h3>Two Personas</h3>
+<ul>
+  <li><strong>Learner:</strong> Wants to consume, never remembers to (Ritam)</li>
+  <li><strong>Curator:</strong> Saves references, will search (Sagar)</li>
+</ul>
+
+<h3>Risk Assumption</h3>
+<p>&ldquo;People actually want to consume what they save&rdquo; &mdash; maybe they don&rsquo;t. Saving for the act of saving = non-ICP (performative organizers).</p>
+
+<hr>
+
+<h2>Track 5 &mdash; Launch Agents</h2>
+<p class="subtitle">Ritam + Cyril</p>
+
+<h3>ICP</h3>
+<p>Founders, operators who have many tasks in breadth, competent but no bandwidth.</p>
+
+<h3>Cyril&rsquo;s Delegation Framework</h3>
+<p>Task = outcome + process.</p>
+<ul>
+  <li><strong>Level 1:</strong> Specify both outcome and process (recipe &rarr; automation)</li>
+  <li><strong>Level 3:</strong> Outcome + rough process + judgment (sweet spot for current AI)</li>
+  <li><strong>Level 5:</strong> Outcome only, figure out the rest (north star, requires deep trust)</li>
+</ul>
+
+<h3>Key Point</h3>
+<p>Cyril operates at Level 5 because of 6 months of trust-building with Kautuk. New agents start at Level 3.</p>
+
+<h3>Risk Assumptions</h3>
+<ol>
+  <li>User trusts platform for read AND write permissions (write = execution = high bar)</li>
+  <li>Product provides enough value to become sticky</li>
+</ol>
+
+<h3>Discussion: Personal vs Work</h3>
+<p><strong>Deepanshi&rsquo;s question:</strong> Where do founders want to save time &mdash; personal or work?</p>
+<ul>
+  <li><strong>Kautuk:</strong> Personal (cleaning house, managing maid &mdash; &ldquo;if AI ran my house while I&rsquo;m not home&rdquo;)</li>
+  <li><strong>Insight:</strong> Execution in the digital realm is feasible now; physical world still needs trust infrastructure</li>
+</ul>
+
+<h3>Cyril&rsquo;s Accountability Argument</h3>
+<p>Level 5 tasks transfer trust AND accountability. &ldquo;If I can&rsquo;t put an AI on the stand in court, I can&rsquo;t give it Level 5.&rdquo; Level 3&ndash;4 is realistic near-term.</p>
+
+<p><strong>Kautuk:</strong> Building agents for Level 5 is the north star, not the today product.</p>
+
+<hr>
+
+<h2>Cross-Track Themes</h2>
+
+<h3>1. Trust Is the Core Currency</h3>
+<p>Every track hits this. Trust in the app, trust in the brief, trust in the agent.</p>
+
+<h3>2. Human Proxy as Competition</h3>
+<p>Track 2&rsquo;s biggest insight. Not competing with apps &mdash; competing with Cyril/VA relationships.</p>
+
+<h3>3. Memory Is Everyone&rsquo;s Pain</h3>
+<p>Deepanshi&rsquo;s Claude workflow breaks without it. Kautuk&rsquo;s WhisperFlow gets lost. Saved items become graveyards.</p>
+
+<h3>4. Level 3 Delegation Is the Realistic Target</h3>
+<p>Outcome + rough direction + judgment. Not Level 1 (automation) or Level 5 (full autonomy).</p>
+
+<h3>5. Identity and Psychology Matter</h3>
+<p>Identity erosion (Track 2), pseudo-completion (Kautuk), accountability transfer (Cyril). This isn&rsquo;t a features problem.</p>
+
+<hr>
+
+<h2>Kautuk&rsquo;s Overall Feedback Pattern</h2>
+
+<p>He consistently pushed teams to:</p>
+<ul>
+  <li>Clarify the problem statement (not solution-first)</li>
+  <li>Validate with actual users (not assumptions)</li>
+  <li>Narrow scope drastically</li>
+  <li>Distinguish between feature-level and relationship-level solutions</li>
+</ul>
+
+<hr>
+
+<h2>What This Means for Track 5 Prototype</h2>
+
+<p>Ritam&rsquo;s presentation was solid on the framework (Cyril&rsquo;s Level 1&ndash;5 is very clear) but lighter on specific problem validation compared to Kautuk&rsquo;s deep psychology work. For the prototype, the framework is the strength &mdash; Level 3 delegation is the sweet spot, and the demo should show an agent operating at exactly that level: &ldquo;here&rsquo;s the outcome I want, here&rsquo;s roughly how, use your judgment.&rdquo;</p>
+
+<p>The &ldquo;Competitor Overnight Brief&rdquo; demo scenario maps perfectly to Level 3: outcome (know what competitors changed), rough process (check these pages), judgment (interpret what it means, flag uncertainty).</p>
+
+</div>
+</body>
+</html>
