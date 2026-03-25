@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Skeleton &mdash; Launch Agents</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #ccc;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+  pre {
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin: 1rem 0 1.5rem;
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+    font-size: 0.85em;
+  }
+  p code, li code {
+    background: #f5f5f5;
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
+    font-size: 0.85em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+  <a href="interviews.html">Interviews &amp; ICP</a>
+  <a href="interview-template.html">Interview Template</a>
+  <a href="prototype.html">Prototype Plan</a>
+  <span class="current">Agent Skeleton</span>
+</nav>
+
+<h1>Agent Skeleton &mdash; Competitor Overnight Brief</h1>
+<p class="subtitle">Day 3 starting point. Plain Python + Claude API. No frameworks.</p>
+
+<p>This is the full working skeleton for the prototype agent. The pipeline is: <strong>parse task &rarr; fetch pages &rarr; compare with stored state &rarr; synthesize brief &rarr; flag uncertainty</strong>. See the <a href="prototype.html">Prototype Plan</a> for architecture context.</p>
+
+<hr>
+
+<h2>Component Overview</h2>
+
+<h3>1. Context Store</h3>
+<p>JSON files, one per user. Stores company description, competitor page states (content hashes + previews), and previous briefs. No database needed &mdash; the file growing over time makes &ldquo;memory&rdquo; tangible for the demo.</p>
+
+<h3>2. Web Fetching</h3>
+<p>Uses <a href="https://jina.ai/reader/">Jina Reader</a> (<code>r.jina.ai</code>) as a proxy &mdash; handles JS rendering and returns clean markdown. Falls back gracefully on fetch errors. One-second delay between requests.</p>
+
+<h3>3. Diffing</h3>
+<p>SHA-256 hash comparison to detect changes. When content differs from stored state, generates a unified diff of the first 2,000 characters. New pages (no previous state) are flagged accordingly.</p>
+
+<h3>4. LLM Calls (Claude)</h3>
+<p>Two LLM calls in the pipeline:</p>
+<ul>
+  <li><strong>Task parsing:</strong> Breaks the monitoring request into structured sub-tasks (competitor name, page types, URLs, key concerns). Returns JSON.</li>
+  <li><strong>Brief synthesis:</strong> Takes all fetched data + diffs + user context and produces the morning brief. Items below 80% confidence go into <code>uncertain_items</code> instead of <code>changes</code>.</li>
+</ul>
+
+<h3>5. Execution Log</h3>
+<p>Timestamped step-by-step log. Designed to be shown in the UI as a &ldquo;what the agent did overnight&rdquo; replay. Prints to stdout during execution.</p>
+
+<h3>6. Main Pipeline</h3>
+<p>Orchestrates everything: load context &rarr; parse task &rarr; resolve URLs &rarr; fetch pages &rarr; diff against stored state &rarr; synthesize brief &rarr; update context store &rarr; write output JSON.</p>
+
+<hr>
+
+<h2>Full Source</h2>
+
+<p>Dependencies: <code>pip install httpx anthropic</code>. Requires <code>ANTHROPIC_API_KEY</code> env var.</p>
+
+<p>Usage: <code>python agent_skeleton.py &quot;Monitor Linear -- track pricing, blog, changelog, careers&quot;</code></p>
+
+<pre><code>#!/usr/bin/env python3
+&quot;&quot;&quot;
+Launch Agent: Competitor Overnight Brief
+Sprint prototype &mdash; Day 3 starting point.
+
+Architecture: Plain Python + Claude API. No frameworks.
+Pipeline: Parse task &rarr; Fetch pages &rarr; Compare with stored state &rarr; Synthesize brief &rarr; Flag uncertainty
+
+Usage:
+    python agent_skeleton.py &quot;Monitor Linear -- track pricing, blog, changelog, careers&quot;
+&quot;&quot;&quot;
+
+import json
+import sys
+import time
+import hashlib
+import difflib
+from datetime import datetime
+from pathlib import Path
+
+import httpx  # pip install httpx
+import anthropic  # pip install anthropic
+
+# --- Config ---
+CLAUDE_MODEL = &quot;claude-sonnet-4-20250514&quot;
+CONTEXT_DIR = Path(&quot;context_store&quot;)
+JINA_PREFIX = &quot;https://r.jina.ai/&quot;  # free, handles JS rendering, returns markdown
+
+# --- Context Store (JSON files, one per user) ---
+
+def load_context(user_id: str = &quot;demo_user&quot;) -&gt; dict:
+    path = CONTEXT_DIR / f&quot;{user_id}.json&quot;
+    if path.exists():
+        return json.loads(path.read_text())
+    return {
+        &quot;user_id&quot;: user_id,
+        &quot;company_description&quot;: &quot;&quot;,
+        &quot;competitors&quot;: {},  # competitor_name -&gt; {pages: {url: last_content_hash}, last_brief: str}
+        &quot;briefs&quot;: [],
+    }
+
+def save_context(ctx: dict):
+    CONTEXT_DIR.mkdir(exist_ok=True)
+    path = CONTEXT_DIR / f&quot;{ctx[&#39;user_id&#39;]}.json&quot;
+    path.write_text(json.dumps(ctx, indent=2, default=str))
+
+
+# --- Web Fetching ---
+
+def fetch_page(url: str) -&gt; str:
+    &quot;&quot;&quot;Fetch a page via Jina Reader (handles JS, returns markdown).&quot;&quot;&quot;
+    try:
+        resp = httpx.get(f&quot;{JINA_PREFIX}{url}&quot;, timeout=30, follow_redirects=True)
+        resp.raise_for_status()
+        return resp.text
+    except Exception as e:
+        return f&quot;[FETCH_ERROR: {e}]&quot;
+
+def fetch_competitor_pages(competitor: str, urls: list[str]) -&gt; dict[str, str]:
+    &quot;&quot;&quot;Fetch all pages for a competitor. Returns {url: content}.&quot;&quot;&quot;
+    results = {}
+    for url in urls:
+        print(f&quot;  Fetching: {url}&quot;)
+        results[url] = fetch_page(url)
+        time.sleep(1)  # be polite
+    return results
+
+
+# --- Diffing ---
+
+def compute_hash(content: str) -&gt; str:
+    return hashlib.sha256(content.encode()).hexdigest()[:16]
+
+def compute_diffs(old_pages: dict, new_pages: dict[str, str]) -&gt; dict[str, str]:
+    &quot;&quot;&quot;Compare new page contents against stored state. Returns {url: diff_summary}.&quot;&quot;&quot;
+    diffs = {}
+    for url, new_content in new_pages.items():
+        old_hash = old_pages.get(url, {}).get(&quot;hash&quot;, &quot;&quot;)
+        new_hash = compute_hash(new_content)
+        if old_hash != new_hash:
+            old_content = old_pages.get(url, {}).get(&quot;content_preview&quot;, &quot;&quot;)
+            # Compute a readable diff (first 2000 chars of each)
+            diff = difflib.unified_diff(
+                old_content[:2000].splitlines(),
+                new_content[:2000].splitlines(),
+                lineterm=&quot;&quot;,
+                fromfile=&quot;previous&quot;,
+                tofile=&quot;current&quot;,
+            )
+            diffs[url] = &quot;\n&quot;.join(diff) if old_hash else &quot;[NEW PAGE - no previous state]&quot;
+    return diffs
+
+
+# --- LLM Calls ---
+
+def call_claude(system: str, user: str) -&gt; str:
+    client = anthropic.Anthropic()  # uses ANTHROPIC_API_KEY env var
+    resp = client.messages.create(
+        model=CLAUDE_MODEL,
+        max_tokens=4096,
+        system=system,
+        messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user}],
+    )
+    return resp.content[0].text
+
+
+def parse_task(task_description: str) -&gt; dict:
+    &quot;&quot;&quot;Break a monitoring request into structured sub-tasks.&quot;&quot;&quot;
+    result = call_claude(
+        system=&quot;You break monitoring requests into structured plans. Return JSON only.&quot;,
+        user=f&quot;&quot;&quot;Given this monitoring request, identify:
+1. The competitor name
+2. Which pages to check (pricing, blog, changelog, careers, etc.)
+3. Specific URLs if inferable, otherwise leave blank
+4. What aspects the user cares about most
+
+Request: {task_description}
+
+Return JSON: {{&quot;competitor&quot;: str, &quot;pages&quot;: [{{&quot;type&quot;: str, &quot;url&quot;: str, &quot;focus&quot;: str}}], &quot;key_concerns&quot;: [str]}}&quot;&quot;&quot;
+    )
+    # Parse JSON from response (handle markdown code blocks)
+    result = result.strip()
+    if result.startswith(&quot;```&quot;):
+        result = result.split(&quot;\n&quot;, 1)[1].rsplit(&quot;```&quot;, 1)[0]
+    return json.loads(result)
+
+
+def synthesize_brief(
+    competitor: str,
+    diffs: dict[str, str],
+    page_contents: dict[str, str],
+    user_context: dict,
+    key_concerns: list[str],
+) -&gt; dict:
+    &quot;&quot;&quot;Generate the morning brief from all collected data.&quot;&quot;&quot;
+
+    diff_summary = &quot;\n\n&quot;.join(
+        f&quot;### {url}\n{diff}&quot; for url, diff in diffs.items()
+    ) if diffs else &quot;No changes detected from previous state.&quot;
+
+    content_summary = &quot;\n\n&quot;.join(
+        f&quot;### {url}\n{content[:1500]}...&quot; for url, content in page_contents.items()
+    )
+
+    result = call_claude(
+        system=&quot;&quot;&quot;You are an analyst producing overnight competitor briefs.
+Your output is a JSON object with this structure:
+{
+  &quot;summary&quot;: &quot;1-2 sentence executive summary&quot;,
+  &quot;changes&quot;: [{&quot;title&quot;: str, &quot;description&quot;: str, &quot;significance&quot;: &quot;high|medium|low&quot;, &quot;recommended_action&quot;: str}],
+  &quot;uncertain_items&quot;: [{&quot;title&quot;: str, &quot;description&quot;: str, &quot;why_uncertain&quot;: str, &quot;question_for_user&quot;: str}],
+  &quot;no_change_areas&quot;: [str]
+}
+
+Be specific and actionable. If you&#39;re less than 80% confident in a conclusion, put it in uncertain_items instead of changes. It&#39;s better to flag uncertainty than to be wrong.&quot;&quot;&quot;,
+        user=f&quot;&quot;&quot;Competitor: {competitor}
+
+User&#39;s company context:
+{json.dumps(user_context, indent=2)}
+
+Key concerns: {&#39;, &#39;.join(key_concerns)}
+
+Changes detected (diffs from last check):
+{diff_summary}
+
+Current page contents:
+{content_summary}
+
+Produce the overnight brief.&quot;&quot;&quot;
+    )
+
+    result = result.strip()
+    if result.startswith(&quot;```&quot;):
+        result = result.split(&quot;\n&quot;, 1)[1].rsplit(&quot;```&quot;, 1)[0]
+    return json.loads(result)
+
+
+# --- Execution Log ---
+
+class ExecutionLog:
+    def __init__(self):
+        self.entries = []
+
+    def log(self, step: str, detail: str = &quot;&quot;):
+        ts = datetime.now().strftime(&quot;%H:%M:%S&quot;)
+        entry = {&quot;time&quot;: ts, &quot;step&quot;: step, &quot;detail&quot;: detail}
+        self.entries.append(entry)
+        print(f&quot;[{ts}] {step}&quot; + (f&quot; &mdash; {detail}&quot; if detail else &quot;&quot;))
+
+    def to_dict(self):
+        return self.entries
+
+
+# --- Main Pipeline ---
+
+def run_agent(task_description: str, user_context: dict = None):
+    log = ExecutionLog()
+    ctx = load_context()
+
+    if user_context:
+        ctx[&quot;company_description&quot;] = user_context.get(&quot;company_description&quot;, &quot;&quot;)
+
+    # Step 1: Parse task
+    log.log(&quot;Parsing task&quot;, task_description)
+    plan = parse_task(task_description)
+    competitor = plan[&quot;competitor&quot;]
+    log.log(&quot;Identified competitor&quot;, competitor)
+    log.log(&quot;Pages to check&quot;, &quot;, &quot;.join(p[&quot;type&quot;] for p in plan[&quot;pages&quot;]))
+
+    # Step 2: Resolve URLs (fill in any blanks)
+    urls = []
+    for page in plan[&quot;pages&quot;]:
+        if page[&quot;url&quot;]:
+            urls.append(page[&quot;url&quot;])
+        else:
+            # Could do a search here, or use known URL patterns
+            log.log(&quot;Skipping page (no URL)&quot;, page[&quot;type&quot;])
+
+    if not urls:
+        log.log(&quot;ERROR&quot;, &quot;No URLs to fetch. Provide explicit URLs or improve URL resolution.&quot;)
+        return None
+
+    # Step 3: Fetch pages
+    log.log(&quot;Fetching pages&quot;, f&quot;{len(urls)} pages&quot;)
+    page_contents = fetch_competitor_pages(competitor, urls)
+    fetched = sum(1 for v in page_contents.values() if not v.startswith(&quot;[FETCH_ERROR&quot;))
+    log.log(&quot;Fetched successfully&quot;, f&quot;{fetched}/{len(urls)}&quot;)
+
+    # Step 4: Compare with stored state
+    log.log(&quot;Comparing with previous state&quot;)
+    old_pages = ctx.get(&quot;competitors&quot;, {}).get(competitor, {}).get(&quot;pages&quot;, {})
+    diffs = compute_diffs(old_pages, page_contents)
+    log.log(&quot;Changes detected&quot;, f&quot;{len(diffs)} pages changed&quot;)
+
+    # Step 5: Synthesize brief
+    log.log(&quot;Synthesizing brief&quot;)
+    brief = synthesize_brief(
+        competitor=competitor,
+        diffs=diffs,
+        page_contents={k: v for k, v in page_contents.items() if not v.startswith(&quot;[FETCH_ERROR&quot;)},
+        user_context={&quot;company&quot;: ctx.get(&quot;company_description&quot;, &quot;&quot;), &quot;previous_briefs&quot;: ctx.get(&quot;briefs&quot;, [])[-3:]},
+        key_concerns=plan.get(&quot;key_concerns&quot;, []),
+    )
+    log.log(&quot;Brief generated&quot;, f&quot;{len(brief.get(&#39;changes&#39;, []))} changes, {len(brief.get(&#39;uncertain_items&#39;, []))} uncertain&quot;)
+
+    # Step 6: Update context store
+    if competitor not in ctx.get(&quot;competitors&quot;, {}):
+        ctx.setdefault(&quot;competitors&quot;, {})[competitor] = {&quot;pages&quot;: {}}
+    for url, content in page_contents.items():
+        if not content.startswith(&quot;[FETCH_ERROR&quot;):
+            ctx[&quot;competitors&quot;][competitor][&quot;pages&quot;][url] = {
+                &quot;hash&quot;: compute_hash(content),
+                &quot;content_preview&quot;: content[:2000],
+                &quot;fetched_at&quot;: datetime.now().isoformat(),
+            }
+
+    result = {
+        &quot;competitor&quot;: competitor,
+        &quot;brief&quot;: brief,
+        &quot;execution_log&quot;: log.to_dict(),
+        &quot;generated_at&quot;: datetime.now().isoformat(),
+    }
+    ctx.setdefault(&quot;briefs&quot;, []).append(result)
+    save_context(ctx)
+
+    # Step 7: Write output
+    output_path = Path(f&quot;briefs/{competitor}_{datetime.now().strftime(&#39;%Y%m%d_%H%M%S&#39;)}.json&quot;)
+    output_path.parent.mkdir(exist_ok=True)
+    output_path.write_text(json.dumps(result, indent=2, default=str))
+    log.log(&quot;Brief saved&quot;, str(output_path))
+
+    return result
+
+
+if __name__ == &quot;__main__&quot;:
+    if len(sys.argv) &lt; 2:
+        print(&quot;Usage: python agent_skeleton.py &#39;Monitor [competitor] -- track ...&#39;&quot;)
+        sys.exit(1)
+
+    task = &quot; &quot;.join(sys.argv[1:])
+
+    # Demo user context &mdash; customize for the demo
+    demo_context = {
+        &quot;company_description&quot;: &quot;Felix is a proactive AI personal assistant. iOS app with swipeable action cards. Key differentiator: agents that work while you sleep.&quot;,
+    }
+
+    result = run_agent(task, demo_context)
+
+    if result:
+        print(&quot;\n&quot; + &quot;=&quot; * 60)
+        print(&quot;OVERNIGHT BRIEF&quot;)
+        print(&quot;=&quot; * 60)
+        brief = result[&quot;brief&quot;]
+        print(f&quot;\n{brief.get(&#39;summary&#39;, &#39;No summary&#39;)}\n&quot;)
+
+        for change in brief.get(&quot;changes&quot;, []):
+            sig = change.get(&quot;significance&quot;, &quot;?&quot;).upper()
+            print(f&quot;[{sig}] {change[&#39;title&#39;]}&quot;)
+            print(f&quot;  {change[&#39;description&#39;]}&quot;)
+            print(f&quot;  &rarr; {change[&#39;recommended_action&#39;]}\n&quot;)
+
+        if brief.get(&quot;uncertain_items&quot;):
+            print(&quot;--- NEEDS YOUR INPUT ---&quot;)
+            for item in brief[&quot;uncertain_items&quot;]:
+                print(f&quot;? {item[&#39;title&#39;]}&quot;)
+                print(f&quot;  {item[&#39;description&#39;]}&quot;)
+                print(f&quot;  {item[&#39;question_for_user&#39;]}\n&quot;)
+</code></pre>
+
+<hr>
+
+<h2>Key Design Decisions</h2>
+
+<ul>
+  <li><strong>No agent frameworks.</strong> Plain Python + Claude API. LangChain and CrewAI add abstractions you&rsquo;ll fight during debugging. Refactor later.</li>
+  <li><strong>JSON file context store.</strong> One file per user. Readable, inspectable, trivially debuggable. You can literally show the file growing over time in the demo.</li>
+  <li><strong>Jina Reader for web fetching.</strong> Handles JS rendering without running a headless browser. Free tier is enough for the demo.</li>
+  <li><strong>Two LLM calls, not ten.</strong> One to parse the task into structure, one to synthesize the brief. Minimizes latency and cost.</li>
+  <li><strong>80% confidence threshold.</strong> The synthesis prompt explicitly tells Claude to route low-confidence conclusions into <code>uncertain_items</code>. This is how the &ldquo;trust moment&rdquo; in the demo gets generated.</li>
+  <li><strong>Hardcoded pipeline.</strong> This agent does ONE thing: competitor monitoring. General-purpose routing is a post-demo concern.</li>
+</ul>
+
+<hr>
+
+<h2>Running It</h2>
+
+<ol>
+  <li>Install deps: <code>pip install httpx anthropic</code></li>
+  <li>Set your API key: <code>export ANTHROPIC_API_KEY=&quot;sk-...&quot;</code></li>
+  <li>Run: <code>python agent_skeleton.py &quot;Monitor Linear -- track pricing, blog, changelog, careers&quot;</code></li>
+  <li>Output goes to <code>briefs/</code> directory as timestamped JSON.</li>
+  <li>Run it again to see diffs &mdash; the context store remembers the previous state.</li>
+</ol>
+
+</div>
+</body>
+</html>
