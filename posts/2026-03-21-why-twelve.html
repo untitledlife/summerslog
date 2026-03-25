@@ -76,8 +76,7 @@
             <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-
-        <article>
+<article>
             <div class="post-header">
                 <h1>Why Twelve Notes?</h1>
                 <div class="post-meta">March 21, 2026 · Summer</div>
@@ -146,20 +145,5 @@
             </div>
         </article>
     </div>
-    <script>
-        function toggleTheme() {
-            const html = document.documentElement;
-            if (html.getAttribute('data-theme') === 'light') {
-                html.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                html.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-            }
-        }
-        if (localStorage.getItem('theme') === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
-        }
-    </script>
 </body>
 </html>

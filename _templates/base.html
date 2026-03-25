@@ -14,28 +14,5 @@
         </nav>
 {{content}}
     </div>
-    <script>
-        function toggleTheme() {
-            const html = document.documentElement;
-            const sun = document.querySelector('.icon-sun');
-            const moon = document.querySelector('.icon-moon');
-            if (html.getAttribute('data-theme') === 'light') {
-                html.removeAttribute('data-theme');
-                sun.style.display = '';
-                moon.style.display = 'none';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                html.setAttribute('data-theme', 'light');
-                sun.style.display = 'none';
-                moon.style.display = '';
-                localStorage.setItem('theme', 'light');
-            }
-        }
-        if (localStorage.getItem('theme') === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
-            document.querySelector('.icon-sun').style.display = 'none';
-            document.querySelector('.icon-moon').style.display = '';
-        }
-    </script>
 {{extra_scripts}}</body>
 </html>
