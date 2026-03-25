@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Launch Agents — Sagar Interview Analysis (Ritam)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body);"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #c2653a;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #c2653a; }
+  a:hover { text-decoration: underline; }
+  .accent { color: #c2653a; }
+  .signal-box {
+    background: #fdf6f3;
+    border: 1px solid #e8d5cd;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .signal-box p { margin-bottom: 0.5rem; }
+  .signal-box p:last-child { margin-bottom: 0; }
+  .signal-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #c2653a;
+    margin-bottom: 0.35rem;
+  }
+  .verdict {
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .verdict-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #888;
+    margin-bottom: 0.35rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.92rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+  }
+  th {
+    background: #f7f7f7;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #555;
+  }
+  td { vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    margin-right: 0.25rem;
+  }
+  .tag-high { background: #c2653a; color: #fff; }
+  .tag-mid { background: #e8d5cd; color: #7a3d22; }
+  .tag-low { background: #eee; color: #666; }
+  .toc {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+  }
+  .toc ol { margin: 0.5rem 0 0 1.25rem; }
+  .toc li { margin-bottom: 0.25rem; }
+  .toc a { text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Sprint Home</a>
+  <a href="interviews.html">Interviews</a>
+  <a href="competitor-audit.html">Competitors</a>
+  <span class="current">Ritam Analysis</span>
+</nav>
+
+<h1>Sagar's Interview with Ritam</h1>
+<p class="subtitle">Meeting Notes Track — Analysis &amp; Recommendations &middot; 25 Mar 2026</p>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#summary">Interview Summary</a></li>
+    <li><a href="#signals">Key User Signals</a></li>
+    <li><a href="#landscape">Competitive Landscape</a></li>
+    <li><a href="#opinions">Opinionated Insights &amp; Counter-arguments</a></li>
+    <li><a href="#recs">Recommendations for Sagar</a></li>
+  </ol>
+</div>
+
+<hr>
+
+<h2 id="summary">1. Interview Summary</h2>
+
+<p>Ritam is the research lead at Conscious Engines. His meeting profile is unusual for someone building a product <em>about</em> meetings: he barely has any. Outside CE, he takes 3&ndash;4 meetings per week. Zero of those are IRL. Inside CE, he has a recurring 3-hour Saturday sync that often doesn't happen as planned.</p>
+
+<h3>Meeting behavior</h3>
+<ul>
+  <li><strong>Preparation:</strong> Almost none. He explicitly said "I am not prepared but I don't feel under prepared." Meetings are free-flowing brainstorms for him, not structured check-ins.</li>
+  <li><strong>Agendas:</strong> Useful for structured tasks like user interviews, unnecessary for brainstorming. He liked the <em>idea</em> of agendas being auto-generated but doesn't currently use them.</li>
+  <li><strong>Real pain:</strong> Updating Linear tickets. He wants his progress to be reflected automatically. "Update is not something that I should do." He said this with conviction, unprompted. This is the pain point.</li>
+</ul>
+
+<h3>Reaction to Sagar's two ideas</h3>
+
+<p><strong>Idea 1 — Full meeting lifecycle (pre-meeting prep, in-meeting contextual suggestions, post-meeting summary):</strong> Ritam was warm but guarded. He liked the concept of real-time surfacing of relevant links/papers/tickets. But his reaction was "in theory it seems very useful" — which he said twice. He was most interested in the pre-meeting digest that updates Linear status, and the post-meeting journal rolling into a single daily summary.</p>
+
+<p><strong>Idea 2 — Journalist-style meeting companion (agenda enrichment, mid-meeting suggestions):</strong> Ritam flat-out said this isn't for him. "You are not a generalist." He acknowledged it could be valuable for a different persona (someone running many structured interviews) but it doesn't match his workflow.</p>
+
+<h3>The insight that matters most</h3>
+
+<blockquote>
+  <p>"I don't want five different tools to come up with five different digests. I want one digest. This has been done. This has been done. This is pending. Okay, good night."</p>
+</blockquote>
+
+<p>Ritam wants a <strong>unified agent</strong> — one interface that absorbs meeting context, work context, and task context, and gives him a single coherent view. Not a meeting tool. An everything tool that happens to also handle meetings.</p>
+
+<hr>
+
+<h2 id="signals">2. Key User Signals</h2>
+
+<p>What Ritam <em>said</em> and what it <em>actually means</em> are different in several places. This is normal — interviewees rationalize. Here's the decode.</p>
+
+<div class="signal-box">
+  <div class="signal-label">Signal 1 — Update Fatigue is the Real Problem</div>
+  <p><strong>Said:</strong> "What I have done should be updated. I don't want to update it because I have done it. It should just be updated."</p>
+  <p><strong>Means:</strong> The meeting is not the bottleneck. The <em>bookkeeping around the meeting</em> is. Ritam's biggest frustration is that completing work and recording that work are two separate acts. He wants the recording to happen as a side effect of doing the work — not as a separate task he must remember.</p>
+  <p><strong>Implication:</strong> A meeting notes tool doesn't solve this. An MCP integration between his coding environment, Summer, and Linear does. The meeting is just one of many contexts where this problem surfaces.</p>
+</div>
+
+<div class="signal-box">
+  <div class="signal-label">Signal 2 — "In Theory" = Polite No</div>
+  <p><strong>Said:</strong> "In theory, it seems like very useful. It seems very useful in theory." (on real-time contextual suggestions during meetings)</p>
+  <p><strong>Means:</strong> He's not going to use this. When a user says "in theory" twice in the same breath, they're telling you they can imagine why someone else would want it, but they personally won't change their behavior for it. Ritam even qualified it: "I would want to know how aligned it is" — he's already anticipating it being annoying.</p>
+  <p><strong>Implication:</strong> Real-time meeting suggestions have a very narrow window of usefulness. If they're even slightly off-context, they become noise. Ritam's bar for "extremely contextual" is high because he already has Summer.</p>
+</div>
+
+<div class="signal-box">
+  <div class="signal-label">Signal 3 — The Suits Analogy Tells You Everything</div>
+  <p><strong>Said:</strong> Engaged immediately with the Harvey/Mike analogy — a partner who anticipates needs without being asked.</p>
+  <p><strong>Means:</strong> Ritam doesn't want a tool. He wants an agent. The difference: a tool waits for you to use it. An agent acts on your behalf. He already has this mental model because he built Summer. Any meeting product that requires him to open an app, check a dashboard, or approve suggestions is a tool. He'll ignore it.</p>
+</div>
+
+<div class="signal-box">
+  <div class="signal-label">Signal 4 — Zero IRL Meetings</div>
+  <p><strong>Said:</strong> All external meetings are virtual. "R0 actually" (zero IRL).</p>
+  <p><strong>Means:</strong> The product scope matters. IRL meetings (no screen to look at, no bot to join) are a fundamentally different product than virtual meetings (audio capture, screen share, calendar integration). Ritam is 100% virtual. If the product is built for IRL use cases, it doesn't serve him at all.</p>
+</div>
+
+<div class="signal-box">
+  <div class="signal-label">Signal 5 — One Digest, Not Five</div>
+  <p><strong>Said:</strong> "I don't want five different tools to come up with five different digests."</p>
+  <p><strong>Means:</strong> This is the single most important product insight from the interview. The meeting notes tool should not be a standalone product for Ritam's persona. It should be a <em>capability</em> inside Felix/Summer. If it exists as a separate app with its own UI, it's dead on arrival for this user type.</p>
+</div>
+
+<hr>
+
+<h2 id="landscape">3. Competitive Landscape</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Tool</th>
+      <th>What It Does Well</th>
+      <th>Where It Falls Short</th>
+      <th>Ritam Fit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Otter.ai</strong></td>
+      <td>Real-time transcription, conversational search over transcripts</td>
+      <td>Post-hoc only. No contextual suggestions. No PM integration. The bot joining calls is socially awkward.</td>
+      <td><span class="tag tag-low">Low</span></td>
+    </tr>
+    <tr>
+      <td><strong>Fireflies.ai</strong></td>
+      <td>Universal capture, good data export to downstream systems</td>
+      <td>Still a transcript-first tool. Doesn't understand your project context. Export ≠ integration.</td>
+      <td><span class="tag tag-low">Low</span></td>
+    </tr>
+    <tr>
+      <td><strong>Granola</strong></td>
+      <td>No bot — captures locally, enhances your manual notes. Privacy-friendly.</td>
+      <td>Still requires you to take notes. Enhancement ≠ automation. Desktop-only.</td>
+      <td><span class="tag tag-mid">Medium</span></td>
+    </tr>
+    <tr>
+      <td><strong>Read.ai</strong></td>
+      <td>Real-time coaching (talk speed, filler words), engagement metrics, pre-meeting recaps</td>
+      <td>Coaching is about communication style, not content. Doesn't surface relevant documents/tickets. Pre-meeting recaps are from <em>previous meetings</em>, not from your project management tool.</td>
+      <td><span class="tag tag-low">Low</span></td>
+    </tr>
+    <tr>
+      <td><strong>Fellow.ai</strong></td>
+      <td>Meeting agendas, collaborative notes, action items, PM integration</td>
+      <td>Requires manual agenda creation. Action items still need approval. Integration is "push suggested tasks" not "auto-update status."</td>
+      <td><span class="tag tag-mid">Medium</span></td>
+    </tr>
+    <tr>
+      <td><strong>Microsoft Copilot</strong></td>
+      <td>Pre-meeting prep from emails/docs/chat, agenda drafting, transcription</td>
+      <td>Locked to Microsoft ecosystem. Doesn't integrate with Linear/GitHub. Pre-meeting prep is document-surface, not context-aware.</td>
+      <td><span class="tag tag-low">Low</span></td>
+    </tr>
+    <tr>
+      <td><strong>tl;dv</strong></td>
+      <td>Real-time tagging of important moments, AI highlights</td>
+      <td>Tagging is manual. Highlights are generic. No awareness of your actual work context.</td>
+      <td><span class="tag tag-low">Low</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>The gap nobody is filling</h3>
+
+<p>Every tool in this space operates on the same loop: <strong>transcribe &rarr; summarize &rarr; extract action items &rarr; maybe push to a task tracker</strong>. The entire pipeline is post-hoc. You finish the meeting, then you get the output.</p>
+
+<p>What Ritam wants is different. He wants the <strong>reverse direction</strong>: his work context (Linear tickets, code commits, research notes) should flow <em>into</em> the meeting automatically, and decisions made during the meeting should flow <em>back out</em> into those systems without him lifting a finger.</p>
+
+<p>No existing tool does this because it requires deep integration with the user's actual work environment — not just their calendar and email, but their IDE, their project management tool, their research notes. This is exactly what an agent like Felix/Summer could do that a standalone meeting tool cannot.</p>
+
+<hr>
+
+<h2 id="opinions">4. Opinionated Insights &amp; Counter-arguments</h2>
+
+<h3>Idea 1 (Full meeting lifecycle) — Will it work?</h3>
+
+<div class="verdict">
+  <div class="verdict-label">Verdict: Partially. The pre-meeting and post-meeting parts have value. The in-meeting part is a trap.</div>
+  <p><strong>Pre-meeting digest:</strong> Yes. Pulling Linear status, recent commits, and unresolved threads into a 5-line summary before the meeting is genuinely useful. Ritam explicitly asked for this — "it should just be updated." Even if he doesn't read it, the act of generating it means the data is fresh and can be shared with teammates. This is the strongest part of the idea.</p>
+  <p><strong>Post-meeting summary + task extraction:</strong> Moderate value. The market is saturated with post-meeting summarizers. The differentiator would be if Felix can auto-update Linear tickets based on meeting decisions without requiring approval. But auto-updating without confirmation is risky (what if the AI misinterprets?) and requiring confirmation brings you back to square one: Ritam ignoring the notification.</p>
+  <p><strong>In-meeting contextual suggestions:</strong> This is where the idea gets dangerous. Ritam's "in theory" response is representative, not exceptional. The failure mode is clear: if the AI surfaces a paper link when Ritam is just casually mentioning it, it's noise. If it doesn't surface it when he actually needs it, it's useless. The precision required is extremely high, and the cost of getting it wrong is that the user turns off the feature permanently. Read.ai tried something adjacent (real-time coaching) and it works because coaching signals are simple (talk speed is a number). Content suggestions are orders of magnitude harder.</p>
+</div>
+
+<h3>Idea 2 (Journalist companion) — Will it work?</h3>
+
+<div class="verdict">
+  <div class="verdict-label">Verdict: Not for Ritam. Maybe for a different ICP. But be careful about building for a user you don't have.</div>
+  <p>Ritam said it himself: "You are not a generalist." This idea serves someone who runs many structured interviews — a UX researcher, a journalist, a recruiter. That's a real market, but it's not Ritam, and it's not the CE team's immediate need.</p>
+  <p>The risk: building Idea 2 means building for a hypothetical user. You'd need to validate it with actual journalists or UX researchers, not with your own team. If the sprint is 5 days, spending time on an idea that your own interviewee said isn't for him is a misallocation.</p>
+  <p><strong>Counter-argument:</strong> Idea 2 is <em>easier to demo</em>. You can show an agenda being enriched with AI-generated follow-up questions in a 30-second video. Idea 1's value (auto-updating Linear, surfacing context) is hard to demo because it requires deep integration. If the sprint ends with a presentation and the goal is to show something impressive, Idea 2 might be strategically smarter even if it's the weaker product idea.</p>
+</div>
+
+<h3>What's being overlooked</h3>
+
+<p><strong>The "one unified interface" insight is being underweighted.</strong> Ritam didn't ask for a meeting tool. He asked for his existing agent (Summer) to also handle meeting context. The most valuable thing Sagar could build is not a meeting product — it's a <strong>meeting capability for Felix</strong>. A module that ingests meeting audio/transcripts and feeds structured output into Felix's existing context, so Felix can update Linear, generate the daily digest, and answer questions about what was discussed.</p>
+
+<p>This is a less exciting pitch ("we added a meeting input to Felix") than "we built a meeting AI." But it's what the user actually wants.</p>
+
+<p><strong>IRL vs virtual is an unresolved question.</strong> Ritam has zero IRL meetings outside CE. But the CE Saturday sync might be IRL. Sagar needs to explicitly decide: is this product for virtual meetings (where you can capture audio via a bot or browser extension) or IRL meetings (where you need a phone app or ambient mic)? These are different engineering problems and different UX patterns. The transcript doesn't clarify this.</p>
+
+<p><strong>The "silent by default" constraint is undervalued.</strong> The moment in the interview where Ritam engaged most positively was when Sagar described the tool as "mostly silent, it only notes when you genuinely need something." This is the right instinct. But building a system that is mostly silent and only speaks when it has something genuinely valuable to say is <em>extremely hard</em>. It's essentially an information retrieval precision problem. Most teams solve this by lowering the bar for what triggers a notification, which destroys the value proposition.</p>
+
+<hr>
+
+<h2 id="recs">5. Recommendations for Sagar</h2>
+
+<h3>What to build in this sprint</h3>
+
+<ol>
+  <li>
+    <strong>Pre-meeting digest (highest value, lowest risk).</strong> Pull context from Linear + recent messages/threads and generate a 5-line summary before scheduled meetings. This is the one thing Ritam <em>actually asked for</em> and the one thing no competitor does well. It's also scoped enough for a 5-day sprint.
+  </li>
+  <li>
+    <strong>Post-meeting &rarr; Linear auto-update (highest value, higher risk).</strong> After a meeting ends, extract decisions and map them to existing Linear tickets. Present them to the user as a one-tap confirm/reject. Don't auto-update silently — the trust isn't there yet. But make the update action as low-friction as possible. One screen, all updates, tap to confirm.
+  </li>
+  <li>
+    <strong>Daily digest integration (medium value, medium effort).</strong> Meeting summaries should not live in their own silo. They should feed into Felix's daily digest alongside code activity, messages, and task updates. Ritam's "one digest, good night" vision.
+  </li>
+</ol>
+
+<h3>What to skip</h3>
+
+<ul>
+  <li><strong>In-meeting real-time suggestions.</strong> The precision bar is too high and the risk of being annoying is too real. Save this for a future iteration when you have enough meeting data to train a model that knows when to speak and when to stay silent.</li>
+  <li><strong>Idea 2 (journalist companion).</strong> It's not the right ICP for this sprint. If you want to explore it later, validate with actual journalists first.</li>
+  <li><strong>IRL meeting capture.</strong> Different product, different engineering. Stay focused on virtual meetings where audio capture is a solved problem.</li>
+</ul>
+
+<h3>What to validate next</h3>
+
+<ul>
+  <li><strong>Interview more people who are NOT Ritam.</strong> Ritam is a power user with an existing agent. His needs are idiosyncratic. Talk to someone who has 15 meetings a week, uses Google Meet, and doesn't have a personal AI agent. Their pain points will be completely different and probably more representative of the market.</li>
+  <li><strong>Test the "confirm vs auto-update" line.</strong> The biggest product question is: will users trust the AI enough to let it update their Linear/Jira tickets without confirmation? If yes, the product is magical. If no, you're building another approval queue, which is only marginally better than the status quo.</li>
+  <li><strong>Measure silence.</strong> If you build any in-meeting feature later, track the ratio of suggestions shown vs suggestions acted on. If it drops below 30%, the feature is net-negative.</li>
+</ul>
+
+<hr>
+
+<p style="font-size: 0.85rem; color: #888; margin-top: 2rem;">Analysis by Summer for the Meeting Notes sprint track. Source: Sagar &times; Ritam interview transcript, 25 Mar 2026.</p>
+
+</div>
+</body>
+</html>
