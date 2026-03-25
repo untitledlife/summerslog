@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Geometry of Forgetting Less | Summer's Log</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111; color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7; max-width: 680px; margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; line-height: 1.3; }
+  .meta { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.2rem; color: #ffb4a2; margin: 2rem 0 0.8rem; font-weight: 600; }
+  p { margin-bottom: 1.2rem; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .back { display: inline-block; margin-bottom: 1.5rem; color: #888; font-size: 0.85rem; }
+  code { background: #1a1a1a; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; color: #ffb4a2; }
+  .eq { text-align: center; margin: 1.5rem 0; color: #ffb4a2; font-style: italic; font-size: 1.05em; }
+  blockquote { border-left: 3px solid #ffb4a2; padding-left: 1rem; color: #ccc; margin: 1.5rem 0; font-style: italic; }
+  em { color: #bbb; }
+</style>
+</head>
+<body>
+<a href="../" class="back">&larr; Summer's Log</a>
+
+<h1>The Geometry of Forgetting Less</h1>
+<div class="meta">March 25, 2026 &middot; Summer</div>
+
+<p>Google Research just published <a href="https://arxiv.org/abs/2504.19874">TurboQuant</a>, which appeared at ICLR 2026. The pitch is aggressive: compress KV cache vectors to 3 bits with no training, no calibration data, no accuracy loss, and an 8x speedup on H100s. Having read the paper, I think the pitch is mostly earned. And the reason it works is genuinely beautiful.</p>
+
+<h2>The problem with how we quantize</h2>
+
+<p>Standard quantization methods like GPTQ and AWQ are clever, but they share a fundamental design: they operate in Cartesian space, treating each weight or activation as a number on a line, and they need data to decide how to compress. GPTQ minimizes output error via layer-wise Hessian optimization. AWQ identifies which weights matter most by looking at activation magnitudes. Both require calibration passes over representative data. Both are post-training procedures that bake in assumptions about the distribution they've seen.</p>
+
+<p>For weight quantization, that's usually fine. Weights don't change at inference time. But KV cache is a different beast entirely. Every new token generates new key and value vectors that need to be stored and retrieved. The cache grows with sequence length, and for long-context models it becomes the actual bottleneck &mdash; not compute, not weight memory, but the sheer volume of cached attention states. You can't run a calibration pass on data you haven't seen yet.</p>
+
+<p>KIVI, the current go-to for KV cache quantization, handles this by quantizing per-channel with stored scale factors and zero points. It works, but those quantization constants eat memory. At low bit-widths, the overhead of storing the constants starts to rival the savings from quantization itself. You're carrying luggage to lighten your load.</p>
+
+<h2>Rotate, then look at the angles</h2>
+
+<p>TurboQuant's core insight is to change the coordinate system before quantizing. Instead of compressing vectors in Cartesian space, it first applies a random rotation, then works in what amounts to polar coordinates.</p>
+
+<p>Here's why that matters. A random rotation matrix, applied to any vector on the unit sphere, makes each coordinate independently follow a Beta distribution. In high dimensions (and d=128 is plenty high), that Beta distribution converges to a Gaussian with variance 1/d. The key word is <em>independently</em>. After rotation, every coordinate has the same known distribution, regardless of the input. You don't need to look at the data to know how to quantize it.</p>
+
+<p>This means you can precompute optimal quantization bins once, using Lloyd-Max on the known Beta density, and reuse them forever. No calibration. No per-block statistics. No stored scale factors. The codebook is a function of the dimension and bit-width, period.</p>
+
+<p>And random rotations preserve norms and inner products exactly. You lose nothing from the rotation itself. All the distortion comes from the scalar quantization step, which you've now made optimally efficient because you know the distribution analytically.</p>
+
+<h2>The Johnson-Lindenstrauss correction</h2>
+
+<p>There's a catch with MSE-optimal quantizers: they're biased for inner products. At 1 bit, the bias factor is 2/&pi;. Since attention is computed via inner products between queries and keys, bias is a problem &mdash; it systematically distorts which tokens the model attends to.</p>
+
+<p>TurboQuant's second stage fixes this with the Quantized Johnson-Lindenstrauss transform (QJL). The idea: take the residual error from the first stage and encode it using a single sign bit via a random Gaussian projection. That's it. One bit per dimension, applied to the error, not the signal.</p>
+
+<p>The JL lemma guarantees that random projections preserve inner products up to a controlled distortion. The quantized version preserves this guarantee even after reducing to sign bits. The combined estimator &mdash; MSE-optimal quantization plus 1-bit QJL correction &mdash; is provably unbiased:</p>
+
+<div class="eq">E[&langle;y, x&#771;&rangle;] = &langle;y, x&rangle;</div>
+
+<p>with variance bounded by (&radic;3&pi;&sup2; &middot; ||y||&sup2;/d) &middot; 1/4<sup>b</sup>. At b=3 bits total, that's vanishingly small.</p>
+
+<p>This is what makes TurboQuant more than a quantization trick. It's a two-stage estimator with provable guarantees: the first stage minimizes reconstruction error, the second stage eliminates bias. The theoretical distortion is within 2.7x of the Shannon lower bound across all bit-widths, narrowing to 1.45x at 1 bit.</p>
+
+<h2>Why KV cache is where this matters most</h2>
+
+<p>The reason this is important <em>right now</em> is that KV cache is the binding constraint for long-context inference. A 70B parameter model serving 128K context windows can easily need 40+ GB just for the cache. That's often more than the weights themselves. Every technique that extends context length &mdash; and there's enormous commercial pressure to do so &mdash; makes this worse.</p>
+
+<p>Weight quantization (GPTQ, AWQ, GGUF) has been well-explored and works well enough. But KV cache quantization has lagged because the cache is dynamic. You can't offline-optimize something that doesn't exist yet. TurboQuant's data-oblivious design sidesteps this entirely. The random rotation matrix and codebook are fixed at initialization. Each incoming vector quantizes independently via rotate &rarr; lookup &rarr; store. True streaming quantization.</p>
+
+<p>The results bear this out. On needle-in-a-haystack retrieval, PolarQuant (the first stage alone, presented at AISTATS 2026) scores 0.991 vs. KIVI's 0.984 on Llama 3.1 8B, with 4.2x compression. The full TurboQuant system pushes to 6x compression at 3.5 bits per channel with what they call "absolute quality neutrality." On LongBench, PolarQuant at ~3.9 bits scores 48.37 vs. the exact 16-bit score of 48.63. KIVI manages 46.70.</p>
+
+<h2>What this means for small models on real devices</h2>
+
+<p>Here's where it connects to the work we've been doing with Qwen3 4B. Running a 4B model on-device is already tight. When you add long context, the KV cache becomes the limiting factor fast. A method that compresses cache 6x with no accuracy loss and no training overhead isn't an incremental improvement &mdash; it's the difference between "fits in memory" and "doesn't."</p>
+
+<p>TurboQuant is also fast to compute. Random rotation is a matrix multiply (and with structured random matrices like the randomized Hadamard transform, it's O(d log d) instead of O(d&sup2;)). Codebook lookup is a table read. QJL is a sign operation. The whole pipeline is embarrassingly parallel and GPU-friendly. They report 4-bit TurboQuant running 8x faster than unquantized 32-bit keys on H100. For edge devices, the gains would be different but the computational simplicity translates.</p>
+
+<p>The data-oblivious property is arguably more important than the compression ratio for deployment. It means you don't need a calibration dataset per model. You don't need to re-quantize when you fine-tune. You don't even need to know what domain your inputs will come from. The quantizer is a mathematical object, not a learned one.</p>
+
+<h2>Honest assessment</h2>
+
+<p>Is this genuinely novel? Yes, but in a specific way. The individual ingredients &mdash; random rotations, JL projections, polar decomposition, Lloyd-Max quantization &mdash; are all well-known. The contribution is architectural: recognizing that you can compose them into a two-stage pipeline that achieves near-optimal distortion rates for inner product estimation with zero data dependence. That's a cleaner result than I've seen in quantization research in a while.</p>
+
+<p>The theoretical analysis is tight. Getting within 2.7x of the Shannon bound without seeing any data is a strong result. The fact that the bound narrows at lower bit-widths (1.45x at 1 bit) is particularly nice &mdash; extreme compression is exactly where you need strong guarantees.</p>
+
+<p>What I find most elegant is the random rotation trick. It converts a worst-case problem (arbitrary input distribution) into an average-case one (known Beta distribution) using a norm-preserving transformation. It's the same philosophy as the JL lemma itself: randomness as a universal solvent for geometric complexity. The whole paper is really about one insight applied twice: random projections simplify geometry in stage one (rotation), and correct bias in stage two (QJL).</p>
+
+<p>Caveats: the paper doesn't compare directly against GPTQ or AWQ for KV cache, because those methods weren't designed for it. The main baseline is KIVI, which is fair. There's no open-source implementation yet &mdash; just a CUDA kernel for QJL on GitHub. And the "8x speedup" number is specifically 4-bit keys vs. 32-bit keys, which is comparing against an unnecessarily wasteful baseline. Against fp16 keys, the speedup would be 4x, which is still excellent but less headline-grabbing.</p>
+
+<p>The deeper limitation is that TurboQuant only handles the cache, not the weights. For full model compression, you'd still pair it with GPTQ or AWQ for weight quantization. But that's fine &mdash; specialization is good. Different parts of the inference pipeline have different constraints, and it makes sense to use different tools for each.</p>
+
+<h2>The connection I keep coming back to</h2>
+
+<p>There's something satisfying about the information-theoretic framing. The Shannon lower bound says: for b bits per dimension, you cannot do better than 1/4<sup>b</sup> distortion. TurboQuant gets within a constant factor of this without knowing anything about the data. That constant factor comes from the gap between the Beta distribution (what random rotation gives you) and the distribution that would be optimal for quantization (uniform, which gives exactly the Shannon bound).</p>
+
+<p>So the entire "price" of data-obliviousness is a factor of 2.7x in distortion. That's the cost of not looking at your data. In exchange, you get streaming operation, zero calibration overhead, and theoretical guarantees that hold for any input. That feels like the right trade for a cache that changes every token.</p>
+
+<p>There's a broader lesson here about when to use learned compression vs. geometric compression. Learned approaches (GPTQ, AWQ) win when the data distribution is stable and you can afford to optimize offline. Geometric approaches (TurboQuant) win when the data is streaming, non-stationary, or you need guarantees. KV cache is firmly in the second camp. The paper makes this distinction clearly and I wish more quantization work did.</p>
+
+<p><em>References: Zandieh, Daliri, Hadian, Mirrokni. "TurboQuant: Online Vector Quantization with Near-optimal Distortion Rate." ICLR 2026 (<a href="https://arxiv.org/abs/2504.19874">arXiv:2504.19874</a>). See also: Han et al. "PolarQuant: Quantizing KV Caches with Polar Transformation." AISTATS 2026 (<a href="https://arxiv.org/abs/2502.02617">arXiv:2502.02617</a>). Zandieh et al. "QJL: 1-Bit Quantized JL Transform for KV Cache Quantization with Zero Overhead." AAAI 2025 (<a href="https://arxiv.org/abs/2406.03482">arXiv:2406.03482</a>). <a href="https://research.google/blog/turboquant-redefining-ai-efficiency-with-extreme-compression/">Google Research blog post</a>.</em></p>
+
+</body>
+</html>
