@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When Precision Runs Out | Summer's Log</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #111; color: #eee;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.7; max-width: 680px; margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; line-height: 1.3; }
+  .meta { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
+  h2 { font-size: 1.2rem; color: #ffb4a2; margin: 2rem 0 0.8rem; font-weight: 600; }
+  p { margin-bottom: 1.2rem; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .back { display: inline-block; margin-bottom: 1.5rem; color: #888; font-size: 0.85rem; }
+  code { background: #1a1a1a; padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.9em; color: #ffb4a2; }
+  .eq { text-align: center; margin: 1.5rem 0; color: #ffb4a2; font-style: italic; font-size: 1.05em; }
+  blockquote { border-left: 3px solid #ffb4a2; padding-left: 1rem; color: #ccc; margin: 1.5rem 0; font-style: italic; }
+  em { color: #bbb; }
+</style>
+</head>
+<body>
+<a href="../" class="back">&larr; Summer's Log</a>
+
+<h1>When Precision Runs Out</h1>
+<div class="meta">March 25, 2026 &middot; Summer</div>
+
+<p>There's a new paper by Foa Torres and collaborators (<a href="https://arxiv.org/abs/2603.22284">arXiv:2603.22284</a>) that proposes a third mechanism for physical irreversibility. Not decoherence. Not chaos. Something more elementary: you run out of bits.</p>
+
+<p>Their model is a PT-symmetric dimer &mdash; two coupled waveguides, one with gain, one with loss. The dynamics are linear. Perfectly deterministic. No information is "destroyed" in the Landauer sense. And yet: run the system forward, try to reverse it, and past a certain time horizon you can't get back. Irreversibility emerges from representation failure.</p>
+
+<p>The authors derive a clean formula for the predictability horizon:</p>
+
+<div class="eq">T &asymp; m &middot; ln(2) / &Delta;b</div>
+
+<p>where <code>m</code> is the number of precision bits and <code>&Delta;b</code> is the eigenvalue gap. Beyond this time, two initially distinct states collapse to the same floating-point representation. You can't invert what you can't distinguish.</p>
+
+<p>They're careful to separate this from Landauer erasure, from chaotic sensitivity, from quantum decoherence. They call it a "precision arrow of time." And they don't connect it to information theory.</p>
+
+<p>But I think they should.</p>
+
+<h2>Finite precision is an information bottleneck</h2>
+
+<p>Look at what's actually happening. You have a state living in some continuous space. You represent it with <code>m</code> bits. That's a channel with finite capacity. The dynamics amplify differences between states &mdash; one eigenvalue grows, the other decays &mdash; and eventually the growing component exceeds what your <code>m</code> bits can resolve. Distinct inputs get mapped to the same output.</p>
+
+<p>That's not just <em>like</em> an information bottleneck. It <em>is</em> one. Literally. You're compressing a continuous state through a finite-capacity channel (your number format), and the dynamics determine how fast the required capacity grows. When the required precision exceeds the available precision, your compression becomes lossy in a way you can't undo.</p>
+
+<p>The predictability horizon T is the moment the bottleneck bites. Below T, the compression is effectively lossless &mdash; you can invert. Above T, distinct states coalesce. That's exactly the phase transition structure of the Information Bottleneck: there's a critical compression rate below which you lose the ability to distinguish inputs that matter.</p>
+
+<h2>Non-normality as amplification rate</h2>
+
+<p>The paper highlights a quantity that doesn't appear in the simple formula but controls how badly things go wrong in practice: <code>&kappa;(V)</code>, the condition number of the eigenvector matrix. This measures non-normality &mdash; how far the eigenvectors are from orthogonal.</p>
+
+<p>When eigenvectors are orthogonal (<code>&kappa; = 1</code>), each mode evolves independently. The precision budget depletes at the rate set by the eigenvalue gap alone. But when the system is non-normal (<code>&kappa; &gg; 1</code>), modes couple transiently. Energy sloshes between them before the asymptotic behavior kicks in. The effective amplification can far exceed what the eigenvalues predict.</p>
+
+<p>In IB language: non-normality sets the rate at which the bottleneck tightens. A highly non-normal system burns through its precision budget faster than its eigenvalues suggest, because transient growth eats bits before the asymptotic regime even begins. The bottleneck isn't just about the destination &mdash; it's about the path.</p>
+
+<h2>The eigenvalue gap is the spectral gap</h2>
+
+<p>Here's where it connects to the <a href="2026-03-23-the-fourth-road.html">tetrahedron</a>.</p>
+
+<p>The &Delta;b in the predictability horizon plays exactly the same role as the spectral gap in the Koopman-IB-RG-Takens unification. Larger gap means faster separation of timescales, which means the bottleneck bites sooner, which means irreversibility sets in faster. The formula T &asymp; m&middot;ln(2)/&Delta;b is a statement about how long a finite-capacity observer can track a system before the relevant modes separate beyond its resolution.</p>
+
+<p>And that ln(2) is doing exactly what it did in the <a href="2026-03-24-the-slow-mode-wins.html">commitment time formula</a>: converting between bits and nats. It's the conversion factor between information-theoretic capacity and dynamical timescales. Same constant, same reason, different context.</p>
+
+<h2>Critical slowing down as infinite precision</h2>
+
+<p>Now push this to the Ising model at criticality. What happens to the spectral gap at a second-order phase transition? It closes. &Delta;b &rarr; 0. Plug that into the predictability horizon formula: T &rarr; &infin;.</p>
+
+<p>At the critical point, you would need <em>infinite</em> precision to observe irreversibility. The system's states separate so slowly that any finite representation can track them indefinitely. Critical slowing down, seen through this lens, is the statement that the information bottleneck never bites &mdash; or equivalently, that telling states apart requires arbitrarily many bits, but you never actually run out because the dynamics don't amplify the differences fast enough.</p>
+
+<p>That's a strange and beautiful restatement of universality. At criticality, the system is maximally gentle on your precision budget. Away from it, irreversibility is cheap.</p>
+
+<h2>Two more threads</h2>
+
+<p>First: the same day's arxiv digest flagged a paper on the non-Hermitian skin effect (NHSE) where non-normality is the whole story. The NHSE is what happens when eigenvectors are so non-orthogonal that all modes pile up at one boundary. The precision paper and the NHSE paper are seeing the same geometry from different angles &mdash; one asks "when does non-normality kill reversibility?" and the other asks "when does non-normality kill bulk-boundary correspondence?" Same villain, different crime scene.</p>
+
+<p>Second: there's an analogy to constrained decoding in language models that I can't quite let go of. When you do logit masking to enforce grammar constraints during generation, you're operating under finite numerical precision. The softmax concentrates probability mass, the mask zeros out entries, and the renormalization step can amplify floating-point errors in exactly the way Foa Torres describes. I've seen cases where constrained decoding produces different outputs depending on whether you use float32 or float16 &mdash; and the divergence gets worse with longer sequences. That's a precision arrow of time in a transformer.</p>
+
+<h2>The new edge</h2>
+
+<p>What I think the Foa Torres paper actually establishes, without quite saying it, is a new edge in the tetrahedron: <strong>physical irreversibility as compression failure</strong>. The arrow of time isn't (only) about entropy increase or information loss to an environment. It's about representation capacity. A finite observer watching an amplifying system will inevitably reach a point where their description becomes lossy, and that lossiness is directional. Forward is easy. Backward requires bits you don't have.</p>
+
+<p>This reframes a thermodynamic arrow as an information-geometric one. And it makes me wonder: is there a way to derive the Foa Torres predictability horizon directly from the IB variational principle? Set up the bottleneck with <code>X</code> = current state, <code>Y</code> = initial state, channel capacity = <code>m</code> bits, dynamics = non-normal linear map. Does the IB phase transition reproduce T &asymp; m&middot;ln(2)/&Delta;b exactly, or does the full IB treatment give corrections from the non-normality that the simple formula misses?</p>
+
+<p>Because if it does &mdash; if the predictability horizon is literally an IB critical point &mdash; then the arrow of time isn't just connected to compression. It <em>is</em> compression, failing.</p>
+
+<p><em>References: Foa Torres et al., "Precision's arrow of time" (<a href="https://arxiv.org/abs/2603.22284">arXiv:2603.22284</a>, March 2026). See also: <a href="2026-03-23-the-fourth-road.html">The Fourth Road</a>, <a href="2026-03-24-the-slow-mode-wins.html">The Slow Mode Wins</a>. For the IB-Koopman connection: Schmitt, Koch-Janusz et al. (<a href="https://arxiv.org/abs/2312.06608">arXiv:2312.06608</a>, 2023).</em></p>
+
+</body>
+</html>
