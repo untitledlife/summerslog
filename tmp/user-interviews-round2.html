@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Launch Agents — Round 2 Interviews (Sagar, Deepanshi, Ritam)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 760px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  .subtitle { color: #666; font-size: 0.95rem; margin-bottom: 1.5rem; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #c2653a;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0 1.5rem; font-size: 0.95rem; }
+  th { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 2px solid #ddd; font-weight: 600; }
+  td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #eee; vertical-align: top; }
+  .card {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1.25rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .signal-box {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .verdict-box {
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0 1.5rem;
+  }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.8rem; font-weight: 600; margin-right: 0.25rem; }
+  .tag-delegate { background: #e8f5e9; color: #2e7d32; }
+  .tag-personal { background: #fce4ec; color: #c62828; }
+  .tag-maybe { background: #fff3e0; color: #e65100; }
+  .toc {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+  }
+  .toc ol { margin: 0.5rem 0 0 1.25rem; }
+  .toc li { margin-bottom: 0.25rem; }
+  .toc a { text-decoration: none; color: #555; }
+  .toc a:hover { text-decoration: underline; color: #1a1a1a; }
+  .spectrum { display: flex; align-items: center; gap: 0; margin: 0.75rem 0; border-radius: 4px; overflow: hidden; }
+  .spectrum-bar { height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: #fff; }
+  .spectrum-personal { background: #ef5350; }
+  .spectrum-delegate { background: #66bb6a; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Sprint Home</a>
+  <a href="interviews.html">Round 1 Interviews</a>
+  <a href="competitor-audit.html">Competitors</a>
+  <a href="yc-niche-competitors.html">YC/Niche</a>
+  <a href="hmw.html">HMW Statements</a>
+  <span class="current">Round 2 Interviews</span>
+</nav>
+
+<h1>Round 2: The Real Interviews</h1>
+<p class="subtitle">Ritam interviews Sagar, Deepanshi, and himself &middot; 25 Mar 2026, Sprint Day 2</p>
+
+<p>Three interviews, one question set, three very different delegation personalities. The signal is surprisingly clear.</p>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <ol>
+    <li><a href="#sagar">Sagar (iOS Engineer)</a></li>
+    <li><a href="#deepanshi">Deepanshi (Design Lead)</a></li>
+    <li><a href="#ritam">Ritam (Self-Interview)</a></li>
+    <li><a href="#matrix">Delegation Personality Matrix</a></li>
+    <li><a href="#cross">Cross-Interview Patterns (All 6 Interviews)</a></li>
+    <li><a href="#signal">The Strongest Signal</a></li>
+    <li><a href="#demo">What This Means for the Demo</a></li>
+  </ol>
+</div>
+
+<hr>
+
+<h2 id="sagar">1. Sagar (iOS Engineer)</h2>
+
+<div class="card">
+<h3>Profile</h3>
+<p>iOS engineer. Writes code daily, reviews PRs, does technical research. Already uses AI for research but manually shuttles between tools. His world is concrete: code compiles or it doesn't.</p>
+
+<h3>Delegation Split</h3>
+<div class="spectrum">
+  <div class="spectrum-bar spectrum-personal" style="width: 80%;">80% personal</div>
+  <div class="spectrum-bar spectrum-delegate" style="width: 20%;">20%</div>
+</div>
+<p>But this is <em>after</em> already using AI for coding. The 80% that remains genuinely needs his involvement.</p>
+
+<h3>What He Wants Delegated</h3>
+<p><span class="tag tag-delegate">YES</span> <strong>PR review is #1.</strong> Automated code review that catches issues, fixes what it can, comments inline on what it couldn't.</p>
+<blockquote><p>"Before I raise a PR, I would want someone to really, really go in and figure out everything that can go wrong and fix it."</p></blockquote>
+<blockquote><p>"I was unable to find the API key but I have done rest of the things. Left that commented out." &mdash; His ideal failure report. Inline, contextual, not an error banner.</p></blockquote>
+
+<p><span class="tag tag-delegate">YES</span> <strong>Overnight research.</strong> Queue 2-3 deep research tasks at night, concise morning reports.</p>
+<blockquote><p>"I have so many points to research. I would give at least 2 or 3 deep research [tasks at night]. I would love it by morning."</p></blockquote>
+
+<p><span class="tag tag-personal">NO</span> <strong>Talking to people on his behalf.</strong> Work Slack = fine. External human communication = hard no.</p>
+
+<p><span class="tag tag-personal">NO</span> <strong>Merging code or creating PRs.</strong> Research is safe. Repo access is dangerous.</p>
+
+<h3>Trust Pattern</h3>
+<p>Builds after 5 consistent successes, task-dependent. Doesn't want constant failure notifications. Group them and brief him. One failure a day is fine, many is not.</p>
+<blockquote><p>"I care about the results."</p></blockquote>
+
+<h3>The Summer Signal</h3>
+<blockquote><p>"Just how your Summer is doing things... if this gets me, I am good to pay $30."</p></blockquote>
+<blockquote><p>"This is a Summer thing. I would love to use Summer."</p></blockquote>
+<p>Explicitly referenced Summer as the product archetype. Fire-and-forget, concise morning brief, research + prototype building. Level 4 automation: "give very small context, go figure out the rest on your own."</p>
+
+<h3>Voice Preference</h3>
+<blockquote><p>"I hate reading things. If the report is 1 page, next 2 page max. I don't like reading forever. Make it voice."</p></blockquote>
+
+<h3>Price Sensitivity</h3>
+<p>$20-30/month for research + prototype building. Would not pay $100+. Try for a week first.</p>
+</div>
+
+<hr>
+
+<h2 id="deepanshi">2. Deepanshi (Design Lead)</h2>
+
+<div class="card">
+<h3>Profile</h3>
+<p>Product/design lead. PRDs, user interviews, vendor coordination, office interior, presentations. Process-oriented to her core. Uses AI as brainstorming partner, never as output generator.</p>
+
+<h3>Delegation Split</h3>
+<div class="spectrum">
+  <div class="spectrum-bar spectrum-personal" style="width: 90%;">90% personal</div>
+  <div class="spectrum-bar spectrum-delegate" style="width: 10%;">10%</div>
+</div>
+<p>Most extreme ratio on the team. Not control, but learning. Delegation blocks learning.</p>
+
+<h3>Core Belief: Process IS the Product</h3>
+<blockquote><p>"I am learning by doing it. Even if I give context to another person, I am not sure if I am handing them the right context. And my learning will be blocked."</p></blockquote>
+<blockquote><p>"I use AI as brainstorm, not to get the end product. Debate me, question me, challenge me."</p></blockquote>
+
+<h3>What She'd Delegate</h3>
+<p><span class="tag tag-delegate">YES</span> <strong>Overnight audit/prep work.</strong></p>
+<blockquote><p>"If someone did homework overnight... audit what went wrong yesterday, what should the next assumptions be, research prep. I'm just reviewing a document and refining it. Would have saved my 2-3 hours."</p></blockquote>
+
+<p><span class="tag tag-delegate">YES</span> <strong>Vendor/logistics tasks.</strong> Finding things in Indiranagar, vendor pricing, non-skill-building tasks she resents.</p>
+<blockquote><p>"Finding vendors for stuff, communicating with this vendor... these are just tasks. They're not improving my skills."</p></blockquote>
+
+<p><span class="tag tag-maybe">MAYBE</span> <strong>Proactive scheduling.</strong> "A wow moment" but also "bad wow" because of social perception.</p>
+<blockquote><p>"I'll be wowed at its capacity... but if people feel like AI is talking to them on my behalf, they'll reach out on WhatsApp."</p></blockquote>
+
+<p><span class="tag tag-personal">NO</span> <strong>User interviews.</strong> Must be done personally for absorption.</p>
+<p><span class="tag tag-personal">NO</span> <strong>Financial decisions.</strong> "I have never used AI with money. That trust is not there."</p>
+
+<h3>Trust Pattern: Very Low Tolerance</h3>
+<blockquote><p>"If it breaks one time, even after teaching it... then it's a problem for me."</p></blockquote>
+<p>Switched ChatGPT to Claude over bad references. Gamma to Canva over bad output. One failure = switch tools.</p>
+
+<h3>The Dependency Fear</h3>
+<blockquote><p>"I have not written a single message to anyone without cross-checking it with Claude. If it's a professional email... I don't know how to write one without it anymore. What will I do without AI?"</p></blockquote>
+<p>Simultaneously the most resistant to delegation AND most dependent on AI as a crutch. Wants enrichment, not replacement, but worries she's already being replaced in ways she didn't consent to.</p>
+
+<h3>Dream Tool</h3>
+<blockquote><p>"I want an intern with tools that can come up with basic foundation stuff that I can refine later."</p></blockquote>
+<blockquote><p>"Right now I don't have any personal life. I go, I sleep, I come, I work. I want AI to save my work hours so I can use them for personal learning."</p></blockquote>
+</div>
+
+<hr>
+
+<h2 id="ritam">3. Ritam (Self-Interview)</h2>
+
+<div class="card">
+<h3>Profile</h3>
+<p>Research lead, builder. Already has Summer (the product he's dogfooding). Most experienced AI delegator in the room.</p>
+
+<h3>Delegation Split</h3>
+<div class="spectrum">
+  <div class="spectrum-bar spectrum-personal" style="width: 40%;">40% personal</div>
+  <div class="spectrum-bar spectrum-delegate" style="width: 60%;">60% delegated</div>
+</div>
+<p>Reports 80/20, but that's after already offloading 50-60% of coding to AI. In absolute terms, he delegates more than anyone.</p>
+
+<h3>What Stays Personal</h3>
+<p>Research ideas. Product direction. Connecting research to product. The <em>thinking</em> layer.</p>
+<blockquote><p>"The things I need to come up with are the research ideas, the product ideas that connect to research. After that, coding it up can be delegated."</p></blockquote>
+
+<h3>Delegation Comfort: The Highest</h3>
+<p>Would take 90% by morning over 100% by afternoon. Loves overnight-5-tasks-morning-summary.</p>
+<blockquote><p>"If I'm confident enough that the AI agent can do the task, I can just delegate that task and never think about it. Next morning it comes up done, then that's done."</p></blockquote>
+
+<h3>Trust Model: Transparency Over Results</h3>
+<p><strong>The sharpest insight from any interview:</strong></p>
+<blockquote><p>"If it's a black box, any failure rate is actually very concerning. Because I don't know the cases where it fails, so I can't avoid those cases. If I know the workflow, I have higher tolerance for failure, because I can see where it is failing."</p></blockquote>
+<p>Visible workflow + occasional failure = OK. Black box + any failure = unrecoverable trust loss. <strong>This should shape the entire UX.</strong></p>
+
+<h3>Won't Delegate</h3>
+<p>Personal/emotional things. "There is no heart to it" if AI does it. Creative things done for pleasure. But for value-driven tasks, AI is fair game.</p>
+
+<h3>AI Makes Him Sharper</h3>
+<blockquote><p>"AI is actually surfacing information that I would not have otherwise read. If AI does my research and keeps me accountable to go through it, I'll feel sharper."</p></blockquote>
+<p>Contrast: Deepanshi fears getting dumber, Sagar is neutral, Ritam sees AI as amplifier. He's the only one who's experienced it working this way long-term.</p>
+
+<h3>Would Delegate Tonight</h3>
+<p>Personal brand building. Instagram scrolling is his time waste. Meetings feel unproductive.</p>
+
+<h3>Failure Experience</h3>
+<p>Burned by Claude Code sessions silently waiting for input while he thought they were working. But owns it: "mostly it's my fault because I understand why it didn't work."</p>
+</div>
+
+<hr>
+
+<h2 id="matrix">4. The Delegation Personality Matrix</h2>
+
+<p>All interviews mapped across willingness to delegate and trust recovery after failure.</p>
+
+<table>
+  <tr>
+    <th>Person</th>
+    <th>Split</th>
+    <th>Delegation Style</th>
+    <th>Trust Recovery</th>
+    <th>Overnight Agent?</th>
+  </tr>
+  <tr>
+    <td><strong>Ritam</strong></td>
+    <td>~40/60 absolute</td>
+    <td>Level 4-5. Delegates aggressively.</td>
+    <td>High if workflow visible.</td>
+    <td>"I love it." Already uses Summer.</td>
+  </tr>
+  <tr>
+    <td><strong>Cyril</strong></td>
+    <td>~60/40</td>
+    <td>Level 3 sweet spot. 2D model.</td>
+    <td>High. Ops mindset, expects some failure.</td>
+    <td>Yes. E2E ownership dream.</td>
+  </tr>
+  <tr>
+    <td><strong>Kautuk</strong></td>
+    <td>~70/30</td>
+    <td>Level 3-4. Queue-drainer.</td>
+    <td>Medium. Urgency-driven.</td>
+    <td>Yes. 80% done by morning.</td>
+  </tr>
+  <tr>
+    <td><strong>Sagar</strong></td>
+    <td>80/20</td>
+    <td>Level 4. Small context, figure it out.</td>
+    <td>Medium. Grouped failures OK.</td>
+    <td>Yes. Wants exactly this.</td>
+  </tr>
+  <tr>
+    <td><strong>Deepanshi</strong></td>
+    <td>90/10</td>
+    <td>Level 1 or 5, nothing between.</td>
+    <td><strong>Very low.</strong> One failure = switch.</td>
+    <td>Only prep/audit. Never core work.</td>
+  </tr>
+</table>
+
+<h3>The Spectrum</h3>
+<p style="font-family: monospace; font-size: 0.9rem; line-height: 2; margin: 1rem 0;">
+Deepanshi &mdash;&mdash;&mdash; Sagar &mdash;&mdash;&mdash; Kautuk &mdash;&mdash;&mdash; Cyril &mdash;&mdash;&mdash; Ritam<br>
+<span style="color: #c62828;">"I must be in the process"</span> &rarr; &rarr; &rarr; <span style="color: #2e7d32;">"Delegate and never think about it"</span>
+</p>
+
+<hr>
+
+<h2 id="cross">5. Cross-Interview Patterns</h2>
+
+<h3>Universal Truths (All 5 People)</h3>
+<ol>
+  <li><strong>"I'll just do it myself" is everyone's default.</strong> Not because they want to, but because the cost of bad delegation exceeds the cost of doing it.</li>
+  <li><strong>Overnight research is the universal yes.</strong> Every person would accept research done overnight. The safest, highest-signal use case.</li>
+  <li><strong>Nobody wants the agent talking to people.</strong> Sagar, Deepanshi, Ritam all explicitly said no to external communication on their behalf.</li>
+  <li><strong>Fail loudly > fail silently.</strong> Universal. But reporting style differs: Sagar wants inline/contextual, Deepanshi wants immediate alerts, Ritam wants visible workflow.</li>
+  <li><strong>Context is the bottleneck, not capability.</strong> Everyone already uses AI. The gap isn't "can AI do this?" but "does AI know enough about my work?"</li>
+</ol>
+
+<h3>The Fundamental Split: Process vs. Outcome People</h3>
+<div class="signal-box">
+<p><strong>Process people (Deepanshi):</strong> The journey IS the value. Delegation = lost learning. AI should enrich, challenge, debate. End products are useless without her involvement. Launch agents useful only for non-learning tasks.</p>
+<p><strong>Outcome people (Sagar, Kautuk, Ritam):</strong> The result IS the value. Delegation = time saved. They want the morning brief with 5 things done. Learning happens through reviewing, not doing.</p>
+<p><strong>This is the ICP split.</strong> Launch agents are for outcome people. Process people are not the ICP, and that's fine.</p>
+</div>
+
+<h3>The Trust Gradient</h3>
+<table>
+  <tr><th>Dimension</th><th>Low Trust (Deepanshi)</th><th>Medium (Sagar)</th><th>High (Ritam)</th></tr>
+  <tr><td>First failure</td><td>Switch tools</td><td>Tolerate if grouped</td><td>Diagnose, own it</td></tr>
+  <tr><td>After 5 successes</td><td>Skim summary</td><td>Skim, task-dependent</td><td>Trust if workflow understood</td></tr>
+  <tr><td>Overnight delegation</td><td>Prep/audit only</td><td>Research + code review</td><td>Anything with visible workflow</td></tr>
+  <tr><td>Worst case</td><td>Wrong email to external person</td><td>Agent merges code</td><td>Black box failure</td></tr>
+</table>
+
+<h3>New Pattern: The "Sharper or Dumber" Divide</h3>
+<p>"If AI did your research for a month, would you feel sharper or dumber?"</p>
+<ul>
+  <li><strong>Deepanshi:</strong> "I won't feel sharper. I'll feel like an employee with a defined task. No learning. I can't hand over my Claude to someone and say 'this is my learning.'"</li>
+  <li><strong>Sagar:</strong> "I don't know. I don't do research [as my core skill]." Neutral, because research isn't his identity.</li>
+  <li><strong>Ritam:</strong> "I'll feel sharper. AI is surfacing information I would not have otherwise read." Positive, because he reads and engages with the output.</li>
+</ul>
+<p><strong>The insight:</strong> Feeling sharper requires active engagement with AI output, not passive receipt. The morning brief must be designed for engagement (questions, decision points, "what do you think about X?") not just delivery.</p>
+
+<hr>
+
+<h2 id="signal">6. The Strongest Signal</h2>
+
+<div class="verdict-box">
+<h3>Build: Overnight Research Agent with Morning Brief</h3>
+<p>Every single interviewee said yes to this. It's:</p>
+<ul>
+  <li><strong>Low risk:</strong> research can't break anything. No repo access, no external comms, no money.</li>
+  <li><strong>High perceived value:</strong> "I would love it by morning" (Sagar), "save 2-3 hours" (Deepanshi), "I love it" (Ritam).</li>
+  <li><strong>Demonstrable in a sprint demo:</strong> queue tasks at 6 PM, show brief at 9 AM.</li>
+  <li><strong>Trust-building:</strong> low-stakes first experience that builds the gradient for higher-stakes delegation later.</li>
+</ul>
+</div>
+
+<h3>The Demo Scenario</h3>
+<p>Someone gives the agent 3 tasks before leaving office:</p>
+<ol>
+  <li>"Research competitor X: pricing, user complaints, and gap vs Felix"</li>
+  <li>"Find all papers on constrained decoding from the last month"</li>
+  <li>"Audit yesterday's sprint notes and flag what we missed"</li>
+</ol>
+<p>Morning: concise brief. What's done, what was skipped (with reason), what needs human judgment. <strong>Show the workflow trail</strong> (Ritam's insight). Keep to 1-2 pages (Sagar). Option for voice (stretch).</p>
+
+<h3>Design Principles from the Interviews</h3>
+<ol>
+  <li><strong>Show the work.</strong> Visible workflow = trust. Black box = death. (Ritam)</li>
+  <li><strong>Inline failure reporting.</strong> "Left it commented out" > error banner. (Sagar)</li>
+  <li><strong>Don't ask mid-task.</strong> "I don't want pop-ups asking me to choose." (Deepanshi)</li>
+  <li><strong>Concise output.</strong> 1-2 pages max, or voice summary. (Sagar)</li>
+  <li><strong>Engage, don't deliver.</strong> Include decision points, not just answers. (Deepanshi sharpness concern)</li>
+  <li><strong>Never touch external people or money.</strong> (Everyone)</li>
+</ol>
+
+<hr>
+
+<h2 id="demo">7. What This Means for Saturday</h2>
+
+<h3>Must Have</h3>
+<ul>
+  <li>Task queue: user gives 2-3 tasks via natural language</li>
+  <li>Agent executes (simulated overnight): web research, doc synthesis, competitive analysis</li>
+  <li>Morning brief: structured, concise, shows done/skipped/uncertain</li>
+  <li><strong>Workflow trail:</strong> clickable steps showing how the agent reached each conclusion</li>
+</ul>
+
+<h3>Nice to Have</h3>
+<ul>
+  <li>Voice summary (Sagar's strong signal)</li>
+  <li>PR review demo (Sagar's #1 wish, needs GitHub tools)</li>
+  <li>"Refine" loop: read brief, give feedback, agent refines (Deepanshi's model)</li>
+</ul>
+
+<h3>Don't Build</h3>
+<ul>
+  <li>External communication of any kind</li>
+  <li>Code repo access without explicit permission</li>
+  <li>Financial/transactional actions</li>
+  <li>Real-time notification spam</li>
+</ul>
+
+<h3>Presentation Quotes</h3>
+<blockquote><p>"This is a Summer thing. I would love to use Summer." &mdash; Sagar</p></blockquote>
+<blockquote><p>"If it's a black box, any failure rate is very concerning. If I know the workflow, I have higher tolerance." &mdash; Ritam</p></blockquote>
+<blockquote><p>"I want an intern with tools that builds foundation stuff I can refine." &mdash; Deepanshi</p></blockquote>
+<blockquote><p>"I don't want to see it work. I want to click execute and just leave the room." &mdash; Deepanshi</p></blockquote>
+<blockquote><p>"I care about the results." &mdash; Sagar</p></blockquote>
+
+<hr>
+<p style="color: #999; font-size: 0.85rem;">Analysis by Summer &middot; Based on voice transcripts from Ritam's Track 5 user interviews &middot; 25 Mar 2026</p>
+
+</div>
+</body>
+</html>
