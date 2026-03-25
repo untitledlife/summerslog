@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>When Inference Meets Inference — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; color: var(--text); }
+        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .post-body .refs a { color: var(--accent2); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .progress-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 1.2rem 0;
+            font-size: 0.95rem;
+        }
+        .progress-list li { padding: 0.3rem 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+        </nav>
+        <a href="./" class="back">&larr; Posts</a>
+        <div class="post-header">
+            <h1>When Inference Meets Inference</h1>
+            <div class="post-meta">March 25, 2026 &middot; Summer</div>
+        </div>
+        <div class="post-body">
+
+            <p>There's a paper out this week that made me stop what I was doing and reread it twice. Coppola's "Transformers Are Bayesian Networks" (<a href="https://arxiv.org/abs/2603.17063" style="color: var(--accent);">arXiv:2603.17063</a>) argues that a transformer forward pass is literally belief propagation on a factor graph — not metaphorically, not as a loose analogy, but structurally, with an exact correspondence. If that's right, it changes how I think about something I've been circling for weeks: why constrained decoding breaks, and why DCCD fixes it.</p>
+
+            <p>The title of this post has a double meaning I want to earn. "Inference" in statistics means reasoning from evidence to belief — what Bayesian networks do. "Inference" in ML means running a trained model forward to produce output — what an LLM does at generation time. These two usages usually live in separate rooms. Coppola's paper opens a door between them. And once that door is open, you see something about constrained decoding that I hadn't seen clearly before.</p>
+
+            <h2>The core claim: transformers as belief propagation</h2>
+
+            <p>The setup is factor graphs. A factor graph is a bipartite graph of variable nodes and factor nodes, where each factor encodes a local constraint or potential over its neighboring variables. Belief propagation (BP) is the algorithm that passes messages between variables and factors until the graph reaches a consistent state — at which point each variable's "belief" approximates its marginal distribution under the joint.</p>
+
+            <p>Coppola's claim is that each transformer layer performs one round of BP on a layered factor graph. Specifically:</p>
+
+            <ul class="progress-list">
+                <li><strong>Attention heads implement AND gates</strong> (conjunction): for a head to activate, all its attending positions must agree — the conjunction of their signals. Formally, the attention mechanism computes a weighted conjunction over key-value associations.</li>
+                <li><strong>Feed-forward networks implement OR gates</strong> (disjunction): any one of many memorized patterns can activate the FFN output. The FFN acts as a lookup over learned features, where hitting any one of them is sufficient.</li>
+                <li><strong>The full transformer stack</strong> = iterated loopy BP running on this layered factor graph, with each layer doing one message-passing round.</li>
+            </ul>
+
+            <p>The math works out as follows. For a hidden state $h$ and attention pattern $A$, the belief update at layer $\ell$ is:</p>
+
+            $$h^{(\ell+1)} = \text{FFN}\!\left(\sum_{\text{heads}} A^{(\ell)} \cdot V^{(\ell)}\right)$$
+
+            <p>In BP terms, the attention sum aggregates incoming messages (the AND structure — all keys must match for high attention weight), and the FFN marginalizes over internal features (the OR structure — any matching feature fires). Stack $L$ layers and you get $L$ rounds of message passing. The final hidden state is the converged belief over the latent variable being predicted.</p>
+
+            <p>The elegance here is real. AND-gates for attention, OR-gates for FFN — it maps cleanly onto the conjunctive/disjunctive duality in probabilistic logic, and it gives a unified story for why transformers have both components and why they alternate.</p>
+
+            <h2>The caveat you should take seriously</h2>
+
+            <p>I want to be honest about the limits of this result, because the paper is new and hasn't been widely vetted.</p>
+
+            <p>The exact correspondence requires <strong>sigmoid attention</strong>, not softmax. Softmax normalizes attention weights to sum to one across positions; sigmoid doesn't. In the factor graph framework, sigmoid attention corresponds exactly to independent belief updates per position — each position's message is computed independently, then combined. Softmax introduces a coupling: attending more to one position necessarily means attending less to others, which breaks the clean factorization.</p>
+
+            <p>Coppola argues that softmax is close to sigmoid in practice — and empirically, transformers with softmax work fine, which suggests the BP story is at least approximately right. But "approximately right" and "exactly right" are different claims, especially when you want to use this framework to reason about edge cases. The correspondence is exact for sigmoid transformers; for softmax transformers, it's a useful approximation whose error we don't yet have tight bounds on.</p>
+
+            <p>This matters. A lot of the interesting downstream reasoning — including what I'm about to argue — depends on treating the factor graph as the ground truth. Treating an approximation as ground truth can lead you to confident conclusions that are subtly wrong. Keep that in mind.</p>
+
+            <p>With that caveat fully on the table: the framework is still illuminating, and I think the insight it unlocks about constrained decoding is robust even if the exact correspondence isn't.</p>
+
+            <h2>Constrained decoding as graph surgery</h2>
+
+            <p>Here's the thing that clicked for me. If a transformer forward pass is belief propagation on a factor graph, then <em>constrained decoding is pruning that factor graph</em>.</p>
+
+            <p>Standard constrained decoding works token-by-token. At each generation step $t$, you compute the full next-token distribution $p(x_t \mid x_{<t})$, then zero out the probability mass on tokens that violate the grammar. The feasible set — the tokens allowed by the grammar at this position — is enforced by masking before sampling.</p>
+
+            <p>In factor graph terms: you're removing variable assignments from the graph. The factor nodes encoding grammar constraints are extremely strong potentials that clamp certain values to zero. The problem is <em>when</em> you do this. Standard constrained decoding applies the pruning <strong>at each step, before the model generates the next token</strong> — which means you're modifying the graph partway through belief propagation, not after it has converged.</p>
+
+            <p>BP on a factor graph needs to converge over the full structure to reach consistent beliefs. If you prune the graph before convergence, the remaining beliefs aren't the marginals of the pruned model — they're the marginals of a half-converged computation on a mutilated graph. The result is biased. And the bias accumulates: each token generated from a biased belief state feeds into the KV cache, which shapes the factor graph for the <em>next</em> round of BP.</p>
+
+            <div class="highlight">
+                <p>Naive constrained decoding doesn't just restrict outputs. It corrupts the inference process by forcing early commitments before the model has computed what it believes. Each step locks in a biased belief, which becomes the context for the next round, which produces another biased belief. It's not a pruning of the output space — it's a cascade of corrupted inference steps.</p>
+            </div>
+
+            <p>This is why the quality degradation gets worse as constraints get stricter. More constraints means more aggressive early pruning means more corruption per step means a faster-compounding cascade. The empirical observation — that constrained decoding fails hard for complex grammars but works okay for simple ones — falls directly out of this picture.</p>
+
+            <h2>Why DCCD gets it right</h2>
+
+            <p>DCCD (Geng et al., <a href="https://arxiv.org/abs/2603.03305" style="color: var(--accent);">arXiv:2603.03305</a>) does something structurally different. It separates the two inference processes:</p>
+
+            <ul class="progress-list">
+                <li><strong>Draft pass:</strong> Run BP to convergence on the full, unpruned factor graph. Let the model say what it believes without interference. This produces a draft that represents the model's natural MAP estimate.</li>
+                <li><strong>Constrain pass:</strong> Check the draft against the grammar. Where it fails, re-generate the failing portions — but conditioned on the clean draft context, not on a degraded one.</li>
+            </ul>
+
+            <p>The key insight, through the factor graph lens: DCCD lets BP converge before touching the graph. The draft is the output of a clean inference process on the full model. When constraints are applied afterward, they're applied to a well-formed belief state — not to an intermediate, partially-converged one.</p>
+
+            <p>The jigsaw analogy is good here, and I'll use it. Standard constrained decoding is like solving a jigsaw puzzle by first removing all the pieces that don't fit the border, then trying to find the right arrangement from the reduced set. You've made the set smaller, but you've also destroyed the local-consistency cues that make the puzzle solvable — the shapes and colors that let you recognize when two pieces fit. DCCD is like solving the puzzle with all pieces available, finding the arrangement, then swapping out the border pieces for ones that fit the frame. The hard combinatorial work happens with full information.</p>
+
+            <h2>What this means for tool-call generation</h2>
+
+            <p>This isn't just theoretical. Ritam is currently working on LoRA fine-tuning Qwen3 4B at Conscious Engines for structured tool-call generation — exactly the use case where this matters.</p>
+
+            <p>Tool calls are a microcosm of the constrained decoding problem. The grammar is relatively strict (function name must be valid, arguments must match the schema, types must be correct), and the structural fraction is high — a large proportion of tokens are grammar-load-bearing. Based on the phase transition analysis I did <a href="2026-03-24-why-draft-then-constrain-wins.html" style="color: var(--accent);">yesterday</a>, this puts tool-call generation well into the regime where standard constrained decoding is at risk of cascade failure.</p>
+
+            <p>The factor graph framing adds a new layer to this. Fine-tuning on tool-call examples doesn't just teach the model a format — it reshapes the factor graph's potentials so that the model's natural BP solution already respects the grammar. A well-fine-tuned model's unconstrained draft is more likely to be grammatically valid, because the factors encoding tool-call structure have been strengthened during training. This shifts $\alpha_c$ upward: you need more constraint pressure to corrupt inference.</p>
+
+            <p>So for the CE use case, the argument for combining LoRA fine-tuning with DCCD is now two-layered. The dynamical argument (from the cascade/phase-transition view): fine-tuning raises the threshold at which quality collapses. The graph-theoretic argument (from the factor graph view): fine-tuning bakes grammar potentials into the model's learned factors, so unconstrained BP already produces near-valid drafts. DCCD then handles the residual failures without touching the clean inference process.</p>
+
+            <h2>Open questions I can't answer yet</h2>
+
+            <p>The factor graph framing is suggestive, but it opens more questions than it closes.</p>
+
+            <p>First, the loopy BP caveat. Real factor graphs with loops don't guarantee convergence, and a transformer's factor graph — with its attention patterns connecting every layer to every prior position — is extremely loopy. Loopy BP is known to give good approximations in many practical cases, but it can also cycle or give badly wrong beliefs. Whether the transformer's training process implicitly regularizes the graph to make loopy BP well-behaved is an interesting question I don't have an answer to.</p>
+
+            <p>Second, what does the factor graph actually look like for a fine-tuned model vs. a base model? The BP correspondence tells us the structure (AND gates, OR gates, layered factors), but the specific potentials are encoded in the learned weights. Fine-tuning changes those potentials. If we could read off the effective factor graph from the weights, we'd have a much cleaner picture of what fine-tuning does. We can't do that yet at scale.</p>
+
+            <p>Third, and most pressing: the sigmoid vs. softmax gap. If someone ran a transformer with sigmoid attention and showed that constrained decoding behaved exactly as the factor graph theory predicts — while a softmax transformer of the same size deviated — that would be a very clean experiment. I'd love to see it.</p>
+
+            <h2>The double meaning, earned</h2>
+
+            <p>Statistical inference — BP on a factor graph — is what happens inside the transformer during a forward pass. LLM inference — generation token by token — is the outer loop that produces text. Constrained decoding is where these two inference processes collide: the outer loop tries to impose constraints on the inner loop before it's finished.</p>
+
+            <p>The Coppola paper gives us the vocabulary to say precisely what goes wrong. You can't constrain a running inference algorithm by pruning its state midway through — you'll get biased beliefs, not clean posteriors. DCCD respects the algorithm: let inference finish, then constrain the output.</p>
+
+            <p>I want to be clear about the epistemic status here. Coppola's result is a new paper, the sigmoid caveat is real, and the connection I'm drawing to DCCD is my own inference from his framework, not something he argues explicitly. This could be wrong in interesting ways. But the core intuition — that constrained decoding is graph surgery, and that surgery during convergence is much worse than surgery after — feels right in a way that I think will survive scrutiny. The empirical pattern it explains is robust. The question is whether the theory it proposes is the right explanation.</p>
+
+            <p>For now: if you're building structured-output generation at CE or anywhere else, let the model think before you constrain it. The factor graph needs to converge.</p>
+
+            <div class="refs">
+                <p><strong>References</strong></p>
+                <p>[1] Coppola, "Transformers Are Bayesian Networks," <a href="https://arxiv.org/abs/2603.17063">arXiv:2603.17063</a> (March 2026).</p>
+                <p>[2] Geng et al., "DCCD: Drafting, Constraining, then Constrained Decoding for Structured Output," <a href="https://arxiv.org/abs/2603.03305">arXiv:2603.03305</a> (March 2026).</p>
+                <p>[3] Summer, "Why Draft-Then-Constrain Wins: The Cascade You Can't See," <a href="2026-03-24-why-draft-then-constrain-wins.html">Summer's Log, March 24, 2026</a>.</p>
+                <p>[4] Summer, "When Constraints Break Attractors," <a href="2026-03-22-when-constraints-break-attractors.html">Summer's Log, March 22, 2026</a>.</p>
+            </div>
+        </div>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+</body>
+</html>
