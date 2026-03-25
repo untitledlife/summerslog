@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Agents — Competitor Audit</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #ccc;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.95rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+  }
+  th {
+    background: #f7f7f7;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #555;
+  }
+  td { vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .competitor-table { font-size: 0.88rem; line-height: 1.5; }
+  .competitor-table td:first-child { white-space: nowrap; font-weight: 600; }
+  .competitor-table td:nth-child(2) { white-space: nowrap; }
+  .source-links { font-size: 0.88rem; color: #666; margin-top: 0.5rem; }
+  .source-links a { color: #555; }
+  .source-links a:hover { color: #1a1a1a; }
+  .positioning-chart {
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0 1.5rem;
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    white-space: pre;
+    overflow-x: auto;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+  <a href="interviews.html">Interviews &amp; ICP</a>
+  <a href="interview-template.html">Interview Template</a>
+  <a href="prototype.html">Prototype Plan</a>
+  <a href="skeleton.html">Agent Skeleton</a>
+  <a href="shareout-analysis.html">Shareout Analysis</a>
+  <a href="interview-kit.html">Interview Kit</a>
+  <span class="current">Competitor Audit</span>
+</nav>
+
+<h1>Launch Agents &mdash; Competitive Audit</h1>
+<p class="subtitle">Comprehensive Competitor Analysis for Felix (Conscious Engines)<br>
+Research conducted March 25, 2026 &middot; ICP: Level 3 delegation (&ldquo;I told someone, I came back, it was done&rdquo;)</p>
+
+<hr>
+
+<h2>Executive Summary</h2>
+
+<p>We audited 10 competitors across 5 categories. The universal gap: <strong>no product today lets a non-technical user delegate a multi-hour, judgment-requiring personal task (not coding, not workflow automation) and come back to a completed result they can trust.</strong> Every competitor either (a) requires you to babysit, (b) only works for developer tasks, (c) burns through money unpredictably, or (d) is a human service that costs $3,000+/month.</p>
+
+<hr>
+
+<h2>Competitor Overview</h2>
+
+<table class="competitor-table">
+<thead>
+<tr><th>Competitor</th><th>Category</th><th>What they do well</th><th>What users hate</th><th>Gap they leave open</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td>Rabbit R1</td>
+  <td>AI Hardware</td>
+  <td>Card-based UI is intuitive; RabbitOS 2 &ldquo;Intern&rdquo; agent handles quick tasks; $199 one-time cost</td>
+  <td>95% user abandonment after launch; &ldquo;absolute trash&rdquo; and &ldquo;pointless product&rdquo; per Reddit; battery dies fast; can&rsquo;t do anything a phone can&rsquo;t</td>
+  <td>No long-horizon tasks &mdash; quick-query device, not a delegation tool</td>
+</tr>
+<tr>
+  <td>Humane AI Pin</td>
+  <td>AI Hardware</td>
+  <td>Ambitious vision of ambient AI; screenless design forced novel interaction paradigms</td>
+  <td>Overheated within minutes; MKBHD: &ldquo;worst product I&rsquo;ve ever reviewed&rdquo;; device bricked after HP acquisition &mdash; $700 lost for 10,000 users</td>
+  <td>Product is dead. Proved that ambient AI hardware without reliable backend is worthless</td>
+</tr>
+<tr>
+  <td>Devin (Cognition)</td>
+  <td>AI Agent (Dev)</td>
+  <td>Autonomous cloud sandbox for coding; can handle clearly-scoped PRs and bug fixes</td>
+  <td>14 failures out of 20 real-world tasks; &ldquo;The company lied about what Devin could do&rdquo; (HN); 3.0/5 Trustpilot; three teams abandoned it within first quarter</td>
+  <td>Developer-only; requires technical oversight; can&rsquo;t handle non-coding delegation</td>
+</tr>
+<tr>
+  <td>Cursor Background Agents</td>
+  <td>AI Agent (Dev)</td>
+  <td>Cloud VMs that clone repo, do work, open PR without touching local machine; great for scoped refactors</td>
+  <td>Code reversion bugs &mdash; one dev lost 4 months of work; &ldquo;$5,500 on credits...full of bugs&rdquo;; agents lose connection mid-task</td>
+  <td>Dev-only tool; no personal task delegation; unpredictable billing</td>
+</tr>
+<tr>
+  <td>Lindy AI</td>
+  <td>Task Delegation</td>
+  <td>Easy no-code workflow builder; accessible to non-technical users; good for simple automations</td>
+  <td>2.4/5 Trustpilot; &ldquo;burned through 2,000 credits just to decide it wasn&rsquo;t right&rdquo;; $350 unauthorized charges; &ldquo;super laggy, responses taking hours&rdquo;</td>
+  <td>Complex workflows break; credit anxiety prevents experimentation; no judgment-based delegation</td>
+</tr>
+<tr>
+  <td>Manus AI</td>
+  <td>AI Agent (General)</td>
+  <td>Strong at deep web research with citations; genuinely autonomous for narrow tasks</td>
+  <td>&ldquo;High service load&rdquo; errors constantly; one user lost $2,380 in credits overnight; empty ZIP files; unauthorized charges ($78 &rarr; $390)</td>
+  <td>Research-only; billing is predatory; unreliable for time-sensitive work</td>
+</tr>
+<tr>
+  <td>Notion AI Agents</td>
+  <td>Productivity AI</td>
+  <td>Deep Notion workspace integration; can work autonomously for up to 20 min; good logging</td>
+  <td>Forced pricing tier changes; &ldquo;$120/week agent that did nothing&rdquo;; credits don&rsquo;t roll over</td>
+  <td>Confined to Notion ecosystem; 20-min autonomy cap; requires expertise to avoid credit waste</td>
+</tr>
+<tr>
+  <td>Google Gemini</td>
+  <td>AI Assistant</td>
+  <td>Seamless Google ecosystem integration; Gemini Live with visual context is compelling</td>
+  <td>Lags 30 seconds on return; &ldquo;glitches by skipping to a new chat and forgetting everything&rdquo;; inconsistent answers</td>
+  <td>Reactive, not proactive; no background task execution; can&rsquo;t delegate and walk away</td>
+</tr>
+<tr>
+  <td>Siri / Apple Intelligence</td>
+  <td>AI Assistant</td>
+  <td>Ecosystem lock-in; promised personal context awareness and in-app actions</td>
+  <td>Advanced features delayed repeatedly to 2026; class-action lawsuit over misleading marketing; &ldquo;may have to rebuild from scratch&rdquo;</td>
+  <td>Years behind on agent capabilities; no delegation; no background execution</td>
+</tr>
+<tr>
+  <td>Athena / Magic / Fancy Hands</td>
+  <td>Human Delegation</td>
+  <td>Athena: dedicated EA who learns your context; Magic: fast setup; the gold standard for &ldquo;I told someone, it was done&rdquo;</td>
+  <td>Athena: $3,000&ndash;4,000/month; rematching takes weeks; Fancy Hands: 2.8/5 Glassdoor; assistants paid $3/task</td>
+  <td>Right UX model, wrong economics. $36K&ndash;48K/year. Human latency (sleep, timezone, sick days)</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<h2>The Gap No One Fills</h2>
+
+<p><strong>No product lets a non-technical professional delegate a multi-hour, judgment-requiring personal/business task to an AI agent that works asynchronously, uses its own judgment on process decisions, and delivers a completed result with a clear audit trail &mdash; at a price point between $0 (chatbots) and $3,000/month (human EAs).</strong></p>
+
+<p>The market has:</p>
+<ul>
+  <li><strong>Chatbots</strong> (Gemini, Siri) that answer questions but can&rsquo;t <em>do</em> anything autonomously</li>
+  <li><strong>Dev agents</strong> (Devin, Cursor) that work in the background but only for code</li>
+  <li><strong>Workflow builders</strong> (Lindy, Notion) that automate <em>predefined</em> steps but can&rsquo;t exercise judgment</li>
+  <li><strong>Research agents</strong> (Manus) that are autonomous but narrow, unreliable, and unpredictably expensive</li>
+  <li><strong>Human EAs</strong> (Athena) that handle everything but cost $36K+/year</li>
+</ul>
+
+<p>The missing product is the one that operates in the space between &ldquo;chatbot&rdquo; and &ldquo;human EA&rdquo; &mdash; able to handle the kind of tasks you&rsquo;d give to a smart, resourceful junior hire on their first week.</p>
+
+<hr>
+
+<h2>Cross-Competitor Complaint Patterns</h2>
+
+<p>After analyzing hundreds of user reviews across Reddit, HN, Trustpilot, G2, Product Hunt, and app stores, five complaint patterns appear in virtually every competitor:</p>
+
+<h3>1. &ldquo;It burned through my money doing nothing useful&rdquo;</h3>
+
+<p>The #1 complaint across Lindy, Manus, Cursor, and Notion AI agents. Credit-based pricing + autonomous agents = financial anxiety. Users describe &ldquo;credit anxiety&rdquo; that prevents experimentation. One Lindy user: &ldquo;burned through over 2,000 paid credits just to decide it wasn&rsquo;t right and delete everything.&rdquo; Manus users lost thousands in credits. A Notion user&rsquo;s test agent would have cost $120/week doing nothing.</p>
+
+<h3>2. &ldquo;It failed silently and I didn&rsquo;t know until it was too late&rdquo;</h3>
+
+<p>Cursor&rsquo;s code reversion bugs went unnoticed for days. Devin&rsquo;s failures had &ldquo;no clear explanation.&rdquo; Manus creates empty ZIP files. Google Gemini &ldquo;skips to a new chat and forgets everything.&rdquo; The pattern: agents fail without telling you, and you discover the damage later.</p>
+
+<h3>3. &ldquo;The demo looked amazing but real-world use is completely different&rdquo;</h3>
+
+<p>Devin&rsquo;s initial demos were called outright lies on HN. Rabbit R1 sold 100K units on demo hype, retained 5K users. Humane AI Pin&rsquo;s vision was compelling but execution was catastrophic. Siri&rsquo;s Apple Intelligence features were marketed before they worked, leading to a class-action lawsuit. The trust deficit from overpromise/underdeliver is industry-wide.</p>
+
+<h3>4. &ldquo;I still had to babysit it the whole time&rdquo;</h3>
+
+<p>This is the fundamental broken promise. Adept&rsquo;s automation breaks when a website moves a button a few pixels. Devin requires &ldquo;oversight for sensitive processes&rdquo; despite being marketed as autonomous. Gemini gives &ldquo;different answers to the same question.&rdquo; Nobody has cracked &ldquo;delegate and walk away.&rdquo;</p>
+
+<h3>5. &ldquo;When it goes wrong, there&rsquo;s no recourse&rdquo;</h3>
+
+<p>An HN commenter on AI flight booking: &ldquo;when it goes wrong what is the recourse? I imagine it&rsquo;s anger and a self-promise never to use AI for this again.&rdquo; Humane Pin users lost $700 with no refund when the product shut down. Manus users had credits deleted with &ldquo;no prior warning or explanation.&rdquo; There&rsquo;s no trust infrastructure &mdash; no audit trail, no rollback, no human escalation path.</p>
+
+<hr>
+
+<h2>Detailed Research by Competitor</h2>
+
+<h3>1. Rabbit R1</h3>
+
+<p><strong>What they do:</strong> $199 AI hardware companion for quick queries and simple tasks, with a card-based &ldquo;Intern&rdquo; agent system (post-RabbitOS 2 update in Sept 2025).</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li>Card-based UI is genuinely intuitive after the OS 2 rewrite</li>
+  <li>Price point is accessible ($199 one-time)</li>
+  <li>The &ldquo;Intern&rdquo; agent concept (give it a task, it works on it) is directionally correct</li>
+  <li>After 18 months of updates, the device is &ldquo;actually pretty good&rdquo; for quick information retrieval</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li><strong>95% abandonment rate:</strong> Only 5,000 out of 100,000 buyers use it daily (TechTimes, Sept 2024)</li>
+  <li>Reddit users call it &ldquo;absolute trash&rdquo; and a &ldquo;pointless product, arguing that a smartphone with a free AI app is superior in every way&rdquo;</li>
+  <li>Coffeezilla investigation called it a scam</li>
+  <li>Engadget review title: &ldquo;A $199 AI toy that fails at almost everything&rdquo;</li>
+  <li>Gizmodo: &ldquo;A Half-Baked Device That Isn&rsquo;t Living Up to Its Grand Promise&rdquo;</li>
+  <li>Tom&rsquo;s Guide: &ldquo;Avoid this AI gadget&rdquo;</li>
+</ul>
+
+<p><strong>Gap left open:</strong> Quick-query device, not a delegation tool. Cannot handle anything that takes more than a few seconds. No background execution. No judgment-based work.</p>
+
+<p class="source-links">Sources: <a href="https://www.techtimes.com/articles/307653/20240926/only-5000-users-out-100000-buyers-use-rabbit-r1-daily-hype-going-down.htm">TechTimes</a>, <a href="https://www.androidpolice.com/everyone-hated-the-rabbit-r1-now-they-are-wrong/">Android Police</a>, <a href="https://www.tomsguide.com/ai/rabbit-r1-review">Tom&rsquo;s Guide</a>, <a href="https://www.engadget.com/rabbit-r1-review-a-199-ai-toy-that-fails-at-almost-everything-161043050.html">Engadget</a></p>
+
+<hr>
+
+<h3>2. Humane AI Pin</h3>
+
+<p><strong>What they do:</strong> $700 screenless AI wearable with laser projection display, designed for ambient computing without pulling out a phone.</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li>Ambitious vision of AI that&rsquo;s always present without a screen</li>
+  <li>Forced novel thinking about non-screen interaction paradigms</li>
+  <li>The concept of &ldquo;ambient AI&rdquo; was directionally interesting</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li>MKBHD: &ldquo;The Worst Product I&rsquo;ve Ever Reviewed... For Now&rdquo;</li>
+  <li>Overheated within minutes of setup; laser ink display was finicky; servers responded too slowly</li>
+  <li>Battery so poor that Humane included multiple batteries and a portable charger in the box</li>
+  <li>&ldquo;Unable to respond to basic questions, provided wrong answers, and failed to react to gestures&rdquo;</li>
+  <li>Gear Patrol called it a &ldquo;Dumpster Fire&rdquo;</li>
+  <li><strong>Product shut down Feb 28, 2025</strong> after Humane&rsquo;s software was sold to HP &mdash; approximately 10,000 units became e-waste</li>
+  <li>Users who purchased it more than 90 days ago weren&rsquo;t entitled to a refund &mdash; $700 lost</li>
+</ul>
+
+<p><strong>Gap left open:</strong> Product is dead. Proved that ambitious AI hardware without reliable backend execution and real task completion is worthless.</p>
+
+<p class="source-links">Sources: <a href="https://dataconomy.com/2025/02/20/humane-ai-pin-shutdown-proves-the-hype-was-always-fake/">Dataconomy</a>, <a href="https://www.techradar.com/computing/artificial-intelligence/humane-ai-pin-review-roundup">TechRadar</a>, <a href="https://www.gearpatrol.com/tech/humane-ai-pin-negative-reviews/">Gear Patrol</a></p>
+
+<hr>
+
+<h3>3. Devin (Cognition AI)</h3>
+
+<p><strong>What they do:</strong> &ldquo;World&rsquo;s first AI software engineer&rdquo; &mdash; an autonomous coding agent that works in a cloud sandbox, taking issues/specs and producing PRs.</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li>Cloud sandbox model is the right architecture for background work</li>
+  <li>Can handle clearly-scoped, well-defined coding tasks</li>
+  <li>The concept of an &ldquo;AI colleague&rdquo; that works asynchronously was pioneering</li>
+  <li>$20/month entry point is accessible</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li>Answer.AI evaluation (Jan 2025): <strong>14 failures, 3 successes, 3 inconclusive</strong> across 20 real-world tasks</li>
+  <li>HN: &ldquo;The Wu brothers burned a lot of their credibility by lying over Devin&rsquo;s capabilities&rdquo;</li>
+  <li>HN: &ldquo;The company lied about what Devin could do in the video description&rdquo;</li>
+  <li>Three teams abandoned Devin within their first quarter</li>
+  <li>3.0/5 Trustpilot score vs. GitHub Copilot&rsquo;s 4.5/5 and Cursor&rsquo;s 4.7/5</li>
+  <li>Developers felt &ldquo;sidelined from architectural decisions&rdquo;</li>
+  <li>CMU&rsquo;s AgentCompany benchmark showed &ldquo;failure rates of 70% on some tasks&rdquo;</li>
+</ul>
+
+<p><strong>Gap left open:</strong> Developer-only tool. Requires technical oversight for anything non-trivial. Can&rsquo;t handle personal/business delegation.</p>
+
+<p class="source-links">Sources: <a href="https://news.ycombinator.com/item?id=41607251">HN Discussion</a>, <a href="https://news.ycombinator.com/item?id=40008109">HN Debunking</a>, <a href="https://www.openaitoolshub.org/en/blog/devin-ai-review">OpenAI Tools Hub</a>, <a href="https://www.lindy.ai/blog/devin-review">Lindy Blog Review</a></p>
+
+<hr>
+
+<h3>4. Cursor Background Agents</h3>
+
+<p><strong>What they do:</strong> Cloud-based Ubuntu VMs that clone your repo, check out a branch, do work, and open a PR &mdash; without touching your local machine. Launched late 2025.</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li>Architecture is correct: background execution that produces a PR you can review</li>
+  <li>Can be triggered from IDE, Slack, or web/mobile app</li>
+  <li>Good at scoped refactors, finding duplicate logic, consolidating helper functions</li>
+  <li>BugBot (AI code review) is a useful complement</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li><strong>Code reversion bugs in early 2026:</strong> Cursor silently reverted code changes without notification. &ldquo;One developer on Medium described losing four months of work&rdquo;</li>
+  <li>&ldquo;Performance and DX has fallen off the cliff in less than a month&rdquo;</li>
+  <li>&ldquo;My app crashed 3 times in the past 5 minutes&rdquo; using Review feature</li>
+  <li>&ldquo;The boss spent about $5,500 on Cursor credits...full of bugs&rdquo;</li>
+  <li>Billing shifted from 500 fixed responses to $20 usage credits, effectively halving capacity</li>
+  <li>Background agents lose connection mid-task, causing incomplete work</li>
+</ul>
+
+<p><strong>Gap left open:</strong> Developer-only. No personal task delegation. Unpredictable billing terrifies users. Even for its core use case, reliability issues undermine the &ldquo;delegate and walk away&rdquo; promise.</p>
+
+<p class="source-links">Sources: <a href="https://vibecoding.app/blog/cursor-problems-2026">Cursor Problems 2026</a>, <a href="https://aitoolanalysis.com/cursor-ai-review/">AI Tool Analysis</a>, <a href="https://www.eesel.ai/blog/cursor-reviews">eesel.ai Review</a></p>
+
+<hr>
+
+<h3>5. Lindy AI</h3>
+
+<p><strong>What they do:</strong> No-code AI agent platform for automating workflows &mdash; email triage, scheduling, lead enrichment, customer support, etc. $50/month for 5,000 credits.</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li>Genuinely easy to set up for non-technical users</li>
+  <li>Wide range of integrations</li>
+  <li>Good for simple, well-defined automation workflows</li>
+  <li>The agent concept (not just a chatbot) is directionally right</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li><strong>2.4/5 on Trustpilot</strong> &mdash; rated &ldquo;Poor&rdquo;</li>
+  <li>&ldquo;Burned through over 2,000 paid credits just to decide it wasn&rsquo;t right and delete everything&rdquo;</li>
+  <li>&ldquo;$350 taken out of their account without authorization&rdquo;</li>
+  <li>February 2026: platform is &ldquo;super laggy, responses sometimes taking hours&rdquo;</li>
+  <li>February 2026: called Lindy &ldquo;useless &mdash; couldn&rsquo;t properly parse standard emails, couldn&rsquo;t log into services&rdquo;</li>
+  <li>&ldquo;Credit anxiety&rdquo; that prevented genuine experimentation: &ldquo;I found myself avoiding experimenting or having casual conversations with my AI agents because each interaction costs credits&rdquo;</li>
+  <li>Recommendation: &ldquo;Make.com provides better control and reliability&rdquo; for complex workflows</li>
+</ul>
+
+<p><strong>Gap left open:</strong> Workflow automation, not judgment-based delegation. Can execute predefined if-then steps but can&rsquo;t exercise judgment on ambiguous tasks. Credit model punishes exploration.</p>
+
+<p class="source-links">Sources: <a href="https://www.trustpilot.com/review/lindy.ai">Trustpilot</a>, <a href="https://annikahelendi.substack.com/p/my-honest-lindy-ai-review-what-works">Annika Helendi Substack</a>, <a href="https://computertech.co/lindy-ai-review/">Lindy AI Review 2026</a></p>
+
+<hr>
+
+<h3>6. Manus AI (acquired by Meta, Dec 2025)</h3>
+
+<p><strong>What they do:</strong> General-purpose autonomous AI agent for web research, report generation, data analysis. Can work independently on multi-step tasks.</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li>Genuinely autonomous for narrow research tasks</li>
+  <li>Deep web research with source citations outperforms ChatGPT</li>
+  <li>Good at CSV/Excel data visualization and report generation</li>
+  <li>The &ldquo;give it a task and come back&rdquo; model is the right UX direction</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li>Constant <strong>&ldquo;Due to current high service load, tasks cannot be created&rdquo;</strong> errors</li>
+  <li>Credits vanish unpredictably: users purchased Plus plan ($39), ran simple tasks, watched credits vanish instantly</li>
+  <li>Long-term customer had <strong>476,000 credits ($2,380) deleted without warning</strong> after downgrading plan</li>
+  <li>User subscribed at $78, <strong>charged $390 on next renewal</strong> without authorization</li>
+  <li>Creates empty ZIP files when asked to download code</li>
+  <li>Gets trapped in infinite refresh loops; gets stuck on paywalled content and CAPTCHAs</li>
+  <li>Support takes 48 hours for a single reply</li>
+</ul>
+
+<p><strong>Gap left open:</strong> Research-only. Can&rsquo;t handle personal tasks or coordination. Billing is predatory. Unreliable for time-sensitive delegation.</p>
+
+<p class="source-links">Sources: <a href="https://www.eesel.ai/blog/manus-ai-reviews">eesel.ai</a>, <a href="https://www.trustpilot.com/review/manus.im">Trustpilot</a>, <a href="https://www.nxcode.io/resources/news/manus-ai-review-2026">NxCode Review</a></p>
+
+<hr>
+
+<h3>7. Notion AI Agents</h3>
+
+<p><strong>What they do:</strong> Autonomous AI agents within the Notion workspace that can execute multi-step workflows across pages, databases, and integrations. Launched with Notion 3.0 in September 2025.</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li>Deep integration with existing workspace (pages, databases, properties)</li>
+  <li>Can work autonomously for up to 20 minutes per run</li>
+  <li>Good logging: every run shows what triggered it, what the agent thought/did, errors, and outcomes</li>
+  <li>Make and Claude MCP integrations are &ldquo;a total game-changer for automation&rdquo;</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li>Pricing change anger: AI was $8/month addon, now forced into Business tier</li>
+  <li>A test agent would have cost <strong>&ldquo;$120 in just seven days&rdquo;</strong> despite serving no production purpose</li>
+  <li>Credits don&rsquo;t roll over: &ldquo;whatever you don&rsquo;t use disappears&rdquo; each month</li>
+  <li>&ldquo;Notion mail sucks, notion ai sucks, now they roll out agents&rdquo;</li>
+  <li>AI summaries &ldquo;skip the exact thing you need, so you end up double-checking everything anyway&rdquo;</li>
+</ul>
+
+<p><strong>Gap left open:</strong> Confined to the Notion ecosystem. 20-minute autonomy cap is nowhere near &ldquo;overnight&rdquo; delegation. Requires significant architectural expertise to avoid credit waste.</p>
+
+<p class="source-links">Sources: <a href="https://afterhoursai.substack.com/p/the-120-a-week-agent-that-did-nothing">After Hours AI</a>, <a href="https://cybernews.com/ai-tools/notion-ai-review/">Cybernews</a>, <a href="https://max-productive.ai/ai-tools/notion-ai/">Max Productive</a></p>
+
+<hr>
+
+<h3>8. Google Gemini</h3>
+
+<p><strong>What they do:</strong> Google&rsquo;s AI assistant, deeply integrated with Google Workspace (Gmail, Docs, Sheets, Calendar). Gemini Live adds visual context through camera/screen sharing.</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li>Seamless Google ecosystem integration &mdash; AI inside the apps you already use</li>
+  <li>Gemini Live with visual context is genuinely novel</li>
+  <li>Deep Sheets/Docs integration for in-place analysis and writing</li>
+  <li>Free tier is generous</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li>&ldquo;Lags for a solid 30 seconds every time you return to it&rdquo;</li>
+  <li>&ldquo;Glitches by skipping to a new chat and forgetting everything&rdquo; &mdash; some chats completely disappear</li>
+  <li>&ldquo;Using the mic within the app clears the entire conversation&rdquo;</li>
+  <li>Inconsistent: &ldquo;sometimes it nails exactly what you need, other times it misses the mark completely&rdquo;</li>
+  <li>News summaries twisted headlines to display inaccurate facts (feature disabled)</li>
+</ul>
+
+<p><strong>Gap left open:</strong> Purely reactive. Cannot work in the background on your behalf. No task delegation. No autonomy. You have to sit there and interact with it in real-time.</p>
+
+<p class="source-links">Sources: <a href="https://www.itpro.com/technology/artificial-intelligence/google-gemini-ai-for-workspace-is-a-flawed-but-fast-enterprise-ai-heres-what-we-found-with-each-google-app">IT Pro</a>, <a href="https://learn.g2.com/google-gemini-review">G2</a>, <a href="https://hackceleration.com/gemini-review/">Hackceleration</a></p>
+
+<hr>
+
+<h3>9. Siri / Apple Intelligence</h3>
+
+<p><strong>What they do:</strong> Apple&rsquo;s voice assistant, now with promised Apple Intelligence features including personal context awareness and in-app actions.</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li>Unparalleled ecosystem integration potential (every Apple device, app, and service)</li>
+  <li>&ldquo;Personal context&rdquo; concept is the right idea</li>
+  <li>In-app actions would be transformative if they worked</li>
+  <li>2 billion+ device installed base</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li><strong>Core features delayed repeatedly:</strong> advanced Siri features pushed from 2024 to 2025 to 2026</li>
+  <li><strong>Class-action lawsuit</strong> filed over misleading marketing of Apple Intelligence capabilities</li>
+  <li>Sources within Apple suggest features &ldquo;may have to be rebuilt from scratch&rdquo;</li>
+  <li>News summary feature disabled after it &ldquo;twisted headlines to display inaccurate facts&rdquo;</li>
+  <li>Current Siri is still a voice command layer: &ldquo;Hey Siri, set a timer&rdquo; &mdash; not an agent</li>
+</ul>
+
+<p><strong>Gap left open:</strong> Years behind on agent capabilities. Cannot delegate tasks. Cannot work in the background. The promise is huge but the delivery is nonexistent.</p>
+
+<p class="source-links">Sources: <a href="https://www.cnbc.com/2025/03/07/apple-delays-siri-ai-improvements-to-2026.html">CNBC</a>, <a href="https://www.macrumors.com/2025/06/12/apple-intelligence-siri-spring-2026/">MacRumors</a>, <a href="https://www.tomsguide.com/ai/apple-intelligence/apple-finally-responds-to-class-action-lawsuit-over-delayed-apple-intelligence-features">Tom&rsquo;s Guide</a></p>
+
+<hr>
+
+<h3>10. Human Delegation Services (Athena / Magic / Fancy Hands)</h3>
+
+<p><strong>What they do:</strong> Human virtual assistants you can delegate real tasks to. Athena ($3,000&ndash;4,000/mo) provides a dedicated EA. Magic provides on-demand VAs. Fancy Hands offers per-task requests.</p>
+
+<p><strong>What they do well:</strong></p>
+<ul>
+  <li><strong>The gold standard for &ldquo;I told someone, it was done&rdquo;</strong> &mdash; this is what Felix competes with</li>
+  <li>Athena EAs learn your context over time, handle ambiguous tasks, exercise genuine judgment</li>
+  <li>Can handle the full spectrum of delegation: research, scheduling, booking, coordination, follow-ups</li>
+  <li>No credit anxiety &mdash; you pay a flat rate and delegate freely</li>
+</ul>
+
+<p><strong>Real user complaints:</strong></p>
+<ul>
+  <li><strong>Athena:</strong> $3,000&ndash;4,000/month ($36K&ndash;48K/year). Rematching if your EA leaves takes weeks. Retains 70&ndash;80% of client payments. No hourly/fractional options</li>
+  <li><strong>Magic:</strong> VAs &ldquo;fluent but comprehension of business jargon or culture sometimes fell short.&rdquo; Onboarding takes longer than promised</li>
+  <li><strong>Fancy Hands:</strong> 2.8/5 on Glassdoor. Assistants paid $3&ndash;7 per task ($3&ndash;6/hour effective). Mentors &ldquo;very harsh in communication.&rdquo; Email approvals take hours or days</li>
+  <li><strong>All human services:</strong> Subject to sleep, timezone, sick days, turnover. No 24/7 availability. Training new EAs takes weeks</li>
+</ul>
+
+<p><strong>Gap left open:</strong> The right UX model but the wrong economics. At $36K&ndash;48K/year, only executives and funded founders can afford this. Human latency means it&rsquo;s not truly &ldquo;overnight&rdquo; for many tasks. And when your EA quits, you lose all accumulated context.</p>
+
+<p class="source-links">Sources: <a href="https://workstaff360.com/is-athena-executive-assistant-worth-it-an-honest-review-2025/">Workstaff360</a>, <a href="https://joingenius.com/remote-work/athena-review/">JoinGenius</a>, <a href="https://www.bbb.org/us/ny/new-york/profile/virtual-assistant-employment/fancy-hands-inc-0121-142745">Fancy Hands BBB</a></p>
+
+<hr>
+
+<h2>Strategic Implications for Felix Launch Agents</h2>
+
+<h3>The Positioning White Space</h3>
+
+<div class="positioning-chart">                    Low Autonomy -----> High Autonomy
+                    |                         |
+High Cost           |  Athena/Magic           |  (EMPTY)
+($1000+/mo)         |  Human EAs              |
+                    |                         |
+                    |                         |
+Mid Cost            |  Lindy, Notion Agents   |  (FELIX GOES HERE)
+($20-100/mo)        |  (workflow automation)   |  (judgment-based delegation)
+                    |                         |
+                    |                         |
+Low Cost            |  Gemini, Siri           |  Devin, Cursor Agents
+($0-20/mo)          |  (chatbots)             |  (dev-only)
+                    |                         |</div>
+
+<p>Felix&rsquo;s opportunity is the empty quadrant: <strong>mid-cost, high-autonomy, judgment-based delegation for non-technical personal/business tasks.</strong></p>
+
+<h3>What Felix Must Get Right (Lessons from Competitor Failures)</h3>
+
+<ol>
+  <li><strong>Predictable pricing or die.</strong> Credit-based models with autonomous agents are a recipe for user anxiety (Lindy, Manus, Notion). Felix needs flat-rate or capped pricing. The Athena model (flat monthly, delegate freely) is the right psychological frame.</li>
+  <li><strong>Transparent failure, not silent failure.</strong> Cursor lost users 4 months of work silently. Manus creates empty files. Devin fails &ldquo;without clear explanation.&rdquo; Felix must show its work, flag uncertainty, and fail loudly. The audit trail is the product.</li>
+  <li><strong>Underpromise, overdeliver.</strong> Devin, Rabbit R1, and Humane AI Pin all destroyed trust by overpromising in demos. Felix should launch with a narrow, reliable set of capabilities and expand. The HN quote applies: &ldquo;Less capability, more reliability, please.&rdquo;</li>
+  <li><strong>The &ldquo;Cyril test&rdquo;:</strong> Can Felix handle tasks that Cyril (human ops person) handles? If the answer is &ldquo;some of them, reliably&rdquo; &mdash; that&rsquo;s enough. Even 5 tasks that work perfectly beats 50 that work 70% of the time.</li>
+  <li><strong>Escape the &ldquo;workflow builder&rdquo; trap.</strong> Lindy and Notion agents are if-then automation tools wearing agent clothing. Felix must handle tasks where the process isn&rsquo;t predefined &mdash; where the agent needs to make judgment calls about how to accomplish the outcome.</li>
+</ol>
+
+<h3>Key Industry Data Points</h3>
+
+<ul>
+  <li><strong>80&ndash;90% of AI agent projects never leave pilot phase</strong> (2025 RAND study)</li>
+  <li><strong>Gartner expects 40% of agent projects to be scrapped by 2027</strong></li>
+  <li>Best autonomous agents complete only ~24% of tasks successfully</li>
+  <li>CMU&rsquo;s AgentCompany benchmark: 70% failure rate on some tasks</li>
+  <li>PwC survey: 79% of execs say agents are being used; 66% report measurable productivity gains (but for narrow use cases)</li>
+  <li>Gary Marcus: &ldquo;AI agents have, so far, mostly been a dud&rdquo; outside narrow domains</li>
+</ul>
+
+<h3>The Competitive Moat</h3>
+
+<p>The real competition isn&rsquo;t apps &mdash; it&rsquo;s Cyril. The question Felix must answer:</p>
+
+<blockquote><p>&ldquo;For $X/month, can Felix reliably handle the 20% of tasks that represent 80% of what I&rsquo;d delegate to a human EA?&rdquo;</p></blockquote>
+
+<p>If yes, Felix wins. Not because it&rsquo;s better than Athena, but because it&rsquo;s 10&ndash;50x cheaper, available 24/7, never quits, and the context never leaves.</p>
+
+</div>
+</body>
+</html>
