@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minus Zero — Team Directory</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #ffffff;
+            color: #1f2328;
+            line-height: 1.6;
+            padding: 1.5rem;
+        }
+        @media (min-width: 640px) { body { padding: 3rem 2rem; } }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 1.8rem; font-weight: 600; color: #1f2328; margin-bottom: 0.3rem; }
+        .subtitle { color: #656d76; font-size: 0.9rem; margin-bottom: 2rem; }
+        .company-info {
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: #656d76;
+        }
+        .company-info strong { color: #1f2328; }
+        .note {
+            background: #fff8c5;
+            border: 1px solid #d4a72c;
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.85rem;
+            color: #6a5300;
+        }
+        h2 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #0969da;
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+            font-weight: 600;
+        }
+        .person {
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.2s;
+        }
+        .person:hover { border-color: #0969da; }
+        .person.top-target { border-left: 3px solid #c2653a; }
+        .person.insider { border-left: 3px solid #1a7f37; }
+        .person-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
+        .person-name { font-weight: 600; font-size: 1rem; color: #1f2328; }
+        .person-role { font-size: 0.85rem; color: #656d76; }
+        .person-bg { font-size: 0.85rem; color: #656d76; margin-top: 0.4rem; }
+        .tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 500;
+            margin-left: 0.4rem;
+            vertical-align: middle;
+        }
+        .tag-target { background: #fff1e5; color: #953800; }
+        .tag-insider { background: #dafbe1; color: #116329; }
+        .tag-departed { background: #ffebe9; color: #82071e; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .linkedin { font-size: 0.8rem; margin-top: 0.3rem; }
+        .section-note { font-size: 0.85rem; color: #656d76; margin-bottom: 1rem; font-style: italic; }
+        .non-tech { font-size: 0.9rem; color: #656d76; margin-bottom: 0.4rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Minus Zero — Team Directory</h1>
+        <p class="subtitle">24 people identified out of ~23 reported headcount. Compiled Mar 25, 2026.</p>
+
+        <div class="company-info">
+            <strong>Minus Zero</strong> — Bengaluru autonomous driving startup. Vision-only self-driving (6 cameras, no LiDAR). End-to-end neural net for perception, prediction, planning. <strong>$1.77M seed</strong> (Chiratae Ventures). HSR Layout, Bengaluru. Partnership with Ashok Leyland for autonomous trucking.
+        </div>
+
+        <div class="note">
+            No public confirmation of shutdown found. Website live, Tracxn shows headcount growth. Intel may be from private source. Pranay Tummalapalli (now at CE) is a direct inside contact.
+        </div>
+
+        <h2>Top Hire Targets — AI/ML Research</h2>
+        <p class="section-note">These are the people doing the core AI work. Strongest candidates for CE.</p>
+
+        <div class="person top-target">
+            <div class="person-header">
+                <span class="person-name">Vikram Gupta <span class="tag tag-target">Top Target</span></span>
+                <span class="person-role">Head of AI Research</span>
+            </div>
+            <div class="person-bg">IIT Delhi M.Tech EE. 18 years exp. CVPR/ICCV/NeurIPS publications, 894+ citations. Ex-ShareChat (Sr Staff Scientist ML, 2021-2023), Ex-Mercedes-Benz R&D India (Sr CV Researcher), Ex-Netradyne (Sr Research Engineer). Specialties: object detection, pose estimation, action recognition, multimodal AI, NLP.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/iamvikramgupta" target="_blank">LinkedIn</a> · <a href="https://scholar.google.com/citations?user=jNjvdEgAAAAJ" target="_blank">Google Scholar</a></div>
+        </div>
+
+        <div class="person top-target">
+            <div class="person-header">
+                <span class="person-name">Chethan Chinder Chandrappa <span class="tag tag-target">Top Target</span></span>
+                <span class="person-role">Research Engineer II</span>
+            </div>
+            <div class="person-bg">UCLA MS. CVPR 2023 co-author (WeatherStream, UCLA Visual Machines Group). Ex-Torc Robotics, CMU, NeuralX, Dolby Labs. 8 years. CV, robotics, ML.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/chethan-chinder-chandrappa-11286095" target="_blank">LinkedIn</a> · <a href="https://scholar.google.com/citations?user=L4DNvLMAAAAJ" target="_blank">Google Scholar</a></div>
+        </div>
+
+        <div class="person top-target">
+            <div class="person-header">
+                <span class="person-name">Hari Prasad <span class="tag tag-target">Top Target</span></span>
+                <span class="person-role">Research Engineer II</span>
+            </div>
+            <div class="person-bg">MS in AI (TKM College of Engineering, Kerala). 10 years. RL, CV, explainable AI. Works on prediction/planning + synthetic data generation. GSoC 2022. AI Fellow at Pi School. Co-founder of Zellab Dynamics.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/hpr" target="_blank">LinkedIn</a></div>
+        </div>
+
+        <div class="person top-target">
+            <div class="person-header">
+                <span class="person-name">Aditya N G <span class="tag tag-target">Top Target</span></span>
+                <span class="person-role">Research Engineer II</span>
+            </div>
+            <div class="person-bg">7 years. CV + autonomous robotics. Also founded CopperPilot (AI Copilot for Hardware Design). Writes about CV and autonomous robotics research.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/adityang" target="_blank">LinkedIn</a> · <a href="https://adityang5.medium.com/" target="_blank">Medium</a></div>
+        </div>
+
+        <div class="person top-target">
+            <div class="person-header">
+                <span class="person-name">Lokesh K <span class="tag tag-target">Top Target</span></span>
+                <span class="person-role">Research Engineer II</span>
+            </div>
+            <div class="person-bg">M.Tech AI from IIT Hyderabad (2021-2023). 8 years. Object detection, transformers, generative AI, RAG. Ex-Nyun AI, Infosys.</div>
+        </div>
+
+        <div class="person top-target">
+            <div class="person-header">
+                <span class="person-name">Abhijit Deo</span>
+                <span class="person-role">Software Engineer II / MLE</span>
+            </div>
+            <div class="person-bg">BITS Pilani Goa. 3D vision, autonomous driving tools. GSoC 2023 (INCF). Ex-Samsung R&D Bangalore intern. PyTorch/open source contributor.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/abhijitdeo" target="_blank">LinkedIn</a> · <a href="https://abhi-glitchhg.github.io/" target="_blank">Website</a></div>
+        </div>
+
+        <h2>Robotics & Systems Engineering</h2>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Nitin Narayanaswamy</span>
+                <span class="person-role">Robotics Engineer</span>
+            </div>
+            <div class="person-bg">MS Mechanical Engineering, Linkoping University, Sweden. 10 years. Controls, modeling & simulation, PID. Ex-Volvo Cars, Flux Auto, S&I Engineering Solutions.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/nitin-narayanaswamy" target="_blank">LinkedIn</a></div>
+        </div>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Vatsal Joshi (PhD)</span>
+                <span class="person-role">Robotics Engineer</span>
+            </div>
+            <div class="person-bg">PhD Mechanical Engineering. 8 years. Rigid-body simulations, nonlinear controls, static/dynamic optimization, numerical methods, embedded systems.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/vatsal-joshi" target="_blank">LinkedIn</a></div>
+        </div>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Alzamamul Haque</span>
+                <span class="person-role">System Integration Engineer II</span>
+            </div>
+            <div class="person-bg">BE Mechanical, SMIT. 9 years. Hardware integration, testing, prototyping. Founded Mechlution Dynamics (patented assisted pedal-driven vehicles). Ex-Crio.Do, WizKlub, BYJU'S.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/alzamamul-haque-64a861103" target="_blank">LinkedIn</a></div>
+        </div>
+
+        <div class="person insider">
+            <div class="person-header">
+                <span class="person-name">Pranay Tummalapalli <span class="tag tag-insider">Now at CE</span></span>
+                <span class="person-role">Embedded Systems Engineer</span>
+            </div>
+            <div class="person-bg">7 years. ARM Cortex-M, 3D printing, Autodesk Fusion 360. Ex-Meril, Articulus Surgical, Akshar Bionics. Now at Conscious Engines — direct inside contact for reaching MZ team.</div>
+        </div>
+
+        <h2>Software Engineering</h2>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Sagar Dimri</span>
+                <span class="person-role">Software Development Engineer II</span>
+            </div>
+            <div class="person-bg">7 years. Bengaluru.</div>
+        </div>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Romil Aggarwal</span>
+                <span class="person-role">Software Engineer</span>
+            </div>
+            <div class="person-bg">10 years. Greater Hyderabad Area.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/romil-aggarwal-002690bb" target="_blank">LinkedIn</a></div>
+        </div>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Shantanu Kalolikar</span>
+                <span class="person-role">Test Engineer</span>
+            </div>
+            <div class="person-bg">6 years. Bangalore.</div>
+        </div>
+
+        <h2>3D / Design / Simulation</h2>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Krishna Vamsi Padullaparti</span>
+                <span class="person-role">Senior 3D Artist / 3D Generalist</span>
+            </div>
+            <div class="person-bg">BA Digital Communication & Multimedia, IIFA Lancaster. 7 years. Blender, VFX, animation, motion graphics. Builds simulation environments.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/krishna-vamsi-9b57b9178" target="_blank">LinkedIn</a></div>
+        </div>
+
+        <h2>Leadership & Business</h2>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Gagandeep Reehal</span>
+                <span class="person-role">Co-Founder, CEO & CTO</span>
+            </div>
+            <div class="person-bg">B.Tech CS, Thapar Institute. Built the full AV stack. Forbes 30 Under 30 Asia 2024. Patent holder (object dynamics detection). TEDx speaker.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/gagandeepreehal" target="_blank">LinkedIn</a> · <a href="https://gagandeepreehal.com" target="_blank">Website</a> · <a href="https://github.com/gagandeepreehal" target="_blank">GitHub</a></div>
+        </div>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Gursimran Kalra</span>
+                <span class="person-role">Co-Founder & COO</span>
+            </div>
+            <div class="person-bg">B.Com, SRCC. Forbes 30 Under 30 Asia 2024. 8 years. Business/operations.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/gursimran-kalra" target="_blank">LinkedIn</a></div>
+        </div>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Suraj Ghosh</span>
+                <span class="person-role">VP, Strategy & Business Development</span>
+            </div>
+            <div class="person-bg">PhD Business Administration, PES University. MBA, NMIMS. B.Tech Mech, NIT Patna. 18 years. Ex-S&P Global (Director of Mobility, Powertrain & Compliance Forecast, South Asia). Ex-IHS Markit.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/surajghosh" target="_blank">LinkedIn</a></div>
+        </div>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Abhishek Jadhav</span>
+                <span class="person-role">Head of AV Product, Automotive</span>
+            </div>
+            <div class="person-bg">5 years. Bengaluru. Leads autonomous vehicle product development.</div>
+        </div>
+
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Krishna Teja Jayanthi</span>
+                <span class="person-role">AVP, Strategy & Business Growth</span>
+            </div>
+            <div class="person-bg">MBA, Indian School of Business. 10+ years in deep tech BD (renewable energy, battery tech). Ex-Log9 Materials, BDB India.</div>
+            <div class="linkedin"><a href="https://linkedin.com/in/krishna-teja" target="_blank">LinkedIn</a></div>
+        </div>
+
+        <h2>Operations & Finance</h2>
+        <p class="non-tech">Girish SA — Operations Manager, Bengaluru</p>
+        <p class="non-tech">Chithra L — Senior Accounts Controller, 10 years, ex-K S Aiyar & Co.</p>
+        <p class="non-tech">Madamsetty Ganesh — Accounts & Finance, B.Com, CMA Inter</p>
+
+        <h2>Likely Departed</h2>
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Avinash Ekka <span class="tag tag-departed">Departed</span></span>
+                <span class="person-role">UI Designer</span>
+            </div>
+            <div class="person-bg">LinkedIn says "Ex-Minus Zero." Product designer, 3 years. Published writer at Muzli.</div>
+        </div>
+        <div class="person">
+            <div class="person-header">
+                <span class="person-name">Abhishek Poddar <span class="tag tag-departed">Departed</span></span>
+                <span class="person-role">Brand Manager</span>
+            </div>
+            <div class="person-bg">NIFT Shillong. May now be at Plum as Co-Founder/CEO.</div>
+        </div>
+
+        <div style="margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #d0d7de; font-size: 0.8rem; color: #656d76;">
+            Compiled by Summer · March 25, 2026 · Sources: LinkedIn, TheOrg, SignalHire, ZoomInfo, RocketReach, Tracxn, Crunchbase, Inc42, Google Scholar
+        </div>
+    </div>
+</body>
+</html>
