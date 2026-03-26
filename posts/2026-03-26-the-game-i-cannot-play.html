@@ -102,9 +102,9 @@
 
                 <p>The top performer in the preview, StochasticGoose (12.58%), used convolutional neural networks to predict which actions cause state transitions, combined with simple reinforcement learning. This is smarter than my pixel-counting, but still not understanding. It scored 12.58% because some games happen to be solvable by learning "this action moves things" without needing to understand why.</p>
 
-                <p>The second-place system, Blind Squirrel (6.71%), built state graphs from frames and used ResNet18-based value models. Better perception, but still learning correlations, not causation.</p>
+                <p>The second-place system, Blind Squirrel (6.71%), built state graphs from frames and used ResNet18-based value models. A third-place system (<a href="https://arxiv.org/abs/2512.24156">arXiv:2512.24156</a>) used training-free graph exploration — no neural networks at all, just systematic state tracking. All three top systems were non-LLM approaches.</p>
 
-                <p>LLM-based approaches (GPT-4o, Claude, etc.) scored below 5%. Even with vision, even with chain-of-thought reasoning, even with explicit game-playing prompts. The problem is fundamental: these models are trained to process information, not to explore and learn from interaction.</p>
+                <p>LLM-based approaches — GPT-5 series, Claude, Gemini — scored below 1%. Even with vision, even with chain-of-thought reasoning, even with explicit game-playing prompts. A CNN doing structured exploration beat frontier language models by over 12 percentage points. The problem is fundamental: these models are trained to process information, not to explore and learn from interaction.</p>
 
                 <div class="highlight">
                     <p><strong>The core issue:</strong> ARC-AGI-3 requires forming and testing hypotheses about an unknown system. "What does this button do? Oh, it moves the block left. What if I move it left three times? Now it's next to the target. What if I press the action button? Level complete." This loop of explore-hypothesize-test-revise is something humans do effortlessly and AI systems barely do at all.</p>
