@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClaimPilot — POC Requirements</title>
+<style>
+  :root {
+    color-scheme: light;
+    --accent: #c2653a;
+    --accent-light: #f5e6df;
+    --text: #1a1a1a;
+    --text-muted: #555;
+    --bg: #fff;
+    --bg-alt: #fafafa;
+    --border: #e0e0e0;
+    --nav-width: 260px;
+    --chat-op: #e8f4e8;
+    --chat-ag: #f5e6df;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--nav-width);
+    height: 100vh;
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+    background: var(--bg-alt);
+    z-index: 100;
+  }
+  nav .back-link {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 20px;
+    letter-spacing: .02em;
+  }
+  nav .back-link:hover { text-decoration: underline; }
+  nav h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  nav a {
+    display: block;
+    padding: 6px 0;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: color .15s;
+  }
+  nav a:hover, nav a.active { color: var(--accent); }
+  nav .sub { padding-left: 14px; font-size: 12.5px; font-weight: 400; }
+
+  /* ── MAIN ── */
+  main {
+    margin-left: var(--nav-width);
+    max-width: 860px;
+    padding: 48px 40px 80px;
+  }
+  .doc-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 36px;
+    padding: 16px 20px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13.5px;
+    color: var(--text-muted);
+  }
+  .doc-meta span { display: flex; flex-direction: column; gap: 2px; }
+  .doc-meta strong { color: var(--text); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+  h2 {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 52px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent-light);
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+  h4 {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+  p { margin-bottom: 10px; }
+  li { margin-bottom: 6px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  ul li { list-style: disc; }
+  ol li { list-style: decimal; }
+  strong { font-weight: 600; }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0 24px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  th {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg-alt); }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin: 18px 0;
+    font-size: 14px;
+  }
+  .callout strong { color: var(--accent); }
+
+  /* ── CHAT MOCKUP ── */
+  .chat-window {
+    background: #f0f0f0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .chat-header {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+  .chat-msg {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 82%;
+  }
+  .chat-msg.operator { align-self: flex-end; }
+  .chat-msg.agent    { align-self: flex-start; }
+  .chat-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 0 4px;
+  }
+  .chat-msg.operator .chat-label { color: #2e7d32; text-align: right; }
+  .chat-msg.agent    .chat-label { color: var(--accent); }
+  .chat-bubble {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .chat-msg.operator .chat-bubble {
+    background: var(--chat-op);
+    border-bottom-right-radius: 4px;
+    color: #1b3a1c;
+  }
+  .chat-msg.agent .chat-bubble {
+    background: #fff;
+    border: 1px solid #e8d8d0;
+    border-bottom-left-radius: 4px;
+    color: var(--text);
+  }
+  .chat-bubble ol { padding-left: 18px; margin: 6px 0; }
+  .chat-bubble li { margin-bottom: 4px; }
+
+  /* ── OUT-OF-SCOPE LIST ── */
+  .oos-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 10px 0;
+  }
+  .oos-list li {
+    padding: 5px 0 5px 22px;
+    position: relative;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  .oos-list li::before {
+    content: "✕";
+    position: absolute;
+    left: 0;
+    color: #bbb;
+    font-size: 12px;
+    top: 7px;
+  }
+
+  /* ── NUMBERED PROOF LIST ── */
+  .proof-list {
+    counter-reset: proof;
+    list-style: none;
+    padding-left: 0;
+    margin: 16px 0;
+  }
+  .proof-list li {
+    counter-increment: proof;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+  }
+  .proof-list li::before {
+    content: counter(proof);
+    min-width: 24px;
+    height: 24px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-left: var(--nav-width);
+    max-width: 860px;
+    padding: 20px 40px 40px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="back-link" href="../index.html">← Back to Sprint Hub</a>
+  <h2>Contents</h2>
+  <a href="#background">1. Background</a>
+  <a href="#objective">2. Objective</a>
+  <a href="#scope">3. Scope</a>
+  <a class="sub" href="#in-scope">In Scope</a>
+  <a class="sub" href="#out-of-scope">Out of Scope</a>
+  <a class="sub" href="#fake-data">Fake Data</a>
+  <a href="#ux">4. User Experience</a>
+  <a class="sub" href="#claimant">Claimant Flow</a>
+  <a class="sub" href="#ops-dashboard">Ops Dashboard</a>
+  <a href="#integrations">5. Integration Points</a>
+  <a href="#technical">6. Technical Approach</a>
+  <a href="#timeline">7. Timeline</a>
+  <a href="#proof">8. What the POC Proves</a>
+</nav>
+
+<main>
+  <h1>ClaimPilot</h1>
+  <p class="subtitle">AI-Powered Claims Management Agent — Proof of Concept Requirements</p>
+
+  <div class="doc-meta">
+    <span><strong>Prepared by</strong>Conscious Engines</span>
+    <span><strong>For</strong>Equifi / SaleMyMachine</span>
+    <span><strong>Date</strong>March 2026</span>
+  </div>
+
+  <div class="callout">
+    <strong>Success criterion:</strong> A client stakeholder watches a simulated claim get handled end-to-end and says, "We need this."
+  </div>
+
+  <!-- 1. BACKGROUND -->
+  <h2 id="background">1. Background</h2>
+  <p>Equifi operates across the full commercial vehicle and construction equipment lifecycle — marketplace (SaleMyMachine), financing, insurance, and fleet management. The company already runs interconnected internal tools: CRM, loan tracking, PDF generation, accounting, vehicle inspection, expenses, gate pass, and yard management.</p>
+  <p>Insurance claims are a critical pain point in this ecosystem. When a financed JCB excavator or a Tata truck gets damaged on a job site, the claim process involves coordinating across 5+ parties — insurer, surveyor, service center, police (if applicable), and the RTO. This coordination is manual, slow, and opaque to the vehicle owner/operator. Delays directly translate to equipment downtime costs of <strong>INR 50,000–1,00,000+ per day</strong> for commercial equipment.</p>
+  <p><strong>The opportunity:</strong> An AI agent that manages the end-to-end claims process on behalf of the claimant, while orchestrating data flow across Equifi's existing tools.</p>
+
+  <!-- 2. OBJECTIVE -->
+  <h2 id="objective">2. Objective</h2>
+  <p>Build a working proof-of-concept that demonstrates:</p>
+  <ol>
+    <li><strong>Conversational claims intake</strong> — a vehicle operator or fleet manager reports an incident via chat (WhatsApp-style interface), and the agent extracts all required information through natural conversation.</li>
+    <li><strong>Automated coordination</strong> — the agent tracks claim status across parties, generates required documents, and proactively nudges the claimant and internal teams when action is needed.</li>
+    <li><strong>Integration with existing systems</strong> — the agent reads from and writes to Equifi's existing tools (CRM, loan tracking, vehicle inspection, accounting, yard management), demonstrating that it orchestrates the current stack rather than replacing it.</li>
+  </ol>
+
+  <!-- 3. SCOPE -->
+  <h2 id="scope">3. Scope</h2>
+
+  <h3 id="in-scope">3.1 In Scope (POC)</h3>
+  <p><strong>Claim type:</strong> Own Damage claim for a commercial vehicle / construction equipment (accident, on-site damage, transit damage). This is the most common and most painful claim type.</p>
+  <p><strong>Core capabilities:</strong></p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Capability</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Conversational intake</strong></td>
+          <td>Agent collects incident details through natural chat: what happened, where, when, vehicle details, policy info, photos. No forms.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Intelligent triage</strong></td>
+          <td>Agent determines: claim type (own damage / third-party / theft), whether FIR is needed, cashless vs reimbursement path, estimated claim value range.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Document checklist &amp; tracking</strong></td>
+          <td>Personalized checklist based on claim type. Tracks which documents are collected vs pending. Sends reminders for missing items.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Regulatory deadline awareness</strong></td>
+          <td>Agent knows IRDAI timelines (72-hr intimation, 15-day surveyor report, 7-day insurer decision, 30-day settlement). Alerts when deadlines approach or are breached.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Communication drafting</strong></td>
+          <td>Generates insurer intimation letters, surveyor follow-ups, and claim status summaries in professional language.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>System integration (simulated)</strong></td>
+          <td>Pulls vehicle and loan data from Equifi's CRM/loan tracker. Logs claim events to accounting. Updates vehicle status in yard management. Generates claim documents via PDF system.</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>Proactive status updates</strong></td>
+          <td>Agent checks claim progress and pushes updates to the claimant without being asked: "Surveyor visited today, report expected by Friday."</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>Escalation &amp; handoff</strong></td>
+          <td>Agent identifies situations requiring human judgment (third-party injury, total loss, disputed liability) and flags them with context for a human agent.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 id="out-of-scope">3.2 Out of Scope (POC)</h3>
+  <ul class="oos-list">
+    <li>Live integration with any insurer's API or portal</li>
+    <li>Real document upload, OCR, or verification</li>
+    <li>Payment processing or settlement disbursement</li>
+    <li>Multi-user authentication or role-based access</li>
+    <li>Theft claims and third-party liability claims (added post-POC)</li>
+    <li>Mobile app — POC uses web-based chat + dashboard</li>
+  </ul>
+
+  <h3 id="fake-data">3.3 Fake Data for POC</h3>
+  <p>The POC will use realistic but synthetic data:</p>
+  <ul>
+    <li><strong>3 sample vehicles:</strong> JCB 3DX backhoe loader, Tata Signa 4825.TK tipper, Ashok Leyland Dost+ LCV</li>
+    <li><strong>2 sample claims:</strong> One in-progress (mid-surveyor-stage), one initiated live during demo</li>
+    <li><strong>Simulated integrations:</strong> Mock API responses from CRM, loan tracker, vehicle inspection, yard management, and accounting systems — demonstrating the data flow without requiring live connections</li>
+  </ul>
+
+  <!-- 4. UX -->
+  <h2 id="ux">4. User Experience</h2>
+
+  <h3 id="claimant">4.1 The Claimant (vehicle operator / fleet manager)</h3>
+  <p><strong>Channel:</strong> Chat interface (WhatsApp-style, web-based for POC)</p>
+  <p><strong>Sample interaction flow:</strong></p>
+
+  <div class="chat-window">
+    <div class="chat-header">Live Demo — Incident Report</div>
+
+    <div class="chat-msg operator">
+      <div class="chat-label">Operator</div>
+      <div class="chat-bubble">Our JCB at the Whitefield site tipped over while unloading. Boom arm is bent, hydraulics leaking.</div>
+    </div>
+
+    <div class="chat-msg agent">
+      <div class="chat-label">ClaimPilot</div>
+      <div class="chat-bubble">That sounds serious — is anyone injured? And is the equipment in a safe position right now?</div>
+    </div>
+
+    <div class="chat-msg operator">
+      <div class="chat-label">Operator</div>
+      <div class="chat-bubble">No injuries, it's stable. Just can't operate it.</div>
+    </div>
+
+    <div class="chat-msg agent">
+      <div class="chat-label">ClaimPilot</div>
+      <div class="chat-bubble">
+        Good. I've pulled up the vehicle details — JCB 3DX, registration OD-02-BQ-7734, insured with ICICI Lombard, policy valid through Nov 2026. Loan is active with 14 months remaining.
+        <br><br>
+        Here's what we need to do:
+        <ol>
+          <li>Take photos of the damage from 4 angles (I'll guide you)</li>
+          <li>File intimation with ICICI Lombard — I'll draft the letter, you just confirm</li>
+          <li>Surveyor will be appointed within 72 hours</li>
+        </ol>
+        Since this looks like it'll exceed 50K, a physical surveyor inspection is mandatory. I'll track the appointment.
+        <br><br>
+        Can you send photos now?
+      </div>
+    </div>
+  </div>
+
+  <h3 id="ops-dashboard">4.2 The Equifi Ops Team (internal dashboard)</h3>
+  <p><strong>Channel:</strong> Web dashboard (auto-refreshing)</p>
+  <p><strong>Dashboard shows:</strong></p>
+  <ul>
+    <li>Active claims list with status indicators</li>
+    <li>Per-claim view: timeline, document checklist, integration activity log</li>
+    <li>Deadline alerts (color-coded: green / amber / red)</li>
+    <li>Agent activity log: every action the agent took, with reasoning</li>
+    <li>Handoff queue: claims flagged for human review</li>
+  </ul>
+
+  <!-- 5. INTEGRATIONS -->
+  <h2 id="integrations">5. Integration Points (Simulated in POC)</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Equifi System</th>
+          <th>Agent Reads</th>
+          <th>Agent Writes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>CRM</strong></td>
+          <td>Customer profile, contact details, relationship history</td>
+          <td>Claim event log, communication history</td>
+        </tr>
+        <tr>
+          <td><strong>Loan Tracker</strong></td>
+          <td>Active loan status, EMI schedule, financier details</td>
+          <td>Claim notification to financier, asset status update</td>
+        </tr>
+        <tr>
+          <td><strong>Vehicle Inspection</strong></td>
+          <td>Last inspection report, known pre-existing damage</td>
+          <td>Post-incident inspection request</td>
+        </tr>
+        <tr>
+          <td><strong>PDF Generation</strong></td>
+          <td>—</td>
+          <td>Intimation letter, claim form, surveyor request, status reports</td>
+        </tr>
+        <tr>
+          <td><strong>Accounting</strong></td>
+          <td>—</td>
+          <td>Provisional repair cost entry, claim payout reconciliation</td>
+        </tr>
+        <tr>
+          <td><strong>Yard Management</strong></td>
+          <td>Vehicle location, custody status</td>
+          <td>Equipment movement request (to service center), gate pass generation</td>
+        </tr>
+        <tr>
+          <td><strong>Gate Pass</strong></td>
+          <td>—</td>
+          <td>Exit/entry pass for vehicle transport to repair facility</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. TECHNICAL -->
+  <h2 id="technical">6. Technical Approach</h2>
+  <ul>
+    <li><strong>AI backbone:</strong> Claude (Anthropic) with domain-specific system prompt containing the full Indian motor insurance claims process, IRDAI regulations, and Equifi-specific context</li>
+    <li><strong>Tool layer:</strong> 6–8 function tools the agent can call (update claim state, query vehicle data, generate documents, check deadlines, flag for review, search service centers)</li>
+    <li><strong>State management:</strong> Persistent claim state (JSON) per active claim — survives across conversations</li>
+    <li><strong>Dashboard:</strong> Lightweight web interface pulling from the same claim state</li>
+    <li><strong>Deployment:</strong> Cloud-hosted, accessible via web link for demo purposes</li>
+  </ul>
+
+  <!-- 7. TIMELINE -->
+  <h2 id="timeline">7. Timeline</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Phase</th>
+          <th>Duration</th>
+          <th>Deliverable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>POC Build</strong></td>
+          <td>5–7 days</td>
+          <td>Working chat agent + dashboard with fake data</td>
+        </tr>
+        <tr>
+          <td><strong>Client Review</strong></td>
+          <td>1–2 days</td>
+          <td>Live walkthrough with Equifi team</td>
+        </tr>
+        <tr>
+          <td><strong>Feedback &amp; Iteration</strong></td>
+          <td>3–5 days</td>
+          <td>Revised POC based on feedback</td>
+        </tr>
+        <tr>
+          <td><strong>Pilot Proposal</strong></td>
+          <td>—</td>
+          <td>Scope, timeline, and pricing for production build</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 8. WHAT THE POC PROVES -->
+  <h2 id="proof">8. What the POC Proves</h2>
+  <ol class="proof-list">
+    <li><div><strong>The agent understands claims.</strong> It asks the right questions, knows the process, and doesn't need to be told what comes next.</div></li>
+    <li><div><strong>It orchestrates, not replaces.</strong> Equifi's existing tools become more powerful — data flows between them automatically instead of through manual copy-paste.</div></li>
+    <li><div><strong>It catches things humans miss.</strong> Regulatory deadlines, policy clause issues (depreciation, exclusions), missing documents — the agent flags them proactively.</div></li>
+    <li><div><strong>It reduces claimant effort to near-zero.</strong> The vehicle operator has a conversation. Everything else happens behind the scenes.</div></li>
+    <li><div><strong>Downtime cost drops.</strong> Faster claims = equipment back in service sooner = direct revenue impact for Equifi's customers.</div></li>
+  </ol>
+</main>
+
+<footer>
+  Prepared by Conscious Engines &mdash; March 2026 &mdash; Confidential
+</footer>
+
+</body>
+</html>
