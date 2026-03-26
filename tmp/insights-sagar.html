@@ -106,55 +106,65 @@
 </nav>
 
 <h1>Interview Insights: Sagar</h1>
-<p class="subtitle">Product / Sprint Lead, Conscious Engines &mdash; Interview Intelligence track</p>
+<p class="subtitle">iOS Developer, Conscious Engines &mdash; Launch Agents interview, 25 March 2026</p>
 
 <hr>
 
 <h2>1. Profile</h2>
 
 <div class="persona-card">
-  <p><strong>Role:</strong> Product / sprint track lead for the "Interview Intelligence" product concept. Conducted user research interviews as part of the CE sprint.</p>
-  <p><strong>Context:</strong> Sagar's data comes from his interview with Ritam about meeting habits (analyzed in the sagar-interview-analysis page), not from a direct delegation-focused interview. His insights are inferred from his product thesis, interview style, and the product direction he chose to pursue.</p>
-  <p><strong>Interview date:</strong> March 25, 2026 (as interviewer of Ritam).</p>
+  <p><strong>Role:</strong> iOS developer at Conscious Engines. Hands-on engineer building UI with SwiftUI. Currently also doing backend/research work for the sprint.</p>
+  <p><strong>Context:</strong> Interviewed by Ritam using the standard Launch Agents interview kit (same questions as all other interviewees: last task after midnight, delegation buckets, failure tolerance, overnight agents, trust thresholds, dealbreakers).</p>
+  <p><strong>Interview date:</strong> March 25, 2026 (18:10 recording).</p>
 </div>
 
 <hr>
 
 <h2>2. Delegation Philosophy</h2>
 
-<p><strong>Delegation ratio: Not directly assessed.</strong> Sagar was the interviewer, not the interviewee in the delegation-focused rounds. However, his product thesis reveals his mental model.</p>
+<p><strong>Delegation ratio: ~80/20</strong> (80% personal, 20% delegatable). Sagar does not delegate much in his iOS role but is very open to delegation for research and backend tasks.</p>
 
-<p>His product concept &mdash; a real-time AI copilot for interviewers &mdash; reveals a philosophy of <strong>augmentation over replacement</strong>. The tool sits beside the interviewer and helps, but never takes over. The Suits analogy (Harvey Specter and Mike Ross) is his explicit mental model: the AI is the brilliant associate who prepares the brief, slides notes when needed, and writes up the summary afterward.</p>
+<blockquote><p>&ldquo;Depends on my role &mdash; previously on the iOS role, I don&rsquo;t think there is something which AI can do which I would delegate. But in the backend role I would want it to do a differentiation between Deepgram and AssemblyAI and come up with pros and cons of both.&rdquo;</p></blockquote>
 
-<p><strong>Key positions from his product thesis:</strong></p>
-<ul>
-  <li>The agent should be "silent by default" &mdash; only speak when genuinely useful</li>
-  <li>Post-interview output is where you win (retention), not during-interview features (hook)</li>
-  <li>Pull-based suggestions beat push-based ones in v1</li>
-  <li>UX researchers are the right launch ICP (high volume, structured process, painful synthesis)</li>
-</ul>
+<p>His delegation stance is <strong>role-dependent and task-categorical</strong>. He has a clear mental map of what is delegatable (research, code review, prototyping) and what is not (production merges, personal communication). Unlike some other interviewees, he does not struggle with deciding <em>what</em> to delegate &mdash; he struggles with the overhead of <em>explaining</em> it:</p>
+
+<blockquote><p>&ldquo;If I&rsquo;m delegating, why do I want to give context?&rdquo;</p></blockquote>
+
+<p>He wants Level 4 autonomy: give minimal context, agent figures out the approach. Not Level 3 (specify the rough process).</p>
+
+<blockquote><p>&ldquo;I will give a very small quantity [of context]. This is the transcription, but go and figure out shit on your own.&rdquo;</p></blockquote>
 
 <hr>
 
 <h2>3. Key Insights</h2>
 
 <ol>
-  <li><strong>Identified the interviewer-side copilot gap.</strong> The entire interview copilot space is built for the interviewee (Final Round AI has 10M+ users). Nobody is building for the person asking the questions. The research tools space (Dovetail, Marvin) is entirely post-hoc. The whitespace: a real-time copilot for the interviewer.
+  <li><strong>Code review is his #1 engineering delegation wish.</strong> He wants deep, automated PR review that runs whenever he pushes: finding everything that can go wrong, fixing what it can, and flagging what it cannot.
+    <blockquote><p>&ldquo;I would want someone to really, really go in and figure out everything that can go wrong [in my PR]. It should be automated whenever I do changes.&rdquo;</p></blockquote>
   </li>
 
-  <li><strong>"Silent by default" is the make-or-break feature.</strong> High precision (only surface when genuinely useful) and high recall (don't miss moments that matter) is extremely hard. Every competitor that tried real-time suggestions either set the bar too low (noisy) or too high (never fires).
+  <li><strong>Research is the overnight delegation sweet spot.</strong> He has many research tasks accumulating and wants 2&ndash;3 deep research tasks delegated nightly, each producing a concise report with a recommendation.
+    <blockquote><p>&ldquo;I have so much to research today. If I by 9 PM go and okay do this research, create these websites, create very small reports, I would love it by morning.&rdquo;</p></blockquote>
   </li>
 
-  <li><strong>Post-interview output is the retention driver.</strong> The 2 hours of synthesis after each interview is the pain researchers will pay to eliminate. A filled-in discussion guide with mapped quotes and cross-interview patterns is worth $50/mo to every UX researcher.
+  <li><strong>Failures should be documented in the report, not sent as interruptions.</strong> He draws a clear line: no real-time error banners, no constant notifications. Batch failures into the morning report. The agent should work around what it cannot do and flag it inline.
+    <blockquote><p>&ldquo;I would not want error banners. I would want the report. It says okay I was unable to find the [API] but I have done rest of the things. I have left that commented out.&rdquo;</p></blockquote>
   </li>
 
-  <li><strong>The Suits analogy as product narrative.</strong> Harvey (interviewer) leads the conversation. Mike (AI) has perfect recall, surfaces the right document, never interrupts unless it matters. This communicates the value proposition instantly.
+  <li><strong>Morning brief is the ideal interaction model.</strong> Fire-and-forget at night, summary in the morning. He does not want to monitor the agent working.
+    <blockquote><p>&ldquo;If it does it at night and in morning I get okay, I have done this, I have not done this &mdash; that would be very good.&rdquo;</p></blockquote>
   </li>
 
-  <li><strong>Standalone beats Felix integration.</strong> The ICP (UX researchers, PMs, journalists) doesn't use Felix. A standalone tool integrating with Zoom, Google Meet, and Dovetail has a much larger addressable market.
+  <li><strong>Concise output is non-negotiable.</strong> He explicitly hates long-form text and wants reports limited to 1&ndash;2 pages. Voice delivery is preferred over reading.
+    <blockquote><p>&ldquo;I don&rsquo;t like reading. I hate reading things. If I get a report it should be one page at most 2 pages. Be vocal.&rdquo;</p></blockquote>
   </li>
 
-  <li><strong>Mapped 14 competitors across 4 categories.</strong> Post-interview analysis tools (Dovetail $57.2M, Marvin, Condens, Looppanel, Grain), general meeting AI (Otter, Fireflies, Granola, Read.ai, Fellow), AI-moderated research (Outset.ai, Quals.ai), and interview copilots on the wrong side of the table (Final Round AI, LockedIn AI).
+  <li><strong>Research + prototype is the killer combo.</strong> Not just research &mdash; he wants the agent to research a topic and then build a working prototype of the finding.
+    <blockquote><p>&ldquo;Research karo, uska prototype banao &mdash; not touching deployed stuff, just how your Summer is doing things.&rdquo;</p></blockquote>
+  </li>
+
+  <li><strong>Already trusts AI for research.</strong> Unlike other interviewees who need trust to build over time, Sagar already trusts ChatGPT for research output. His trust barrier is task-categorical, not progressive.
+    <blockquote><p>&ldquo;If it&rsquo;s research, I&rsquo;m trusting ChatGPT.&rdquo;</p></blockquote>
   </li>
 </ol>
 
@@ -162,13 +172,11 @@
 
 <h2>4. Pain Points</h2>
 
-<p><em>Inferred from his product thesis and interview behavior, not from a direct pain-point interview:</em></p>
-
 <ul>
-  <li><strong>Agenda coverage tracking is manual.</strong> Interviewers don't know what they've covered until afterward. AI should detect coverage from the transcript, not require manual checkboxes.</li>
-  <li><strong>Post-interview synthesis is a 2x time sink.</strong> UX researchers spend 2x the interview duration on notes, tagging, and coding.</li>
-  <li><strong>Interview quality is inconsistent.</strong> PMs doing customer discovery without a research background forget to probe deeper, repeat questions already answered.</li>
-  <li><strong>Real-time suggestion tools are either too noisy or too quiet.</strong> No one has solved the precision/recall tradeoff for during-interview assistance.</li>
+  <li><strong>Too many research tasks, not enough time.</strong> Has accumulated multiple research threads (tool comparisons, open-source evaluations) that he cannot get to during working hours. Estimates 2&ndash;3 deep research tasks could be offloaded nightly.</li>
+  <li><strong>Manual multi-step workflow for content generation.</strong> Currently: take transcript, go to ChatGPT, get press release, copy to doc, then build website, then deploy. Wants this collapsed into one delegation.</li>
+  <li><strong>Context-giving overhead.</strong> Finds the process of explaining tasks burdensome. Wants to give minimal input and have the agent figure out the rest.</li>
+  <li><strong>Long text output is unusable for him.</strong> Deep research tools produce verbose reports he will not read. Wants concise (1&ndash;2 page) or voice-based delivery.</li>
 </ul>
 
 <hr>
@@ -178,35 +186,39 @@
 <table>
   <tr>
     <th>Dimension</th>
-    <th>Sagar's Approach (inferred from product design)</th>
-  </tr>
-  <tr>
-    <td>Agent behavior</td>
-    <td>Silent by default. Pull-based suggestions in v1. Push can come in v2 with enough data.</td>
-  </tr>
-  <tr>
-    <td>User control</td>
-    <td>User clicks "suggest" when they want help. Agent shows agenda checklist passively. Never interrupts.</td>
+    <th>Sagar&rsquo;s Approach</th>
   </tr>
   <tr>
     <td>Trust building</td>
-    <td>Earn trust through post-interview output quality. The structured discussion guide with mapped quotes is the trust-builder.</td>
+    <td>Results-based and task-categorical. Already trusts AI for research. Very high bar for production code actions.</td>
+  </tr>
+  <tr>
+    <td>Trust threshold</td>
+    <td>Low for research (already trusts ChatGPT). Effectively infinite for merging code &mdash; won&rsquo;t allow it regardless of track record.</td>
   </tr>
   <tr>
     <td>Failure handling</td>
-    <td>Missing coverage should be flagged, not silently ignored. The "done state" (all agenda items covered) is the core UX.</td>
+    <td>Graceful degradation: agent should work around failures, comment out what it cannot do, and include everything in the morning report.</td>
+  </tr>
+  <tr>
+    <td>Agent behavior</td>
+    <td>Fire-and-forget at night, morning report. No real-time monitoring needed for research tasks.</td>
+  </tr>
+  <tr>
+    <td>Trust transition</td>
+    <td>Categorical, not progressive. Research is trusted. Production code is not. No amount of successful runs changes the production boundary.</td>
   </tr>
 </table>
 
 <hr>
 
-<h2>6. What He'd Delegate Tonight</h2>
+<h2>6. What He&rsquo;d Delegate Tonight</h2>
 
 <ul>
-  <li><strong>Interview prep</strong> &mdash; context from previous interviews, suggested probing questions based on research goals.</li>
-  <li><strong>Agenda coverage tracking</strong> &mdash; real-time detection of which discussion guide questions were answered.</li>
-  <li><strong>Post-interview structured output</strong> &mdash; filled-in discussion guide with quotes mapped to each question.</li>
-  <li><strong>Cross-interview pattern detection</strong> &mdash; theme extraction across multiple sessions.</li>
+  <li><strong>2&ndash;3 deep research tasks</strong> &mdash; tool comparisons, framework evaluations, competitive analysis. Each producing a concise report with a recommendation and reasoning.</li>
+  <li><strong>Automated code review</strong> &mdash; deep PR review that finds everything that can go wrong, fixes what it can, and flags the rest as comments.</li>
+  <li><strong>Prototype scaffolding</strong> &mdash; research a topic, then build a working prototype. Sandbox only, not touching production.</li>
+  <li><strong>Website/content generation</strong> &mdash; take a transcript, generate press release, build and deploy a simple website.</li>
 </ul>
 
 <hr>
@@ -214,10 +226,10 @@
 <h2>7. Dealbreakers</h2>
 
 <ul>
-  <li>Noisy real-time suggestions that interrupt the interviewer's flow</li>
-  <li>Tool that takes over the interview rather than assisting</li>
-  <li>Post-interview output that is a transcript summary rather than a structured, filled-in discussion guide</li>
-  <li>No integration with existing research tools (Zoom, Google Meet, Dovetail)</li>
+  <li><strong>Merging code or taking production actions.</strong> &ldquo;I wouldn&rsquo;t give it full control because I don&rsquo;t own the product.&rdquo; Autonomous merges are an absolute no.</li>
+  <li><strong>Talking to people on his behalf.</strong> Personal messages (girlfriend, friends) and professional communications are off-limits. Work-related Slack updates are a <em>maybe</em> for the future.</li>
+  <li><strong>Verbose output.</strong> Long reports get deleted. If the agent produces walls of text, he stops using it.</li>
+  <li><strong>Frequent real-time error interruptions.</strong> Error banners and constant failure notifications break the fire-and-forget model.</li>
 </ul>
 
 <hr>
@@ -225,24 +237,34 @@
 <h2>8. ICP Classification</h2>
 
 <div class="persona-card">
-  <h3><span class="tag tag-neutral">Moderate ICP</span> (as user) / <span class="tag tag-yes">Strong</span> (as builder)</h3>
-  <p><strong>Reasoning:</strong> Sagar was not interviewed as a delegation user in the same way as others. His data comes from his role as interviewer and product thinker. As a user of launch agents for his own work, his profile is not well-characterized. As a builder who identified a genuine product gap (interviewer-side copilot) with competitive landscape analysis and concrete v1 scope, his contribution is strong.</p>
-  <p><strong>Note:</strong> His interview intelligence product thesis is a separate product concept from the core launch agents vision, though the underlying technology (long-horizon AI that works autonomously) overlaps.</p>
+  <h3><span class="tag tag-yes">Strong ICP</span></h3>
+  <p><strong>Reasoning:</strong> Sagar is a clear match for the core Launch Agents use case. He actively wants overnight research delegation (2&ndash;3 tasks per night), already trusts AI for research output, prefers fire-and-forget with morning summary, is willing to pay $30/month, and has concrete accumulated pain (too many research tasks, not enough time). His boundaries (no production merges, no personal communication) are standard across all interviewees and do not conflict with the v1 product scope.</p>
+  <p><strong>Segment:</strong> IC engineer with research backlog. Similar to Sahil in role but much higher delegation willingness and lower trust threshold for research tasks.</p>
 </div>
 
 <hr>
 
 <h2>9. Best Quotes</h2>
 
-<p><em>From Sagar's product thesis and analysis:</em></p>
+<blockquote><p>&ldquo;If I&rsquo;m delegating, why do I want to give context?&rdquo;</p></blockquote>
 
-<blockquote><p>"The entire interview copilot space is built for the interviewee. Nobody is building the equivalent for the person asking the questions."</p></blockquote>
+<blockquote><p>&ldquo;I would want someone to really, really go in and figure out everything that can go wrong [in my PR]. It should be automated whenever I do changes.&rdquo;</p></blockquote>
 
-<blockquote><p>"The sexy pitch is 'real-time AI copilot during your interview.' But the actual pain that researchers will pay to eliminate is the 2 hours of synthesis after each interview."</p></blockquote>
+<blockquote><p>&ldquo;I would not want error banners. I would want the report.&rdquo;</p></blockquote>
 
-<blockquote><p>"Harvey Specter and Mike Ross. The interviewer is Harvey. The AI is Mike &mdash; has perfect recall, surfaces the right document at the right time, never interrupts unless it matters."</p></blockquote>
+<blockquote><p>&ldquo;It says okay I was unable to find the [API] but I have done rest of the things. I have left that commented out.&rdquo;</p></blockquote>
 
-<blockquote><p>"Don't try to be smart about when to suggest. Make it pull-based, not push-based."</p></blockquote>
+<blockquote><p>&ldquo;If it does it at night and in morning I get okay, I have done this, I have not done this &mdash; that would be very good.&rdquo;</p></blockquote>
+
+<blockquote><p>&ldquo;I don&rsquo;t like reading. I hate reading things. Be vocal.&rdquo;</p></blockquote>
+
+<blockquote><p>&ldquo;Research karo, uska prototype banao &mdash; if this gets me [that] I am good to pay $30.&rdquo;</p></blockquote>
+
+<blockquote><p>&ldquo;Merging the code &mdash; I wouldn&rsquo;t give it full control because I don&rsquo;t own the product.&rdquo;</p></blockquote>
+
+<blockquote><p>&ldquo;I would not want it to talk to people on my behalf.&rdquo;</p></blockquote>
+
+<blockquote><p>&ldquo;I will give a very small quantity [of context]. Go and figure out shit on your own.&rdquo;</p></blockquote>
 
 </div>
 </body>
