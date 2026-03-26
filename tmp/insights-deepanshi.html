@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Interview Insights — Deepanshi</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #ccc;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+  .persona-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+    background: #fafafa;
+  }
+  .persona-card h3 { margin-top: 0; }
+  .tag {
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    margin-right: 0.35rem;
+    margin-bottom: 0.25rem;
+  }
+  .tag-yes { background: #e6f4ea; color: #1a7f37; }
+  .tag-no { background: #fce8e6; color: #c5221f; }
+  .tag-neutral { background: #e8eaed; color: #555; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.92rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+  }
+  th {
+    background: #f7f7f7;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #555;
+  }
+  td { vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="interviews.html">Interviews &amp; ICP</a>
+  <a href="insights-index.html">All Insights</a>
+  <a href="insights-cyril.html">Cyril</a>
+  <span class="current">Deepanshi</span>
+  <a href="insights-kautuk.html">Kautuk</a>
+  <a href="insights-ritam.html">Ritam</a>
+  <a href="insights-sagar.html">Sagar</a>
+  <a href="insights-sahil.html">Sahil</a>
+</nav>
+
+<h1>Interview Insights: Deepanshi</h1>
+<p class="subtitle">Product &amp; Design Lead, Conscious Engines &mdash; Rounds 1 &amp; 2 combined</p>
+
+<hr>
+
+<h2>1. Profile</h2>
+
+<div class="persona-card">
+  <p><strong>Role:</strong> Product manager who also handles interior decoration, design management, and vendor coordination. Extreme context-switching across 4+ domains daily.</p>
+  <p><strong>Context:</strong> Early-career design lead who uses AI heavily but is anxious about over-dependence. The "Process Learner" persona &mdash; she learns by doing and fears losing that.</p>
+  <p><strong>Interview dates:</strong> Round 1 &mdash; March 24, 2026. Round 2 &mdash; March 25, 2026 (~23 min).</p>
+</div>
+
+<hr>
+
+<h2>2. Delegation Philosophy</h2>
+
+<p><strong>Delegation ratio: 90/10.</strong> 90% of her work must involve her personally (the journey, the learning, the judgment). Only 10% is delegatable &mdash; purely mechanical execution (formatting, manual tasks, "the end product").</p>
+
+<p>She is a <strong>Level 1 or Level 5 delegator, nothing in between.</strong> Either give exact instructions and expect perfect execution, or don't bother. This binary is partly a defense mechanism against further AI dependency.</p>
+
+<blockquote><p>"I'd rather do it myself. Teaching someone is time-consuming and error-prone. I'll put 5 more minutes and do it perfectly."</p></blockquote>
+
+<p><strong>Current workflow:</strong> Whiteboard/meeting &rarr; Claude (central brain) &rarr; Notion (storage) &rarr; specialized tools (Chronicle, Figma, Midjourney, ChatGPT images). Uses ChatGPT voice mode for brainstorming, then asks it to generate Claude prompts. Pays ~&#8377;1,500/month across tools.</p>
+
+<p><strong>What she delegates vs keeps:</strong></p>
+<p><span class="tag tag-yes">YES</span> Low-stakes "has to be done" tasks (comms, follow-ups, unblocking juniors)</p>
+<p><span class="tag tag-yes">YES</span> Presentation creation (when she knows exactly what she wants)</p>
+<p><span class="tag tag-yes">YES</span> User interview prep (script generation, question lists with context)</p>
+<p><span class="tag tag-yes">YES</span> Process audit / postmortem (overnight)</p>
+<p><span class="tag tag-yes">YES</span> Vendor/logistics work (finding vendors, negotiating pricing, office supplies)</p>
+<p><span class="tag tag-no">NO</span> Research ("it makes me smarter &mdash; I don't want AI doing my learning for me")</p>
+<p><span class="tag tag-no">NO</span> User interviews ("Insight is not your transcript, it's how I've observed you")</p>
+<p><span class="tag tag-no">NO</span> High-judgment product decisions</p>
+<p><span class="tag tag-no">NO</span> Financial decisions ("I have never used AI with money")</p>
+<p><span class="tag tag-no">NO</span> External-facing AI actions on her behalf</p>
+
+<hr>
+
+<h2>3. Key Insights</h2>
+
+<ol>
+  <li><strong>Learning-by-doing is the core blocker to delegation.</strong> She is still learning on the job and doesn't have enough experience to know if the context she'd provide is even correct.
+    <blockquote><p>"Even if I give context to other person, I am not sure if I am handing them a right context. And my learning will be blocked sort of a thing."</p></blockquote>
+  </li>
+
+  <li><strong>Failure tolerance is essentially zero-strike.</strong> Gamma gave bad presentation results: abandoned. ChatGPT gave vague references: switched to Claude. Fireflies lost a transcript: trust broken.
+    <blockquote><p>"I tried Gamma for presentation, the result was so bad. So like okay, fuck it. I'll do it in Canva alone only."</p></blockquote>
+  </li>
+
+  <li><strong>She doesn't want to watch the agent work.</strong> Fire-and-forget is non-negotiable. Claude's clarification pop-ups actively frustrate her.
+    <blockquote><p>"I don't want to see it work. I want to click execute and just go, leave the room. Come back to see the output."</p></blockquote>
+  </li>
+
+  <li><strong>AI output is always a base, never a final product.</strong> Even a PRD goes through iteration. The agent is an intern, not a colleague.
+    <blockquote><p>"I want an intern... it can come up with basic foundation stuff that I can refine later on."</p></blockquote>
+  </li>
+
+  <li><strong>The overnight audit is the strongest concrete use case.</strong> Audit what went wrong yesterday, the right process going forward, and what assumptions to build on.
+    <blockquote><p>"I would love to delegate AI audit. Whatever went wrong yesterday... I want him to audit where we went wrong."</p></blockquote>
+  </li>
+
+  <li><strong>Deep AI dependency anxiety is real.</strong> She cannot write a single professional email without Claude. This genuinely scares her.
+    <blockquote><p>"If AI isn't there, what will I do?"</p></blockquote>
+  </li>
+
+  <li><strong>Memory is the #1 feature request.</strong> She manually copies context from Notion back into Claude before every session. The tool doesn't remember her, her team, or previous conversations.
+    <blockquote><p>"If Claude had memory... your question should be 'how is it working with Felix?' not 'do you use productivity tools?'"</p></blockquote>
+  </li>
+
+  <li><strong>External-facing AI actions are a hard boundary.</strong> If an AI messaged someone on her behalf, the social perception risk kills it.
+    <blockquote><p>"If they feel like, oh AI is talking to them on my behalf, then I don't think so anyone will book that interview."</p></blockquote>
+  </li>
+
+  <li><strong>The ultimate goal is reclaiming personal time.</strong> Not more productivity. An actual personal life.
+    <blockquote><p>"Right now I don't have any personal life. I go, I sleep, I come, I work, that's it."</p></blockquote>
+  </li>
+
+  <li><strong>Real-time proof of pain.</strong> Got a vendor phone call mid-interview about furniture advance payments (&#8377;22,000, raw materials, delivery schedule). Context-switched from product manager to interior designer to user interviewee in 90 seconds.</li>
+</ol>
+
+<hr>
+
+<h2>4. Pain Points</h2>
+
+<ul>
+  <li><strong>Interrupted flow from AI clarification questions.</strong> Claude pop-ups asking "choose from 5 approaches" break her flow. She wants fire-and-forget, not a conversation.</li>
+  <li><strong>Silent failures in automation tools.</strong> "All the time, all the time" &mdash; burned repeatedly by tools failing without notification.</li>
+  <li><strong>Time wasted on non-skill-building operational tasks.</strong> Vendor management, office interiors, finding services in Bangalore. Hours spent, nothing learned.</li>
+  <li><strong>AI dependency creating learned helplessness.</strong> Cannot write a PRD without Claude. The dependency fear is real and growing.</li>
+  <li><strong>Process skipping caused rework.</strong> Team jumped to problem statement, had to defend a premature position.</li>
+  <li><strong>No personal life.</strong> Sleep-work-sleep cycle. Time reclaimed from AI goes to personal interests, not more work.</li>
+  <li><strong>Meeting transcripts getting lost.</strong> Fireflies lost a user interview transcript. Trust broken.</li>
+  <li><strong>Context loss across sessions.</strong> Rebuilds Claude context manually every time from Notion.</li>
+</ul>
+
+<hr>
+
+<h2>5. Trust Model</h2>
+
+<table>
+  <tr>
+    <th>Dimension</th>
+    <th>How Deepanshi Builds/Loses Trust</th>
+  </tr>
+  <tr>
+    <td>Building trust</td>
+    <td>Near-zero tolerance. The first experience must work. No "it gets better over time" &mdash; one bad output and she's gone.</td>
+  </tr>
+  <tr>
+    <td>Failure response</td>
+    <td>Prefers agent that fails loudly over one that skips silently. "I think failed and tell me so that I know the capacity."</td>
+  </tr>
+  <tr>
+    <td>Trust death</td>
+    <td>One bad output = tool abandoned. Gamma (one try), ChatGPT references (one experience), Fireflies (transcript lost).</td>
+  </tr>
+  <tr>
+    <td>External actions</td>
+    <td>Hard boundary. Never act on her behalf with external people. Social perception risk is a dealbreaker.</td>
+  </tr>
+  <tr>
+    <td>Financial actions</td>
+    <td>Hard no. Zero trust with AI and money. Never used AI for financial decisions.</td>
+  </tr>
+  <tr>
+    <td>Internal bias</td>
+    <td>Would give an internal tool more patience than an external one. "You want the project to work."</td>
+  </tr>
+</table>
+
+<hr>
+
+<h2>6. What She'd Delegate Tonight</h2>
+
+<ul>
+  <li><strong>Overnight process audit</strong> &mdash; what went wrong yesterday, the right process going forward, assumptions to validate, research on relevant topics. Delivered as a reviewable document by morning.</li>
+  <li><strong>Vendor/logistics work</strong> &mdash; finding vendors, negotiating pricing, office supplies, finding dumbbells, finding the best pineapple in Indiranagar.</li>
+  <li><strong>Presentation content creation</strong> &mdash; when she knows exactly what she wants.</li>
+  <li><strong>User interview prep</strong> &mdash; script generation, question lists with context.</li>
+</ul>
+
+<hr>
+
+<h2>7. Dealbreakers</h2>
+
+<ul>
+  <li>A single bad output with no path to recovery (zero-strike tolerance)</li>
+  <li>AI acting on her behalf with external people (social perception risk)</li>
+  <li>Mid-task clarification pop-ups (must be fire-and-forget)</li>
+  <li>AI handling financial decisions</li>
+  <li>Silent failures</li>
+  <li>Tool replacing her learning rather than augmenting it</li>
+</ul>
+
+<hr>
+
+<h2>8. ICP Classification</h2>
+
+<div class="persona-card">
+  <h3><span class="tag tag-neutral">Moderate ICP</span></h3>
+  <p><strong>Reasoning:</strong> Deepanshi has real, painful problems that a launch agent could solve &mdash; overnight process audits, vendor logistics, presentation prep. Her context-switching pain is genuine and demonstrated live. However, her zero-strike failure tolerance and 90/10 delegation ratio make her extremely hard to win and easy to lose. The product must work perfectly on the first try or she will abandon it permanently.</p>
+  <p><strong>Why moderate, not strong:</strong> Her delegation surface area is small (only 10% of her work). She resists delegation philosophically (learning-by-doing is core to her identity). Her trust threshold is the highest of all interviewees. She would use the product for a narrow set of operational tasks, not as a core workflow tool.</p>
+  <p><strong>Why not anti-ICP:</strong> The operational tasks she does want to delegate (vendor work, process audits, logistics) are real and recurring. The overnight audit use case is specific, valuable, and maps well to launch agents. Her AI dependency already exists &mdash; she just needs the agent to be reliable enough to trust.</p>
+</div>
+
+<hr>
+
+<h2>9. Best Quotes</h2>
+
+<blockquote><p>"I'd rather put 5 more minutes and do it perfectly than deal with errors and trials."</p></blockquote>
+
+<blockquote><p>"See, this is the problem. I have to context-switch from product manager to interior designer to designer." &mdash; after vendor call interrupted interview</p></blockquote>
+
+<blockquote><p>"It makes me smarter. I don't want to give research to AI."</p></blockquote>
+
+<blockquote><p>"If AI isn't there, what will I do?"</p></blockquote>
+
+<blockquote><p>"I don't want to see it work. I want to click execute and just go, leave the room. Come back to see the output."</p></blockquote>
+
+<blockquote><p>"Cloning myself would be better than hiring an intern."</p></blockquote>
+
+<blockquote><p>"Every day." &mdash; when asked if she feels overwhelmed</p></blockquote>
+
+<blockquote><p>"Right now I don't have any personal life. I go, I sleep, I come, I work, that's it."</p></blockquote>
+
+<blockquote><p>"I want an intern... it can come up with basic foundation stuff that I can refine later on. But at least somewhere to start from."</p></blockquote>
+
+<blockquote><p>"I have not written a single message to anyone without cross-checking it with Claude if it's a professional email... I don't know how to do base level foundation first."</p></blockquote>
+
+</div>
+</body>
+</html>

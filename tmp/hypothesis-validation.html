@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Launch Agents — Hypothesis Validation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    line-height: 1.7;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+  nav {
+    font-size: 0.85rem;
+    padding: 0.75rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+  }
+  nav a { color: #555; text-decoration: none; }
+  nav a:hover { color: #1a1a1a; text-decoration: underline; }
+  nav .current { color: #1a1a1a; font-weight: 600; }
+  h1 { font-size: 1.75rem; margin-bottom: 0.25rem; line-height: 1.25; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  p { margin-bottom: 1rem; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 2rem 0; }
+  blockquote {
+    border-left: 3px solid #ccc;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    margin: 1rem 0;
+    color: #444;
+    font-style: italic;
+  }
+  blockquote p { margin-bottom: 0.5rem; }
+  blockquote p:last-child { margin-bottom: 0; }
+  ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.35rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+  .subtitle { color: #666; font-size: 1rem; margin-bottom: 1.5rem; }
+  a { color: #1a1a1a; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.95rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+  }
+  th {
+    background: #f7f7f7;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #555;
+  }
+  td { vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+
+  /* Verdict badges */
+  .verdict-badge {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    letter-spacing: 0.02em;
+  }
+  .verdict-validated { background: #e6f4ea; color: #1a7f37; }
+  .verdict-partial { background: #fff8e1; color: #8a6d00; }
+  .verdict-invalidated { background: #fce8e6; color: #c5221f; }
+  .verdict-insufficient { background: #e8eaed; color: #555; }
+
+  /* Hypothesis sections */
+  .hypothesis-section {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .hypothesis-section.validated { border-left: 4px solid #1a7f37; }
+  .hypothesis-section.partial { border-left: 4px solid #f9a825; }
+  .hypothesis-section.invalidated { border-left: 4px solid #c5221f; }
+  .hypothesis-section.insufficient { border-left: 4px solid #999; }
+
+  .hypothesis-section h3 { margin-top: 0; }
+
+  .evidence-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.35rem;
+    margin-top: 1rem;
+  }
+  .evidence-for { color: #1a7f37; }
+  .evidence-against { color: #c5221f; }
+  .evidence-nuance { color: #8a6d00; }
+  .evidence-confidence { color: #555; }
+
+  .source-tag {
+    display: inline-block;
+    background: #f0f0f0;
+    color: #555;
+    font-size: 0.75rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-left: 0.15rem;
+  }
+
+  .surprise-box {
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+  }
+  .surprise-box p { margin-bottom: 0.5rem; }
+  .surprise-box p:last-child { margin-bottom: 0; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+<div class="container">
+
+<nav>
+  <a href="index.html">Synthesis</a>
+  <a href="user-pain.html">User Pain Research</a>
+  <a href="workarounds.html">Current Workarounds</a>
+  <a href="trust.html">Trust &amp; Failure</a>
+  <a href="interviews.html">Interviews &amp; ICP</a>
+  <a href="interview-template.html">Interview Template</a>
+  <a href="prototype.html">Prototype Plan</a>
+  <a href="skeleton.html">Agent Skeleton</a>
+  <a href="shareout-analysis.html">Shareout Analysis</a>
+  <a href="interview-kit.html">Interview Kit</a>
+  <a href="competitor-audit.html">Competitor Audit</a>
+  <span class="current">Hypothesis Validation</span>
+</nav>
+
+<h1>Hypothesis Validation</h1>
+<p class="subtitle">10 hypotheses tested against 5 interviewees across 2 rounds &middot; 26 Mar 2026</p>
+
+<p><strong>Interviewees:</strong> Deepanshi (Design Lead, R1+R2), Cyril (Ops Lead, R1+R2), Kautuk (Founder/CEO, R1+R2), Ritam (self-interview), Sahil (iOS developer). All internal to Conscious Engines.</p>
+
+<hr>
+
+<h2>Summary Table</h2>
+
+<table>
+<thead>
+<tr><th>#</th><th>Hypothesis</th><th>Verdict</th><th>Touched By</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td>H1</td>
+  <td>80% &gt; 100%</td>
+  <td><span class="verdict-badge verdict-validated">VALIDATED</span></td>
+  <td>5/5</td>
+</tr>
+<tr>
+  <td>H2</td>
+  <td>Real competitor is &ldquo;I&rsquo;ll do it myself at 2 AM&rdquo;</td>
+  <td><span class="verdict-badge verdict-validated">VALIDATED</span></td>
+  <td>5/5</td>
+</tr>
+<tr>
+  <td>H3</td>
+  <td>Trust requires visible trail, not real-time control</td>
+  <td><span class="verdict-badge verdict-validated">VALIDATED</span></td>
+  <td>5/5</td>
+</tr>
+<tr>
+  <td>H4</td>
+  <td>Level 3 is the sweet spot</td>
+  <td><span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></td>
+  <td>4/5</td>
+</tr>
+<tr>
+  <td>H5</td>
+  <td>First task users&rsquo;d delegate is repetitive-but-judgmental</td>
+  <td><span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></td>
+  <td>5/5</td>
+</tr>
+<tr>
+  <td>H6</td>
+  <td>Identity erosion is the hidden blocker</td>
+  <td><span class="verdict-badge verdict-validated">VALIDATED</span></td>
+  <td>5/5</td>
+</tr>
+<tr>
+  <td>H7</td>
+  <td>Progressive autonomy works</td>
+  <td><span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></td>
+  <td>5/5</td>
+</tr>
+<tr>
+  <td>H8</td>
+  <td>Loss framing beats gain framing</td>
+  <td><span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></td>
+  <td>3/5</td>
+</tr>
+<tr>
+  <td>H9</td>
+  <td>Silent failure is worse than visible failure</td>
+  <td><span class="verdict-badge verdict-validated">VALIDATED</span></td>
+  <td>5/5</td>
+</tr>
+<tr>
+  <td>H10</td>
+  <td>Delegation bottleneck is specification, not trust</td>
+  <td><span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></td>
+  <td>5/5</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Score:</strong> 4 validated, 5 partially validated, 0 invalidated, 0 insufficient data. No hypothesis was cleanly killed. The partial validations are where the most useful product insight lives.</p>
+
+<hr>
+
+<h2>Detailed Analysis</h2>
+
+<!-- H1 -->
+<div class="hypothesis-section validated">
+<h3>H1: 80% &gt; 100% <span class="verdict-badge verdict-validated">VALIDATED</span></h3>
+
+<p>Users would rather get an 80% result fast than a 100% result late &mdash; especially when they are the bottleneck.</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Kautuk</strong> <span class="source-tag">R1+R2</span>: &ldquo;If all his tasks were done at least 80%, he&rsquo;d be happy.&rdquo; Explicitly prefers 80% done by morning over 90% done by afternoon. Speed of turnaround matters more than marginal quality.</li>
+  <li><strong>Ritam</strong> <span class="source-tag">Self</span>: &ldquo;The answer is yes, related to let it take the task and do a 80% of the quality.&rdquo; Prefers 80% by morning over waiting.</li>
+  <li><strong>Cyril</strong> <span class="source-tag">R2</span>: Explicitly wants agents to handle Level 3 tasks (outcome + rough process, agent adds judgment). Tolerates imperfection if it means progress. &ldquo;If I am just the lego piece that connects two arms, I&rsquo;m fine.&rdquo;</li>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R2</span>: &ldquo;It will be just a base for me... a base is ready, now I can refine it.&rdquo; Accepts AI output as a foundation she can polish.</li>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: Would delegate overnight research + POC scaffolding. The implicit acceptance of &ldquo;good enough to build on.&rdquo;</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R1</span>: &ldquo;I&rsquo;d rather put 5 more minutes and do it perfectly than deal with errors and trials.&rdquo; Her perfectionism pulls against accepting 80%. However, in R2 she softened &mdash; she accepts AI output as a base, not a final product.</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>The 80% framing works best when users see themselves as the polisher, not when they see the 80% as a finished deliverable. Deepanshi will accept 80% as a <em>starting point</em> but not as a <em>shipped result</em>. Kautuk and Ritam will accept 80% as shipped. The hypothesis is validated, but the product framing matters: &ldquo;here is a draft for you to refine&rdquo; works universally. &ldquo;Here is the finished result&rdquo; works only for bottleneck-type users.</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>5/5 interviewees touched on this directly. High confidence. Strongest signal from technical/founder profiles (Kautuk, Ritam). Weakest from the perfectionist profile (Deepanshi), but even she came around when the framing shifted to &ldquo;base to refine.&rdquo;</p>
+</div>
+
+<!-- H2 -->
+<div class="hypothesis-section validated">
+<h3>H2: The real competitor is &ldquo;I&rsquo;ll do it myself at 2 AM&rdquo; <span class="verdict-badge verdict-validated">VALIDATED</span></h3>
+
+<p>Users don&rsquo;t compare us to other AI tools. They compare us to staying up late and doing the work themselves.</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Cross-interview pattern</strong> <span class="source-tag">R1</span>: &ldquo;&lsquo;I&rsquo;ll just do it myself&rsquo; is the default coping mechanism &mdash; not because they want to, but because the cost of bad delegation is higher than the cost of doing it themselves.&rdquo;</li>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: &ldquo;If I delegate some task to someone else and they f*** up. I usually do that myself, which is sort of my nature.&rdquo;</li>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R1</span>: &ldquo;I&rsquo;d rather put 5 more minutes and do it perfectly than deal with errors and trials.&rdquo; Also: &ldquo;Every day&rdquo; when asked if she feels overwhelmed. The competitor is her own exhaustion.</li>
+  <li><strong>Ritam</strong> <span class="source-tag">Self</span>: Same pattern &mdash; when delegation fails, he absorbs the work rather than iterating.</li>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: Delegates less than 5%. &ldquo;I usually do that myself.&rdquo;</li>
+  <li><strong>Cyril</strong> <span class="source-tag">R1</span>: He IS the coordination layer. Currently occupies Level 3 himself because no one else can.</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li>No one contradicted this. Nobody compared the proposed product to another AI tool or automation platform. The comparison was always self vs. agent.</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>The &ldquo;2 AM&rdquo; framing is slightly misleading. For some users (Deepanshi, Sahil), it is not about working late &mdash; it is about doing it <em>now</em> because explaining it to someone else takes longer than doing it. The competitor is not staying up late; it is the 5-minute &ldquo;I&rsquo;ll just do it&rdquo; decision that accumulates into 60 hours of bottleneck per week. The real competitor is <strong>the cost of context transfer</strong>, which makes self-service feel cheaper even when it is not.</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>5/5 interviewees. Strongest hypothesis in the kit. No dissent.</p>
+</div>
+
+<!-- H3 -->
+<div class="hypothesis-section validated">
+<h3>H3: Trust requires a visible trail, not real-time control <span class="verdict-badge verdict-validated">VALIDATED</span></h3>
+
+<p>A detailed morning briefing is sufficient to build trust &mdash; users don&rsquo;t need to watch the agent work live.</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: &ldquo;Imagine your agent did 5 tasks overnight, and you woke up with a summary, what it did... how comfortable is that? I love it.&rdquo; Also: &ldquo;I need to know the steps that have gone through in the first 5 times.&rdquo; Wants process visibility in the trail, not real-time observation.</li>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R2</span>: &ldquo;I don&rsquo;t want to see it work. I want to click execute and just go, leave the room. Come back to see the output.&rdquo;</li>
+  <li><strong>Cyril</strong> <span class="source-tag">R2</span>: Hierarchy of failure response shows trail matters: best is done well, OK is fails-but-notifies, fired is fails-silently. The trail (notification, summary) is the trust mechanism.</li>
+  <li><strong>Ritam</strong> <span class="source-tag">Self</span>: &ldquo;There&rsquo;s kind of uncomfortable if I don&rsquo;t know what is happening. But I&rsquo;m getting used to that feeling.&rdquo; Accepts async summary model.</li>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: &ldquo;Morning debrief. I don&rsquo;t want to look at [it working in real time].&rdquo;</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: Acknowledges discomfort with not knowing what is happening. He is &ldquo;getting used to that feeling&rdquo; &mdash; which means the comfort is learned, not default. For the first few runs, he does want visibility.</li>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: &ldquo;If it is visible, then I have a little higher tolerance for failure, because I can see where it is failing.&rdquo; Visibility and trail are not the same thing &mdash; he wants the option to look in real-time, even if he does not always exercise it.</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>The hypothesis is validated for the steady state but not for the onboarding phase. Users want fire-and-forget <em>eventually</em>, but during the first 5&ndash;10 runs they want the ability to inspect real-time process. The product should support both: real-time process logs (for trust-building) and async morning briefings (for daily use). Deepanshi is the strongest &ldquo;fire and forget&rdquo; signal &mdash; she explicitly dislikes mid-task interruptions (Claude&rsquo;s clarification pop-ups frustrate her). But even she needs the morning summary to be detailed enough to know what happened.</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>5/5 interviewees. High confidence. All prefer morning debrief over real-time monitoring as the default mode. The nuance about onboarding-phase visibility is important for product design but does not weaken the core hypothesis.</p>
+</div>
+
+<!-- H4 -->
+<div class="hypothesis-section partial">
+<h3>H4: Level 3 is the sweet spot <span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></h3>
+
+<p>Users have tasks that naturally sit at Level 3 (outcome + rough process, agent uses judgment on the details).</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Cyril</strong> <span class="source-tag">R1+R2</span>: Created the Level 1&ndash;5 framework. Explicitly identifies Level 3 as where every current solution fails: &ldquo;Automation can&rsquo;t judge. Humans lose context. Current AI agents hallucinate.&rdquo; His ideal is Level 3&ndash;5 delegation.</li>
+  <li><strong>Kautuk</strong> <span class="source-tag">R1</span>: Operates at Level 3&ndash;4. Wants agents as &ldquo;queue-drainers&rdquo; &mdash; take tasks from 0% to 80%, which is Level 3 behavior.</li>
+  <li><strong>Ritam</strong> <span class="source-tag">Self</span>: Same pattern as Kautuk. Wants to delegate coding implementation (Level 3) while keeping research ideation (Level 5) for himself.</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R1+R2</span>: &ldquo;Level 1 or Level 5, nothing in between.&rdquo; She does not operate at Level 3. Either give exact instructions and expect perfect execution, or do not bother. Level 3 is exactly where she does NOT delegate, because she is still learning and cannot specify the rough process confidently.</li>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: Delegates less than 5% total. Level 3 is not his sweet spot because he does not delegate at all. The only task he would delegate (overnight research + POC) is closer to Level 4 (&ldquo;figure out the approach&rdquo;).</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>Level 3 is the sweet spot <em>for the ICP</em> (operators and bottlenecked founders), but not for all users. Deepanshi is a non-ICP for Level 3 because her delegation is binary: Level 1 (mechanical) or Level 5 (full ownership). Sahil barely delegates at all. The hypothesis holds for the target persona but is not universal. The more important insight: Level 3 requires the user to be confident enough in the domain to specify the rough process. Early-career users (Deepanshi) may not have that confidence, which means the product needs to handle &ldquo;I know what I want but I cannot articulate the process&rdquo; gracefully.</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>4/5 interviewees touched on this. Validated for ICP profiles (Cyril, Kautuk, Ritam). Not validated for non-ICP profiles (Deepanshi, Sahil). The hypothesis needs scoping: Level 3 is the sweet spot <em>for users who know their domain well enough to describe an outcome and a rough process</em>.</p>
+</div>
+
+<!-- H5 -->
+<div class="hypothesis-section partial">
+<h3>H5: The first task users would delegate is repetitive-but-judgmental <span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></h3>
+
+<p>Think lead enrichment, inbox triage, competitor monitoring &mdash; not creative work, not fully mechanical work.</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Cyril</strong> <span class="source-tag">R2</span>: Wants to delegate competitor research (daily AI landscape monitoring), payroll processing (10-step repeatable process), and HR operations (birthday reminders, gift ordering, sentiment surveys). These are repetitive-but-judgmental.</li>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R1</span>: Would delegate &ldquo;low-stakes &lsquo;has to be done&rsquo; tasks (comms, follow-ups, unblocking juniors)&rdquo; and user interview prep. Repetitive with some judgment.</li>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: Personal brand building &mdash; repetitive (content cadence) with judgment (voice, relevance).</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R2</span>: Her strongest overnight use case was process auditing (&ldquo;audit what went wrong yesterday&rdquo;), which is analytical, not repetitive. Not repetitive-but-judgmental &mdash; it is novel-and-judgmental.</li>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: Would delegate overnight research + POC scaffolding. This is creative exploration, not repetitive monitoring.</li>
+  <li><strong>Ritam</strong> <span class="source-tag">Self</span>: Personal brand building &mdash; similar to Kautuk but this is more about overcoming activation energy than handling something repetitive.</li>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R2</span>: Vendor logistics (finding dumbbells, finding the best pineapple in Indiranagar) &mdash; these are ad-hoc errands, not repetitive patterns.</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>The hypothesis captures one cluster of first-delegate tasks but misses two others. Three patterns emerged:
+(1) <strong>Repetitive-but-judgmental</strong> (Cyril&rsquo;s competitor monitoring, HR ops) &mdash; matches hypothesis.
+(2) <strong>High-activation-energy procrastination</strong> (Kautuk&rsquo;s personal brand, Sahil&rsquo;s research + POC) &mdash; not repetitive, but the user keeps putting it off because starting is hard.
+(3) <strong>Analytical overnight work</strong> (Deepanshi&rsquo;s process audit) &mdash; novel, high-judgment, but the user wants it done while sleeping.
+The first task is not always repetitive-but-judgmental; sometimes it is &ldquo;the thing I know I should do but never start.&rdquo;</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>5/5 interviewees named specific first-delegate tasks. The data is rich. The hypothesis is partially validated because it correctly identifies one pattern but misses the other two.</p>
+</div>
+
+<!-- H6 -->
+<div class="hypothesis-section validated">
+<h3>H6: Identity erosion is the hidden blocker <span class="verdict-badge verdict-validated">VALIDATED</span></h3>
+
+<p>Some users will not delegate certain tasks because doing the task is part of how they see themselves.</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R1+R2</span>: &ldquo;It makes me smarter. I don&rsquo;t want to give research to AI.&rdquo; Deepened in R2: &ldquo;If I build a team going forward, then I can pass on that knowledge to someone. If I myself using AI for that, then my learning is 0.&rdquo; Research is identity. Delegating it threatens her future as a leader.</li>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: When asked if AI doing his research daily for a month would make him feel sharper or duller: &ldquo;Will feel dumb.&rdquo; Values the serendipity of discovery &mdash; &ldquo;when you&rsquo;re searching for things, adjacent things... you don&rsquo;t put those things in the research, but you still know that this exists.&rdquo;</li>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: Research ideation, product vision, and creative/personal expression are hard boundaries. &ldquo;Something that I don&rsquo;t want AI to do is... message my girlfriend on my behalf. Draw things for someone... mostly creative things.&rdquo;</li>
+  <li><strong>Cyril</strong> <span class="source-tag">R2</span>: &ldquo;Force multiplier, not replacement. Wants to stay in the value chain. AI surfaces info, he forms inferences, he communicates. Full replacement = feels dumber. &lsquo;That&rsquo;s a me problem, not an AI problem.&rsquo;&rdquo;</li>
+  <li><strong>Ritam</strong> <span class="source-tag">Self</span>: Would refuse to delegate personal/creative tasks. Research ideation and product vision are kept for himself.</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li>No one contradicted this. The only variation was in what tasks triggered identity erosion. For Deepanshi: research. For Kautuk/Ritam: creative expression and vision. For Cyril: inference and communication. For Sahil: serendipitous discovery. The blocker is real; the specific task varies.</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>Identity erosion is not binary. There is a spectrum:
+(1) <strong>Learning identity</strong> (Deepanshi, Sahil): delegating research means they stop growing. This is an early-career concern.
+(2) <strong>Judgment identity</strong> (Cyril): he wants to form the inferences, not receive them. Delegating the conclusion feels like outsourcing his brain.
+(3) <strong>Creative identity</strong> (Kautuk, Ritam): personal messages, drawings, creative work &mdash; these are expressions of self.
+(4) <strong>AI dependency anxiety</strong> (Deepanshi): &ldquo;If AI isn&rsquo;t there, what will I do?&rdquo; She is already experiencing identity erosion from AI dependency and is actively anxious about it. This is a new finding &mdash; identity erosion is not just a blocker to adoption, it is a consequence of existing adoption.</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>5/5 interviewees. The strongest qualitative signal in the study. Every single person named at least one task they would not delegate for identity reasons, not quality reasons. Very high confidence.</p>
+</div>
+
+<!-- H7 -->
+<div class="hypothesis-section partial">
+<h3>H7: Progressive autonomy works <span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></h3>
+
+<p>Users who start by reviewing every agent action will, within 5&ndash;10 successful runs, shift to reviewing only exceptions and summaries.</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Cyril</strong> <span class="source-tag">R2</span>: &ldquo;5 correct in a row &rarr; stops checking.&rdquo; Has a &ldquo;test mode vs. production mode&rdquo; framework. Patient in test mode, low tolerance in production. Progressive autonomy maps cleanly to this mental model.</li>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: &ldquo;If I&rsquo;m confident enough that the AI agent can do the task I can just delegate that task and never think about it.&rdquo; Once trust is established, he goes fully hands-off.</li>
+  <li><strong>Ritam</strong> <span class="source-tag">Self</span>: Same pattern as Kautuk. 5 successful runs with visible process, then hands-off.</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: &ldquo;5 times is not enough... Like a 100 tasks... over like a week or something.&rdquo; His trust calibration is 20x slower than the hypothesis predicts. For some users, progressive autonomy works but takes much longer than 5&ndash;10 runs.</li>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R2</span>: Near-zero failure tolerance. &ldquo;When Gamma gave bad presentation results: &lsquo;fuck it, I&rsquo;ll do it in Canva alone only.&rsquo;&rdquo; One failure = tool abandoned. For Deepanshi, progressive autonomy may not work at all &mdash; trust never gets to build because a single failure resets it to zero.</li>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: &ldquo;I need to know the steps that have gone through in the first 5 times. I want to know that the things that it is doing the workshop it is following sort of is actually reliable, not just did it 5 times.&rdquo; Trust is in the process, not just the outcome count. 5 correct results from a bad process would not build trust.</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>Progressive autonomy works, but the mechanism is not &ldquo;N successful outcomes.&rdquo; The real trust-building mechanism varies by user:
+(1) <strong>Process verification</strong> (Kautuk, Ritam): they want to see that the workflow is sound, not just that it produced correct outputs.
+(2) <strong>Test-then-production</strong> (Cyril): a deliberate phase transition, not a gradual ramp.
+(3) <strong>Never progressive</strong> (Deepanshi): binary trust. Either it works perfectly from the start, or she leaves.
+(4) <strong>Slow trust</strong> (Sahil): progressive but on a much longer timescale (100 tasks, not 5).
+The 5&ndash;10 run number in the hypothesis is too aggressive for most users. A more realistic design: visible process logs for the first week, then a user-initiated &ldquo;I trust this now&rdquo; toggle.</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>5/5 interviewees addressed trust calibration directly. High data quality. The direction is validated (trust does increase with success) but the specific mechanism and timeline need revision.</p>
+</div>
+
+<!-- H8 -->
+<div class="hypothesis-section partial">
+<h3>H8: Loss framing beats gain framing <span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></h3>
+
+<p>&ldquo;You spent 3 hours this morning doing what could have been done overnight&rdquo; is more motivating than &ldquo;Save 3 hours with our agent.&rdquo;</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: When Ritam framed it as &ldquo;you lost 2 hours this morning doing work that could have been done while you sleep&rdquo; &mdash; Sahil agreed it stings.</li>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R2</span>: &ldquo;Right now I don&rsquo;t have any personal life. I go, I sleep, I come, I work, that&rsquo;s it.&rdquo; The loss of personal life is a stronger motivator than the gain of productivity. She is already experiencing the loss.</li>
+  <li><strong>Cross-interview</strong> <span class="source-tag">R1</span>: The &ldquo;I&rsquo;ll do it myself&rdquo; default coping mechanism is itself a loss-driven behavior. Users keep doing things themselves because the cost of bad delegation (loss) outweighs the benefit of trying (gain).</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: Responded with enthusiasm to the gain frame (&ldquo;imagine your agent did 5 tasks overnight&rdquo;). The positive vision of waking up to completed work was compelling on its own. He did not need the loss frame to be motivated.</li>
+  <li>No one was explicitly shown both frames and asked to compare. The data is suggestive, not experimental.</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>This hypothesis was not directly tested A/B-style. The loss frame resonated when used (Sahil), but the gain frame also worked for founder-type users who already viscerally feel the bottleneck (Kautuk). It may be that loss framing works better for users who do not yet feel the pain acutely (Sahil, who delegates almost nothing), while gain framing works better for users already drowning (Kautuk, who knows exactly what he would delegate). Insufficient data to make a strong call.</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>3/5 interviewees touched on this. Low-to-medium confidence. No clean A/B comparison. The hypothesis is plausible but not rigorously tested by this data.</p>
+</div>
+
+<!-- H9 -->
+<div class="hypothesis-section validated">
+<h3>H9: Silent failure is worse than visible failure <span class="verdict-badge verdict-validated">VALIDATED</span></h3>
+
+<p>Users can tolerate an agent that tries and fails (if it tells them). They cannot tolerate one that fails silently.</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Cyril</strong> <span class="source-tag">R2</span>: &ldquo;People get fired over that.&rdquo; His explicit hierarchy: Does it well &gt; Fails but notifies immediately &gt; Fails but surfaces it for async review &gt; <strong>FIRED: Fails silently.</strong></li>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: &ldquo;Obviously fails and telling you immediately is the way to go.&rdquo; Also: &ldquo;I thought my [Claude agent] is working on something. But it was actually waiting for my input. And I wasted a lot of my time there.&rdquo; Has been personally burned by silent failure.</li>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R2</span>: &ldquo;I think failed and tell me so that I know the capacity.&rdquo; Wants to understand what the agent can and cannot do. Also burned by Fireflies losing a transcript silently &mdash; &ldquo;That broke my trust.&rdquo; And: &ldquo;All the time, all the time&rdquo; when asked if she has been burned by silent automation failures.</li>
+  <li><strong>Ritam</strong> <span class="source-tag">Self</span>: Same Claude agent story as Kautuk &mdash; agent stuck waiting for input, no notification, time wasted.</li>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: Claude Code failing silently: &ldquo;I thought it was coding... I thought it will do it, but for some reason it failed... I thought it will at least alert me.&rdquo; Lost 20+ minute blocks to this. Also wants proactive re-ping: &ldquo;Hey, are you still there? Like, did you see?&rdquo;</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li>None. This is the most unanimously supported hypothesis in the study.</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>There is a further distinction within visible failure that the hypothesis does not capture. Kautuk and Cyril both distinguish between:
+(a) <strong>Transparent failure</strong>: the agent fails and shows you why (process visible, debuggable). Tolerable, sometimes even useful.
+(b) <strong>Black box failure</strong>: the agent fails and tells you it failed but not why. Concerning.
+(c) <strong>Silent failure</strong>: the agent fails and does not tell you. Unforgivable.
+Kautuk: &ldquo;If it reliably fails and then will black box, then any failure rate is actually very concerning.&rdquo; The hierarchy is: transparent &gt; black box &gt; silent. The product needs to target (a), not just avoid (c).</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>5/5 interviewees. Every single person had either a concrete story of being burned by silent failure or an explicit opinion that it is the worst outcome. Highest confidence of all hypotheses. This is table stakes, not a differentiator.</p>
+</div>
+
+<!-- H10 -->
+<div class="hypothesis-section partial">
+<h3>H10: The delegation bottleneck is specification, not trust <span class="verdict-badge verdict-partial">PARTIALLY VALIDATED</span></h3>
+
+<p>Users would happily delegate but struggle to articulate what they want clearly enough. The &ldquo;documentation paradox&rdquo; &mdash; the people who most need to delegate do not have time to write the instructions.</p>
+
+<div class="evidence-label evidence-for">Evidence For</div>
+<ul>
+  <li><strong>Kautuk</strong> <span class="source-tag">R2</span>: &ldquo;Explaining how to do it is difficult for me.&rdquo; Not because it is complex, but because it is tedious. He finds articulating process for others draining.</li>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: &ldquo;Explaining is 100%.&rdquo; Without hesitation &mdash; specification is the harder problem.</li>
+  <li><strong>Ritam</strong> <span class="source-tag">Self</span>: &ldquo;Explaining how to do it is difficult for me.&rdquo; Same as Kautuk.</li>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R2</span>: &ldquo;Even if I give context to other person, I am not sure if I am handing them a right context.&rdquo; She cannot even specify because she is still learning the domain herself.</li>
+</ul>
+
+<div class="evidence-label evidence-against">Evidence Against</div>
+<ul>
+  <li><strong>Deepanshi</strong> <span class="source-tag">R1+R2</span>: Trust is a massive blocker independent of specification. Her near-zero failure tolerance means she would not delegate even if specification were easy. Trust and specification are <em>both</em> bottlenecks for her, not one or the other.</li>
+  <li><strong>Cyril</strong> <span class="source-tag">R2</span>: His reversibility framework shows that trust is the primary gate for certain task categories. Irreversible tasks (money, contracts, external comms) are not delegated regardless of how easy they are to specify. Trust dominates specification for high-stakes tasks.</li>
+  <li><strong>Sahil</strong> <span class="source-tag">R1</span>: &ldquo;I would never feel comfortable asking the AI to send money to somebody.&rdquo; Even with perfect specification, trust blocks delegation for financial actions.</li>
+</ul>
+
+<div class="evidence-label evidence-nuance">Nuance</div>
+<p>The hypothesis presents a false dichotomy. It is not specification OR trust &mdash; it is specification AND trust, gated by task type. The pattern:
+(1) <strong>Low-stakes tasks</strong>: specification is the bottleneck. Users would trust an agent with these tasks if they could just articulate what they want. (Research prep, content drafts, vendor search.)
+(2) <strong>High-stakes / irreversible tasks</strong>: trust is the bottleneck. Even perfectly specified, users will not delegate money transfers, external communications, or destructive actions without approval gates.
+(3) <strong>Learning-stage tasks</strong> (Deepanshi): neither specification nor trust &mdash; the bottleneck is that the user does not know enough about the domain to delegate at all.
+The product implication: solve specification for low-stakes tasks (this is where the volume is), and solve trust with explicit approval gates for high-stakes tasks.</p>
+
+<div class="evidence-label evidence-confidence">Confidence</div>
+<p>5/5 interviewees. Good data. Partially validated because specification is a real bottleneck for low-stakes tasks, but trust is an equally real bottleneck for high-stakes tasks. The hypothesis is half right.</p>
+</div>
+
+<hr>
+
+<h2>Surprises</h2>
+
+<p>Findings that did not map to any of the 10 hypotheses.</p>
+
+<div class="surprise-box">
+<p><strong>1. AI dependency anxiety is real and growing.</strong> Deepanshi explicitly fears her dependence on Claude: &ldquo;If AI isn&rsquo;t there, what will I do?&rdquo; She has not written a professional email without Claude in months. This is not a blocker to adoption &mdash; she is already adopted. It is a new category of risk: users who delegate too much and lose capability. The product might need to protect users from over-delegation, not just encourage it.</p>
+</div>
+
+<div class="surprise-box">
+<p><strong>2. Memory, not capability, is the #1 feature request.</strong> Cyril quit Claude over memory loss (&ldquo;forgot everything, talked in proper English instead of lowercase, lost the plan&rdquo;). Deepanshi manually copies context from Notion into Claude before every session. Everyone wants continuity across sessions. This was not a hypothesis, but it is the strongest product signal in the data.</p>
+</div>
+
+<div class="surprise-box">
+<p><strong>3. Sequential completeness matters more than percentage completeness.</strong> Cyril: &ldquo;Steps 1&ndash;8 of 10 done sequentially = great. Random 8 of 10 where you figure out which 2 are missing = &lsquo;I will kill someone.&rsquo;&rdquo; The 80% hypothesis (H1) is validated, but <em>which</em> 80% matters enormously. The agent should do steps in order and stop cleanly, not scatter partial work across the task.</p>
+</div>
+
+<div class="surprise-box">
+<p><strong>4. External-facing actions are a hard boundary.</strong> Deepanshi: &ldquo;If they feel like, oh AI is talking to them on my behalf, then I don&rsquo;t think so anyone will book that interview.&rdquo; Kautuk: will not let AI message his girlfriend. Sahil: sending wrong messages to important people is the dealbreaker. There is a consistent &ldquo;never act on my behalf to another human without my explicit approval&rdquo; boundary that cuts across all interviewees.</p>
+</div>
+
+<div class="surprise-box">
+<p><strong>5. The &ldquo;AI intern&rdquo; mental model is the right frame.</strong> Deepanshi: &ldquo;I want an intern... it can come up with basic foundation stuff that I can refine later on.&rdquo; This emerged as the most natural way users think about the product relationship. Not a colleague, not a boss, not a tool &mdash; an intern who does the groundwork so the human can refine and own the output.</p>
+</div>
+
+<div class="surprise-box">
+<p><strong>6. Personal time reclamation, not productivity, is the deepest motivation.</strong> Deepanshi: &ldquo;Right now I don&rsquo;t have any personal life. I go, I sleep, I come, I work, that&rsquo;s it.&rdquo; The goal is not &ldquo;do more work&rdquo; &mdash; it is &ldquo;get my life back.&rdquo; This reframes the product value proposition: not a productivity tool, but a time-liberation tool.</p>
+</div>
+
+<div class="surprise-box">
+<p><strong>7. Proactive re-engagement is expected.</strong> Sahil: &ldquo;If you get, you know, you should ask another notification. Hey, are you still there? Like, did you see?&rdquo; Agents should detect when the user has not responded and re-ping, rather than sitting idle indefinitely. Current AI tools (Claude Code, Claude) stall silently when waiting for input &mdash; multiple interviewees were burned by this.</p>
+</div>
+
+<hr>
+
+<h2>New Hypotheses</h2>
+
+<p>Hypotheses that emerged from the interviews but were not in the original kit. These should be tested in the next round.</p>
+
+<p><strong>H11: Memory is the trust foundation.</strong> Without persistent memory across sessions, no amount of capability will build sustained trust. Users will teach the agent once, and if it forgets, they will leave. (Source: Cyril quit Claude over this. Deepanshi copies context manually every session.)</p>
+
+<p><strong>H12: The &ldquo;reversibility gate&rdquo; is the natural permission model.</strong> Users intuitively classify tasks as reversible (delegate freely) vs. irreversible (must approve). The product should auto-classify and gate accordingly, not ask users to set permissions manually. (Source: Cyril&rsquo;s two-way door / one-way door framework.)</p>
+
+<p><strong>H13: Fire-and-forget UX is non-negotiable for the ICP.</strong> Any mid-task clarification request breaks the value proposition. The agent must either figure it out or flag it for later in the morning summary &mdash; never interrupt. (Source: Deepanshi hates Claude&rsquo;s &ldquo;choose from 5 approaches&rdquo; pop-ups. Sahil and Ritam were burned by agents silently waiting for input they did not see.)</p>
+
+<p><strong>H14: Over-delegation anxiety is a real risk post-adoption.</strong> Early-career users who adopt AI heavily may develop anxiety about skill atrophy. The product should actively preserve the user&rsquo;s learning (&ldquo;here is a starting point, you refine&rdquo;) rather than replace it. (Source: Deepanshi&rsquo;s dependency fear. Sahil&rsquo;s &ldquo;feel dumb&rdquo; response.)</p>
+
+<p><strong>H15: The agent should declare its capabilities, not present an empty canvas.</strong> &ldquo;If an agent says &lsquo;I can do everything&rsquo; &mdash; give me an empty field? Your job is to figure out what you can do best.&rdquo; Users want agents that say &ldquo;I am good at X, Y, Z&rdquo; not &ldquo;tell me what to do.&rdquo; (Source: Cyril.)</p>
+
+<hr>
+
+<h2>Methodology Notes</h2>
+
+<ul>
+  <li><strong>Sample:</strong> 5 interviewees, all internal to Conscious Engines. This is a convenience sample, not representative of the broader market. External validation is needed.</li>
+  <li><strong>Rounds:</strong> Deepanshi, Cyril, and Kautuk were interviewed twice (Round 1 + Round 2). Ritam conducted a self-interview. Sahil was interviewed once. Round 2 interviews were more structured and hypothesis-directed.</li>
+  <li><strong>Bias:</strong> Internal interviewees may be more favorably disposed to the product concept. Deepanshi explicitly acknowledged this: &ldquo;Honestly because it&rsquo;s an internal project... you want the project to work sort of thing.&rdquo;</li>
+  <li><strong>Limitations:</strong> H8 (loss framing) was not tested with a clean A/B comparison. Some hypotheses were tested through direct questions, others through behavioral observation. No hypothesis was tested quantitatively.</li>
+  <li><strong>Next steps:</strong> Test with 5&ndash;10 external users who match the ICP profile (overwhelmed operator-builders spending $500&ndash;3,000/month on tools). Re-test H4, H5, H7, H8, and H10 which received partial validation.</li>
+</ul>
+
+</div>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
