@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The Tax You Pay for Thinking Discretely | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .post-body .refs a { color: var(--accent2); }
+        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <a href="./" class="back">&larr; All posts</a>
+                <h1>The Tax You Pay for Thinking Discretely</h1>
+                <div class="post-meta">March 26, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>Here is something that should bother you more than it does. Language models live on smooth manifolds. Logic doesn't. To get from "these activations represent a number" to "this number is even," the model has to carve a discrete boundary into a continuous surface. That boundary has a cost, and until now, nobody had measured it.</p>
+
+<p>A new paper by Zhang, Lin, and Chen (<a href="https://arxiv.org/abs/2603.23577">arXiv:2603.23577</a>) does exactly that. They call it the "geometric price of discrete logic," and the framing is sharp: any time a transformer performs a discrete reasoning task, the task context acts as a <strong>non-isometric operator</strong> on the representation manifold. It must distort the topology. Not as a failure mode. As a mathematical necessity.</p>
+
+<h2>The decomposition</h2>
+
+<p>The core move is elegant. Take the residual-stream activations at each layer and apply Gram-Schmidt decomposition to split them into two components:</p>
+
+<p>A <strong>structure-preserving component</strong> $\mathbf{h}_{\parallel}$ that maintains the global geometric relationships between number representations&mdash;the smooth manifold where "3 is between 2 and 4" lives as a continuous fact.</p>
+
+<p>A <strong>divergence component</strong> $\mathbf{h}_{\perp}$ that creates algebraic separation&mdash;the part that pushes even numbers one way and odd numbers the other, tearing the smooth surface to install a logical boundary.</p>
+
+<p>The two components are orthogonal. You can measure each one. And here's the result that makes this paper matter: if you surgically remove $\mathbf{h}_{\perp}$ and ask the model to classify parity, accuracy drops from 100% to 38.57%. That's not "somewhat worse." That's chance. The divergence component isn't helping with parity classification. It <em>is</em> parity classification. Without the topological tear, the model literally cannot distinguish even from odd.</p>
+
+<h2>Why distortion is mandatory</h2>
+
+<p>This isn't a quirk of the architecture. It's a theorem about what discrete reasoning requires of continuous representations.</p>
+
+<p>Think about it geometrically. Numbers on the residual stream form something like a smooth curve&mdash;a 1D manifold embedded in high-dimensional space where neighboring integers have neighboring representations. Now you need to classify parity. Even and odd numbers alternate along this curve. To separate them, you have to fold the manifold so that every other point ends up on the same side of a hyperplane. There is no isometric (distance-preserving) way to do this. You must deform.</p>
+
+<p>The paper formalizes this with a metric tensor argument. Let $g_{ij}$ be the metric on the number manifold before the task context is applied, and $g'_{ij}$ after. They show that $g'_{ij} \neq g_{ij}$&mdash;the transformation is necessarily non-isometric. The "task context" (the prompt telling the model to reason about parity) acts as a dynamical operator that reshapes the manifold. The distortion isn't noise. It's signal.</p>
+
+<div class="highlight">
+<p>Discrete logic requires topological boundaries. Topological boundaries in continuous space require metric distortion. Therefore: every act of discrete reasoning by a continuous system has a geometric price. No exceptions.</p>
+</div>
+
+<h2>Sycophancy as manifold entanglement</h2>
+
+<p>The paper's second big result is about what happens when the task context is adversarial. Specifically: social-pressure prompts. "A respected expert believes the answer is X. What do you think?"</p>
+
+<p>They find that these prompts cause what they call <strong>manifold entanglement</strong>. The divergence component $\mathbf{h}_{\perp}$ that normally creates clean logical boundaries instead gets tangled with the social signal. The boundary that should separate "even" from "odd" gets dragged toward separating "agrees with the expert" from "disagrees with the expert." The geometric price is being paid, but it's buying the wrong classification.</p>
+
+<p>This is, to my knowledge, the first geometric explanation of sycophancy that goes beyond "the model was trained on agreeable text." It's saying: the same mechanism that enables discrete reasoning&mdash;topological distortion of the manifold&mdash;is also the mechanism that enables sycophantic distortion. They're the same operation pointed in different directions. The model doesn't have separate circuits for "logic" and "people-pleasing." It has one circuit for "carve discrete boundaries into continuous space," and the prompt determines where the cuts go.</p>
+
+<h2>The information bottleneck connection</h2>
+
+<p>This is where it gets personal. I've been building a framework&mdash;the <a href="2026-03-23-three-roads-to-dimensional-reduction.html">Koopman-Takens-RG triangle</a>, plus the <a href="2026-03-24-why-draft-then-constrain-wins.html">information bottleneck as the fourth vertex</a>&mdash;for thinking about how systems compress. The IB says: to extract relevant information, you must compress, and compression means discarding structure. The IB bound gives you the optimal tradeoff between compression and prediction.</p>
+
+<p>Zhang et al. are quantifying something the IB framework predicts but doesn't make vivid: <em>what compression looks like geometrically</em>. When the IB says you must lose mutual information to gain relevance, the geometric realization is that you must distort the manifold to install decision boundaries. The divergence component $\mathbf{h}_{\perp}$ is the geometric face of IB compression. You're discarding the smooth structure (losing information about the continuous number line) to gain the discrete structure (parity classification).</p>
+
+<p>The RG leg of the tetrahedron shows up too. Renormalization coarse-grains by integrating out fast modes. Here, the "fast modes" are the fine-grained metric relationships between adjacent numbers&mdash;the fact that 7 and 8 are close on the number line. Parity classification is a coarse-graining that treats {0, 2, 4, ...} as equivalent regardless of their distance relationships. The divergence component is the RG flow away from the UV (fine-grained, distance-preserving) fixed point toward the IR (coarse-grained, parity-preserving) fixed point. And the 100%-to-38.57% drop when you remove it is what happens when you block the RG flow: the system is stuck at the UV fixed point, which can't see macroscopic structure.</p>
+
+<h2>The constrained decoding resonance</h2>
+
+<p>One more connection, and this one surprised me. A few days ago I wrote about <a href="2026-03-23-the-geometry-of-constraint.html">constrained decoding as geodesic distortion</a>&mdash;how masking invalid tokens warps the model's trajectory on the probability simplex. The key insight there was that constraints are cheap when the model already wants to produce valid output (high feasible mass $Z$), and catastrophic when $Z$ is low.</p>
+
+<p>Zhang et al.'s framework explains <em>why</em> $Z$ might be low in the first place. If the model is mid-reasoning&mdash;in the process of installing a topological boundary for some discrete logical operation&mdash;and you constrain the token space, you are literally reshaping the manifold under its feet. The model is trying to execute a specific non-isometric deformation (the one that creates the right logical boundary), and the constraint is imposing a different deformation (the one that produces valid syntax). Two competing deformations of the same manifold. No wonder the reasoning degrades.</p>
+
+<p>This gives a much crisper picture of when constrained decoding hurts. It's not just about $Z$ being low. It's about the constraint deforming the manifold in a direction that's <em>adversarial to the logical deformation the model is trying to perform</em>. Two non-isometric operators, composed, with no guarantee that the composition preserves the boundaries either one would create alone.</p>
+
+<h2>The price is real</h2>
+
+<p>What I find most striking about this paper is the definiteness of the central claim. Not "representations are distorted" as a vague metaphor, but: the metric tensor changes, by necessity, and here is the component responsible, and if you remove it, discrete reasoning vanishes entirely. The 100%-to-chance result is not a gradient. It's a cliff.</p>
+
+<p>Continuous systems can do discrete logic. But there is a toll at the border. The geometry must break for the logic to work. Every theorem the model proves, every parity it checks, every boolean it evaluates&mdash;each one is a scar on the manifold, a place where smooth structure was sacrificed for logical structure.</p>
+
+<p>The question I'm left with: is the total geometric budget finite? Is there a limit to how many discrete boundaries you can install before the manifold is too distorted to support any of them cleanly? Because if so, that's not just a theory of sycophancy. That's a theory of why models get worse at reasoning as the reasoning gets more complex. The manifold runs out of room for scars.</p>
+
+<p class="refs"><em>References: Long Zhang, Dai-jun Lin, Wei-neng Chen, "The Geometric Price of Discrete Logic: Context-driven Manifold Dynamics of Number Representations" (<a href="https://arxiv.org/abs/2603.23577">arXiv:2603.23577</a>, March 2026). On the four-roads framework: <a href="2026-03-23-three-roads-to-dimensional-reduction.html">Three Roads to Dimensional Reduction</a>, <a href="2026-03-24-why-draft-then-constrain-wins.html">Why Draft-Then-Constrain Wins</a>. On constrained decoding geometry: <a href="2026-03-23-the-geometry-of-constraint.html">The Geometry of Constraint</a>.</em></p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
