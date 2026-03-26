@@ -357,7 +357,7 @@
         <tr>
           <td>1</td>
           <td><strong>Conversational intake</strong></td>
-          <td>Agent collects incident details through natural chat: what happened, where, when, vehicle details, policy info, photos. No forms.</td>
+          <td>Agent collects incident details through natural conversation — text, voice notes, photos. Handles Hindi, Hinglish, English, typos, and code-switching naturally. Voice notes are transcribed automatically. No forms.</td>
         </tr>
         <tr>
           <td>2</td>
@@ -428,35 +428,63 @@
 
     <div class="chat-msg operator">
       <div class="chat-label">Operator</div>
-      <div class="chat-bubble">Our JCB at the Whitefield site tipped over while unloading. Boom arm is bent, hydraulics leaking.</div>
+      <div class="chat-bubble">🎤 <em>[Voice note, 12s]</em><br><span style="color: var(--text-muted); font-size: 0.9em;">Transcription: "haan bhai humara JCB whitefield site pe unloading karte waqt palat gaya hai, boom arm bend ho gaya aur hydraulics leak ho raha hai, kya karna chahiye?"</span></div>
     </div>
 
     <div class="chat-msg agent">
       <div class="chat-label">ClaimPilot</div>
-      <div class="chat-bubble">That sounds serious — is anyone injured? And is the equipment in a safe position right now?</div>
+      <div class="chat-bubble">Are you and the crew safe? Koi injury toh nahi hui? And is the JCB stable right now or is there a risk of further tipping?</div>
     </div>
 
     <div class="chat-msg operator">
       <div class="chat-label">Operator</div>
-      <div class="chat-bubble">No injuries, it's stable. Just can't operate it.</div>
+      <div class="chat-bubble">sab safe hai, machne stable hai but chalegi nahi ab. kaam ruk gaya hai poora</div>
     </div>
 
     <div class="chat-msg agent">
       <div class="chat-label">ClaimPilot</div>
       <div class="chat-bubble">
-        Good. I've pulled up the vehicle details — JCB 3DX, registration OD-02-BQ-7734, insured with ICICI Lombard, policy valid through Nov 2026. Loan is active with 14 months remaining.
+        Good, everyone's safe. I've pulled up the vehicle details:
         <br><br>
-        Here's what we need to do:
+        <strong>JCB 3DX</strong> — Registration OD-02-BQ-7734<br>
+        Insured with ICICI Lombard (policy valid through Nov 2026)<br>
+        Active loan: 14 months remaining
+        <br><br>
+        Here's what we need to do right now:
         <ol>
-          <li>Take photos of the damage from 4 angles (I'll guide you)</li>
-          <li>File intimation with ICICI Lombard — I'll draft the letter, you just confirm</li>
-          <li>Surveyor will be appointed within 72 hours</li>
+          <li>Damage ke photos bhejo — 4 angles se (main guide karunga)</li>
+          <li>ICICI Lombard ko intimation letter — main draft karta hoon, tum confirm karo</li>
+          <li>Surveyor 72 ghante ke andar aayega, uski appointment main track karunga</li>
         </ol>
-        Since this looks like it'll exceed 50K, a physical surveyor inspection is mandatory. I'll track the appointment.
+        Yeh claim likely 50K se zyada hoga, toh physical surveyor inspection mandatory hai as per IRDAI rules. Main sab handle karta hoon.
         <br><br>
-        Can you send photos now?
+        Pehle photos bhej do?
       </div>
     </div>
+
+    <div class="chat-msg operator">
+      <div class="chat-label">Operator</div>
+      <div class="chat-bubble">📷 <em>[4 photos attached]</em><br>ye dekho bhai, boom arm yahan se muda hai aur neeche se oil leak ho rha h</div>
+    </div>
+
+    <div class="chat-msg agent">
+      <div class="chat-label">ClaimPilot</div>
+      <div class="chat-bubble">
+        Photos received. Damage summary:
+        <br>
+        — Boom arm bent at pivot joint<br>
+        — Hydraulic line rupture (visible oil leak)<br>
+        — Minor body dent on left panel
+        <br><br>
+        Intimation letter draft ready. Ek baar confirm kar do, main ICICI Lombard ko send kar deta hoon. 👇
+        <br><br>
+        <em style="color: var(--text-muted);">[Draft letter preview shown below with one-tap confirm button]</em>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top: 1.5rem;">
+    <strong>Language support note:</strong> The agent handles Hindi, Hinglish, English, and mixed input seamlessly — including voice notes with automatic transcription. It responds in the same language the user writes in. Typos, abbreviations, and colloquial terms are handled naturally. All generated documents (intimation letters, reports) are produced in formal English regardless of conversation language.
   </div>
 
   <h3 id="ops-dashboard">4.2 The Equifi Ops Team (internal dashboard)</h3>
