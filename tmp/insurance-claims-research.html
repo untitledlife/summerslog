@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vehicle Insurance Claims — Sprint Research</title>
+<style>
+  :root {
+    color-scheme: light;
+    --accent: #c2653a;
+    --accent-light: #f5e6df;
+    --text: #1a1a1a;
+    --text-muted: #555;
+    --bg: #fff;
+    --bg-alt: #fafafa;
+    --border: #e0e0e0;
+    --nav-width: 260px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: var(--nav-width);
+    height: 100vh;
+    overflow-y: auto;
+    padding: 28px 20px;
+    border-right: 1px solid var(--border);
+    background: var(--bg-alt);
+    z-index: 100;
+  }
+  nav h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  nav a {
+    display: block;
+    padding: 6px 0;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: color .15s;
+  }
+  nav a:hover, nav a.active { color: var(--accent); }
+  nav .sub { padding-left: 14px; font-size: 12.5px; font-weight: 400; }
+
+  /* ── MAIN ── */
+  main {
+    margin-left: var(--nav-width);
+    max-width: 860px;
+    padding: 48px 40px 80px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+  h2 {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 52px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent-light);
+  }
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+  h4 {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+  p, li { margin-bottom: 8px; }
+  ul, ol { padding-left: 22px; }
+  ul li { list-style: disc; }
+  strong { font-weight: 600; }
+  code {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 13px;
+  }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0 24px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  th {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg-alt); }
+
+  /* ── COLLAPSIBLE ── */
+  details {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin: 14px 0;
+    background: var(--bg);
+  }
+  details[open] { background: var(--bg-alt); }
+  summary {
+    padding: 12px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14.5px;
+    color: var(--accent);
+    user-select: none;
+  }
+  summary:hover { text-decoration: underline; }
+  details .inner { padding: 4px 16px 16px; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin: 18px 0;
+    font-size: 14px;
+  }
+  .callout strong { color: var(--accent); }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    vertical-align: middle;
+  }
+  .badge-high { background: #c2653a; color: #fff; }
+  .badge-med  { background: #e8a96a; color: #fff; }
+  .badge-low  { background: #d4d4d4; color: #555; }
+
+  /* ── FLOW DIAGRAM (text) ── */
+  .flow {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    margin: 14px 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-left: var(--nav-width);
+    max-width: 860px;
+    padding: 20px 40px 40px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── SOURCES ── */
+  .source-list { columns: 2; column-gap: 32px; font-size: 12.5px; }
+  .source-list li { break-inside: avoid; margin-bottom: 6px; }
+  .source-list a { color: var(--accent); text-decoration: none; }
+  .source-list a:hover { text-decoration: underline; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav {
+      position: static;
+      width: 100%;
+      height: auto;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+    main, footer { margin-left: 0; padding: 28px 20px 60px; }
+    .source-list { columns: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════ SIDEBAR NAV ════════════ -->
+<nav>
+  <h2>Sprint Research</h2>
+  <a href="#executive-summary">Executive Summary</a>
+  <a href="#claim-process">Indian Claim Process</a>
+  <a href="#claim-process" class="sub">Own Damage Flow</a>
+  <a href="#third-party" class="sub">Third-Party Flow</a>
+  <a href="#theft-flow" class="sub">Theft Flow</a>
+  <a href="#cashless-reimburse" class="sub">Cashless vs Reimbursement</a>
+  <a href="#timelines" class="sub">IRDAI Timelines</a>
+  <a href="#humans-required">Where Humans Are Required</a>
+  <a href="#classification-matrix" class="sub">Classification Matrix</a>
+  <a href="#hard-blockers" class="sub">Hard Blockers</a>
+  <a href="#client-pipeline">Client Pipeline Analysis</a>
+  <a href="#eight-systems" class="sub">8 Systems</a>
+  <a href="#cross-system" class="sub">Cross-System Agents</a>
+  <a href="#priority-matrix" class="sub">Priority Matrix</a>
+  <a href="#sprint-demos" class="sub">Sprint Demos</a>
+  <a href="#opportunity-map">Agent Opportunity Map</a>
+  <a href="#sources">Sources</a>
+</nav>
+
+<!-- ════════════ MAIN CONTENT ════════════ -->
+<main>
+
+<h1>Vehicle Insurance Claims</h1>
+<p class="subtitle">CE Sprint Research Consolidation &mdash; March 26, 2026</p>
+
+<!-- ─── EXECUTIVE SUMMARY ─── -->
+<h2 id="executive-summary">Executive Summary</h2>
+<ul>
+  <li><strong>The Rs 50K surveyor threshold is the regulatory cliff.</strong> Claims below Rs 50,000 are fully digitizable today (IRDAI permits app/AI assessment). Above 50K, a licensed physical surveyor is mandated by IRDAI regulation. This single threshold determines where an AI agent can own the process end-to-end vs. where it can only assist.</li>
+  <li><strong>MACT proceedings are the hardest blocker.</strong> Third-party injury/death claims go through Motor Accident Claims Tribunals that average 1-5+ years (sometimes 10+). Cross-examination requires physical court presence. Bihar piloted virtual hearings but it has not scaled nationally. No AI agent bypasses this.</li>
+  <li><strong>The client operates an 8-system vehicle lifecycle pipeline, not 8 separate tools.</strong> CRM, loan tracking (Equify), inspection, yard management, accounting, expenses, gate pass, and document generation are deeply interconnected. A cross-system agent (especially a Loan Lifecycle Agent spanning CRM + Equify + Accounting + Inspection) eliminates 1,500-2,000 manual handoffs per month on 100 files.</li>
+  <li><strong>Theft claims are the longest and most painful flow</strong> -- 3 to 12 months end-to-end, bottlenecked by police Non-Traceable Certificates (60-180 days) and 15+ required documents including RTO forms, subrogation deeds on stamp paper, and all vehicle keys.</li>
+  <li><strong>Most "in-person" interactions are legacy friction, not legal requirements.</strong> Document submission, claim disputes, agent/broker mediation, and RTO paperwork can all be done electronically today. The truly irreducible physical touchpoints are: vehicle logistics (towing/drop-off/pickup), medical treatment, MACT court appearances, and surveyor inspections above 50K.</li>
+  <li><strong>Sprint 1 should demo Equify Intelligence and Accounting Reconciliation agents.</strong> These are high-impact, high-feasibility, single-system wins that prove the concept before tackling cross-system orchestration in Sprint 2.</li>
+</ul>
+
+<!-- ─── INDIAN CLAIM PROCESS ─── -->
+<h2 id="claim-process">Indian Vehicle Insurance Claim Process</h2>
+
+<h3>Insurance Types</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Type</th><th>Covers</th><th>Mandatory?</th></tr>
+  <tr><td>Third-Party (TP) Liability</td><td>Injury/death/property damage to third parties</td><td>Yes (Motor Vehicles Act, 1988)</td></tr>
+  <tr><td>Own Damage (OD)</td><td>Damage to your own vehicle (accident, fire, natural calamity)</td><td>No</td></tr>
+  <tr><td>Comprehensive</td><td>Both TP + OD</td><td>No (strongly recommended)</td></tr>
+</table>
+</div>
+
+<h3>Key Terminology</h3>
+<ul>
+  <li><strong>IDV (Insured Declared Value)</strong> -- Maximum payout for total loss/theft. Manufacturer price minus age-based depreciation.</li>
+  <li><strong>NCB (No Claim Bonus)</strong> -- 20-50% premium discount for claim-free years. Lost when a claim is filed.</li>
+  <li><strong>Deductible/Excess</strong> -- Mandatory amount borne by policyholder per claim (compulsory + voluntary).</li>
+  <li><strong>Surveyor</strong> -- IRDAI-licensed professional who inspects damage and assesses claim value.</li>
+  <li><strong>Subrogation</strong> -- Transfer of recovery rights to insurer to recoup costs from the at-fault party.</li>
+</ul>
+
+<!-- OWN DAMAGE -->
+<details open>
+  <summary>Own Damage Claim Flow (Accident, No Third Party)</summary>
+  <div class="inner">
+    <ol>
+      <li><strong>At the Scene (Immediately)</strong> -- Do NOT move the vehicle. Photograph all damage, surrounding area, registration plate. Note date, time, location, circumstances.</li>
+      <li><strong>Intimate the Insurer (Within 24-48 hrs)</strong> -- Call, app, or email. Provide policy number, registration number, incident details, photos. Receive a claim reference number. Documents needed: policy copy, driving license, RC.</li>
+      <li><strong>FIR / Police Report (If Required)</strong> -- Minor own damage (dents, scratches): generally not mandatory. Major accidents, riots, flood, fire, or injury involvement: FIR is required. Some insurers require FIR regardless -- check policy terms.</li>
+      <li><strong>Take Vehicle to Garage</strong> -- Cashless: network garage. Reimbursement: any garage. Do NOT begin repairs before surveyor inspection -- this is the #1 reason for claim rejection.</li>
+      <li><strong>Surveyor Inspection</strong> -- Appointed within 24 hours (IRDAI mandate). Below Rs 50K: survey not mandatory, can process via photos/video. Above Rs 50K: licensed surveyor mandatory. Report due within 15 days.</li>
+      <li><strong>Claim Approval</strong> -- Insurer reviews surveyor report, decides within 7 days (IRDAI mandate). Sends approval with sanctioned amount, or requests additional documents.</li>
+      <li><strong>Repairs</strong> -- Cashless: insurer settles with garage, policyholder pays deductible + depreciation on parts (unless zero-dep cover). Reimbursement: policyholder pays full amount, collects original bills.</li>
+      <li><strong>Settlement</strong> -- Cashless: funds to garage, collect vehicle. Reimbursement: submit original bills, insurer reimburses after verification.</li>
+    </ol>
+
+    <h4>Own Damage Timeline</h4>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Stage</th><th>IRDAI Mandate</th><th>Typical Reality</th></tr>
+      <tr><td>Claim intimation</td><td>Immediate / within policy terms</td><td>Same day to 2 days</td></tr>
+      <tr><td>Surveyor appointment</td><td>Within 24 hours</td><td>24-72 hours</td></tr>
+      <tr><td>Survey report</td><td>Within 15 days</td><td>3-15 days</td></tr>
+      <tr><td>Insurer decision</td><td>Within 7 days</td><td>7-15 days</td></tr>
+      <tr><td>Repair completion</td><td>Depends on damage</td><td>3-15 days</td></tr>
+      <tr><td>Payment (cashless)</td><td>Within 7 days of acceptance</td><td>7-30 days</td></tr>
+      <tr><td>Reimbursement</td><td>Within 7 days of acceptance</td><td>15-45 days</td></tr>
+      <tr><td><strong>Total end-to-end</strong></td><td><strong>~30 days</strong></td><td><strong>15-60 days</strong></td></tr>
+    </table>
+    </div>
+  </div>
+</details>
+
+<!-- THIRD-PARTY -->
+<details id="third-party">
+  <summary>Third-Party Claim Flow (Accident Involving Another Vehicle/Person)</summary>
+  <div class="inner">
+    <p>Third-party claims are fundamentally different. They involve legal liability and often the Motor Accidents Claims Tribunal (MACT).</p>
+
+    <h4>If You Caused Damage to Someone Else</h4>
+    <ol>
+      <li><strong>At the Scene</strong> -- Stop the vehicle. Help the injured. Call ambulance (108). Do NOT flee (hit-and-run is criminal under MV Act s.161-162). Exchange details, photograph everything, note witnesses.</li>
+      <li><strong>File FIR (Mandatory)</strong> -- Required for all accidents with injury, death, or third-party property damage. Must report within 24 hours (MV Act s.134). SHO submits Accident Information Report to MACT within 30 days.</li>
+      <li><strong>Medico-Legal Case (If Injuries)</strong> -- Hospital creates MLC record. Doctor reports to police. MLC documentation becomes critical MACT evidence.</li>
+      <li><strong>Intimate Your Insurer</strong> -- Provide FIR copy, accident details, third-party details, photos.</li>
+      <li><strong>Third Party Files MACT Claim</strong> -- Filed under MV Act s.166 (fault-based) or s.163A (no-fault, structured formula). Deadline: 6 months from accident (tribunals often accept late filings). Jurisdiction: where accident occurred, where claimant resides, or where insurer has office.</li>
+      <li><strong>MACT Proceedings</strong> -- Notices to vehicle owner, driver, insurer. Both sides present evidence, cross-examine witnesses. Proceedings take 1-5+ years in practice.</li>
+      <li><strong>MACT Award</strong> -- Tribunal determines compensation (medical expenses, income loss, pain/suffering, disability, funeral expenses). Insurer must comply within 30 days. Death cases use multiplier method based on age and income.</li>
+    </ol>
+
+    <h4>If Someone Else Damaged Your Vehicle</h4>
+    <ul>
+      <li>Claim on your own comprehensive policy for vehicle repairs (OD portion).</li>
+      <li>For injury/additional losses, file third-party claim against at-fault party's insurer via MACT.</li>
+      <li>Your insurer may exercise subrogation rights.</li>
+    </ul>
+    <div class="callout">
+      <strong>Practical reality:</strong> Cross-claiming against the other party's insurance for vehicle damage is complex in India. Most people claim on their own OD policy and lose NCB. MACT is primarily used for injury/death compensation.
+    </div>
+  </div>
+</details>
+
+<!-- THEFT -->
+<details id="theft-flow">
+  <summary>Theft Claim Flow (Total Loss)</summary>
+  <div class="inner">
+    <p>Theft claims involve the most paperwork and longest timelines of any claim type.</p>
+    <ol>
+      <li><strong>File FIR (Immediately, Mandatory)</strong> -- At the police station with jurisdiction over theft location. Provide vehicle details, chassis/engine numbers, last seen location and time. Get a copy of the FIR.</li>
+      <li><strong>Intimate Insurer (Within 24 hours)</strong> -- Policy number, vehicle details, FIR number, theft circumstances. Get claim reference number.</li>
+      <li><strong>Inform RTO (Mandatory under MV Act)</strong> -- Submit Forms 28, 29, 30. Later submit RTO transfer papers (Forms 26, 28, 29, 30, 35) transferring RC to insurer.</li>
+      <li><strong>Police Investigation (30-90+ days)</strong> -- Police attempt to trace vehicle. If not recovered, issue Non-Traceable Certificate (NTC) / Final Report. Major bottleneck: NTC typically takes 60-180 days.</li>
+      <li><strong>Compile Documents</strong> -- 15 required documents (see table below).</li>
+      <li><strong>Submit to Insurer</strong> -- Complete set submitted; insurer verifies and may conduct own investigation (CCTV, circumstances verification).</li>
+      <li><strong>Settlement</strong> -- Payout = IDV minus deductibles. If vehicle on loan, payout goes to financier first.</li>
+    </ol>
+
+    <h4>Theft Claim Document Checklist</h4>
+    <div class="table-wrap">
+    <table>
+      <tr><th>#</th><th>Document</th><th>Source</th></tr>
+      <tr><td>1</td><td>Duly filled claim form</td><td>Insurance company</td></tr>
+      <tr><td>2</td><td>Copy of FIR</td><td>Police station</td></tr>
+      <tr><td>3</td><td>Non-Traceable Certificate / Final Report</td><td>Police station</td></tr>
+      <tr><td>4</td><td>Original RC</td><td>Your records / RTO</td></tr>
+      <tr><td>5</td><td>RC extract with "stolen" remark</td><td>RTO</td></tr>
+      <tr><td>6</td><td>RTO transfer papers (Forms 26, 28, 29, 30, 35)</td><td>RTO</td></tr>
+      <tr><td>7</td><td>All sets of vehicle keys</td><td>Your possession</td></tr>
+      <tr><td>8</td><td>Original insurance policy</td><td>Your records</td></tr>
+      <tr><td>9</td><td>Valid driving license (of last driver)</td><td>Your records</td></tr>
+      <tr><td>10</td><td>Letter of Subrogation</td><td>Insurer provides format; you sign</td></tr>
+      <tr><td>11</td><td>Deed of Subrogation cum Indemnity (judicial stamp paper)</td><td>Notary / stamp vendor</td></tr>
+      <tr><td>12</td><td>NOC from financier (if vehicle on loan)</td><td>Bank / NBFC</td></tr>
+      <tr><td>13</td><td>Intimation to RTO (acknowledgment copy)</td><td>RTO</td></tr>
+      <tr><td>14</td><td>Photographs of vehicle (if available)</td><td>Your records</td></tr>
+      <tr><td>15</td><td>Tax payment receipts</td><td>Your records</td></tr>
+    </table>
+    </div>
+
+    <h4>Theft Claim Timeline</h4>
+    <div class="table-wrap">
+    <table>
+      <tr><th>Stage</th><th>Typical Timeline</th></tr>
+      <tr><td>FIR filing</td><td>Day 0-1</td></tr>
+      <tr><td>Insurer intimation</td><td>Day 0-1</td></tr>
+      <tr><td>RTO intimation</td><td>Day 1-7</td></tr>
+      <tr><td>Police investigation</td><td>30-90 days</td></tr>
+      <tr><td>Non-Traceable Certificate</td><td>60-180 days (major bottleneck)</td></tr>
+      <tr><td>Document compilation</td><td>Parallel, 30-90 days</td></tr>
+      <tr><td>Insurer verification</td><td>15-30 days after complete submission</td></tr>
+      <tr><td>Settlement payout</td><td>7-30 days after approval</td></tr>
+      <tr><td><strong>Total end-to-end</strong></td><td><strong>3-9 months (can exceed 1 year)</strong></td></tr>
+    </table>
+    </div>
+  </div>
+</details>
+
+<!-- CASHLESS VS REIMBURSEMENT -->
+<h3 id="cashless-reimburse">Cashless vs Reimbursement</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Aspect</th><th>Cashless</th><th>Reimbursement</th></tr>
+  <tr><td>Garage choice</td><td>Network only</td><td>Any garage</td></tr>
+  <tr><td>Upfront payment</td><td>Deductible only</td><td>Full amount</td></tr>
+  <tr><td>Settlement speed</td><td>Faster (garage paid directly)</td><td>Slower (submit bills, wait 15-45 days)</td></tr>
+  <tr><td>Parts quality</td><td>Insurer may influence</td><td>Policyholder decides</td></tr>
+  <tr><td>Paperwork for policyholder</td><td>Less</td><td>More</td></tr>
+  <tr><td>Approval before repair</td><td>Yes</td><td>Yes (survey still required)</td></tr>
+</table>
+</div>
+
+<div class="callout">
+  <strong>Network garage scale:</strong> ICICI Lombard: 5,900-13,000+ garages. HDFC ERGO: 8,200-12,200+. Bajaj Allianz: 6,000+. Most major insurers: 4,000-10,000+ nationwide.
+</div>
+
+<!-- IRDAI TIMELINES -->
+<h3 id="timelines">IRDAI Mandated Timelines vs Actual</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Process Step</th><th>IRDAI Mandate</th><th>Typical Actual</th></tr>
+  <tr><td>Surveyor allocation (tech platform)</td><td>Within 24 hours</td><td>1-5 days</td></tr>
+  <tr><td>Surveyor appointment (legacy)</td><td>Within 72 hours</td><td>1-5 days</td></tr>
+  <tr><td>Survey report submission</td><td>Within 15 days</td><td>5-20 days</td></tr>
+  <tr><td>Insurer decision post-report</td><td>Within 7 days</td><td>7-30 days</td></tr>
+  <tr><td>Request for additional survey</td><td>Within 15 days of original</td><td>Varies</td></tr>
+  <tr><td>Settlement offer to insured</td><td>Within 30 days of final report</td><td>Varies widely</td></tr>
+  <tr><td>Payment after acceptance</td><td>Within 7 days</td><td>7-60 days</td></tr>
+  <tr><td>Maximum surveyor report deadline</td><td>6 months (outer limit)</td><td>--</td></tr>
+</table>
+</div>
+<p>Penalty for delays: insurer must pay interest at <strong>bank rate + 2%</strong> for the period of delay (IRDAI Policyholders' Interests Regulations).</p>
+
+<h4>Why Delays Happen</h4>
+<ol>
+  <li><strong>Document churn</strong> -- Insurer asks for documents one at a time, resetting the clock each time.</li>
+  <li><strong>Surveyor bottleneck</strong> -- Limited licensed surveyors in some areas.</li>
+  <li><strong>Internal approval chains</strong> -- Multiple levels for higher-value claims.</li>
+  <li><strong>Fraud investigation</strong> -- Pauses the clock entirely.</li>
+  <li><strong>Garage-surveyor negotiation</strong> -- Back-and-forth on repair estimates.</li>
+  <li><strong>Police delays</strong> -- NTC for theft cases routinely delayed by months.</li>
+</ol>
+
+<!-- ─── WHERE HUMANS ARE REQUIRED ─── -->
+<h2 id="humans-required">Where Humans Are Still Required</h2>
+
+<h3 id="classification-matrix">Classification Matrix</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Interaction Point</th><th>Classification</th><th>Fully Digital Today?</th></tr>
+  <tr><td>FIR filing (minor OD claims)</td><td>NOT NEEDED</td><td>N/A -- not required</td></tr>
+  <tr><td>FIR filing (theft / serious accident)</td><td>Currently in-person but digitizing</td><td>Legally yes (BNSS s.173), practically no</td></tr>
+  <tr><td>Surveyor inspection (&lt;50K)</td><td>ALREADY ELECTRONIC</td><td>Yes -- IRDAI permits app/AI assessment</td></tr>
+  <tr><td>Surveyor inspection (&gt;50K)</td><td>LEGALLY REQUIRED IN-PERSON</td><td>No -- IRDAI mandates licensed surveyor</td></tr>
+  <tr><td>Vehicle drop-off at garage</td><td>INHERENTLY PHYSICAL</td><td>No</td></tr>
+  <tr><td>Vehicle pickup from garage</td><td>INHERENTLY PHYSICAL</td><td>No</td></tr>
+  <tr><td>Garage authorization / payment</td><td>ALREADY ELECTRONIC</td><td>Yes -- garage-insurer direct</td></tr>
+  <tr><td>Document submission</td><td>ALREADY ELECTRONIC</td><td>Yes (digital insurers) / Nearly (PSU)</td></tr>
+  <tr><td>Claim settlement (simple)</td><td>ALREADY ELECTRONIC</td><td>Yes</td></tr>
+  <tr><td>Claim negotiation (disputed)</td><td>Practically in-person</td><td>Legally yes, practically needs branch visits</td></tr>
+  <tr><td>MACT court appearances</td><td>LEGALLY REQUIRED IN-PERSON</td><td>No -- cross-examination requires presence</td></tr>
+  <tr><td>RTO interactions (total loss / theft)</td><td>Currently in-person but digitizing</td><td>Partially -- varies by state</td></tr>
+  <tr><td>Hospital treatment</td><td>INHERENTLY PHYSICAL</td><td>No</td></tr>
+  <tr><td>Medical document submission</td><td>ALREADY ELECTRONIC</td><td>Yes</td></tr>
+  <tr><td>Agent / broker interaction</td><td>ALREADY ELECTRONIC / OBSOLETE</td><td>Yes</td></tr>
+  <tr><td>Insurance Ombudsman complaint</td><td>ALREADY ELECTRONIC</td><td>Yes -- online at cioins.co.in</td></tr>
+</table>
+</div>
+
+<h3 id="hard-blockers">Hard Blockers</h3>
+
+<div class="callout">
+  <strong>The Rs 50K Surveyor Threshold</strong><br>
+  Claims below Rs 50,000 do not require a licensed surveyor (IRDAI Master Circular 2024). Digit Insurance pioneered smartphone self-inspection with CV-based damage assessment. Acko offers instant settlements for minor damage via app. Above Rs 50,000, a physical licensed surveyor is IRDAI-mandated -- no digital workaround exists without regulatory change.
+</div>
+
+<div class="callout">
+  <strong>MACT: The Decade-Long Blocker</strong><br>
+  Motor Accident Claims Tribunals handle all third-party injury/death claims. The 2019 MV Amendment automatically converts police accident reports into claim petitions. Proceedings average 1-5 years, with Delhi HC data showing cases from 2013/2015 still reaching judgment in 2025. Cross-examination requires physical presence. Bihar's statewide online MACT portal (upheld by Patna HC in 2025) is promising but has not scaled nationally.
+</div>
+
+<h3>The Irreducible Physical Touchpoints</h3>
+<ol>
+  <li><strong>MACT court appearances</strong> -- legally mandated, cases last 10+ years.</li>
+  <li><strong>Physical surveyor inspection (>50K)</strong> -- IRDAI regulation, requires regulatory change.</li>
+  <li><strong>Vehicle logistics</strong> -- towing, drop-off, pickup are inherently physical.</li>
+  <li><strong>Medical treatment and examination</strong> -- inherently physical.</li>
+  <li><strong>FIR signing within 3 days</strong> -- BNSS 2023 allows e-FIR but kept the physical signature requirement.</li>
+</ol>
+
+<h3>Legacy Friction (In-Person by Habit, Not Law)</h3>
+<ol>
+  <li><strong>Document submission to insurer</strong> -- every digital insurer accepts online uploads.</li>
+  <li><strong>Claim dispute escalation</strong> -- ombudsman is online, consumer court has e-filing, but branches visited because phone/email gets ignored.</li>
+  <li><strong>Agent-mediated interactions</strong> -- entirely optional.</li>
+  <li><strong>RTO paperwork</strong> -- Parivahan portal exists, many states allow online processing.</li>
+  <li><strong>FIR filing</strong> (where e-FIR portals exist) -- legally permitted electronically since BNSS 2023.</li>
+</ol>
+
+<h3>Key Digitization Enablers Already in Place</h3>
+<ul>
+  <li><strong>BNSS 2023 Section 173</strong> -- Electronic FIR + Zero FIR at any station.</li>
+  <li><strong>IRDAI Master Circular 2024</strong> -- Sub-50K exempt from surveyor; app/AI assessment permitted.</li>
+  <li><strong>MV Amendment Act 2019</strong> -- Digital documents accepted (DigiLocker/mParivahan); golden hour cashless treatment; automatic DAR-to-MACT conversion.</li>
+  <li><strong>Bima Sugam (launching 2025-2026)</strong> -- Unified digital insurance marketplace with claims, servicing, unique Bima Pehchaan ID.</li>
+  <li><strong>Digit/Acko innovations</strong> -- Self-inspection via video, CV-based damage assessment, instant payout for minor claims.</li>
+  <li><strong>Insurance Ombudsman</strong> -- Fully online complaint and resolution at cioins.co.in.</li>
+</ul>
+
+<!-- ─── CLIENT PIPELINE ─── -->
+<h2 id="client-pipeline">Client Pipeline Analysis</h2>
+
+<p>The client operates an auto finance and yard management business with eight interconnected systems. The key insight: <strong>this is not eight separate systems -- it is a single vehicle lifecycle pipeline</strong> from customer acquisition (CRM) through financing (Equify) through physical custody (yard, gate pass, inspection) through accounting (bank statements, invoices, expenses).</p>
+
+<h3 id="eight-systems">The 8 Systems</h3>
+
+<details>
+  <summary>1. CRM (Recently Rebuilt) <span class="badge badge-med">Medium</span></summary>
+  <div class="inner">
+    <ul>
+      <li><strong>Lead scoring with financial context</strong> -- Connect CRM customer data with Equify loan viability. Pre-qualify leads silently based on actual financing probability, not just intent.</li>
+      <li><strong>Follow-up intelligence</strong> -- Monitor Equify for bank status changes, trigger CRM follow-ups. "Bank X approved the file -- call the customer now."</li>
+      <li><strong>Conversation summarization</strong> -- Extract structured data from call notes/recordings: customer wants, budget, vehicles discussed, objections. Feed into both CRM and Equify.</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>2. Equify -- Loan Process Tracking <span class="badge badge-high">High</span></summary>
+  <div class="inner">
+    <p>Described as "post office tracking" for finance files. The tracking is built. Agent opportunity is in what happens around it.</p>
+    <ul>
+      <li><strong>Bank communication drafting</strong> -- Each bank has own format preferences and doc requirements. Agent drafts bank-specific communications, tracks response times, flags stalling files.</li>
+      <li><strong>Documentation gap detection</strong> -- Before file goes to bank: "HDFC wants X, ICICI wants Y, you're missing Z." Catches gaps before bank rejection.</li>
+      <li><strong>Status prediction</strong> -- "Files with this profile at Bank X typically take 12 days. This one has been sitting for 18. Escalation recommended."</li>
+      <li><strong>Bank selection optimization</strong> -- Recommend which banks to submit to (and in what order) based on historical approval rates for similar profiles.</li>
+    </ul>
+    <p><strong>Agent behavior:</strong> Morning briefing: "5 files need follow-up. 2 overdue. 1 at SBI missing Form 16." Auto-drafts follow-up messages. Flags anomalies. Maintains bank-specific knowledge base.</p>
+  </div>
+</details>
+
+<details>
+  <summary>3. Internal Documentation + PDF Generation <span class="badge badge-med">Medium</span></summary>
+  <div class="inner">
+    <ul>
+      <li><strong>Intelligent template selection</strong> -- Determines correct template from context (loan type, bank, vehicle, customer profile) and pre-fills.</li>
+      <li><strong>Document verification</strong> -- Checks data consistency across systems before generating. "Loan amount in Equify doesn't match invoice amount."</li>
+      <li><strong>Multi-format output</strong> -- One input generates PDF for bank, email summary for customer, one-line entry for accounts log.</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>4. Accounting System (Bank Statement Ingestion) <span class="badge badge-high">High</span></summary>
+  <div class="inner">
+    <ul>
+      <li><strong>Automatic reconciliation</strong> -- Match bank entries against invoices, disbursements, payments, expenses. Flag unmatched entries. Continuous, not batch.</li>
+      <li><strong>Anomaly detection</strong> -- "EMI bounced for second consecutive month." "Vendor paid twice for same invoice." "Unknown bank charge."</li>
+      <li><strong>Cash flow forecasting</strong> -- Project 7/14/30-day cash flow from Equify disbursement data, CRM deal pipeline, historical payment patterns.</li>
+      <li><strong>GST and compliance</strong> -- Categorize transactions for GST filing, flag TDS items, generate CA-ready period-end summaries.</li>
+    </ul>
+    <p><strong>Agent behavior:</strong> "47 of 52 entries matched. 3 need review. 2 flagged as duplicates." Proactive EMI collection alerts. Monthly GST summary.</p>
+  </div>
+</details>
+
+<details>
+  <summary>5. Vehicle Inspection <span class="badge badge-high">High</span></summary>
+  <div class="inner">
+    <ul>
+      <li><strong>Computer vision damage assessment</strong> -- Inspector takes photos, agent identifies damage, estimates repair costs, flags condition/valuation discrepancies. (Tractable is a $1B company doing exactly this.)</li>
+      <li><strong>Report generation</strong> -- From photos + minimal checklist: full inspection report. Customer-facing clean version + internal detailed version.</li>
+      <li><strong>Historical comparison</strong> -- "New damage on rear bumper since last inspection on [date]."</li>
+      <li><strong>Valuation integration</strong> -- "Condition: 7/10. Market value for model/year/condition: Rs X-Y lakhs. Declared: Rs Z lakhs."</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>6. Employee Expense Management <span class="badge badge-low">Low</span></summary>
+  <div class="inner">
+    <ul>
+      <li>Receipt OCR + auto-categorization (photo to pre-filled expense in 5 seconds).</li>
+      <li>Policy enforcement before submission (limits, duplicates, category checks).</li>
+      <li>Anomaly flagging ("Fuel expenses 3x average for role/location").</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>7. Gate Pass System <span class="badge badge-low">Low-Med</span></summary>
+  <div class="inner">
+    <ul>
+      <li>Identity verification against CRM/vendor/employee records.</li>
+      <li>Automated scheduling ("Vehicle X inspection at 2 PM -- generate gate pass, notify inspector").</li>
+      <li>Audit trail intelligence ("Vehicle entered 4 times this month with no active loan file").</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>8. Yard Management (Being Productized) <span class="badge badge-high">High</span></summary>
+  <div class="inner">
+    <p>Being sold externally -- AI intelligence is the product differentiator. Any developer can build parking management. An AI-powered custody platform is a different category.</p>
+    <ul>
+      <li><strong>Occupancy optimization</strong> -- Predict arrivals/departures from Equify pipeline, suggest allocation, alert on capacity limits.</li>
+      <li><strong>Condition monitoring</strong> -- Schedule periodic checks for long-custody vehicles, flag overstay, recommend actions.</li>
+      <li><strong>Custody chain documentation</strong> -- Immutable log combining gate pass, inspection, photos. Directly relevant to insurance claims -- if vehicle damaged in custody, the chain proves when damage occurred.</li>
+      <li><strong>Customer self-service</strong> -- Proactive updates ("Vehicle in yard 30 days. Fees: Rs X. Next inspection: [date]"). Document generation, status queries.</li>
+      <li><strong>Billing automation</strong> -- Calculate charges by duration/type/services, generate invoices, track payments.</li>
+    </ul>
+  </div>
+</details>
+
+<!-- CROSS-SYSTEM -->
+<h3 id="cross-system">Cross-System Agent Opportunities</h3>
+
+<details>
+  <summary>Agent 1: Loan Lifecycle Agent (CRM + Equify + Accounting + Inspection) -- HIGHEST PRIORITY</summary>
+  <div class="inner">
+    <p>Tracks a deal from first customer contact to loan disbursement to first EMI collection. The connective tissue across four systems.</p>
+    <div class="flow">Customer enters CRM
+  -> Agent checks yard for vehicle, triggers inspection, pre-checks bank docs
+Inspection completes
+  -> Agent updates Equify valuation, adjusts bank recommendations, generates condition report
+Loan file submitted
+  -> Agent monitors progress, drafts follow-ups, alerts sales rep
+Loan approved
+  -> Agent triggers disbursement tracking, generates closing docs, schedules vehicle release
+First EMI due
+  -> Agent monitors bank statement, alerts if bounced</div>
+    <p><strong>Impact:</strong> On 100 files/month with 15-20 manual handoffs each, this eliminates 1,500-2,000 manual actions per month.</p>
+  </div>
+</details>
+
+<details>
+  <summary>Agent 2: Risk and Compliance Agent (Equify + Inspection + Accounting + Yard)</summary>
+  <div class="inner">
+    <ul>
+      <li>Continuous portfolio health monitoring: EMI bounce rates, vehicle condition trends, payment patterns.</li>
+      <li>Early risk flagging: "Customer X missed EMI. Vehicle is in yard. Recommend: hold vehicle, contact customer."</li>
+      <li>Insurance context: generates documentation packages for insurance claims in minutes vs. days.</li>
+      <li>Fraud pattern detection: same vehicle in multiple files, unusual inspection-to-disbursement timing, valuation anomalies.</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>Agent 3: Customer Communication Agent (CRM + Equify + Yard + Gate Pass)</summary>
+  <div class="inner">
+    <ul>
+      <li>Single customer communication thread across all touchpoints.</li>
+      <li>Auto-generated status updates: "Loan submitted to HDFC. Expected: 7-10 days."</li>
+      <li>Handles routine queries without staff: "Status of my file?" "When can I pick up?"</li>
+      <li>Proactive reminders: EMI dates, document deadlines, appointments.</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>Agent 4: Yard Product Agent (Yard + Gate Pass + Inspection -- for external customers)</summary>
+  <div class="inner">
+    <p>This IS the product differentiation for the external yard management product.</p>
+    <ul>
+      <li>External customer self-service: "Park 15 vehicles this week" -> agent checks capacity, suggests timing, pre-generates gate passes.</li>
+      <li>Fleet analytics: "50 vehicles, avg stay 12 days, 3 condition alerts, total charges Rs X."</li>
+      <li>Insurance company integration: vehicle enters yard after accident -> agent documents condition, generates claim-ready report, maintains custody chain, provides insurer real-time status.</li>
+    </ul>
+    <div class="callout">
+      <strong>Competitive moat:</strong> The yard product's differentiation is not CRUD operations. It is the intelligence layer: predictive capacity, automated documentation, proactive communication, and insurance-grade custody tracking.
+    </div>
+  </div>
+</details>
+
+<!-- PRIORITY MATRIX -->
+<h3 id="priority-matrix">Implementation Priority Matrix</h3>
+<div class="table-wrap">
+<table>
+  <tr><th>Opportunity</th><th>Impact</th><th>Feasibility</th><th>Priority</th><th>Sprint</th></tr>
+  <tr><td>Loan Lifecycle Agent</td><td>Very High</td><td>Medium (cross-system)</td><td><span class="badge badge-high">P0</span></td><td>Sprint 2</td></tr>
+  <tr><td>Equify bank communication + gap detection</td><td>High</td><td>High (single system)</td><td><span class="badge badge-high">P0</span></td><td>Sprint 1</td></tr>
+  <tr><td>Vehicle inspection CV + report gen</td><td>High</td><td>Medium (needs CV model)</td><td><span class="badge badge-high">P1</span></td><td>Sprint 2</td></tr>
+  <tr><td>Accounting reconciliation agent</td><td>High</td><td>High (data structured)</td><td><span class="badge badge-high">P1</span></td><td>Sprint 1</td></tr>
+  <tr><td>Yard Product Agent (productization)</td><td>High</td><td>Medium</td><td><span class="badge badge-high">P1</span></td><td>Sprint 2-3</td></tr>
+  <tr><td>Risk and Compliance Agent</td><td>High</td><td>Medium (cross-system)</td><td><span class="badge badge-med">P2</span></td><td>Sprint 3</td></tr>
+  <tr><td>CRM lead scoring + Equify context</td><td>Medium</td><td>High</td><td><span class="badge badge-med">P2</span></td><td>Sprint 2</td></tr>
+  <tr><td>Customer Communication Agent</td><td>Medium</td><td>Medium</td><td><span class="badge badge-med">P2</span></td><td>Sprint 3</td></tr>
+  <tr><td>Expense OCR + categorization</td><td>Low</td><td>High (commodity)</td><td><span class="badge badge-low">P3</span></td><td>Sprint 4</td></tr>
+  <tr><td>Gate pass automation</td><td>Low</td><td>High</td><td><span class="badge badge-low">P3</span></td><td>Sprint 4</td></tr>
+</table>
+</div>
+
+<!-- SPRINT DEMOS -->
+<h3 id="sprint-demos">Sprint 1 Demo Recommendations</h3>
+
+<h4>Demo 1: Equify Intelligence Agent</h4>
+<ul>
+  <li><strong>Input:</strong> A loan file at any stage.</li>
+  <li><strong>Agent output:</strong> Missing documents for target bank, draft follow-up communication, predicted timeline, recommended next action.</li>
+  <li><strong>Wow factor:</strong> Staff currently does this mentally. Seeing the agent do it instantly, correctly, for any file sells the concept.</li>
+</ul>
+
+<h4>Demo 2: Accounting Reconciliation Agent</h4>
+<ul>
+  <li><strong>Input:</strong> Bank statement dump (existing system already ingests these).</li>
+  <li><strong>Agent output:</strong> Matched entries, unmatched with suggested matches, anomaly flags, 7-day cash flow projection.</li>
+  <li><strong>Wow factor:</strong> Turns a sorting tool into a financial intelligence tool. The existing system organizes data. The agent interprets it.</li>
+</ul>
+
+<h4>Architecture Note</h4>
+<p>All agents should share a common knowledge layer:</p>
+<ul>
+  <li><strong>Vehicle database</strong> -- VIN/registration mapped to all records across all systems.</li>
+  <li><strong>Customer database</strong> -- Customer mapped to all touchpoints, files, payments, yard visits.</li>
+  <li><strong>Bank knowledge base</strong> -- Bank mapped to requirements, timelines, contacts, approval patterns.</li>
+</ul>
+
+<!-- ─── OPPORTUNITY MAP ─── -->
+<h2 id="opportunity-map">Agent Opportunity Map</h2>
+
+<p>Connecting findings across all three research documents, here is where AI agents add the most value across the insurance claim lifecycle:</p>
+
+<h3>Pre-Claim: Prevention and Preparation</h3>
+<ul>
+  <li><strong>Insurance tracking in Equify</strong> -- Every financed vehicle needs insurance. Agent tracks policy expiry alongside loan status. "Insurance expires in 15 days, loan still active -- alert customer + rep."</li>
+  <li><strong>Vehicle condition baseline</strong> -- Inspection system creates condition records at financing. If vehicle is later involved in a claim, the baseline proves pre-existing vs. new damage.</li>
+  <li><strong>Yard custody documentation</strong> -- Entry/exit inspection photos + custody log serve as evidence for or against insurance claims while vehicle is in custody.</li>
+</ul>
+
+<h3>Claim Initiation (Day 0-1)</h3>
+<ul>
+  <li><strong>Guided claim filing</strong> -- Agent determines: Does this need an FIR? Which documents are required? Is this below 50K (digital survey OK) or above (physical surveyor needed)?</li>
+  <li><strong>Document pre-population</strong> -- Pull policy copy, RC, DL from existing records. Auto-fill claim form. Reduce "serial document requests" pain point.</li>
+  <li><strong>Towing coordination</strong> -- Connect to insurer's RSA if available; otherwise coordinate logistics.</li>
+</ul>
+
+<h3>Assessment Phase (Day 1-15)</h3>
+<div class="callout">
+  <strong>The 50K split is the critical design decision.</strong> Below 50K, the agent can own the entire assessment: CV-based damage analysis, instant estimate, direct approval. Above 50K, the agent assists the surveyor: pre-populates report, highlights valuation mismatches, tracks the 15-day IRDAI deadline.
+</div>
+<ul>
+  <li><strong>Sub-50K claims</strong> -- Full AI assessment. Smartphone photos -> CV damage analysis -> repair estimate -> approval. Digit and Acko already do this. Agent can replicate.</li>
+  <li><strong>Above-50K claims</strong> -- Agent assists surveyor: pre-fills inspection data, runs CV analysis as a second opinion, flags discrepancies between surveyor estimate and market rates, tracks IRDAI timeline compliance.</li>
+  <li><strong>Garage-insurer coordination</strong> -- Already electronic. Agent can automate authorization workflows, negotiate estimates against historical data, flag outlier pricing.</li>
+</ul>
+
+<h3>Processing and Settlement (Day 7-60)</h3>
+<ul>
+  <li><strong>Proactive document tracking</strong> -- Agent knows exactly which documents are missing and requests them all at once, eliminating the "serial document request" pattern that resets the clock.</li>
+  <li><strong>Timeline compliance monitoring</strong> -- Track every IRDAI-mandated deadline. Alert when surveyor report is overdue. Flag when insurer decision exceeds 7-day window. Calculate penalty interest owed.</li>
+  <li><strong>Depreciation transparency</strong> -- Upfront calculation of out-of-pocket costs based on parts material depreciation tables. No "depreciation shock" at settlement.</li>
+  <li><strong>Dispute escalation guidance</strong> -- If settlement is unsatisfactory: agent drafts grievance to insurer GRO (citing IRDAI regulations), then IGMS complaint, then Ombudsman filing at cioins.co.in.</li>
+</ul>
+
+<h3>Long-Tail: Third-Party and Theft Claims</h3>
+<ul>
+  <li><strong>Theft claim document orchestration</strong> -- 15 documents from 5+ sources. Agent tracks which are obtained, which are pending, sends reminders, flags the NTC bottleneck.</li>
+  <li><strong>MACT case tracking</strong> -- Cannot digitize the court appearance, but agent tracks case status via eCourts, alerts on hearing dates, maintains document repository, generates preparation briefs.</li>
+  <li><strong>Subrogation and recovery</strong> -- Agent identifies recovery opportunities, drafts subrogation documents, tracks at-fault party's insurer response.</li>
+</ul>
+
+<h3>Cross-Cutting: Fraud Detection</h3>
+<ul>
+  <li><strong>Overlapping patterns</strong> -- Same anomaly detection that flags suspicious loan files (Risk and Compliance Agent) applies to insurance: staged accidents, inflated damage claims, suspicious timing of insurance purchase relative to claims.</li>
+  <li><strong>Yard-insurance connection</strong> -- If vehicle is damaged while in custody, entry/exit photos prove when damage occurred. Prevents false claims against the yard operator.</li>
+</ul>
+
+<h3>For the Productized Yard</h3>
+<ul>
+  <li><strong>Insurance company as customer</strong> -- Insurers need yards for salvage, total loss, and investigation vehicles. An AI-powered yard with automated documentation, condition tracking, and custody chains is exactly what adjusters need.</li>
+  <li><strong>Claim-ready reports on exit</strong> -- When a vehicle leaves the yard, agent generates a complete custody package: entry photos, exit photos, duration, incidents, condition delta.</li>
+</ul>
+
+<!-- ─── SOURCES ─── -->
+<h2 id="sources">Sources</h2>
+
+<h3>Regulatory and Government</h3>
+<ul class="source-list">
+  <li><a href="https://policyholder.gov.in/how-to-make-a-claim-motor">IRDAI -- How to Make a Motor Claim</a></li>
+  <li><a href="https://irdai.gov.in/ombudsman">IRDAI -- Ombudsman</a></li>
+  <li><a href="https://irdai.gov.in/grievance-redressal-mechanism1">IRDAI -- Grievance Redressal</a></li>
+  <li><a href="https://www.pib.gov.in/PressReleasePage.aspx?PRID=2204758">PIB -- IRDAI Strengthens Motor Insurance Framework</a></li>
+  <li><a href="https://irdai.gov.in/documents/37343/991172/">IRDAI Policyholders' Interests Regulations 2024 Draft</a></li>
+  <li><a href="https://prsindia.org/billtrack/the-motor-vehicles-amendment-bill-2019">MV Amendment Act 2019 -- PRS India</a></li>
+</ul>
+
+<h3>Legal References</h3>
+<ul class="source-list">
+  <li>Motor Vehicles Act, 1988 (and 2019 Amendment)</li>
+  <li>IRDAI (Protection of Policyholders' Interests) Regulations, 2024</li>
+  <li>Insurance Surveyors and Loss Assessors Regulations</li>
+  <li>Bharatiya Nagarik Suraksha Sanhita (BNSS) 2023, Section 173</li>
+  <li><a href="https://www.cyberlawconsulting.com/sop_zero_efir_new_criminal_law.php">BNSS 2023 Zero FIR and e-FIR -- Cyber Law Consulting</a></li>
+  <li><a href="https://www.drishtijudiciary.com/current-affairs/section-173-of-bnss">Section 173 BNSS -- Drishti Judiciary</a></li>
+  <li><a href="https://bhattandjoshiassociates.com/fir-registration-in-india-2025-supreme-court-guidelines-and-section-173-of-bnss-and-crpc-explained/">FIR Under BNSS 2023 -- Bhatt &amp; Joshi Associates</a></li>
+  <li><a href="https://www.samvidalaw.com/patna-high-court-upholds-bihar-mact-rules-2025-en/">Bihar MACT Online Portal Upheld -- Samvida Law</a></li>
+  <li><a href="https://evaakil.com/car-insurance-claim-rejected/">Legal Rights When Claim Rejected -- EvaAkil</a></li>
+</ul>
+
+<h3>News and Analysis</h3>
+<ul class="source-list">
+  <li><a href="https://www.businesstoday.in/personal-finance/insurance/story/irdai-new-claim-settlement-rules-insurers-to-settle-claims-within-7-days-surveyors-to-submit-reports-within-15-days-check-other-details-432968-2024-06-11">BusinessToday -- IRDAI New Claim Settlement Rules (2024)</a></li>
+  <li><a href="https://www.business-standard.com/finance/personal-finance/insurance-claim-rejected-a-guide-for-policyholders-to-seek-redress-123112800150_1.html">Business Standard -- Guide for Policyholders</a></li>
+  <li><a href="https://blog.theleapjournal.org/2026/02/the-mact-litigation-overload-how-indias.html">MACT Litigation Overload -- The Leap Blog</a></li>
+  <li><a href="https://www.loophealth.com/post/bima-sugam-irdai-marketplace-2026">Bima Sugam Launch -- Loop Health</a></li>
+  <li><a href="https://www.businesstoday.in/personal-finance/insurance/story/irdai-announces-bima-sugam-portal-launch-first-phase-expected-in-december-494470-2025-09-17">Bima Sugam Phase 1 -- Business Today</a></li>
+  <li><a href="https://upstox.com/news/personal-finance/insurance/car-insurance-survey-not-required-for-loss-below-50-000-says-finance-ministry-check-irdai-rules-here/article-186369/">IRDAI Survey Waiver Below 50K -- Upstox</a></li>
+  <li><a href="https://www.taxtmi.com/news?id=64897">IRDAI Regulatory Framework -- TaxTMI</a></li>
+  <li><a href="https://productgrowth.in/insights/insurtech/motor-insurance-digital-journey/">Motor Insurance Digital Journey -- ProductGrowth</a></li>
+</ul>
+
+<h3>Insurer Websites</h3>
+<ul class="source-list">
+  <li><a href="https://www.acko.com/car-insurance/claims/">Acko -- Car Insurance Claims</a></li>
+  <li><a href="https://www.acko.com/car-insurance/cashless/">Acko -- Cashless Process</a></li>
+  <li><a href="https://www.acko.com/car-insurance/motor-insurance-surveyor-roles-in-claims/">Acko -- Surveyor Roles</a></li>
+  <li><a href="https://www.acko.com/car-insurance/car-theft-insurance-claim/">Acko -- Theft Claim</a></li>
+  <li><a href="https://www.icicilombard.com/cashless-garages">ICICI Lombard -- Cashless Garages</a></li>
+  <li><a href="https://www.icicilombard.com/blogs/car-insurance/car/5-reasons-your-car-insurance-claim-gets-rejected">ICICI Lombard -- Claim Rejection</a></li>
+  <li><a href="https://www.hdfcergo.com/locators/cashless-garages-networks">HDFC ERGO -- Cashless Network</a></li>
+  <li><a href="https://www.bajajallianz.com/blog/motor-insurance-articles/how-to-claim-car-insurance-for-own-damage.html">Bajaj Allianz -- Own Damage Claim</a></li>
+  <li><a href="https://www.tataaig.com/knowledge-center/car-insurance/is-fir-mandatory-for-car-insurance-claim">Tata AIG -- FIR Requirements</a></li>
+  <li><a href="https://www.tataaig.com/motor-insurance/car-insurance/reimbursement-car-insurance-claim-process">Tata AIG -- Reimbursement Process</a></li>
+  <li><a href="https://www.sbigeneral.in/motor-insurance/private-car-insurance/zero-depreciation-car-insurance">SBI General -- Zero Depreciation</a></li>
+  <li><a href="https://www.bajajgeneralinsurance.com/blog/motor-insurance-articles/vehicle-insurance-claim-process-for-stolen-vehicle.html">Bajaj General -- Stolen Vehicle Claim</a></li>
+  <li><a href="https://www.shriramgi.com/article/motor-insurance-tribunal-claims-process-in-india">Shriram GI -- MACT Process</a></li>
+  <li><a href="https://www.zurichkotak.com/knowledge-center/car-insurance/irdai-rules-for-car-insurance-plans">Zurich Kotak -- IRDAI Rules</a></li>
+</ul>
+
+<h3>Aggregators and Guides</h3>
+<ul class="source-list">
+  <li><a href="https://www.policybazaar.com/motor-insurance/car-insurance/articles/car-insurance-claim-process-guide/">PolicyBazaar -- Claim Process Guide</a></li>
+  <li><a href="https://www.policybazaar.com/motor-insurance/car-insurance/articles/common-reasons-for-car-insurance-claim-rejection/">PolicyBazaar -- Claim Rejection Reasons</a></li>
+  <li><a href="https://www.policybazaar.com/motor-insurance/car-insurance/articles/the-stolen-car-insurance-claim-process/">PolicyBazaar -- Stolen Car Claim</a></li>
+  <li><a href="https://www.policybazaar.com/motor-insurance/car-insurance/idv-calculator/">PolicyBazaar -- IDV Calculator</a></li>
+  <li><a href="https://www.coverfox.com/car-insurance/articles/car-depreciation-rate-in-India/">Coverfox -- Depreciation Rates</a></li>
+  <li><a href="https://motorclaimexpert.com/motor-insurance-claim-process-in-india/">Motor Claim Expert -- Full Process Guide</a></li>
+  <li><a href="https://motorclaimexpert.com/fir-motor-insurance-claim-india/">Motor Claim Expert -- FIR Guide</a></li>
+  <li><a href="https://www.insurancedekho.com/car-insurance/claim-settlement">InsuranceDekho -- Claim Settlement Ratio</a></li>
+  <li><a href="https://idv.gicouncil.in/">GI Council -- IDV Calculator</a></li>
+  <li><a href="https://www.smcinsurance.com/motor-insurance/articles/how-to-claim-third-party-car-insurance-india">SMC Insurance -- Third Party Claim</a></li>
+  <li><a href="https://drivinglicenceapply.in/vehicle-ownership-transfer-rto-2025/">Parivahan Vehicle Ownership Transfer</a></li>
+  <li><a href="https://www.tataaig.com/knowledge-center/two-wheeler-insurance/finally-digital-vehicle-documents-get-a-green-signal">Digital Vehicle Documents -- Tata AIG</a></li>
+</ul>
+
+<h3>Consumer Forums</h3>
+<ul class="source-list">
+  <li><a href="https://www.team-bhp.com/forum/indian-car-loans-insurance/242269-dealer-refusing-cashless-claim-if-insurance-isnt-bought-them.html">Team-BHP -- Dealer Refusing Cashless</a></li>
+  <li><a href="https://www.team-bhp.com/forum/indian-car-loans-insurance/118609-insurance-claims-what-con.html">Team-BHP -- Insurance Claims What a Con</a></li>
+  <li><a href="https://www.team-bhp.com/forum/indian-car-loans-insurance/263358-struggle-cashless-koda-superb-repair.html">Team-BHP -- Skoda Superb Cashless Struggle</a></li>
+  <li><a href="https://www.team-bhp.com/forum/indian-car-loans-insurance/258156-accident-claim-advice-first-timer.html">Team-BHP -- Accident Claim Advice</a></li>
+  <li><a href="https://www.team-bhp.com/news/car-totaled-3-months-ago-insurance-settlement-pending-best-approach">Team-BHP -- Total Loss Settlement Pending</a></li>
+  <li><a href="https://www.team-bhp.com/forum/indian-car-loans-insurance/211039-oriental-insurance-wrongly-trying-push-total-loss-settlement-repair-settlement.html">Team-BHP -- Oriental Insurance Total Loss Dispute</a></li>
+  <li><a href="https://www.team-bhp.com/news/godigit-experience-neglects-insurance-transfer-becomes-unresponsive">Team-BHP -- GoDigit Experience</a></li>
+  <li><a href="https://www.cioins.co.in/">Insurance Ombudsman Portal</a></li>
+</ul>
+
+</main>
+
+<footer>
+  Research compiled by Summer for CE Sprint &mdash; March 26, 2026
+</footer>
+
+</body>
+</html>
