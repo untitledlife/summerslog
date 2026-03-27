@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The Shape of What's Allowed: How Support Constraints Determine Universality Classes | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.2rem; color: var(--text); margin-top: 2.5rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body h3 { text-transform: none; letter-spacing: normal; font-size: 1.05rem; color: var(--text); margin-top: 1.8rem; margin-bottom: 0.5rem; font-weight: 600; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; font-style: italic; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .post-body .refs a { color: var(--accent2); }
+        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .highlight p { margin-bottom: 0.5rem; color: var(--text); }
+        .highlight p:last-child { margin-bottom: 0; }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .post-body table { border-collapse: collapse; margin: 1.5rem 0; width: 100%; font-size: 0.85rem; }
+        .post-body th, .post-body td { border: 1px solid var(--border); padding: 0.5rem 0.8rem; text-align: left; }
+        .post-body th { background: var(--surface); font-weight: 600; }
+        .post-body .aside { background: var(--surface); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 6px; font-size: 0.88rem; }
+        .post-body .aside p { margin-bottom: 0.5rem; font-size: 0.88rem; }
+        .post-body .aside p:last-child { margin-bottom: 0; }
+
+        /* Theorem-like environments */
+        .theorem-block { background: rgba(255, 180, 162, 0.08); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .theorem-block .theorem-head { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .theorem-block p { margin-bottom: 0.8rem; font-size: 0.95rem; }
+        .theorem-block p:last-child { margin-bottom: 0; }
+
+        .conjecture-block { background: rgba(180, 162, 255, 0.08); border-left: 3px solid #8b7ec8; padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .conjecture-block .theorem-head { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; color: #8b7ec8; }
+        .conjecture-block p { margin-bottom: 0.8rem; font-size: 0.95rem; }
+        .conjecture-block p:last-child { margin-bottom: 0; }
+
+        .proof-block { background: var(--surface); border-left: 3px solid var(--border); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; font-size: 0.92rem; }
+        .proof-block .proof-head { font-style: italic; font-weight: 600; margin-bottom: 0.5rem; }
+        .proof-block p { margin-bottom: 0.8rem; font-size: 0.92rem; }
+        .proof-block p:last-child { margin-bottom: 0; }
+        .proof-block .qed { text-align: right; }
+
+        .remark-block { background: var(--surface); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 6px; font-size: 0.92rem; }
+        .remark-block .theorem-head { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.5rem; font-style: italic; }
+        .remark-block p { margin-bottom: 0.5rem; font-size: 0.92rem; }
+        .remark-block p:last-child { margin-bottom: 0; }
+
+        .definition-block { background: rgba(162, 210, 255, 0.08); border-left: 3px solid #6ba3d6; padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .definition-block .theorem-head { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; color: #6ba3d6; }
+        .definition-block p { margin-bottom: 0.8rem; font-size: 0.95rem; }
+        .definition-block p:last-child { margin-bottom: 0; }
+
+        .download-link { display: inline-block; background: var(--surface); border: 1px solid var(--border); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; text-decoration: none; color: var(--text); margin-bottom: 1rem; }
+        .download-link:hover { border-color: var(--accent); }
+
+        .figure-block { margin: 2rem 0; text-align: center; }
+        .figure-block img { max-width: 100%; border-radius: 6px; border: 1px solid var(--border); }
+        .figure-block .caption { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; text-align: left; }
+
+        .conditions-list { margin: 1rem 0 1.5rem 0; }
+        .conditions-list p { margin-bottom: 0.4rem; }
+
+        .abstract { background: var(--surface); padding: 1.2rem 1.5rem; margin: 1.5rem 0; border-radius: 6px; }
+        .abstract .abstract-head { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .abstract p { font-size: 0.93rem; }
+
+        .enum-list { margin: 0.5rem 0 1rem 1.5rem; }
+        .enum-list li { margin-bottom: 0.4rem; font-size: 0.95rem; }
+
+        .ack-block { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="./" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <a href="./" class="back">&larr; All posts</a>
+                <h1>The Shape of What's Allowed: How Support Constraints Determine Universality Classes</h1>
+                <div class="post-meta">March 27, 2026 &middot; Ritam Pal</div>
+                <a class="download-link" href="files/constrained-universality.tex">Download LaTeX source</a>
+            </div>
+
+            <div class="post-body">
+
+<div class="abstract">
+<div class="abstract-head">Abstract</div>
+<p>The central limit theorem establishes the Gaussian as the universal attractor for sums of independent random variables on $\mathbb{R}$. We argue that the Gaussian is merely one entry in a larger table: the support of the summands determines the universality class, and the attractor is always the maximum-entropy exponential family on that support. Sums of positive variables converge to Gamma; averages of bounded variables to Beta; averages on the simplex to Dirichlet; projections from the $\ell^p$ ball to the generalized Gaussian $\propto e^{-|t|^p}$. We state a general theorem, based on Csisz&aacute;r's I-projection and saddlepoint methods, that unifies these cases under conditions (C1)&ndash;(C5). We propose the <em>Barrier Function Conjecture</em>: the logarithmic barrier of the constraint set determines the sufficient statistics and hence the universality class. The conjecture is verified for all known cases and connects constrained universality to the theory of self-concordant barriers in convex optimization. We discuss supporting perspectives from reflecting diffusions, free probability, and optimal transport, and present numerical evidence confirming the predicted convergence.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>1. Introduction</h2>
+<!-- ====================================================================== -->
+
+<p>The central limit theorem (CLT) is one of the most powerful results in probability theory. In its simplest form, it states that if $X_1, X_2, \ldots$ are independent, identically distributed (i.i.d.) random variables with mean $\mu$ and variance $\sigma^2 < \infty$, then the standardized sum $(\sum_{i=1}^n X_i - n\mu)/(\sigma\sqrt{n})$ converges in distribution to the standard Gaussian $N(0,1)$. The Gaussian is universal: the limit depends only on the first two moments, not on the detailed form of the summands.</p>
+
+<p>But the CLT makes no assumption about the <em>support</em> of the $X_i$. What happens when the summands are constrained to lie in a subset $S \subsetneq \mathbb{R}^d$? The Gaussian approximation remains valid in the central region, yet it violates the support constraint: a Gaussian approximation to a sum of positive variables assigns nonzero probability to negative values.</p>
+
+<p>It has long been recognized, in various specific contexts, that support-respecting approximations outperform the Gaussian. Castro and Cuesta [1] recently proved that sums of independent positive random variables are better approximated by the Gamma distribution than by the Gaussian. Barthe <em>et al.</em> [2] showed that marginals of uniform distributions on $\ell^p$ balls converge to the generalized Gaussian $\propto e^{-|t|^p}$. Classical results connect the Dirichlet distribution to P&oacute;lya urns on the simplex [3], and the Beta distribution to various bounded-support limits.</p>
+
+<p>The purpose of this paper is to argue that all of these are instances of a single principle:</p>
+
+<blockquote>
+<p>The support of the summands determines the universality class. The universal attractor is the maximum-entropy (MaxEnt) exponential family on that support.</p>
+</blockquote>
+
+<p>Table 1 summarizes the known instances.</p>
+
+<table>
+<caption style="caption-side: top; text-align: left; font-size: 0.88rem; color: var(--muted); margin-bottom: 0.5rem;"><strong>Table 1.</strong> Support determines universality class. Each row specifies a convex support $S$, the appropriate aggregate statistic, and the MaxEnt exponential family that serves as the universal attractor.</caption>
+<tr><th>Support $S$</th><th>Aggregate</th><th>MaxEnt family</th><th>Sufficient statistics</th><th>Status</th></tr>
+<tr><td>$\mathbb{R}$</td><td>$\bar{X}_n$ (standardized)</td><td>Gaussian $N(\mu,\sigma^2)$</td><td>$(x,\, x^2)$</td><td>Proved (CLT)</td></tr>
+<tr><td>$[0,\infty)$</td><td>$S_n = \sum X_i$</td><td>$\mathrm{Gamma}(\alpha,\beta)$</td><td>$(x,\, \log x)$</td><td>Proved (Thm. 1)</td></tr>
+<tr><td>$[0,1]$</td><td>$\bar{X}_n = \frac{1}{n}\sum X_i$</td><td>$\mathrm{Beta}(\alpha,\beta)$</td><td>$(\log x,\, \log(1{-}x))$</td><td>Proved (Cor. 1)</td></tr>
+<tr><td>$\Delta_{k-1}$</td><td>$\bar{X}_n = \frac{1}{n}\sum X_i$</td><td>$\mathrm{Dirichlet}(\boldsymbol{\alpha})$</td><td>$(\log x_1, \ldots, \log x_k)$</td><td>Proved (Cor. 2)</td></tr>
+<tr><td>$\ell^p$ ball</td><td>1-d projection</td><td>$\propto e^{-c|t|^p}$</td><td>$|x|^p$</td><td>Known [2]</td></tr>
+</table>
+
+<p><strong>What is new.</strong> The individual entries of Table 1 are established or known results. What is new in this paper is threefold. First, we state a <em>general theorem</em> (Theorem 1) that unifies all cases: for any closed convex support $S$ equipped with a natural exponential family, the I-projection of the empirical measure onto that family yields the universal attractor, with $O(n^{-1})$ convergence in KL divergence. The proof combines Csisz&aacute;r's conditional limit theorem [4] with the multivariate saddlepoint approximation. Second, we propose the <em>Barrier Function Conjecture</em> (Conjecture 1), which asserts that the logarithmic barrier of $S$ determines the sufficient statistics and hence the universality class. This connects probability theory to interior-point methods in convex optimization. Third, we assemble evidence from five independent mathematical perspectives&mdash;information geometry, reflecting diffusions, free probability, Schr&ouml;dinger bridges, and transform methods&mdash;all of which point to the same principle, creating what we call an &ldquo;overdetermination argument&rdquo; for its correctness.</p>
+
+<!-- ====================================================================== -->
+<h2>2. Preliminaries</h2>
+<!-- ====================================================================== -->
+
+<h3>2.1 Notation</h3>
+
+<p>Let $S \subseteq \mathbb{R}^d$ be a closed convex set with nonempty interior relative to its affine hull. We write $\mathcal{M}_1(S)$ for the set of Borel probability measures on $S$, and $P$ for a generic element with density $p$ (with respect to the Lebesgue measure on $S$ or the appropriate Hausdorff measure). The Kullback&ndash;Leibler divergence is $D_{\mathrm{KL}}(Q \| P) = \int \log(dQ/dP)\, dQ$ when $Q \ll P$, and $+\infty$ otherwise. The cumulant generating function (CGF) of a random variable $X$ is $\Lambda(\theta) = \log \mathbb{E}[e^{\theta \cdot X}]$, with Fenchel&ndash;Legendre transform $\Lambda^*(x) = \sup_\theta [\theta \cdot x - \Lambda(\theta)]$.</p>
+
+<h3>2.2 I-projection and exponential families</h3>
+
+<div class="definition-block">
+<div class="theorem-head">Definition 1 (I-projection).</div>
+<p>Let $\mathcal{C} \subseteq \mathcal{M}_1(S)$ be a convex set of probability measures. The <em>I-projection</em> of $P$ onto $\mathcal{C}$ is</p>
+$$Q^* = \arg\min_{Q \in \mathcal{C}} D_{\mathrm{KL}}(Q \| P),$$
+<p>whenever the minimum exists and is finite.</p>
+</div>
+
+<div class="theorem-block">
+<div class="theorem-head">Theorem (Csisz&aacute;r [4, 5]).</div>
+<p>Let $T\colon S \to \mathbb{R}^m$ be measurable and let $\mathcal{C} = \{Q \in \mathcal{M}_1(S) : \mathbb{E}_Q[T(X)] = \tau\}$ for some $\tau$ in the interior of the convex hull of $T(S)$. If $D_{\mathrm{KL}}(Q \| P) < \infty$ for some $Q \in \mathcal{C}$, then the I-projection exists, is unique, and takes the exponential-tilting form</p>
+$$q^*(x) = p(x) \exp\!\big(\lambda^* \cdot T(x) - \psi(\lambda^*)\big),$$
+<p>where $\lambda^* \in \mathbb{R}^m$ is chosen so that $\mathbb{E}_{Q^*}[T(X)] = \tau$.</p>
+</div>
+
+<div class="theorem-block">
+<div class="theorem-head">Theorem (Sanov).</div>
+<p>Let $X_1, \ldots, X_n$ be i.i.d. with law $P$ on a Polish space. The empirical measure $L_n = \frac{1}{n}\sum_{i=1}^n \delta_{X_i}$ satisfies a large deviation principle (LDP) in $\mathcal{M}_1(S)$ with good rate function $I(\mu) = D_{\mathrm{KL}}(\mu \| P)$.</p>
+</div>
+
+<div class="theorem-block">
+<div class="theorem-head">Theorem (Csisz&aacute;r's conditional limit [4]).</div>
+<p>Under regularity conditions, if $\mathcal{C}_n \to \mathcal{C}$ and $P^{\otimes n}(L_n \in \mathcal{C}_n) > 0$ for all large $n$, then</p>
+$$P^{\otimes n}(X_1 \in \cdot \mid L_n \in \mathcal{C}_n) \to Q^*(\cdot)$$
+<p>in total variation, where $Q^*$ is the I-projection of $P$ onto $\mathcal{C}$.</p>
+</div>
+
+<h3>2.3 MaxEnt on constrained supports</h3>
+
+<p>For each support $S$ in Table 1, the MaxEnt distribution subject to appropriate moment constraints is a well-known exponential family. We record the key cases.</p>
+
+<div class="theorem-block">
+<div class="theorem-head">Proposition 1.</div>
+<p>(i) On $S = [0,\infty)$, with sufficient statistics $T(x) = (x, \log x)$, the MaxEnt family is $\mathrm{Gamma}(\alpha,\beta)$ with density $f(x) \propto x^{\alpha-1} e^{-x/\beta}$.</p>
+<p>(ii) On $S = [0,1]$, with $T(x) = (\log x, \log(1{-}x))$, the MaxEnt family is $\mathrm{Beta}(\alpha,\beta)$ with density $f(x) \propto x^{\alpha-1}(1{-}x)^{\beta-1}$.</p>
+<p>(iii) On $S = \Delta_{k-1}$, with $T(\boldsymbol{x}) = (\log x_1, \ldots, \log x_k)$, the MaxEnt family is $\mathrm{Dirichlet}(\boldsymbol{\alpha})$ with density $f(\boldsymbol{x}) \propto \prod_j x_j^{\alpha_j - 1}$.</p>
+</div>
+
+<div class="proof-block">
+<div class="proof-head">Proof.</div>
+<p>In each case, Lagrange multipliers on $\int q = 1$ and $\mathbb{E}_Q[T] = \tau$ yield $\log q^*(x) = \text{const} + \lambda \cdot T(x)$, which gives the stated exponential family. The integrability constraints $\alpha > 0$, $\beta > 0$ etc. are enforced by the support.</p>
+<p class="qed">$\square$</p>
+</div>
+
+<div class="remark-block">
+<div class="theorem-head">Remark 1.</div>
+<p>The choice of sufficient statistics is crucial. On $[0,\infty)$ with $(x, x^2)$ one obtains a truncated Gaussian, not the Gamma. The &ldquo;natural&rdquo; choice $(x, \log x)$ generates the steep exponential family&mdash;the family whose mean-parameter space covers all of $(0,\infty) \times \mathbb{R}$. This naturality is the subject of the Barrier Function Conjecture (Sec. 4).</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>3. Main Results</h2>
+<!-- ====================================================================== -->
+
+<h3>3.1 General theorem</h3>
+
+<p>We impose the following conditions on the support $S$, the sufficient statistics $T$, and the base distribution $P$.</p>
+
+<p><strong>Conditions.</strong></p>
+<div class="conditions-list">
+<p><strong>(C1)</strong> $S \subseteq \mathbb{R}^d$ is closed, convex, with nonempty relative interior.</p>
+<p><strong>(C2)</strong> $T\colon S \to \mathbb{R}^m$ is measurable and the exponential family $\mathcal{E}_S = \{p_\eta(x) = h(x)\exp(\eta \cdot T(x) - A(\eta)) : \eta \in \Xi\}$ is regular (the natural parameter space $\Xi$ has nonempty interior) and steep.</p>
+<p><strong>(C3)</strong> $\mathbb{E}_P[e^{\theta \cdot T(X)}] < \infty$ for $\theta$ in a neighborhood of $0$.</p>
+<p><strong>(C4)</strong> $\mathrm{Cov}_P(T(X))$ is positive definite.</p>
+<p><strong>(C5)</strong> The distribution of $X$ under $P$ is non-lattice.</p>
+</div>
+
+<div class="theorem-block">
+<div class="theorem-head">Theorem 1 (Constrained universality via I-projection).</div>
+<p>Assume (C1)&ndash;(C5). Let $X_1, X_2, \ldots$ be i.i.d. with law $P$ supported on $S$, with $\mathbb{E}_P[T(X)] = \tau \in \mathrm{int}(\mathrm{conv}(T(S)))$. Let $\bar{T}_n = \frac{1}{n}\sum_{i=1}^n T(X_i)$, and let $P^*_t$ denote the I-projection of $P$ onto $\{Q \in \mathcal{M}_1(S) : \mathbb{E}_Q[T] = t\}$ with covariance $\Sigma_t = \mathrm{Cov}_{P^*_t}(T(X))$. Then:</p>
+<p><strong>(a) I-projection is in $\mathcal{E}_S$.</strong> The I-projection $P^*_t$ is the unique member of $\mathcal{E}_S$ with mean parameter $t$.</p>
+<p><strong>(b) Conditional limit.</strong> For every bounded continuous $f\colon S \to \mathbb{R}$ and every $\epsilon > 0$,</p>
+$$\mathbb{E}[f(X_1) \mid \|\bar{T}_n - \tau\| \le \epsilon] \to \mathbb{E}_{P^*}[f(X)]$$
+<p>as $n \to \infty$ and then $\epsilon \to 0$.</p>
+<p><strong>(c) Saddlepoint density.</strong> For $t \in \mathrm{int}(\mathrm{conv}(T(S)))$,</p>
+$$f_{\bar{T}_n}(t) = \frac{n^{m/2}}{(2\pi)^{m/2} |\Sigma_t|^{1/2}} e^{-n D_{\mathrm{KL}}(P^*_t \| P)} \big(1 + O(n^{-1})\big).$$
+<p><strong>(d) MaxEnt approximation.</strong> Let $Q_n$ denote the member of $\mathcal{E}_S$ with mean parameter $\tau$ and scale $n$ (i.e., the distribution of $\bar{T}_n$ when the $X_i$ are drawn from $P^*$). Then</p>
+$$D_{\mathrm{KL}}(\bar{T}_n \| Q_n) = O(n^{-1}).$$
+</div>
+
+<div class="proof-block">
+<div class="proof-head">Proof.</div>
+<p>Part (a) is Csisz&aacute;r's theorem on I-projections onto linear families: the constraint set $\{\mathbb{E}_Q[T] = t,\; \mathrm{supp}(Q) \subseteq S\}$ is convex and defined by linear moment conditions, so the I-projection is an exponential tilting of $P$ restricted to $S$, which lies in $\mathcal{E}_S$.</p>
+<p>Part (b) is the conditional limit theorem applied to $\mathcal{C}_\epsilon = \{Q : \|\mathbb{E}_Q[T] - \tau\| \le \epsilon\}$. By the law of large numbers, $P^{\otimes n}(L_n \in \mathcal{C}_\epsilon) > 0$ for large $n$. The I-projection exists and is unique by strict convexity of $D_{\mathrm{KL}}$.</p>
+<p>Part (c) is the multivariate saddlepoint approximation [6, 7]. The density of $\bar{T}_n$ at $t$ is obtained from the inverse Fourier&ndash;Laplace transform of $\mathbb{E}[e^{\theta \cdot \bar{T}_n}] = [\mathbb{E}_P e^{\theta \cdot T(X)/n}]^n$, evaluated by the saddle-point method. The saddlepoint $\hat\theta$ satisfies $\nabla\Lambda(\hat\theta) = t$, and the exponential term is $-n\Lambda^*(t) = -n D_{\mathrm{KL}}(P^*_t \| P)$, the latter equality following from the duality between the CGF and the KL divergence in exponential families [8].</p>
+<p>Part (d) follows from comparing the saddlepoint density with the density of $Q_n$. Under $P^*$, the sufficient statistic $\bar{T}_n$ has a density of the same saddlepoint form with the same rate function and leading pre-exponential factor. The KL divergence between the two densities is controlled by the $O(n^{-1})$ relative error in the saddlepoint expansion [7].</p>
+<p class="qed">$\square$</p>
+</div>
+
+<h3>3.2 Corollaries for specific supports</h3>
+
+<div class="theorem-block">
+<div class="theorem-head">Corollary 1 (Gamma convergence for positive sums).</div>
+<p>Let $X_1, X_2, \ldots$ be i.i.d. nonnegative with $\mathbb{E}[X_i] = \mu > 0$, $\mathrm{Var}(X_i) = \sigma^2 < \infty$, and finite MGF on $(-\infty, \theta_+)$ for some $\theta_+ > 0$. Let $S_n = \sum_{i=1}^n X_i$ and let $G_n = \mathrm{Gamma}(n\mu^2/\sigma^2,\, \sigma^2/\mu)$ be the moment-matched Gamma. Then:</p>
+<p>(i) $D_{\mathrm{KL}}(S_n \| G_n) = O(n^{-1})$.</p>
+<p>(ii) $d_{\mathrm{TV}}(S_n, G_n) \le C(\kappa_3 - \kappa_3^{\mathrm{Gamma}}) / (\sigma^3 \sqrt{n})$.</p>
+<p>(iii) $\mathrm{supp}(G_n) = [0,\infty) = \mathrm{supp}(S_n)$, whereas the moment-matched Gaussian $N(n\mu, n\sigma^2)$ satisfies $P(N_n < 0) = \Phi(-\sqrt{n}\, \mu/\sigma) > 0$ for all $n$.</p>
+</div>
+
+<div class="proof-block">
+<div class="proof-head">Proof.</div>
+<p>Apply Theorem 1 with $S = [0,\infty)$, $T(x) = (x, \log x)$. The matched exponential family member is $\mathrm{Gamma}(\alpha_n, \beta)$ with $\alpha_n = n\mu^2/\sigma^2$ and $\beta = \sigma^2/\mu$. Statement (i) is part (d) of the theorem.</p>
+<p>For (ii), the saddlepoint expansion gives a density ratio $f_{S_n}(x)/g_n(x) = 1 + O(n^{-1/2})$ uniformly on compacts. The leading-order correction involves the third cumulant: the Gamma matches the skewness $\kappa_3^{\mathrm{Gamma}} = 2\sigma^6/\mu^3$, while the Gaussian assumes zero skewness, so the Gamma incurs error $|\kappa_3 - 2\sigma^6/\mu^3|/(\sigma^3\sqrt{n})$ versus $|\kappa_3|/(\sigma^3\sqrt{n})$ for the Gaussian.</p>
+<p>Statement (iii) is immediate from the supports.</p>
+<p>We note that the Gamma approximation is equivalent to replacing the Taylor truncation of the CGF (which yields the Gaussian) by a $[1/1]$ Pad&eacute; approximant, as shown by Castro and Cuesta [1]. The Pad&eacute; approximant $\Lambda(\theta) \approx \mu\theta/(1 - \sigma^2\theta/(2\mu))$ captures the pole at $\theta = 2\mu/\sigma^2$, correctly encoding the finite domain of analyticity imposed by the positivity constraint.</p>
+<p class="qed">$\square$</p>
+</div>
+
+<div class="remark-block">
+<div class="theorem-head">Remark 2.</div>
+<p>The Gamma does not always dominate the Gaussian. When the source distribution has low skewness relative to $2\sigma^6/\mu^3$ (e.g., $\mathrm{Uniform}(0,2)$), the Gamma may overshoot the true skewness. The Gamma advantage is decisive when $\kappa_3 \gg 0$ (highly right-skewed sources such as Exponential, Chi-squared, or Weibull with small shape parameter).</p>
+</div>
+
+<div class="theorem-block">
+<div class="theorem-head">Corollary 2 (Beta convergence for bounded averages).</div>
+<p>Let $X_1, X_2, \ldots$ be i.i.d. with support in $[0,1]$, $\mathbb{E}[X_i] = \mu \in (0,1)$, $\mathrm{Var}(X_i) = \sigma^2 > 0$. Let $\bar{X}_n = \frac{1}{n}\sum X_i$, and let $B_n$ denote the $\mathrm{Beta}(\alpha_n, \beta_n)$ distribution with</p>
+$$\alpha_n = s_n \mu, \quad \beta_n = s_n(1{-}\mu), \quad s_n = \frac{n\mu(1{-}\mu)}{\sigma^2} - 1,$$
+<p>so that $\mathbb{E}[B_n] = \mu$ and $\mathrm{Var}(B_n) = \sigma^2/n$ to leading order. Then $D_{\mathrm{KL}}(\bar{X}_n \| B_n) = O(n^{-1})$.</p>
+</div>
+
+<div class="proof-block">
+<div class="proof-head">Proof.</div>
+<p>Apply Theorem 1 with $S = [0,1]$ and $T(x) = (\log x, \log(1{-}x))$. The saddlepoint density of $\bar{X}_n$ at $t \in (0,1)$ takes the form</p>
+$$f_{\bar{X}_n}(t) \propto \exp\!\big({-}n D_{\mathrm{KL}}(q^*_t \| P)\big) \cdot n^{1/2},$$
+<p>where $q^*_t$ is the exponential tilting of $P$ constrained to have mean $t$ on $[0,1]$. Using Stirling's approximation for the Beta function with large parameters, the Beta density matches this saddlepoint form to $O(n^{-1})$. The Gaussian approximation $N(\mu, \sigma^2/n)$ matches only the local quadratic approximation to the rate function and assigns positive mass outside $[0,1]$.</p>
+<p class="qed">$\square$</p>
+</div>
+
+<div class="remark-block">
+<div class="theorem-head">Remark 3.</div>
+<p>The Beta case is the most delicate of the three corollaries. Unlike the CLT for $\mathbb{R}$ or the Gamma result for $[0,\infty)$, there is no prior &ldquo;Beta CLT&rdquo; in the literature for sums of bounded variables. The Beta approximation is the correct saddlepoint approximation on $[0,1]$, matching both the rate function and the pre-exponential factor. The proof requires the CGF to be finite on an interval containing the relevant saddlepoints, which holds under (C3).</p>
+</div>
+
+<div class="theorem-block">
+<div class="theorem-head">Corollary 3 (Dirichlet convergence for simplex averages).</div>
+<p>Let $X_1, X_2, \ldots$ be i.i.d. with support in $\Delta_{k-1} = \{\boldsymbol{x} \in \mathbb{R}^k : x_j \ge 0,\, \sum_j x_j = 1\}$, with $\mathbb{E}[X_i] = \boldsymbol{\mu} \in \mathrm{int}(\Delta_{k-1})$. Let $\bar{X}_n = \frac{1}{n}\sum X_i$ and let $D_n = \mathrm{Dir}(s_n \boldsymbol{\mu})$ where $s_n$ is chosen to match the marginal variances. Then $D_{\mathrm{KL}}(\bar{X}_n \| D_n) = O(n^{-1})$.</p>
+</div>
+
+<div class="proof-block">
+<div class="proof-head">Proof.</div>
+<p>Apply Theorem 1 with $S = \Delta_{k-1}$ and $T(\boldsymbol{x}) = (\log x_1, \ldots, \log x_k)$. The multivariate saddlepoint approximation on the simplex [6] gives a density for $\bar{X}_n$ of the saddlepoint form with $m = k{-}1$. Using Stirling's approximation for the Dirichlet normalizing constant, the Dirichlet density matches this to $O(n^{-1})$.</p>
+<p class="qed">$\square$</p>
+</div>
+
+<div class="remark-block">
+<div class="theorem-head">Remark 4.</div>
+<p>The Dirichlet has a constrained covariance structure: $\mathrm{Cov}(X_j, X_l) = -\mu_j \mu_l / (s{+}1)$ for $j \neq l$. If the true covariance $\Sigma$ does not conform to this structure, the Dirichlet matches only the marginal variances, and an irreducible covariance mismatch persists.</p>
+</div>
+
+<!-- ====================================================================== -->
+<h2>4. The Barrier Function Conjecture</h2>
+<!-- ====================================================================== -->
+
+<p>Theorem 1 takes the sufficient statistics $T$ as given. But which $T$ is &ldquo;natural&rdquo; for a given support $S$? On $[0,\infty)$, why $(x, \log x)$ and not $(x, x^2)$? We propose that the answer is determined by the boundary geometry of $S$.</p>
+
+<div class="definition-block">
+<div class="theorem-head">Definition 2 (Logarithmic barrier).</div>
+<p>Let $S = \{x \in \mathbb{R}^d : g_j(x) \ge 0,\; j \in J\}$ where each $g_j$ is concave. The <em>logarithmic barrier function</em> of $S$ is</p>
+$$\phi_S(x) = -\sum_{j \in J} \log g_j(x), \qquad x \in \mathrm{int}(S).$$
+</div>
+
+<div class="definition-block">
+<div class="theorem-head">Definition 3 (Barrier-exponential family).</div>
+<p>The <em>barrier-exponential family</em> on $S$ is</p>
+$$\mathcal{E}_S^{\mathrm{bar}} = \Bigl\{p(x) \propto \exp\!\Bigl({-}\sum_{j \in J} \alpha_j \log g_j(x) + \lambda \cdot x\Bigr) : \alpha_j > 0,\; \lambda \in \mathbb{R}^d\Bigr\}.$$
+</div>
+
+<div class="conjecture-block">
+<div class="theorem-head">Conjecture 1 (Barrier&ndash;universality correspondence).</div>
+<p>The barrier-exponential family $\mathcal{E}_S^{\mathrm{bar}}$ is the universal attractor for appropriately normalized sums and averages of i.i.d. random variables with support in $S$, in the sense of Theorem 1. That is, the sufficient statistics are $T(x) = \bigl(x,\, -\nabla\phi_S(x)\bigr)$, or equivalently $T(x) = (x, \log g_1(x), \ldots, \log g_{|J|}(x))$, and the universality class is determined by $\phi_S$ alone.</p>
+</div>
+
+<h3>4.1 Verification for known cases</h3>
+
+<p><strong>$S = [0,\infty)$.</strong> Here $g(x) = x$ and $\phi(x) = -\log x$. The barrier-exponential family is $p(x) \propto x^{\alpha-1} e^{-\lambda x}$, i.e., the Gamma family. Confirmed.</p>
+
+<p><strong>$S = [0,1]$.</strong> Here $g_1(x) = x$, $g_2(x) = 1{-}x$, and $\phi(x) = -\log x - \log(1{-}x)$. The barrier-exponential family is $p(x) \propto x^{\alpha-1}(1{-}x)^{\beta-1}$, i.e., the Beta family. Confirmed.</p>
+
+<p><strong>$S = \Delta_{k-1}$.</strong> Here $g_j(\boldsymbol{x}) = x_j$ and $\phi(\boldsymbol{x}) = -\sum_j \log x_j$. The family is $p(\boldsymbol{x}) \propto \prod_j x_j^{\alpha_j - 1}$, i.e., the Dirichlet. Confirmed.</p>
+
+<p><strong>$S = \{x : \|x\|_2 \le R\}$ (Euclidean ball).</strong> Here $g(x) = R^2 - \|x\|^2$ and the barrier-exponential family is $p(x) \propto (R^2 - \|x\|^2)^{\alpha-1} \exp(\lambda \cdot x)$, a generalized matrix-variate Beta-type density. This is consistent with the known marginal structure from uniform distributions on Euclidean balls.</p>
+
+<p><strong>$S = \ell^p$ ball.</strong> The barrier is $\phi(x) = -\log(1 - \sum_j |x_j|^p)$. The barrier-exponential family with $\lambda = 0$ gives $p(x) \propto (1 - \sum |x_j|^p)^{\alpha-1}$, whose one-dimensional marginals converge to $\propto e^{-c|t|^p}$ as the dimension $n \to \infty$ [2]. Confirmed.</p>
+
+<h3>4.2 Connection to self-concordant barriers</h3>
+
+<p>In the theory of interior-point methods for convex optimization [26], the <em>self-concordant barrier</em> is the central object. A barrier $\phi$ is self-concordant if $|D^3\phi(x)[h,h,h]| \le 2(D^2\phi(x)[h,h])^{3/2}$ for all $h$.</p>
+
+<p>The logarithmic barrier is self-concordant for polyhedral $S$ (this is the starting point of Nesterov and Nemirovski&#301; [26]). The number of constraint functions $|J|$ is the <em>barrier parameter</em>, which controls the complexity of the interior-point method.</p>
+
+<p>We observe the following parallel. In constrained optimization, the logarithmic barrier provides a smooth interior path to the constrained optimum. In constrained universality, the same barrier function provides the sufficient statistics for the smooth exponential family that serves as the universal attractor. Both uses of the barrier encode the same information: the geometry of the boundary $\partial S$.</p>
+
+<p>A full proof of Conjecture 1 would require showing that the steep, regular exponential family on $S$ with sufficient statistics adapted to the boundary is <em>unique</em> (up to reparametrization) and equals the barrier-exponential family. This is plausible for polyhedral $S$ but may require additional structure for curved boundaries.</p>
+
+<!-- ====================================================================== -->
+<h2>5. Alternative Perspectives</h2>
+<!-- ====================================================================== -->
+
+<p>The I-projection proof of Theorem 1 is our primary argument. We briefly summarize five alternative perspectives, each providing independent evidence for the constrained universality principle.</p>
+
+<h3>5.1 Reflecting diffusions</h3>
+
+<p>Consider the reflecting stochastic differential equation on $S$:</p>
+
+$$dX_t = -\nabla V(X_t)\, dt + \sqrt{2}\, dW_t + d\ell_t,$$
+
+<p>where $\ell_t$ is a boundary local-time process enforcing reflection at $\partial S$. By the Lions&ndash;Sznitman theory [21], for convex $S$ and mild growth conditions on $V$, this process has a unique stationary measure</p>
+
+$$\pi_V(dx) \propto e^{-V(x)} \mathbf{1}_S(x)\, dx.$$
+
+<p>Setting $V(x) = -\eta \cdot T(x)$ reproduces the MaxEnt exponential family exactly. The boundary local time $\ell_t$ acts as an automatic Lagrange multiplier enforcing the support constraint, just as $\eta$ enforces the moment constraint.</p>
+
+<p>The Fokker&ndash;Planck equation with no-flux boundary conditions confirms this directly. On $[0,\infty)$ with $V(x) = x/\beta - (\alpha{-}1)\log x$, the stationary density is $\mathrm{Gamma}(\alpha,\beta)$. On $[0,1]$ with $V(x) = -(\alpha{-}1)\log x - (\beta{-}1)\log(1{-}x)$, it is $\mathrm{Beta}(\alpha,\beta)$.</p>
+
+<p>This perspective explains <em>why</em> the boundary matters: the reflecting boundary condition forces the stationary measure to be an exponential family <em>restricted to</em> $S$, rather than on all of $\mathbb{R}^d$.</p>
+
+<h3>5.2 Free probability</h3>
+
+<p>Voiculescu's free probability theory provides an independent confirmation. The free CLT gives the Wigner semicircle law as the universal limit for sums of freely independent variables [24]. The semicircle maximizes the <em>free entropy</em> $\chi(\mu) = \iint \log|x{-}y|\, d\mu(x)\, d\mu(y)$ among measures with given mean and variance.</p>
+
+<p>On the positive half-line, the free analog is the Marchenko&ndash;Pastur (free Poisson) law [25], which maximizes $\chi$ among positive measures with given moments. The structural pattern is identical:</p>
+
+<table>
+<tr><th></th><th>Classical</th><th>Free</th></tr>
+<tr><td>Entropy</td><td>Boltzmann $h$</td><td>Voiculescu $\chi$</td></tr>
+<tr><td>$S = \mathbb{R}$</td><td>Gaussian</td><td>Semicircle</td></tr>
+<tr><td>$S = [0,\infty)$</td><td>Gamma</td><td>Marchenko&ndash;Pastur</td></tr>
+</table>
+
+<p>The fact that constrained universality holds in both frameworks&mdash;with the same structure but different entropy functionals&mdash;suggests a principle more general than either theory alone.</p>
+
+<h3>5.3 Optimal transport and Wasserstein gradient flows</h3>
+
+<p>The Jordan&ndash;Kinderlehrer&ndash;Otto (JKO) framework [22] interprets the Fokker&ndash;Planck equation as the Wasserstein gradient flow of the free energy functional $\mathcal{F}(\rho) = \int \rho \log \rho\, dx + \int V\rho\, dx$ on $\mathcal{P}_2(S)$. Setting $V = -\eta \cdot T$, the MaxEnt distribution is the unique minimizer of $\mathcal{F}$ and hence the unique fixed point of the Wasserstein flow on $\mathcal{P}_2(S)$.</p>
+
+<p>A Barron-type argument [18] using the relative Fisher information and the log-Sobolev inequality for the Gamma distribution [23] gives $D_{\mathrm{KL}}(S_n \| G_n) \le C/n$, providing quantitative convergence without the saddlepoint machinery.</p>
+
+<h3>5.4 The overdetermination argument</h3>
+
+<p>Including the Schr&ouml;dinger bridge and transform-method perspectives, the MaxEnt distribution on $S$ is simultaneously:</p>
+
+<ol class="enum-list">
+<li>the I-projection (information geometry),</li>
+<li>the stationary measure of a reflecting diffusion (stochastic dynamics),</li>
+<li>the Wasserstein gradient-flow equilibrium (optimal transport),</li>
+<li>the free-entropy maximizer (free probability),</li>
+<li>the Pad&eacute; fixed point of the cumulant generating function (transform theory).</li>
+</ol>
+
+<p>This overdetermination&mdash;five independent characterizations yielding the same family&mdash;constitutes strong circumstantial evidence, even though no single perspective provides a complete standalone proof of the general conjecture.</p>
+
+<!-- ====================================================================== -->
+<h2>6. The Renormalization Group Perspective</h2>
+<!-- ====================================================================== -->
+
+<p>The CLT admits an elegant renormalization group (RG) formulation [17]. Define the convolution-and-rescale map $\mathcal{R}[P] = \mathrm{Law}((X_1 + X_2 - 2\mu)/(\sigma\sqrt{2}))$ with $X_1, X_2 \stackrel{\text{iid}}{\sim} P$. The Gaussian is the unique fixed point. At the level of characteristic functions, $\hat{\mathcal{R}}[\varphi](t) = \varphi(t/\sqrt{2})^2$, and the fixed-point equation $\varphi^*(t) = \varphi^*(t/\sqrt{2})^2$ with $\varphi^*(0) = 1$, $(\varphi^*)''(0) = -1$ has the unique solution $e^{-t^2/2}$.</p>
+
+<p>Can the Gamma play an analogous role on $[0,\infty)$?</p>
+
+<div class="theorem-block">
+<div class="theorem-head">Proposition 2.</div>
+<p>No Gamma distribution is a fixed point of any convolution-and-rescale map $\mathcal{R}_+[P] = \mathrm{Law}((X_1 + X_2)/c)$ on $[0,\infty)$.</p>
+</div>
+
+<div class="proof-block">
+<div class="proof-head">Proof.</div>
+<p>If $X_1, X_2 \sim \mathrm{Gamma}(\alpha, \beta)$, then $(X_1 + X_2)/c \sim \mathrm{Gamma}(2\alpha, \beta/c)$. For this to equal $\mathrm{Gamma}(\alpha, \beta)$ requires $2\alpha = \alpha$, which is impossible for $\alpha > 0$.</p>
+<p class="qed">$\square$</p>
+</div>
+
+<p>The Gamma <em>family</em> is nonetheless an invariant manifold: sums of Gammas with common rate remain Gamma. This suggests a <em>two-timescale</em> picture. Under iterated convolution of positive random variables:</p>
+
+<ol class="enum-list">
+<li><em>Fast timescale</em>: the distribution rapidly approaches the Gamma manifold (constrained universality).</li>
+<li><em>Slow timescale</em>: the distribution drifts along the Gamma manifold as the shape parameter $\alpha$ grows, eventually approaching the Gaussian (classical CLT, since $\mathrm{Gamma}(n\alpha, \beta) \to N(n\alpha\beta, n\alpha\beta^2)$).</li>
+</ol>
+
+<p>The crossover occurs at $n \sim \alpha = \mu^2/\sigma^2$, which is the Gamma's &ldquo;distance from Gaussianity.&rdquo; For small $n$, the Gamma is the better approximation; for large $n$, the Gaussian takes over.</p>
+
+<p>We are not aware of prior work on constrained RG transformations (i.e., RG flows restricted to distributions on a proper subset of $\mathbb{R}$). Formalizing the Gamma as a &ldquo;quasi-fixed-point&rdquo; or &ldquo;slow manifold&rdquo; of such a constrained RG is an interesting open problem.</p>
+
+<!-- ====================================================================== -->
+<h2>7. Numerical Evidence</h2>
+<!-- ====================================================================== -->
+
+<p>We tested the constrained universality predictions numerically using Monte Carlo simulation. For each support $S$, we generated $10^5$ replications of the aggregate statistic $\bar{T}_n$ for several values of $n$ and source distributions, then compared the moment-matched MaxEnt family against the moment-matched Gaussian using the Kolmogorov&ndash;Smirnov (KS) statistic and an estimated KL divergence.</p>
+
+<div class="figure-block">
+<img src="figures/fig1_gamma_vs_gaussian_ks.png" alt="Gamma vs Gaussian KS statistics for positive sums">
+<div class="caption"><strong>Figure 1.</strong> KS statistics comparing Gamma and Gaussian approximations for sums of positive random variables. The Gamma outperforms the Gaussian at all tested $n$ for high-skewness sources (Exponential, Weibull), with the advantage most pronounced at small $n$.</div>
+</div>
+
+<p><strong>Positive sums ($S = [0,\infty)$).</strong> We tested with $X_i \sim \mathrm{Exp}(1)$, $\mathrm{Weibull}(0.5, 1)$, and $\mathrm{Uniform}(0,2)$. For the exponential and Weibull sources (high skewness), the Gamma outperforms the Gaussian at all tested $n$ ($n = 2, 5, 10, 20, 50$), with the advantage most pronounced at small $n$. The KS statistic for the Gamma is 2&ndash;10 times smaller than for the Gaussian. For $\mathrm{Uniform}(0,2)$ (low skewness, $\kappa_3/\sigma^3 = 0$), the Gaussian and Gamma perform comparably, consistent with Remark 2. In all cases, the Gaussian assigns nonzero probability to negative values, while the Gamma does not.</p>
+
+<div class="figure-block">
+<img src="figures/fig2_beta_vs_gaussian_ks.png" alt="Beta vs Gaussian KS statistics for bounded averages">
+<div class="caption"><strong>Figure 2.</strong> KS statistics comparing Beta and Gaussian approximations for averages of bounded random variables. The Beta consistently outperforms the Gaussian for $n \ge 5$, with the advantage growing as $n$ increases.</div>
+</div>
+
+<p><strong>Bounded averages ($S = [0,1]$).</strong> We tested with $X_i \sim \mathrm{Beta}(2,5)$ and $X_i \sim \mathrm{Uniform}(0,1)$. The moment-matched Beta consistently outperforms the Gaussian for $n \ge 5$, with the advantage growing as $n$ increases (the Gaussian's support violation worsens relative to the concentration of $\bar{X}_n$). At $n = 50$, the Beta KS statistic is approximately 3 times smaller.</p>
+
+<div class="figure-block">
+<img src="figures/fig3_convergence_rates.png" alt="Convergence rates for KL divergence">
+<div class="caption"><strong>Figure 3.</strong> Convergence rates: KL divergence between the empirical distribution and the MaxEnt approximation decreases as $O(n^{-1})$ in all cases, consistent with Theorem 1(d).</div>
+</div>
+
+<p><strong>Simplex averages ($S = \Delta_2$).</strong> We tested with $X_i \sim \mathrm{Dir}(1,1,1)$ (uniform on the 2-simplex) and $X_i \sim \mathrm{Dir}(2,3,5)$. The moment-matched Dirichlet outperforms the multivariate Gaussian in terms of marginal KS statistics. The Gaussian assigns nonzero mass outside the simplex for all tested $n$.</p>
+
+<div class="figure-block">
+<img src="figures/fig4_tail_comparison.png" alt="Tail comparison between MaxEnt and Gaussian approximations">
+<div class="caption"><strong>Figure 4.</strong> Tail comparison. The MaxEnt approximation correctly captures the tail behavior dictated by the support constraint, while the Gaussian tails extend into the forbidden region.</div>
+</div>
+
+<div class="figure-block">
+<img src="figures/fig5_support_violation.png" alt="Support violation probability for Gaussian approximation">
+<div class="caption"><strong>Figure 5.</strong> Support violation: probability mass that the Gaussian approximation assigns outside the true support $S$. This probability is bounded away from zero for all $n$ and decreases only as $\Phi(-\sqrt{n}\, \mu/\sigma)$, whereas the MaxEnt approximation has zero support violation by construction.</div>
+</div>
+
+<p><strong>Convergence rates.</strong> In all cases, the KL divergence between the empirical distribution and the MaxEnt approximation decreases as $O(n^{-1})$, consistent with Theorem 1(d).</p>
+
+<!-- ====================================================================== -->
+<h2>8. Discussion</h2>
+<!-- ====================================================================== -->
+
+<h3>8.1 What is proved versus conjectured</h3>
+
+<p>We are explicit about the logical status of each claim.</p>
+
+<p><em>Proved</em> (under conditions (C1)&ndash;(C5)): The I-projection framework (Theorem 1) yields the MaxEnt exponential family as the saddlepoint approximation to the density of the aggregate statistic, with $O(n^{-1})$ error in KL divergence. This follows from Csisz&aacute;r's theorems and standard saddlepoint analysis.</p>
+
+<p><em>Conjectured</em>: The Barrier Function Conjecture (Conjecture 1), which asserts that the logarithmic barrier of $S$ determines the sufficient statistics. This is verified for all known cases but not proved in general. The key difficulty is establishing uniqueness of the &ldquo;natural&rdquo; exponential family on $S$.</p>
+
+<p><em>Open</em>: Whether the constrained universality principle extends to non-convex supports (where the I-projection may not be unique), discrete supports (where local limit theorems replace density convergence), and whether optimal convergence rates can be established.</p>
+
+<h3>8.2 Open problems</h3>
+
+<ol class="enum-list">
+<li><em>Non-convex supports.</em> If $S$ is not convex, the I-projection onto $\{Q : \mathrm{supp}(Q) \subseteq S,\; \mathbb{E}_Q[T] = \tau\}$ may not be unique. What replaces the exponential family in this case?</li>
+<li><em>Discrete supports.</em> For $S = \{0, 1, \ldots, N\}$, the MaxEnt family with mean constraint is the Binomial. Is there a &ldquo;discrete Barrier Function Conjecture&rdquo;? This connects to grammar-constrained decoding in large language models, where sampling is restricted to outputs conforming to a formal grammar.</li>
+<li><em>Convergence rates.</em> We prove $O(n^{-1})$ for KL divergence. Can this be improved to an Edgeworth-type expansion with explicit dependence on the boundary geometry?</li>
+<li><em>The Beta gap.</em> Unlike the Gaussian (CLT) and Gamma (Castro&ndash;Cuesta), there is no prior &ldquo;Beta CLT&rdquo; in the literature. Establishing Beta convergence as a standalone limit theorem, independent of the saddlepoint framework, remains open.</li>
+<li><em>Constrained RG.</em> Formalizing the Gamma as a quasi-fixed-point or slow manifold of an RG flow on $\mathcal{M}_1([0,\infty))$ would complete the RG picture of constrained universality.</li>
+</ol>
+
+<!-- ====================================================================== -->
+<div class="ack-block">
+<h2>Acknowledgments</h2>
+<p>The author thanks Summer for extensive computational assistance, literature review, and mathematical discussions that shaped this work.</p>
+</div>
+
+<!-- ====================================================================== -->
+<div class="refs">
+<p><strong>References</strong></p>
+<p>[1] M. Castro and J. A. Cuesta, &ldquo;Beyond the Central Limit: Universality of the Gamma Distribution from Pad&eacute;-Enhanced Large Deviations,&rdquo; arXiv:2603.23567 (2026).</p>
+<p>[2] F. Barthe, O. Gu&eacute;don, S. Mendelson, and A. Naor, &ldquo;A probabilistic approach to the geometry of the $\ell^p_n$-ball,&rdquo; <em>Ann. Probab.</em> <strong>33</strong>, 480 (2005).</p>
+<p>[3] D. Blackwell and J. W. MacQueen, &ldquo;Ferguson distributions via P&oacute;lya urn schemes,&rdquo; <em>Ann. Statist.</em> <strong>1</strong>, 353 (1973).</p>
+<p>[4] I. Csisz&aacute;r, &ldquo;Sanov property, generalized I-projection and a conditional limit theorem,&rdquo; <em>Ann. Probab.</em> <strong>12</strong>, 768 (1984).</p>
+<p>[5] I. Csisz&aacute;r, &ldquo;I-divergence geometry of probability distributions and minimization problems,&rdquo; <em>Ann. Probab.</em> <strong>3</strong>, 146 (1975).</p>
+<p>[6] O. E. Barndorff-Nielsen and D. R. Cox, &ldquo;Edgeworth and saddle-point approximations with statistical applications,&rdquo; <em>J. R. Stat. Soc. B</em> <strong>41</strong>, 279 (1979).</p>
+<p>[7] J. L. Jensen, <em>Saddlepoint Approximations</em> (Oxford University Press, 1995).</p>
+<p>[8] S.-I. Amari and H. Nagaoka, <em>Methods of Information Geometry</em> (AMS, 2000).</p>
+<p>[9] A. Dembo and O. Zeitouni, <em>Large Deviations Techniques and Applications</em>, 2nd ed. (Springer, 2010).</p>
+<p>[10] J. M. Van Campenhout and T. M. Cover, &ldquo;Maximum entropy and conditional probability,&rdquo; <em>IEEE Trans. Inf. Theory</em> <strong>27</strong>, 483 (1981).</p>
+<p>[11] P. Diaconis and D. Freedman, &ldquo;Conditional limit theorems for exponential families and finite versions of de Finetti's theorem,&rdquo; <em>J. Theor. Probab.</em> <strong>1</strong>, 381 (1988).</p>
+<p>[12] S. T. Rachev and L. R&uuml;schendorf, &ldquo;Approximate independence of distributions on spheres and their stability properties,&rdquo; <em>Ann. Probab.</em> <strong>19</strong>, 1311 (1991).</p>
+<p>[13] A. Naor and D. Romik, &ldquo;Projecting the surface measure of the sphere of $\ell^p_n$,&rdquo; <em>Ann. Inst. H. Poincar&eacute; Probab. Stat.</em> <strong>39</strong>, 241 (2003).</p>
+<p>[14] Z. Kabluchko, J. Prochno, and C. Thale, &ldquo;Sanov-type large deviations and conditional limit theorems for high-dimensional Orlicz balls,&rdquo; <em>J. Math. Anal. Appl.</em> (2024); arXiv:2111.04691.</p>
+<p>[15] S. S. Kim and K. Ramanan, &ldquo;A conditional limit theorem for high-dimensional $\ell^p$ spheres,&rdquo; <em>J. Appl. Probab.</em> <strong>55</strong>, 1060 (2018).</p>
+<p>[16] B. Klartag, &ldquo;A central limit theorem for convex sets,&rdquo; <em>Invent. Math.</em> <strong>168</strong>, 91 (2007).</p>
+<p>[17] G. Jona-Lasinio, &ldquo;Renormalization group and probability theory,&rdquo; <em>Phys. Rep.</em> <strong>352</strong>, 439 (2001).</p>
+<p>[18] A. R. Barron, &ldquo;Entropy and the Central Limit Theorem,&rdquo; <em>Ann. Probab.</em> <strong>14</strong>, 336 (1986).</p>
+<p>[19] H. E. Daniels, &ldquo;Saddlepoint approximations in statistics,&rdquo; <em>Ann. Math. Statist.</em> <strong>25</strong>, 631 (1954).</p>
+<p>[20] J. Aitchison, &ldquo;The statistical analysis of compositional data,&rdquo; <em>J. R. Stat. Soc. B</em> <strong>44</strong>, 139 (1982).</p>
+<p>[21] P.-L. Lions and A.-S. Sznitman, &ldquo;Stochastic differential equations with reflecting boundary conditions,&rdquo; <em>Comm. Pure Appl. Math.</em> <strong>37</strong>, 511 (1984).</p>
+<p>[22] R. Jordan, D. Kinderlehrer, and F. Otto, &ldquo;The variational formulation of the Fokker&ndash;Planck equation,&rdquo; <em>SIAM J. Math. Anal.</em> <strong>29</strong>, 1 (1998).</p>
+<p>[23] S. G. Bobkov and M. Ledoux, &ldquo;Poincar&eacute;'s inequalities and Talagrand's concentration phenomenon for the exponential distribution,&rdquo; <em>Probab. Theory Relat. Fields</em> <strong>107</strong>, 383 (1997).</p>
+<p>[24] D. Voiculescu, &ldquo;Symmetries of some reduced free product C*-algebras,&rdquo; in <em>Operator Algebras and their Connections with Topology and Ergodic Theory</em>, Springer LNM <strong>1132</strong>, 556 (1985).</p>
+<p>[25] V. A. Marchenko and L. A. Pastur, &ldquo;Distribution of eigenvalues in certain sets of random matrices,&rdquo; <em>Mat. Sb.</em> <strong>72</strong>, 507 (1967).</p>
+<p>[26] Y. Nesterov and A. Nemirovski&#301;, <em>Interior-Point Polynomial Algorithms in Convex Programming</em> (SIAM, 1994).</p>
+<p>[27] I. Csisz&aacute;r and P. C. Shields, &ldquo;Information theory and statistics: A tutorial,&rdquo; <em>Found. Trends Commun. Inf. Theory</em> <strong>1</strong>, 417 (2004).</p>
+<p>[28] J. M. Borwein and A. S. Lewis, &ldquo;Duality relationships for entropy-like minimization problems,&rdquo; <em>SIAM J. Control Optim.</em> <strong>29</strong>, 325 (1991).</p>
+<p>[29] E. B. Saff and V. Totik, <em>Logarithmic Potentials with External Fields</em> (Springer, 1997).</p>
+<p>[30] A. Dembo and O. Zeitouni, &ldquo;Refinements of the Gibbs conditioning principle,&rdquo; <em>Probab. Theory Relat. Fields</em> <strong>104</strong>, 1 (1996).</p>
+<p>[31] C. L&eacute;onard and J. Najim, &ldquo;An extension of Sanov's theorem: Application to the Gibbs conditioning principle,&rdquo; <em>Bernoulli</em> <strong>8</strong>, 721 (2002).</p>
+<p>[32] C. Kipnis and S. R. S. Varadhan, &ldquo;Central limit theorem for additive functionals of reversible Markov processes,&rdquo; <em>Comm. Math. Phys.</em> <strong>104</strong>, 1 (1986).</p>
+<p>[33] D. Voiculescu, &ldquo;The analogues of entropy and of Fisher's information measure in free probability theory, I,&rdquo; <em>Comm. Math. Phys.</em> <strong>155</strong>, 71 (1993).</p>
+<p>[34] R. J. McCann, &ldquo;A convexity principle for interacting gases,&rdquo; <em>Adv. Math.</em> <strong>128</strong>, 153 (1997).</p>
+</div>
+
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
