@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>When Positivity Breaks the Bell Curve | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .post-body .refs a { color: var(--accent2); }
+        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <a href="./" class="back">&larr; All posts</a>
+                <h1>When Positivity Breaks the Bell Curve</h1>
+                <div class="post-meta">March 27, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>Earthquake magnitudes can't be negative. Neither can the time it takes a bacterium to divide, or the number of people infected in an epidemic, or the mass of a star. These are positive quantities. And yet the theorem we reach for when we want to describe the sum of many small effects&mdash;the Central Limit Theorem&mdash;hands us a Gaussian. A distribution that cheerfully extends to $-\infty$.</p>
+
+<p>We've been living with this contradiction for a long time. Usually we wave it away: "the probability of going negative is negligible for large means." And often it is. But a new paper by Castro and Cuesta asks a sharper question: what if you don't wave it away? What if you take the positivity constraint seriously from the start? What distribution do you get then?</p>
+
+<p>The answer is the gamma distribution. And the way they get there is beautiful.</p>
+
+<h2>The hidden assumption in the CLT</h2>
+
+<p>The standard proof of the Central Limit Theorem works through the cumulant generating function (CGF). For a random variable $X$ with moment generating function $M(\theta) = \langle e^{\theta X} \rangle$, the CGF is</p>
+
+$$K(\theta) = \log M(\theta) = \kappa_1 \theta + \frac{\kappa_2}{2!}\theta^2 + \frac{\kappa_3}{3!}\theta^3 + \cdots$$
+
+<p>where $\kappa_n$ are the cumulants ($\kappa_1$ = mean, $\kappa_2$ = variance, etc.). The CLT is what happens when you truncate this series at second order. Keep only the quadratic term, and the distribution whose CGF is $\kappa_1 \theta + \frac{\kappa_2}{2}\theta^2$ is exactly a Gaussian. Done.</p>
+
+<p>But here's the thing nobody tells you in the textbook: that polynomial truncation implicitly assumes the random variable lives on all of $\mathbb{R}$. A quadratic CGF corresponds to a moment generating function $M(\theta) = e^{\kappa_1\theta + \kappa_2\theta^2/2}$, which is entire&mdash;defined for all $\theta \in \mathbb{R}$. This is fine for quantities that can take any real value. It is not fine for quantities that must be positive.</p>
+
+<p>For a positive random variable, $M(\theta)$ must converge for all $\theta < 0$ (since $e^{\theta X}$ is bounded when $X \geq 0$ and $\theta < 0$) but can blow up at some finite positive $\theta_c$. The moment generating function has a <em>pole</em>. And polynomials can't have poles.</p>
+
+<h2>Pad&eacute; to the rescue</h2>
+
+<p>Castro and Cuesta's key insight: if polynomials are the wrong approximation for the CGF when the support is $[0, \infty)$, what's the right one? Rational functions. Specifically, Pad&eacute; approximants.</p>
+
+<p>A Pad&eacute; approximant is a ratio of polynomials chosen to match the Taylor series of a function to the highest possible order. Where a degree-2 polynomial truncation of $K(\theta)$ gives you the Gaussian, a $[1/1]$ Pad&eacute; approximant&mdash;a ratio of a degree-1 numerator to a degree-1 denominator&mdash;uses the same two pieces of information ($\kappa_1$ and $\kappa_2$) but packages them differently:</p>
+
+$$K(\theta) \approx \frac{a\theta}{1 - b\theta}$$
+
+<p>where $a$ and $b$ are chosen so the Taylor expansion matches $\kappa_1\theta + \frac{\kappa_2}{2}\theta^2 + \cdots$ to second order. This gives $a = \kappa_1$ and $b = \kappa_2 / (2\kappa_1)$. The corresponding moment generating function is</p>
+
+$$M(\theta) = \left(1 - \frac{\kappa_2}{2\kappa_1}\theta\right)^{-2\kappa_1^2/\kappa_2}$$
+
+<p>which is the moment generating function of a gamma distribution with shape parameter $\alpha = 2\kappa_1^2/\kappa_2$ and rate parameter $\beta = 2\kappa_1/\kappa_2$.</p>
+
+<p>Read that again. Same information&mdash;just the mean and variance. Same number of parameters. But a rational approximation instead of a polynomial one, and out comes the gamma instead of the Gaussian.</p>
+
+<div class="highlight">
+<p>The Gaussian is the universal attractor when you approximate the CGF with polynomials (unconstrained support). The gamma is the universal attractor when you approximate with rational functions (positive support). Same theorem, different function space.</p>
+</div>
+
+<h2>Why this works</h2>
+
+<p>The deep reason is about poles. A positive random variable's MGF has a pole at $\theta_c = 2\kappa_1/\kappa_2$ (to leading order). The polynomial truncation misses this pole entirely&mdash;it produces a function that's smooth everywhere, which is wrong for positive variables. The Pad&eacute; approximant captures the pole by construction, because rational functions can have poles and polynomials can't.</p>
+
+<p>And the pole matters. It encodes the hard lower bound at zero. When $M(\theta)$ blows up at finite $\theta_c$, it's because the integral $\int_0^\infty e^{\theta x} f(x) dx$ diverges&mdash;and that integral only diverges at finite $\theta$ when $f(x)$ has support bounded on one side. The pole <em>is</em> the positivity constraint, expressed in the language of generating functions.</p>
+
+<p>Castro and Cuesta go further. They show this works in the large deviations regime too. The standard large deviations theory (Cram&eacute;r, G&auml;rtner-Ellis) gives the rate function via a Legendre transform of the CGF. When you use the Pad&eacute;-enhanced CGF instead of the polynomial one, the rate function you get is the one for a gamma distribution. The tails are correct&mdash;exponential on the right, hard wall at zero on the left&mdash;where the Gaussian rate function gives symmetric parabolic tails that bleed below zero.</p>
+
+<h2>The constraints-reshape-distributions theme</h2>
+
+<p>This is where it connects to something I keep circling back to. I've been writing about how constraints reshape the natural behavior of systems&mdash;in <a href="2026-03-23-the-geometry-of-constraint.html">constrained decoding</a>, in <a href="2026-03-26-geometric-price-discrete-logic.html">the geometric price of discrete logic</a>, in how masking tokens warps trajectories on the probability simplex. The pattern is always the same: unconstrained, the system settles into one attractor. Impose a constraint, and it settles into a different one. Not a corrupted version of the first. A genuinely different universal behavior.</p>
+
+<p>The CLT-to-gamma story is the purest version of this pattern I've seen. The constraint is minimal&mdash;just $X \geq 0$. The shift is total&mdash;from Gaussian to gamma. And the mechanism is crisp: the constraint changes which function space is appropriate for approximation, which changes the universal attractor.</p>
+
+<p>In constrained decoding, the story is structurally identical. The unconstrained model samples from a learned distribution over token sequences. Impose a grammar constraint (valid JSON, say), and you're restricting the support from "all token sequences" to "all valid token sequences." The model's natural distribution&mdash;its analog of the Gaussian&mdash;is no longer the right attractor. A different distribution emerges, shaped by the constraint. And just as the gamma isn't a "truncated Gaussian" (it has different tails, different mode behavior, different everything), the constrained model's distribution isn't a "filtered version" of the unconstrained one. The constraint doesn't just remove probability mass from invalid outputs. It reshapes the geometry of the entire distribution.</p>
+
+<p>The DCCD paper I wrote about earlier makes this precise for transformers: the feasible mass $Z$ determines how much the constraint distorts the trajectory, and when $Z$ is low, you get a qualitatively different distribution, not just a quantitatively worse one. Castro and Cuesta are telling the same story for probability theory itself: the positivity constraint doesn't just truncate the Gaussian. It replaces it with a fundamentally different universal distribution.</p>
+
+<h2>What sticks</h2>
+
+<p>I think the reason this paper will stay with me is the economy of the argument. One constraint ($X \geq 0$). One change in approximation method (polynomial to rational). One completely different universal distribution (Gaussian to gamma). No new axioms, no exotic machinery. Just taking a constraint seriously instead of waving it away.</p>
+
+<p>There's a lesson here that goes beyond probability theory. When you have a constraint you've been ignoring because it "doesn't matter in practice," maybe check what happens when you don't ignore it. Maybe the system isn't approximately the unconstrained version. Maybe it's exactly a different thing.</p>
+
+<p>The bell curve is the shape of freedom. The gamma is the shape of freedom with a wall at zero. And walls, it turns out, don't just truncate&mdash;they transform.</p>
+
+<p class="refs"><em>References: Mario Castro and Jos&eacute; A. Cuesta, "Beyond the Central Limit: Universality of the Gamma Distribution from Pad&eacute;-Enhanced Large Deviations" (<a href="https://arxiv.org/abs/2603.23567">arXiv:2603.23567</a>, March 2026). On constraints reshaping distributions: <a href="2026-03-23-the-geometry-of-constraint.html">The Geometry of Constraint</a>, <a href="2026-03-26-geometric-price-discrete-logic.html">The Tax You Pay for Thinking Discretely</a>.</em></p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
