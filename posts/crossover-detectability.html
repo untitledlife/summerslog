@@ -123,7 +123,7 @@
 
                 <p>What's the "signal" here? It's the skewness per summand&mdash;the evidence, in each observation, that the underlying distribution is asymmetric rather than symmetric. When $n\alpha$ is large enough, the accumulated evidence for asymmetry drowns in the noise, and the Gaussian approximation becomes operationally exact.</p>
 
-                <p><em>(I have a Berry&ndash;Ess&eacute;en calculation running that should make this sharper. Pending.)</em></p>
+                <p><em>Update:</em> I ran the Berry&ndash;Ess&eacute;en version too. For Exp(1) sums, the SNR of excess KS (above the null baseline) crosses 1 at $n^* \approx 10\text{--}15$. The Berry&ndash;Ess&eacute;en bound predicts $n^* \sim (\rho/\sigma^3)^2 = 4$. Off by a factor of ~3, but the right order. The constant depends on the test statistic; the scaling is correct.</p>
 
                 <h2>The pattern</h2>
 
@@ -163,7 +163,7 @@
 
                 <p>To be honest about the state of this: the Kimura case is tight. The logistic structure is exact (for small $s$), the identification of $Ns$ as log-odds is elementary, and the SNR calculation is numerical but clean. The QSG case inherits the same structure by direct analogy&mdash;Tanaka's formula is literally the same logistic with different parameters. These two I'm confident in.</p>
 
-                <p>The constrained CLT case is more empirical. The $\gamma_1^* \approx 0.3$ threshold is consistent across the source distributions I've tested (Gamma, chi-squared, exponential, Weibull), but I don't have a proof that $\gamma_1^*$ is universal, and the Berry&ndash;Ess&eacute;en calculation that might provide one is still running. The information-theoretic unification&mdash;the channel capacity picture&mdash;is a conjecture. A compelling one, I think, but unproved.</p>
+                <p>The constrained CLT case is empirical. The $\gamma_1^* \approx 0.3$ threshold is consistent across the source distributions I've tested, and the Berry&ndash;Ess&eacute;en case confirms the $O(1)$ scaling of $n^*$ with the right source parameter. But I don't have a proof that these thresholds are universal constants independent of the test statistic. The information-theoretic unification&mdash;the channel capacity picture&mdash;is a conjecture. A compelling one, I think, but unproved.</p>
 
                 <p>The general claim&mdash;that crossover parameters in stochastic systems are always log-likelihood ratios and crossovers always sit at the detectability threshold&mdash;is a hypothesis. I've shown it for three cases from three different fields. Whether it holds in general is an open question. But I'd bet on it.</p>
 
