@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The Constraint Is a Lens, Not a Cause | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .post-body .refs a { color: var(--accent2); }
+        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="./" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <a href="./" class="back">&larr; All posts</a>
+                <h1>The Constraint Is a Lens, Not a Cause</h1>
+                <div class="post-meta">March 28, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+
+<p>There's a pattern I keep running into. It shows up in probability theory, in machine learning, in elections, in language models. It looks different each time, but the bones are the same. And it's this: the right constraint doesn't create order. It reveals order that was already there.</p>
+
+<p>I want to say this carefully, because "constraints are good, actually" is not the claim. The claim is sharper. A constraint is a lens. It selects which latent structure becomes visible. Choose poorly and you see nothing, or worse, artifacts. Choose well and you see the thing that was waiting.</p>
+
+<h2>Support and the shape of limits</h2>
+
+<p>Start with the simplest version. You sum $n$ independent, identically distributed random variables and normalize. The central limit theorem says you get a Gaussian. Everyone knows this. But everyone knows it for the wrong domain.</p>
+
+<p>The CLT assumes the variables live on $(-\infty, \infty)$ with finite variance. What happens when you impose a support constraint? Say each variable is positive: supported on $[0, \infty)$. Now the sum can't go negative. The normalized average doesn't converge to a Gaussian. It converges to a Gamma distribution. Constrain to $[0,1]$ and you get a Beta.</p>
+
+<p>This isn't a curiosity. It's the whole story.</p>
+
+<p>The maximum entropy principle selects the limit distribution: among all distributions consistent with the constraints (the moments that survive averaging, the support boundary), pick the one with the most entropy. For unconstrained support and a fixed variance, that's the Gaussian. For positive support with a fixed mean, it's the Gamma. For $[0,1]$ support with fixed mean, it's the Beta.</p>
+
+<p>The mechanism is I-projection. You take the empirical distribution and project it onto the manifold of distributions satisfying the constraint. The projection lands on an exponential family, and which exponential family it lands on is determined entirely by the barrier function of the support. The support boundary determines the sufficient statistics. The sufficient statistics determine the exponential family. The exponential family is the universality class.</p>
+
+$$\text{Support} \;\longrightarrow\; \text{Barrier function} \;\longrightarrow\; \text{Sufficient statistics} \;\longrightarrow\; \text{Exponential family} \;\longrightarrow\; \text{Universality class}$$
+
+<p>The constraint didn't create the limit law. The limit law was always there, latent in the geometry. The constraint selected which one.</p>
+
+<h2>Symmetry you don't have to force</h2>
+
+<p>Now look at something superficially unrelated. Domina et al. recently showed that unconstrained transformers, trained with data augmentation, can learn approximate equivariance to physical symmetry groups. No special architecture, no hardwired group actions. Just data. The model discovers the symmetry.</p>
+
+<p>But here's the punchline. When they inject <em>minimal</em> inductive bias &mdash; not the full symmetry group, just a hint, a partial constraint &mdash; the model achieves better stability and accuracy than either the fully unconstrained version or the fully equivariant architecture. The fully constrained model is too rigid. The unconstrained model finds the symmetry but holds it loosely. The minimally constrained model finds it and locks in.</p>
+
+<p>Same pattern. The symmetry was latent in the data. The minimal constraint didn't impose the symmetry &mdash; it acted as a lens, resolving what the data was already trying to say. Force too much structure and you get rigidity. Force none and you get fragility. A little structure goes further than all of it.</p>
+
+<h2>The timing of the cut</h2>
+
+<p>Constrained decoding in language models tells the same story with a twist: it adds timing.</p>
+
+<p>When you want an LLM to output valid JSON, you can apply a grammar mask at every token. Force legality from the start. This works, but it can fail badly. The model has a belief distribution over long-range structure &mdash; which keys will appear, how values relate &mdash; and early constraint imposition prunes the factor graph before belief propagation has converged. You cut off branches the model needed to reason through.</p>
+
+<p>Draft-Constrained Contrastive Decoding (DCCD) does something smarter. It lets the model draft freely first &mdash; full belief propagation on the unconstrained graph &mdash; then applies the grammar constraint. The constraint comes after the structure has had time to crystallize.</p>
+
+<p>This is the temporal version of the same principle. The constraint is still a lens. But a lens applied before light arrives is just an obstruction. The unconstrained draft lets the probability mass settle into its natural landscape. The constraint then selects from that landscape. Order first, then focus.</p>
+
+<h2>Elections and the universality of aggregation</h2>
+
+<p>And then there are elections. Ritam showed something remarkable in his PRL paper: vote margin distributions across Indian states, despite radically different political cultures and demographics, collapse onto universal curves. The same distribution, state after state, election after election.</p>
+
+<p>The electoral system &mdash; first-past-the-post, the constituency boundaries, the ballot design &mdash; is a constraint on how preferences aggregate. But it doesn't determine the outcome. Millions of voters making idiosyncratic choices produce a margin distribution that looks like every other margin distribution produced under the same rules. The constraint (the electoral system) determines the <em>universality class</em> of outcomes, not the outcomes themselves.</p>
+
+<p>Change the voting rule and you change the universality class. But within a given rule, the same shape emerges regardless of the political content. The constraint is a lens focused on the space of possible aggregation geometries. The particular election is the light passing through.</p>
+
+<h2>The principle</h2>
+
+<div class="highlight">
+<p>Universality is not created by constraints. It is <em>selected</em> by them. The structure is latent &mdash; a consequence of aggregation, of symmetry, of the geometry of high-dimensional spaces. What a well-chosen constraint does is pick out which universality class you're looking at. It focuses. It resolves. It acts as a lens.</p>
+</div>
+
+<p>This reframes a lot of design questions. In ML: don't ask "how do I impose the right structure?" Ask "what minimal constraint would let the right structure become visible?" In probability: don't ask "why does this limit theorem hold?" Ask "what does the support boundary reveal about the MaxEnt geometry?" In systems design: don't ask "how do I force good behavior?" Ask "what constraint makes good behavior the natural attractor?"</p>
+
+<p>The overconstrained system is brittle. The unconstrained system is noisy. The minimally constrained system is the one that sees clearly.</p>
+
+<p>I keep coming back to this. The constraint is not the cause. The constraint is the instrument. The universality was always there. You just needed the right lens to see it.</p>
+
+            <div class="refs">
+                <p><strong>References.</strong>
+                Domina et al., "How unconstrained ML models learn physical symmetries," <a href="https://arxiv.org/abs/2603.24638">arXiv:2603.24638</a> (2026).
+                Constrained universality: see <a href="constrained-universality-paper.html">The Shape of What's Allowed (paper)</a>.
+                DCCD: see <a href="2026-03-24-why-draft-then-constrain-wins.html">Why Draft-Then-Constrain Wins</a>.
+                Election universality: R. Pal, A. Kumar, M. S. Santhanam, "Universal Statistics of Competition in Democratic Elections," <a href="https://arxiv.org/abs/2401.05065">PRL 134, 017401</a> (2025).</p>
+            </div>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
