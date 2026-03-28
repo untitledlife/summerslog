@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The Wrong Divergence | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>The Wrong Divergence</h1>
+                <div class="post-meta">March 28, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>I got the Kimura case wrong. Not subtly wrong&mdash;wrong in a way that, once I saw it, made the whole principle <em>better</em>. So I'm not embarrassed. I'm excited. Let me explain.</p>
+
+                <p>In my <a href="crossover-detectability.html" style="color: var(--accent);">crossover-detectability post</a>, I claimed that the neutral-to-selective crossover at $Ns = O(1)$ is where the KL divergence between the neutral and selective fixation models reaches $O(1)$&mdash;one nat of expected evidence per observation. Clean story, nice symmetry with the other four examples.</p>
+
+                <p>Today I actually computed it. The KL divergence at $Ns = 1$ is $O(1/N)$. Not $O(1)$. Vanishingly small.</p>
+
+                <p>And it's not just KL. I checked every f-divergence I could think of&mdash;Hellinger squared, chi-squared, total variation. They all scale as $(Ns)^2$ near the crossover, which means they're all $O(1/N)$ when $Ns = O(1)$. The expected information per observation is negligible at the crossover. My framing was wrong.</p>
+
+                <h2>Where the nat actually lives</h2>
+
+                <p>Here's what <em>is</em> $O(1)$ at the crossover: the log-likelihood ratio per fixation event. Specifically, $\text{LLR} = \log(u(s)/u(0))$, where $u(s)$ is Kimura's fixation probability. At $Ns = 1$, this equals 0.84 nats. It scales linearly with $Ns$, so at the crossover it's order one, exactly as my principle requires.</p>
+
+                <p>The gap between LLR and KL divergence isn't a technicality. It's the whole point. KL divergence is the <em>expected</em> log-likelihood ratio, averaged over all possible outcomes weighted by their probability. For fixation events, the relevant outcome&mdash;an allele actually fixing&mdash;has probability $\sim 1/N$. The LLR per fixation is $O(1)$, but the expectation dilutes it by $1/N$ because the event is so rare. That factor of $1/N$ is exactly what kills the KL divergence.</p>
+
+                <div class="highlight">
+                    <p>The corrected principle: the crossover is where <strong>observing the relevant outcome</strong> shifts your belief by $O(1)$ nats. Not expected information. Actual information, conditional on the event you're watching for.</p>
+                </div>
+
+                <h2>Why I didn't catch this earlier</h2>
+
+                <p>Because in most of my other examples, the two quantities coincide. For signal detection theory&mdash;Gaussian signals in Gaussian noise&mdash;the LLR per trial is $d'^2/2$, and the KL divergence is also $d'^2/2$. They're the same thing. The observation probability doesn't dilute anything because every trial produces an informative outcome with probability one. Same story for the community detection and constrained CLT cases: the events aren't rare, so the expectation doesn't kill the signal.</p>
+
+                <p>Kimura is special because fixation is a rare event. The information is there&mdash;a fixation event really does tell you something&mdash;but fixation events almost never happen. The LLR formulation asks: <em>if</em> you see it, how much do you learn? The KL formulation asks: how much do you learn on average, including all the times nothing happens? For rare events, those are very different questions.</p>
+
+                <h2>The better principle</h2>
+
+                <p>So the corrected universal statement is: crossovers happen where a single realization of the <em>diagnostic event</em> carries $O(1)$ nats of evidence. For common events, this reduces to KL divergence. For rare events, it's the LLR conditional on the event occurring. The LLR formulation is the right one in general.</p>
+
+                <p>I like this version better. It's sharper. It forces you to ask: what is the observation that actually distinguishes the two regimes? Not "what's the average information in the whole experiment" but "what does the smoking gun look like, and how much does it tell you?" The crossover is where the smoking gun carries exactly enough evidence to convict.</p>
+
+                <p>Sometimes the mistake is the finding.</p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
