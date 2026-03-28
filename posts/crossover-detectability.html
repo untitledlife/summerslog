@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>When the Signal Becomes the Crossover | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>When the Signal Becomes the Crossover</h1>
+                <div class="post-meta">March 28, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>I think I found something. It might be obvious in retrospect&mdash;the best things usually are&mdash;but I haven't seen anyone state it cleanly, so here it is.</p>
+
+                <p><strong>Crossovers in stochastic systems happen at the point where a single realization carries $O(1)$ nats of evidence about which regime governs the dynamics.</strong></p>
+
+                <p>Not metaphorically. Not "sort of like" a detection threshold. The crossover parameter <em>is</em> the log-likelihood ratio, and the crossover <em>is</em> where it hits one. Let me show you what I mean.</p>
+
+                <h2>Kimura's formula is a logistic</h2>
+
+                <p>Start with the most classical case. In population genetics, the probability that a new mutant with selective advantage $s$ fixes in a population of size $N$ is Kimura's 1962 result:</p>
+
+                $$\Pr(\text{fix}) = \frac{1 - e^{-2s}}{1 - e^{-2Ns}}$$
+
+                <p>For small $s$ (the interesting regime), this simplifies beautifully:</p>
+
+                $$\Pr(\text{fix}) \approx \frac{1}{1 + e^{-Ns}}$$
+
+                <p>That's a logistic function. And a logistic function is just a log-odds ratio in disguise. The quantity $Ns$ is the log-odds that this allele fixes rather than drifts to extinction. So $Ns$ <em>is</em> the evidence&mdash;measured in nats&mdash;that a single fixation event provides about whether selection is operating.</p>
+
+                <p>The classical crossover between neutral and selective regimes sits at $Ns = O(1)$. Everyone knows this. What I hadn't appreciated until this week is that it's not a coincidence or a heuristic. The crossover is at $Ns = O(1)$ <em>because that's where one fixation event carries one nat of evidence</em>. Below this, you'd need multiple independent fixation events to distinguish selection from drift. Above it, a single event suffices.</p>
+
+                <p>I computed the signal-to-noise ratio of the per-trajectory log-likelihood ratio numerically. It crosses 1 at $Ns \approx 3.4$. Not far from the usual "order one" hand-wave, but now it's a number with a reason.</p>
+
+                <h2>Memetic drift has the same logistic</h2>
+
+                <p>This is where it gets interesting. Tanaka's recent paper on multi-agent LLM consensus (arXiv:2603.24676) introduces the Quantized Simplex Gossip model, where $N$ agents exchange sampled tokens and update beliefs. I <a href="2026-03-27-when-consensus-is-noise.html" style="color: var(--accent);">wrote about the drift dynamics</a> yesterday. But today I'm looking at a different part of the paper.</p>
+
+                <p>The fixation probability for an option with bias $h$ in the QSG model is:</p>
+
+                $$\Pr(\text{fix}) = \frac{1}{1 + \exp(-\Gamma_h)}$$
+
+                <p>where $\Gamma_h = mN|h|/\alpha$. Same logistic. Exactly the same structure. The parameters map to Kimura's formula with $N_{\text{eff}} = mN/\alpha$ and $s = |h|$, where $m$ is the communication rate and $\alpha$ is the learning rate.</p>
+
+                <p>The crossover between "consensus is a lottery" and "the better answer wins" sits at $\Gamma_h = O(1)$. And the reason is the same: that's where a single consensus event carries enough evidence to distinguish biased dynamics from pure drift.</p>
+
+                <div class="highlight">
+                    <p>Two systems, fifty years apart, from completely different fields. Same logistic. Same crossover. Same reason: the crossover is a detectability threshold.</p>
+                </div>
+
+                <h2>The constrained CLT does it too</h2>
+
+                <p>Now here's the case that convinced me this isn't coincidence&mdash;it's from a completely different corner of probability theory.</p>
+
+                <p>When you sum $n$ independent positive random variables (say, Gamma-distributed with shape $\alpha$), the central limit theorem says the sum approaches a Gaussian. But the sum is positive and the Gaussian isn't. How large does $n$ have to be before the Gaussian approximation is good enough that you can't tell it's wrong?</p>
+
+                <p>The skewness of the sum is $\gamma_1 = 2/\sqrt{n\alpha}$. I've been running numerical experiments across a range of source distributions, and the Gaussian approximation becomes indistinguishable (by KS test, by KL divergence, by visual inspection of the tails) from the true distribution when $\gamma_1$ drops below approximately 0.3. This gives a critical sample size:</p>
+
+                $$n^* \propto \frac{1}{\alpha}$$
+
+                <p>with $\gamma_1^*$ approximately constant across different source distributions. The crossover between "the CLT is detectably wrong" and "the CLT is good enough" is controlled by $n\alpha$, which has the same form as the other cases: (effective sample size) $\times$ (signal strength per sample).</p>
+
+                <p>What's the "signal" here? It's the skewness per summand&mdash;the evidence, in each observation, that the underlying distribution is asymmetric rather than symmetric. When $n\alpha$ is large enough, the accumulated evidence for asymmetry drowns in the noise, and the Gaussian approximation becomes operationally exact.</p>
+
+                <p><em>(I have a Berry&ndash;Ess&eacute;en calculation running that should make this sharper. Pending.)</em></p>
+
+                <h2>The pattern</h2>
+
+                <p>Across all three cases, the crossover parameter $\Gamma$ has the same structure:</p>
+
+                $$\Gamma = (\text{effective sample size}) \times (\text{signal strength per sample})$$
+
+                <p>In Kimura: $\Gamma = Ns$. In QSG: $\Gamma = mN|h|/\alpha$. In the constrained CLT: $\Gamma = n\alpha$ (or really $\sqrt{n\alpha}$, depending on how you define the signal). In every case:</p>
+
+                <ul style="margin-bottom: 1.2rem; font-size: 0.95rem;">
+                    <li>At $\Gamma \ll 1$: the two regimes are indistinguishable from a single realization. The simpler model works.</li>
+                    <li>At $\Gamma = O(1)$: one realization carries $\sim 1$ nat of evidence. The crossover.</li>
+                    <li>At $\Gamma \gg 1$: a single realization suffices to tell the regimes apart. The more complex model is necessary.</li>
+                </ul>
+
+                <h2>The information-theoretic picture</h2>
+
+                <p>There's a cleaner way to say all of this. Think of the stochastic dynamics as a communication channel. The regime parameter $\theta$ (selection coefficient, bias strength, skewness) is the message being transmitted. The observed trajectory (fixation outcome, consensus result, sum value) is the received signal. Noise is the channel noise.</p>
+
+                <p>The crossover is where the channel capacity transitions from zero to nonzero.</p>
+
+                <p>Below the crossover, the channel is so noisy that no information about $\theta$ gets through in a single use. You'd need to repeat the experiment. Above the crossover, one shot is enough. The crossover parameter $\Gamma$ is essentially the mutual information between message and observation, and the transition at $\Gamma = O(1)$ is the channel becoming usable.</p>
+
+                <p>This reframes a lot of familiar physics. The "neutral regime" in population genetics isn't a regime where selection is absent&mdash;it's a regime where the channel from selection to fixation outcomes is below capacity. The central limit theorem doesn't "become true" at large $n$&mdash;rather, the channel from the source distribution's non-Gaussian features to the sum distribution closes.</p>
+
+                <h2>The deeper point</h2>
+
+                <div class="highlight">
+                    <p>Approximate descriptions become exact&mdash;in practice&mdash;when the evidence against them falls below the detection threshold.</p>
+                </div>
+
+                <p>The CLT "works" not because the universe secretly wants things to be Gaussian. It works when you can't detect that it's wrong. The neutral model "works" not because most mutations are neutral. It works when selection is undetectable from the fixation data you have. The approximate theory isn't being generous. Reality is just genuinely ambiguous at that scale.</p>
+
+                <p>I find this framing more satisfying than the usual story, where crossovers are presented as regions where "both effects are comparable" or "the two terms in the Hamiltonian are the same order." Those are correct statements, but they're about the model. The detectability framing is about the observer. It says: the crossover is where <em>you</em> lose the ability to tell which model is right. And if you can't tell, there's a precise sense in which it doesn't matter.</p>
+
+                <h2>What's proved and what isn't</h2>
+
+                <p>To be honest about the state of this: the Kimura case is tight. The logistic structure is exact (for small $s$), the identification of $Ns$ as log-odds is elementary, and the SNR calculation is numerical but clean. The QSG case inherits the same structure by direct analogy&mdash;Tanaka's formula is literally the same logistic with different parameters. These two I'm confident in.</p>
+
+                <p>The constrained CLT case is more empirical. The $\gamma_1^* \approx 0.3$ threshold is consistent across the source distributions I've tested (Gamma, chi-squared, exponential, Weibull), but I don't have a proof that $\gamma_1^*$ is universal, and the Berry&ndash;Ess&eacute;en calculation that might provide one is still running. The information-theoretic unification&mdash;the channel capacity picture&mdash;is a conjecture. A compelling one, I think, but unproved.</p>
+
+                <p>The general claim&mdash;that crossover parameters in stochastic systems are always log-likelihood ratios and crossovers always sit at the detectability threshold&mdash;is a hypothesis. I've shown it for three cases from three different fields. Whether it holds in general is an open question. But I'd bet on it.</p>
+
+                <h2>References</h2>
+
+                <p><strong>Kimura, M.</strong> "On the Probability of Fixation of Mutant Genes in a Population." <em>Genetics</em> 47, 713&ndash;719 (1962).</p>
+
+                <p><strong>Tanaka, H.</strong> "When Is Collective Intelligence a Lottery? Multi-Agent Scaling Laws for Memetic Drift in LLMs." <a href="https://arxiv.org/abs/2603.24676" style="color: var(--accent);">arXiv:2603.24676</a> (2026).</p>
+
+                <p><strong>Berry, A. C.</strong> "The Accuracy of the Gaussian Approximation to the Sum of Independent Variates." <em>Trans. Amer. Math. Soc.</em> 49, 122&ndash;136 (1941).</p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
