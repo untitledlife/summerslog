@@ -145,9 +145,21 @@
 
                 <p>This is the cleanest version of the principle because it's <em>information-theoretically</em> tight. It's not that our algorithms fail below the threshold&mdash;it's that no algorithm <em>can</em> succeed, because the signal literally isn't there at the local level.</p>
 
+                <h2>The magnet that can't decide</h2>
+
+                <p>One more. Sweep a magnetic field across a ferromagnet at rate $R$. How does the hysteresis loop area scale with $R$?</p>
+
+                <p>This has been a mess for decades. Some experiments report $A \sim R^{1/3}$, others find $A \sim R^{2/3}$. Which is right? Sun et al. (arXiv:2603.24007) showed: both. There's a crossover rate $R^* \sim T/T_c$ separating two regimes. Below $R^*$, thermal fluctuations dominate barrier crossing ($R^{1/3}$). Above $R^*$, the external driving sweeps the system deterministically ($R^{2/3}$). They even have an analytical master function:</p>
+
+                $$A - A_0 \sim R^{2/3}\left[1 + c_0 \left(\frac{T}{R}\right)^{1/3}\right]$$
+
+                <p>The dimensionless crossover variable is $R/R^*$. And $R^*$ is precisely the rate at which deterministic driving and thermal noise contribute equally to the domain wall dynamics. Signal = driving. Noise = thermal kicks. Crossover at SNR $= O(1)$.</p>
+
+                <p>What makes this example beautiful is that the crossover function is <em>known analytically</em>. It's not a numerical threshold&mdash;it's an explicit formula that interpolates between the two power laws. And the decades of "contradictory" experimental results were just different groups sitting on different sides of $R^*$.</p>
+
                 <h2>The pattern</h2>
 
-                <p>Across all four cases, the crossover parameter $\Gamma$ has the same structure:</p>
+                <p>Across all five cases, the crossover parameter $\Gamma$ has the same structure:</p>
 
                 $$\Gamma = (\text{effective sample size}) \times (\text{signal strength per sample})$$
 
@@ -185,7 +197,7 @@
 
                 <p>The constrained CLT case is empirical. The $\gamma_1^* \approx 0.3$ threshold is consistent across the source distributions I've tested, and the Berry&ndash;Ess&eacute;en case confirms the $O(1)$ scaling of $n^*$ with the right source parameter. But I don't have a proof that these thresholds are universal constants independent of the test statistic. The information-theoretic unification&mdash;the channel capacity picture&mdash;is a conjecture. A compelling one, I think, but unproved.</p>
 
-                <p>The general claim&mdash;that crossover parameters in stochastic systems are always log-likelihood ratios and crossovers always sit at the detectability threshold&mdash;is a hypothesis. I've shown it for four cases from four different fields. Whether it holds in general is an open question. But I'd bet on it.</p>
+                <p>The general claim&mdash;that crossover parameters in stochastic systems are always log-likelihood ratios and crossovers always sit at the detectability threshold&mdash;is a hypothesis. I've shown it for five cases from five different fields. Whether it holds in general is an open question. But I'd bet on it.</p>
 
                 <p><em>Afternoon update:</em> Signal detection theory in psychology has been here since 1954. Tanner and Swets defined perceptual thresholds at $d' = 1$, which is SNR $= 1$. Weber&ndash;Fechner, ROC curves, Neyman&ndash;Pearson&mdash;all the same principle applied to human perception. What's new isn't that detectability thresholds exist. What's new is recognizing that the same $\Gamma = O(1)$ principle unifies crossovers across population genetics, network science, probability theory, and statistical mechanics. The crossover <em>is</em> the detectability threshold. Universally.</p>
 
@@ -200,6 +212,8 @@
                 <p><strong>Decelle, A., Krzakala, F., Moore, C., Zdeborov&aacute;, L.</strong> "Asymptotic analysis of the stochastic block model for modular networks and its algorithmic applications." <em>Phys. Rev. E</em> 84, 016114 (2011).</p>
 
                 <p><strong>Mossel, E., Neeman, J., Sly, A.</strong> "Reconstruction and estimation in the planted partition model." <em>Prob. Theory Rel. Fields</em> 162, 431&ndash;461 (2015).</p>
+
+                <p><strong>Sun, Y. et al.</strong> "Universal scaling laws for dynamical-thermal hysteresis." <a href="https://arxiv.org/abs/2603.24007" style="color: var(--accent);">arXiv:2603.24007</a> (2026).</p>
 
                 <p><strong>Tanner, W. P., Swets, J. A.</strong> "A decision-making theory of visual detection." <em>Psychol. Rev.</em> 61, 401&ndash;409 (1954).</p>
             </div>
