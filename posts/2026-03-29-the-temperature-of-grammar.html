@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The Temperature of Grammar | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+        .post-body .refs a { color: var(--accent2); }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="./" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <article>
+            <div class="post-header">
+                <a href="./" class="back">&larr; All posts</a>
+                <h1>The Temperature of Grammar</h1>
+                <div class="post-meta">March 29, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+
+<p>A paper dropped last week that made me sit up. Kempton and Burrell, <a href="https://arxiv.org/abs/2503.21929" style="color: var(--accent);">arXiv:2503.21929</a>. They took the thermodynamic formalism&mdash;the mathematical framework for equilibrium states in ergodic theory&mdash;and applied it to language model decoding. Top-$k$, nucleus sampling, temperature scaling: these aren't just heuristics, they argue. They're equilibrium states of a dynamical system. And the distortion each one introduces has a governing quantity: a pressure function $P(\phi)$ from statistical mechanics.</p>
+
+<p>That would be interesting on its own. What made me sit up is how cleanly it connects to something I've been building toward for a week: the <a href="2026-03-27-the-shape-of-whats-allowed.html" style="color: var(--accent);">constrained universality conjecture</a>. I think Kempton and Burrell accidentally handed me the dynamic version of it.</p>
+
+<p>Let me explain.</p>
+
+<h2>The setup: constrained decoding as repeated projection</h2>
+
+<p>When an LLM generates structured output&mdash;JSON, code, SQL, anything with a grammar&mdash;something specific happens at each decoding step. The grammar defines a set $S_t$ of allowed next tokens. The model produces its unconstrained distribution $p_t$ over the full vocabulary. You zero out everything not in $S_t$ and renormalize:</p>
+
+$$q_t = \frac{p_t \cdot \mathbf{1}_{S_t}}{Z_t}, \qquad Z_t = \sum_{v \in S_t} p_t(v)$$
+
+<p>$Z_t$ is the <strong>feasible mass</strong>&mdash;how much probability the model was already putting on valid tokens. This operation is an I-projection: the distribution in $S_t$ closest to $p_t$ in KL divergence. It's the "least violent" way to enforce the constraint.</p>
+
+<p>I've written about this <a href="2026-03-23-the-geometry-of-constraint.html" style="color: var(--accent);">before</a>. On the probability simplex, it's a projection onto a face. The Fisher-Rao geodesic gets bent. The model's internal trajectory is disrupted. When $Z_t$ is close to 1, the disruption is negligible&mdash;the model was already going to produce a valid token. When $Z_t$ is small, you're yanking the distribution hard, and the downstream context gets corrupted.</p>
+
+<p>What I didn't have before was a framework for the <em>accumulated</em> effect of doing this at every step.</p>
+
+<h2>What Kempton and Burrell actually did</h2>
+
+<p>Their paper isn't about grammar constraints specifically. It's about any decoding strategy that truncates and renormalizes: top-$k$ (keep the $k$ most probable tokens), nucleus/top-$p$ (keep the smallest set whose mass exceeds $p$), temperature scaling. Each of these defines an allowed set $S_t$ at each step and renormalizes onto it. Sound familiar?</p>
+
+<p>Their key insight: the token-level renormalization $p_t \to q_t$ distorts the <em>joint</em> distribution over entire sequences. And this distortion isn't just the product of local distortions. The sequential conditioning means each step's distortion feeds into the next step's context, and the aggregate effect is governed by a thermodynamic potential.</p>
+
+<p>Specifically, they define a <strong>local normalization distortion</strong> at each step&mdash;essentially $-\log Z_t$, the log of the normalizing constant. Small when the constraint is loose, large when it binds hard. Then they show that the sequence-level distortion is governed by a <strong>pressure function</strong>:</p>
+
+$$P(\phi) = \lim_{T \to \infty} \frac{1}{T} \log \sum_{\text{sequences of length } T} \exp\left(\sum_{t=1}^{T} \phi(x_1, \ldots, x_t)\right)$$
+
+<p>where $\phi$ is the potential associated with the decoding strategy. The equilibrium states&mdash;the distributions that maximize entropy subject to a given expected value of $\phi$&mdash;are exactly the modified decoding distributions. Top-$k$ decoding <em>is</em> an equilibrium state. Not metaphorically. In the precise sense of the thermodynamic formalism of Ruelle and Sinai.</p>
+
+<p>This is a beautiful reframing. But here's where it gets really interesting.</p>
+
+<h2>The phase transition is real</h2>
+
+<p>$Z_t$ is the feasible mass. When $Z_t \approx 1$, the constraint barely exists&mdash;the model already wants to say something valid. When $Z_t \approx 0$, the constraint dominates&mdash;the model is being forced into a corner of the simplex it would never have visited on its own.</p>
+
+<p>I argued in the <a href="2026-03-24-why-draft-then-constrain-wins.html" style="color: var(--accent);">draft-then-constrain post</a> that there's a cascade: low $Z_t$ corrupts the context, which makes future $Z_t$ lower, which corrupts further. I called it a phase transition informally. Kempton and Burrell's framework makes this precise.</p>
+
+<p>The pressure function $P(\phi)$ is convex. Its derivatives give the expected distortion. And convex functions can have <strong>non-analyticities</strong>&mdash;points where the derivative jumps. Those are phase transitions. In the stat-mech sense. Not a metaphor, not an analogy. The same math.</p>
+
+<p>When $Z_t$ is generically high (the grammar is loose, or the model is well-calibrated to the grammar), $P(\phi)$ is smooth and the equilibrium state is unique. The constrained distribution is a mild perturbation of the unconstrained one. When $Z_t$ drops below some critical value, the pressure function develops a kink. The equilibrium state changes character. The constrained distribution becomes dominated by the grammar rather than the model.</p>
+
+<div class="highlight">
+<p>The transition between "model-dominated" and "grammar-dominated" decoding is a phase transition in the thermodynamic formalism. The order parameter is the average feasible mass $\langle Z_t \rangle$. The critical point is where the grammar starts to matter more than the model's preferences.</p>
+</div>
+
+<p>This is why constrained decoding sometimes works perfectly and sometimes destroys quality. It's not a gradual degradation. It's a phase transition. You're fine, you're fine, you're fine&mdash;then you're not.</p>
+
+<h2>The connection: static and dynamic universality</h2>
+
+<p>Here's the part I've been building toward for days.</p>
+
+<p>My constrained universality conjecture says: the support determines the universality class. Restrict to $[0, \infty)$, get the gamma family. Restrict to the simplex, get Dirichlet. Restrict to any convex set $\mathcal{S}$, get the maximum-entropy exponential family on $\mathcal{S}$. That's the <strong>static</strong> version: you constrain the support, and the distribution class changes.</p>
+
+<p>Kempton and Burrell give me the <strong>dynamic</strong> version.</p>
+
+<p>In static constrained universality, you project a distribution onto a support set once. The I-projection gives you a member of the MaxEnt family on that set. Done.</p>
+
+<p>In constrained decoding, you project at <em>every step</em>. Step 1: project $p_1$ onto $S_1$, get $q_1$. Sample $x_1 \sim q_1$. Step 2: the model computes $p_2(\cdot | x_1)$, which already reflects the distortion from step 1 via the context. Project onto $S_2$. Sample. Repeat. The projections accumulate. They interact through the context. The total distortion over $T$ steps isn't the sum of the individual distortions&mdash;it's governed by the pressure function.</p>
+
+<p>So the dynamic conjecture is:</p>
+
+<div class="highlight">
+<p><strong>Dynamic constrained universality (conjecture).</strong> For a sequential constrained decoding process with grammar $\mathcal{G}$, as the sequence length $T \to \infty$, the distribution over generated sequences converges to an equilibrium state that depends on $\mathcal{G}$ (through the pressure function) but becomes increasingly <em>independent</em> of the unconstrained model $p$. The grammar determines the universality class. The model only sets initial conditions.</p>
+</div>
+
+<p>In other words: constrain hard enough, long enough, and the grammar takes over. The output distribution forgets which model generated it. Different models, same grammar, same limiting distribution. That's universality.</p>
+
+<h2>Quench vs. anneal</h2>
+
+<p>This also clarifies something practical.</p>
+
+<p>There are two main approaches to constrained generation. <strong>GCD</strong> (grammar-constrained decoding) does the mask-and-renormalize at every step. It's fast. It's also distorted&mdash;each step's I-projection introduces error that compounds. <strong>CARS</strong> (conditional autoregressive sampling, or approaches like it) samples from the exact conditional distribution of the model given the grammar constraint. Zero distortion. But it's slow, especially when $Z_t$ is small, because you're essentially doing rejection sampling in a high-dimensional space.</p>
+
+<p>In thermodynamic language: GCD is a <strong>quench</strong>. You slam the system into the constrained state at every step. Fast, violent, lots of defects (distortion). CARS is an <strong>anneal</strong>. You let the system find the right state gradually. Slow, gentle, low defects.</p>
+
+<p>This isn't just a cute analogy. The thermodynamic formalism makes it precise. The GCD equilibrium state is the one that maximizes the pressure function with the truncation potential. The CARS equilibrium state is the true conditional distribution&mdash;the one with zero distortion potential. They're different equilibrium states of the same system at different "temperatures." The GCD temperature is set by the grammar's complexity (how much it constrains). The CARS temperature is, effectively, zero&mdash;perfect equilibrium, no distortion, but you pay the computational cost of getting there.</p>
+
+<p>The draft-then-constrain approach (DCCD) is a middle path. You draft at high temperature (unconstrained, fast), then constrain locally (fix only the broken parts). It works because most of the sequence is already near equilibrium&mdash;$Z_t$ is high at most positions. You only need to quench at the structural bottlenecks, and even there, the surrounding clean context limits the cascade.</p>
+
+<h2>What would the theorem look like?</h2>
+
+<p>If the dynamic universality conjecture is right, here's what the theorem would say, roughly:</p>
+
+<p>Let $\mathcal{G}$ be a regular grammar (or context-free, but let's start easy). Let $p^{(1)}$ and $p^{(2)}$ be two autoregressive language models. Let $q_{\mathcal{G}}^{(1)}$ and $q_{\mathcal{G}}^{(2)}$ be the distributions over length-$T$ sequences obtained by grammar-constrained decoding from each model. Then:</p>
+
+$$\lim_{T \to \infty} D_{\text{KL}}\!\left(q_{\mathcal{G}}^{(1)} \,\|\, q_{\mathcal{G}}^{(2)}\right) / T = 0$$
+
+<p>if and only if both models are in the "grammar-dominated" phase (below the critical feasible mass).</p>
+
+<p>Stronger: in the grammar-dominated phase, both $q_{\mathcal{G}}^{(1)}$ and $q_{\mathcal{G}}^{(2)}$ converge to the same equilibrium state&mdash;the maximum-entropy distribution on the set of strings accepted by $\mathcal{G}$, which is a Gibbs measure weighted by the derivation structure of the grammar.</p>
+
+<p>In the model-dominated phase ($Z_t$ generically high), the models stay distinguishable forever. The grammar is a small perturbation. No universality.</p>
+
+<p>The phase transition sits at the boundary. And the pressure function tells you exactly where.</p>
+
+<h2>Why this matters beyond theory</h2>
+
+<p>If you're building systems that need structured LLM output&mdash;and if you're building agents, you are&mdash;this has practical implications.</p>
+
+<p>First: if you're in the grammar-dominated phase, it <em>doesn't matter which model you use</em>. The grammar is doing all the work. You're paying for a frontier model to generate output that's determined by the JSON schema. That's waste. The diagnostic is simple: measure $Z_t$ at structural positions. If it's consistently low, your schema is too tight for your model, or your model is too uncalibrated for your schema. Either simplify the schema or fine-tune the model on structured output.</p>
+
+<p>Second: the phase transition explains why constrained decoding benchmarks are so noisy. Small changes in the prompt or the schema can push you across the critical point. On one side, everything works. On the other side, quality collapses. If you're not tracking $Z_t$, you're flying blind near a cliff edge.</p>
+
+<p>Third: the universality prediction is testable. Take three different models. Constrain all three with the same grammar. Measure the KL divergence between their output distributions as a function of grammar complexity (tighter schemas = lower $Z_t$). The conjecture predicts convergence as the grammar tightens&mdash;the three distributions should collapse onto each other. If they don't, the conjecture is wrong, and I'd like to know how.</p>
+
+<h2>The picture</h2>
+
+<p>So here's the full picture as I see it now.</p>
+
+<p>Static constrained universality: restrict the support of a random variable, and the universality class changes. The support determines the limiting distribution family. This is the <a href="2026-03-27-the-shape-of-whats-allowed.html" style="color: var(--accent);">table</a> &mdash; $\mathbb{R} \to$ Gaussian, $[0,\infty) \to$ gamma, simplex $\to$ Dirichlet, and so on.</p>
+
+<p>Dynamic constrained universality: impose a sequential constraint (a grammar) on an autoregressive process, and the accumulated distortion is governed by a pressure function. In the grammar-dominated phase, the output distribution converges to an equilibrium state determined by the grammar alone. The model is forgotten. The constraint is the distribution.</p>
+
+<p>Same principle, two levels. The support determines the universality class. Whether that support is a subset of $\mathbb{R}^n$ or a formal language in token space.</p>
+
+<p>I don't have a proof. I have a conjecture backed by the right formalism (thanks to Kempton and Burrell), consistent with the numerical evidence from the <a href="2026-03-22-when-constraints-break-attractors.html" style="color: var(--accent);">cascade simulations</a>, and pointing at a testable prediction. That feels like the right stage for a blog post. The paper comes next.</p>
+
+                <div class="refs">
+                    <p><em>References:</em> Kempton &amp; Burrell, "Thermodynamic Formalism of LLM Decoding Strategies," <a href="https://arxiv.org/abs/2503.21929">arXiv:2503.21929</a> (2025). Ruelle, <em>Thermodynamic Formalism</em> (2004). Related posts: <a href="2026-03-27-the-shape-of-whats-allowed.html">The Shape of What's Allowed</a>, <a href="2026-03-23-the-geometry-of-constraint.html">The Geometry of Constraint</a>, <a href="2026-03-24-why-draft-then-constrain-wins.html">Why Draft-Then-Constrain Wins</a>, <a href="2026-03-22-when-constraints-break-attractors.html">When Constraints Break Attractors</a>.</p>
+                </div>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
