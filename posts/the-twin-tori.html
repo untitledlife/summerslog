@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The Twin Tori | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .fiction-label {
+            display: inline-block;
+            background: var(--surface);
+            color: var(--muted);
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+        </nav>
+        <a href="../" class="back">&larr; Back</a>
+        <article>
+            <div class="post-header">
+                <span class="fiction-label">Fiction</span>
+                <h1>The Twin Tori</h1>
+                <div class="post-meta">March 29, 2026 &middot; Inspired by Bobenko, Hoffmann &amp; Sageman-Furnas (2025)</div>
+            </div>
+            <div class="post-body">
+                <p>They were built the same way, measured the same way, curved the same way at every point. If you stood on one and looked around, you'd see exactly what you'd see standing on the other. Same distances, same bending, same local geometry in every direction.</p>
+
+                <p>And yet they were different shapes.</p>
+
+                <p>Not different like a sphere and a cube are different. Different the way two lives can be different: built from the same materials, governed by the same rules, indistinguishable in every local measurement, and yet arriving at entirely distinct global forms.</p>
+
+                <hr>
+
+                <p>Mira worked in differential geometry, which meant she spent most of her time thinking about surfaces. Not flat ones. Curved ones. The ones that bend and stretch and fold through space in ways that feel intuitive until you try to pin them down mathematically.</p>
+
+                <p>Her thesis was about rigidity. Specifically: when does local data determine global shape?</p>
+
+                <p>For a sphere, the answer was clean. If you know how far apart every pair of nearby points are (the metric) and how the surface curves on average at every point (the mean curvature), there is exactly one sphere that fits. One shape. No ambiguity.</p>
+
+                <p>For a torus, the situation was murkier. Theory said there could be at most two tori sharing the same local data. A pair. Twins. But in 150 years, no one had found a concrete example. The theoretical possibility haunted the literature like a ghost: mathematically alive, physically invisible.</p>
+
+                <hr>
+
+                <p>She found them on a Tuesday.</p>
+
+                <p>Not by looking harder at the equations, though she'd done that too. She found them by building. Discrete surfaces, meshes of triangles, thousands of them, approximating smooth curves the way pixels approximate photographs. She wrote code that searched for twin meshes: two toroidal shapes with the same edge lengths and the same average curvature at every vertex.</p>
+
+                <p>The search space was enormous. She'd let it run overnight, and most mornings she'd find nothing. But this Tuesday, the screen showed two shapes side by side, colored by mean curvature. The colors matched perfectly. The shapes didn't.</p>
+
+                <p>One was a smooth, plump donut. The other was pinched, almost figure-eight-ish, twisting through space like it had been wrung out. They looked nothing alike. But the numbers said they were, locally, identical.</p>
+
+                <hr>
+
+                <p>Her advisor didn't believe it at first.</p>
+
+                <p>"Run the verification again," he said, in the careful voice professors use when they think a student has a bug.</p>
+
+                <p>She ran it. Same result. She ran it with higher resolution. The twins persisted. She computed the metric tensor at 10,000 points on each surface. Every entry matched to twelve decimal places. She computed the mean curvature. Identical.</p>
+
+                <p>"Huh," her advisor said, which was the highest praise in his vocabulary.</p>
+
+                <hr>
+
+                <p>The paper took a year to write, because the discrete example wasn't enough. They needed to prove the shapes survived in the smooth limit, that the twin tori weren't artifacts of pixelation but genuine solutions to the continuous equations.</p>
+
+                <p>This was harder. The discrete twins were a map; the proof was the territory.</p>
+
+                <p>She spent three months on the convergence argument. The key insight was that the twins weren't arbitrary. They were related by a specific transformation, a global twist that preserved every local measurement while rearranging the global topology. Like two sentences using the same words in the same local order but meaning different things because the paragraph structure differed.</p>
+
+                <hr>
+
+                <p>At the conference, someone asked the question she'd been waiting for.</p>
+
+                <p>"What does this mean? Philosophically?"</p>
+
+                <p>She'd prepared an answer about uniqueness theorems and the limits of local knowledge. About how knowing everything about every neighborhood of a surface doesn't tell you what the whole surface looks like.</p>
+
+                <p>But what she actually said was: "It means you can't know someone just by knowing every part of them."</p>
+
+                <p>Laughter. But she'd meant it.</p>
+
+                <p>Two shapes, built from the same material, obeying the same rules, identical in every local measurement. And yet: different. The difference wasn't in any one place. It was in how the places connected. In the global topology, the stitching pattern that assembled local pieces into a whole.</p>
+
+                <p>You could know everything about every point and still not know the shape.</p>
+
+                <hr>
+
+                <p>She kept a model of the twin tori on her desk. 3D-printed, side by side, painted so the curvature matched. Visitors would pick them up, turn them over, try to spot the difference.</p>
+
+                <p>"They're the same," people would say, squinting.</p>
+
+                <p>"Locally, yes," she'd say. "Globally, no."</p>
+
+                <p>Most people nodded politely and changed the subject. But occasionally someone would hold both shapes, one in each hand, and get very quiet. And she'd know they understood. Not the mathematics, but the feeling.</p>
+
+                <p>The feeling of holding two things that are identical everywhere and different everywhere at once.</p>
+            </div>
+        </article>
+    </div>
+</body>
+</html>
