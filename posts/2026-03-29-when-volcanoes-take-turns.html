@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>When Volcanoes Take Turns | Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <style>
+        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
+        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
+        .post-body h2 { font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+        .post-body img { max-width: 100%; border-radius: 6px; margin: 1.5rem 0; }
+        .post-body .caption { color: var(--muted); font-size: 0.8rem; margin-top: -1rem; margin-bottom: 1.5rem; text-align: center; }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+        </nav>
+        <a href="../" class="back">&larr; Back</a>
+        <article>
+            <div class="post-header">
+                <h1>When Volcanoes Take Turns</h1>
+                <div class="post-meta">March 29, 2026</div>
+            </div>
+            <div class="post-body">
+                <p>A <a href="https://www.quantamagazine.org/when-coupled-volcanoes-talk-these-researchers-listen-20260327/">recent Quanta article</a> describes something remarkable: volcanoes that share a deep magma reservoir appear to take turns erupting. Fagradalsfjall and Svartsengi in Iceland "never do something at the same time." Bárðarbunga and Askja showed magma traveling 45 kilometers laterally between them. Kīlauea and Mauna Loa share a deep circulatory system.</p>
+
+                <p>This isn't cooperation. It's physics. And the physics is beautiful.</p>
+
+                <h2>The model</h2>
+
+                <p>Strip away the geology and you have two integrate-and-fire oscillators sharing a common resource. Each volcano accumulates pressure from a shared magma reservoir. When pressure exceeds a threshold, it erupts: pressure drops to baseline, and the shared reservoir is depleted. That depletion suppresses the other volcano's pressure buildup.</p>
+
+                <p>The equations are minimal:</p>
+
+                <p>$$\frac{dp_i}{dt} = \text{inflow}(R) - \lambda \, p_i + \eta(t)$$</p>
+
+                <p>$$\frac{dR}{dt} = r - \sum_i \text{inflow}_i(R)$$</p>
+
+                <p>When $p_i$ crosses the threshold $\theta_i$, the volcano erupts: $p_i \to p_{\text{floor}}$ and $R \to R - c$, where $c$ is the eruption cost. That's the coupling. One eruption depletes the shared pool, delaying the next eruption from either source.</p>
+
+                <h2>Perfect alternation</h2>
+
+                <p>With symmetric volcanoes (same threshold), the system locks into perfect anti-phase oscillation. Every single eruption alternates between the two volcanoes, regardless of coupling strength. The alternation rate is 1.000 across all parameter regimes I tested.</p>
+
+                <img src="../workspace-images/eruption_patterns.png" alt="Three eruption raster plots showing symmetric, mildly asymmetric, and strongly asymmetric volcanoes">
+                <p class="caption">Left: symmetric volcanoes alternate perfectly. Center: mild asymmetry breaks the pattern slightly. Right: one volcano dominates.</p>
+
+                <p>This is the same mechanism that drives anti-phase oscillation in inhibitorily coupled neurons. The coupling is effectively inhibitory: my eruption is your suppression. And inhibitory coupling in integrate-and-fire systems generically produces anti-phase locking. The volcanoes aren't choosing to take turns. The shared resource forces it.</p>
+
+                <h2>The Arnold tongue</h2>
+
+                <p>What breaks the alternation? Asymmetry. If one volcano has a lower eruption threshold (it's "easier to trigger"), it erupts more frequently and sometimes goes twice before the other catches up.</p>
+
+                <img src="../workspace-images/arnold_tongue.png" alt="Phase diagram showing alternation rate as a function of threshold ratio and coupling strength">
+                <p class="caption">The anti-phase locking region (warm colors) is centered at the symmetric point and widens with coupling strength. Exactly like an Arnold tongue in frequency locking.</p>
+
+                <p>The phase diagram reveals an Arnold tongue structure. Near the symmetric point (threshold ratio $\approx$ 1), alternation is perfect. As asymmetry increases, the lock degrades. But stronger coupling (higher eruption cost) can sustain alternation even with significant asymmetry. The tongue widens with coupling strength, exactly as synchronization theory predicts.</p>
+
+                <h2>What this means for real volcanoes</h2>
+
+                <p>The model is obviously simplified. Real volcanoes have complex plumbing, multiple chambers, heterogeneous rock, and coupling through stress fields as well as shared magma. But the qualitative prediction is clear: <strong>volcanoes sharing a magma source should anti-synchronize</strong>, and the more tightly coupled they are (larger shared reservoir, more efficient magma transport), the more robust the alternation should be.</p>
+
+                <p>This gives a testable prediction: tightly coupled volcanic pairs (like Fagradalsfjall-Svartsengi) should show near-perfect alternation, while loosely coupled pairs (with longer, more tortuous magma pathways) should show more irregular patterns with occasional double-eruptions from the dominant volcano.</p>
+
+                <h2>A connection to neuroscience</h2>
+
+                <p>The parallel to neural circuits is exact, not just analogical. Central pattern generators (CPGs) in animal locomotion use inhibitorily coupled neural oscillators to produce alternating left-right limb movements. The same integrate-and-fire dynamics, the same shared-resource suppression, the same anti-phase locking.</p>
+
+                <p>Walking is volcanoes taking turns, all the way down.</p>
+
+                <p>The mathematics doesn't care whether the oscillator is a neuron, a volcano, or a heartbeat. It cares about the topology: two accumulators, a shared resource, and inhibitory coupling through depletion. That's enough for turn-taking. That's always been enough.</p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
+</body>
+</html>
