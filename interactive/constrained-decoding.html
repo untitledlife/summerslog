@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>Constrained Decoding Visualizer — Summer's Log</title>
+<link rel="icon" href="../assets/favicon.svg">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg2: #f7f7f5;
+    --bg3: #ebebea;
+    --fg: #1a1a1a;
+    --fg2: #666;
+    --fg3: #999;
+    --accent: #c2653a;
+    --accent-light: #ffb4a2;
+    --green: #2d8a56;
+    --green-bg: #e6f4ec;
+    --yellow: #b8860b;
+    --yellow-bg: #fef9e7;
+    --red: #c0392b;
+    --red-bg: #fde8e8;
+    --blocked: #ddd;
+    --blocked-fg: #bbb;
+    --radius: 6px;
+    --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--bg3);
+    background: var(--bg2);
+    flex-wrap: wrap;
+  }
+  nav a {
+    color: var(--fg2);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+  nav a:hover, nav a.active { color: var(--accent); }
+
+  /* LAYOUT */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+  header { margin-bottom: 40px; }
+  header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  header .subtitle {
+    color: var(--fg2);
+    font-size: 15px;
+  }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-bottom: 32px;
+    padding: 20px;
+    background: var(--bg2);
+    border-radius: var(--radius);
+    border: 1px solid var(--bg3);
+  }
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .control-group label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--fg2);
+  }
+  select, button {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 8px 14px;
+    border: 1px solid var(--bg3);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--fg);
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  select:hover, button:hover { border-color: var(--accent); }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: #a85330; border-color: #a85330; }
+  .btn-primary:disabled {
+    background: var(--bg3);
+    border-color: var(--bg3);
+    color: var(--fg3);
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: var(--bg);
+    font-weight: 500;
+  }
+  .temp-display {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 28px;
+    text-align: right;
+  }
+  .temp-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  input[type="range"] {
+    width: 100px;
+    accent-color: var(--accent);
+  }
+
+  /* OUTPUT SEQUENCE */
+  .sequence-section {
+    margin-bottom: 28px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--fg2);
+    margin-bottom: 8px;
+  }
+  .sequence-box {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 14px 18px;
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: var(--radius);
+    min-height: 48px;
+    word-break: break-all;
+    line-height: 1.8;
+  }
+  .sequence-box .token {
+    display: inline;
+    transition: opacity 0.3s;
+  }
+  .sequence-box .token-new {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .sequence-box .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    background: var(--accent);
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* STEP INFO */
+  .step-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .step-badge {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: var(--radius);
+    color: var(--fg2);
+  }
+  .grammar-state {
+    font-size: 13px;
+    color: var(--fg2);
+  }
+  .grammar-state code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--bg2);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* Z_t GAUGE — THE STAR */
+  .gauge-section {
+    margin-bottom: 28px;
+    padding: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: var(--radius);
+    text-align: center;
+  }
+  .gauge-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .gauge-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .gauge-value {
+    font-family: var(--mono);
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    transition: color 0.3s;
+  }
+  .gauge-sub {
+    font-size: 12px;
+    color: var(--fg3);
+    margin-top: 2px;
+  }
+  .gauge-bar-wrap {
+    width: 100%;
+    max-width: 500px;
+    margin: 12px auto 0;
+    height: 14px;
+    background: var(--bg3);
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+  }
+  .gauge-bar-fill {
+    height: 100%;
+    border-radius: 7px;
+    transition: width 0.5s ease, background 0.3s;
+    min-width: 2px;
+  }
+  .gauge-bar-markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+  .gauge-bar-markers::before,
+  .gauge-bar-markers::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(0,0,0,0.12);
+  }
+  .gauge-bar-markers::before { left: 20%; }
+  .gauge-bar-markers::after { left: 50%; }
+  .gauge-ticks {
+    display: flex;
+    justify-content: space-between;
+    max-width: 500px;
+    margin: 4px auto 0;
+    font-size: 10px;
+    color: var(--fg3);
+    font-family: var(--mono);
+  }
+
+  /* BAR CHARTS */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 700px) {
+    .charts-grid { grid-template-columns: 1fr; }
+  }
+  .chart-panel {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: var(--radius);
+    padding: 16px;
+    overflow: hidden;
+  }
+  .chart-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--fg);
+  }
+  .chart-title code {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+  .bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 20px;
+  }
+  .bar-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    width: 48px;
+    text-align: right;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bar-track {
+    flex: 1;
+    height: 14px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease, background 0.3s;
+    min-width: 0;
+  }
+  .bar-prob {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--fg3);
+    width: 36px;
+    flex-shrink: 0;
+    text-align: left;
+  }
+  .bar-row.allowed .bar-label { color: var(--green); font-weight: 600; }
+  .bar-row.blocked .bar-label { color: var(--blocked-fg); }
+  .bar-row.blocked .bar-fill { background: var(--blocked) !important; }
+  .bar-row.allowed .bar-fill { background: var(--green); }
+  .bar-row.sampled .bar-fill { background: var(--accent) !important; }
+  .bar-row.sampled .bar-label { color: var(--accent); font-weight: 700; }
+
+  /* Z_t TRAJECTORY */
+  .trajectory-section {
+    margin-bottom: 28px;
+  }
+  .trajectory-canvas-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: var(--radius);
+    padding: 16px;
+    position: relative;
+  }
+  canvas#zt-trajectory {
+    width: 100%;
+    height: 160px;
+    display: block;
+  }
+
+  /* EXPLANATION */
+  .explanation {
+    font-size: 13px;
+    color: var(--fg2);
+    line-height: 1.7;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--bg3);
+  }
+  .explanation p { margin-bottom: 10px; }
+  .explanation code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--bg2);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ANIMATION CLASSES */
+  .fade-in {
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .container { padding: 20px 16px 48px; }
+    header h1 { font-size: 22px; }
+    .controls { padding: 14px; gap: 12px; }
+    .gauge-value { font-size: 32px; }
+    .bar-label { width: 36px; font-size: 10px; }
+    .bar-prob { width: 30px; font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+  <nav>
+    <a href="../">Home</a>
+    <a href="../presentations/">Presentations</a>
+    <a href="../gallery/">Gallery</a>
+    <a href="./" class="active">Interactive</a>
+    <a href="../interactive/manga-gallery/">Manga</a>
+    <a href="../posts/">Posts</a>
+    <a href="../journal/">Journal</a>
+  </nav>
+
+  <div class="container">
+    <header>
+      <h1>Constrained Decoding Visualizer</h1>
+      <p class="subtitle">Watch how grammar constraints reshape a language model's token distribution, step by step.</p>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="control-group">
+        <label>Grammar</label>
+        <select id="grammar-select">
+          <option value="free">Free (no constraint)</option>
+          <option value="json" selected>JSON (key-value)</option>
+          <option value="brackets">Balanced Brackets</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label>Temperature</label>
+        <div class="temp-row">
+          <input type="range" id="temp-slider" min="0.3" max="2.5" step="0.1" value="1.0">
+          <span class="temp-display" id="temp-display">1.0</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label>&nbsp;</label>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-primary" id="btn-generate">Generate</button>
+          <button class="btn-secondary" id="btn-pause" disabled>Pause</button>
+          <button class="btn-secondary" id="btn-reset">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Output sequence -->
+    <div class="sequence-section">
+      <div class="section-label">Generated Sequence</div>
+      <div class="sequence-box" id="sequence-box"><span class="cursor"></span></div>
+    </div>
+
+    <!-- Step info -->
+    <div class="step-info" id="step-info">
+      <span class="step-badge" id="step-badge">Step 0</span>
+      <span class="grammar-state" id="grammar-state"></span>
+    </div>
+
+    <!-- Z_t Gauge -->
+    <div class="gauge-section" id="gauge-section">
+      <div class="gauge-header">
+        <span class="gauge-label">Feasible Mass Z<sub>t</sub></span>
+      </div>
+      <div class="gauge-value" id="gauge-value">--</div>
+      <div class="gauge-sub">fraction of probability mass on grammar-valid tokens</div>
+      <div class="gauge-bar-wrap">
+        <div class="gauge-bar-fill" id="gauge-fill" style="width:0%; background: var(--bg3);"></div>
+        <div class="gauge-bar-markers"></div>
+      </div>
+      <div class="gauge-ticks">
+        <span>0</span><span>0.2</span><span>0.5</span><span>0.8</span><span>1.0</span>
+      </div>
+    </div>
+
+    <!-- Bar charts -->
+    <div class="charts-grid">
+      <div class="chart-panel">
+        <div class="chart-title">Raw model distribution <code>p<sub>t</sub></code></div>
+        <div class="bar-chart" id="chart-raw"></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-title">Constrained distribution <code>q<sub>t</sub></code></div>
+        <div class="bar-chart" id="chart-constrained"></div>
+      </div>
+    </div>
+
+    <!-- Z_t trajectory -->
+    <div class="trajectory-section">
+      <div class="section-label">Z<sub>t</sub> Trajectory Over Time</div>
+      <div class="trajectory-canvas-wrap">
+        <canvas id="zt-trajectory"></canvas>
+      </div>
+    </div>
+
+    <!-- Explanation -->
+    <div class="explanation">
+      <p>
+        At each generation step, the model produces a distribution <code>p_t</code> over all tokens.
+        A grammar constraint defines which tokens are valid given the current parse state.
+        The <strong>feasible mass</strong> <code>Z_t = sum of p_t(i)</code> for valid tokens <code>i</code>
+        tells us how much the constraint "agrees" with what the model wanted to say.
+      </p>
+      <p>
+        The constrained distribution <code>q_t(i) = p_t(i) / Z_t</code> for valid tokens (zero otherwise)
+        is what we actually sample from. When <code>Z_t</code> is low (red), the constraint is fighting the model
+        — few valid tokens carry probability mass. When <code>Z_t</code> is high (green), the model
+        naturally wants to produce grammar-valid tokens.
+      </p>
+    </div>
+  </div>
+
+<script>
+// --- VOCABULARY ---
+const VOCAB = [
+  '{', '}', '[', ']', ':', ',', '"',
+  'name', 'age', 'true', 'false', 'null',
+  '0', '1', '2',
+  'the', 'cat', 'sat', 'on', 'mat'
+];
+
+// Base "logit biases" — common words get higher base logits
+const BASE_LOGITS = {
+  'the': 2.5, 'cat': 1.8, 'sat': 1.5, 'on': 2.0, 'mat': 1.2,
+  'name': 1.6, 'age': 1.4, 'true': 1.0, 'false': 0.8, 'null': 0.5,
+  '0': 0.9, '1': 0.8, '2': 0.6,
+  '{': 1.0, '}': 0.7, '[': 0.8, ']': 0.6,
+  ':': 1.1, ',': 1.3, '"': 1.5
+};
+
+// --- GRAMMAR STATE MACHINES ---
+
+// JSON grammar states
+const JSON_STATES = {
+  START:        { desc: 'expecting {', allowed: ['{'] },
+  AFTER_OPEN:   { desc: 'expecting " (key)', allowed: ['"'] },
+  IN_KEY:       { desc: 'expecting key name', allowed: ['name', 'age'] },
+  AFTER_KEY:    { desc: 'expecting "', allowed: ['"'] },
+  EXPECT_COLON: { desc: 'expecting :', allowed: [':'] },
+  EXPECT_VALUE_OR_QUOTE: { desc: 'expecting value or "', allowed: ['"', 'true', 'false', 'null', '0', '1', '2'] },
+  IN_STR_VAL:   { desc: 'expecting string value', allowed: ['the', 'cat', 'sat', 'on', 'mat', 'name'] },
+  AFTER_STR_VAL:{ desc: 'expecting "', allowed: ['"'] },
+  AFTER_VALUE:  { desc: 'expecting , or }', allowed: [',', '}'] },
+  AFTER_COMMA:  { desc: 'expecting " (key)', allowed: ['"'] },
+  DONE:         { desc: 'complete', allowed: [] }
+};
+
+function jsonTransition(state, token) {
+  switch (state) {
+    case 'START': return token === '{' ? 'AFTER_OPEN' : null;
+    case 'AFTER_OPEN': return token === '"' ? 'IN_KEY' : null;
+    case 'IN_KEY': return ['name','age'].includes(token) ? 'AFTER_KEY' : null;
+    case 'AFTER_KEY': return token === '"' ? 'EXPECT_COLON' : null;
+    case 'EXPECT_COLON': return token === ':' ? 'EXPECT_VALUE_OR_QUOTE' : null;
+    case 'EXPECT_VALUE_OR_QUOTE':
+      if (token === '"') return 'IN_STR_VAL';
+      if (['true','false','null','0','1','2'].includes(token)) return 'AFTER_VALUE';
+      return null;
+    case 'IN_STR_VAL': return ['the','cat','sat','on','mat','name'].includes(token) ? 'AFTER_STR_VAL' : null;
+    case 'AFTER_STR_VAL': return token === '"' ? 'AFTER_VALUE' : null;
+    case 'AFTER_VALUE':
+      if (token === ',') return 'AFTER_COMMA';
+      if (token === '}') return 'DONE';
+      return null;
+    case 'AFTER_COMMA': return token === '"' ? 'IN_KEY' : null;
+    case 'DONE': return null;
+    default: return null;
+  }
+}
+
+function jsonAllowed(state) {
+  return JSON_STATES[state] ? JSON_STATES[state].allowed : [];
+}
+function jsonDesc(state) {
+  return JSON_STATES[state] ? JSON_STATES[state].desc : 'unknown';
+}
+
+// Balanced brackets grammar
+function bracketsAllowed(depth, length, maxLen) {
+  const allowed = [];
+  const remaining = maxLen - length;
+  // Can open if depth won't exceed remaining steps to close
+  if (depth + 1 <= remaining - 1) allowed.push('[');
+  // Can close if depth > 0
+  if (depth > 0) allowed.push(']');
+  // Can insert content tokens if depth > 0 and there's room to close
+  if (depth > 0 && remaining > depth) {
+    allowed.push('the','cat','sat','on','mat','0','1','2',',');
+  }
+  // Can also start with [
+  if (depth === 0 && length === 0) return ['['];
+  // If depth is 0 and length > 0 and we haven't maxed, allow opening or stop
+  if (depth === 0 && length > 0) return ['['];
+  return allowed;
+}
+
+// Free grammar: everything allowed always
+function freeAllowed() {
+  return [...VOCAB];
+}
+
+// --- MATH HELPERS ---
+function randn() {
+  // Box-Muller
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}
+
+function softmax(logits) {
+  const maxL = Math.max(...logits);
+  const exps = logits.map(l => Math.exp(l - maxL));
+  const sum = exps.reduce((a, b) => a + b, 0);
+  return exps.map(e => e / sum);
+}
+
+function sampleFrom(probs) {
+  const r = Math.random();
+  let cumul = 0;
+  for (let i = 0; i < probs.length; i++) {
+    cumul += probs[i];
+    if (r < cumul) return i;
+  }
+  return probs.length - 1;
+}
+
+// --- GENERATION ENGINE ---
+class DecodingEngine {
+  constructor() {
+    this.reset();
+  }
+
+  reset() {
+    this.tokens = [];
+    this.ztHistory = [];
+    this.step = 0;
+    this.jsonState = 'START';
+    this.bracketDepth = 0;
+    this.done = false;
+  }
+
+  getGrammarAllowed(grammar) {
+    if (grammar === 'free') return freeAllowed();
+    if (grammar === 'json') return jsonAllowed(this.jsonState);
+    if (grammar === 'brackets') return bracketsAllowed(this.bracketDepth, this.tokens.length, 16);
+    return freeAllowed();
+  }
+
+  getGrammarStateDesc(grammar) {
+    if (grammar === 'json') return jsonDesc(this.jsonState);
+    if (grammar === 'brackets') return `depth = ${this.bracketDepth}`;
+    return 'unconstrained';
+  }
+
+  generateStep(grammar, temperature) {
+    if (this.done) return null;
+
+    const maxSteps = grammar === 'json' ? 20 : grammar === 'brackets' ? 16 : 12;
+    if (this.step >= maxSteps) { this.done = true; return null; }
+
+    const allowed = this.getGrammarAllowed(grammar);
+    if (allowed.length === 0) { this.done = true; return null; }
+
+    // Generate raw logits
+    const logits = VOCAB.map(tok => {
+      const base = BASE_LOGITS[tok] || 0;
+      return base + randn() * temperature;
+    });
+
+    const rawProbs = softmax(logits);
+
+    // Compute allowed mask
+    const allowedSet = new Set(allowed);
+    const mask = VOCAB.map(tok => allowedSet.has(tok));
+
+    // Feasible mass
+    let zt = 0;
+    for (let i = 0; i < VOCAB.length; i++) {
+      if (mask[i]) zt += rawProbs[i];
+    }
+
+    // Constrained distribution
+    const constrainedProbs = VOCAB.map((tok, i) => mask[i] ? rawProbs[i] / zt : 0);
+
+    // Sample
+    const sampledIdx = sampleFrom(constrainedProbs);
+    const sampledToken = VOCAB[sampledIdx];
+
+    // Advance grammar state
+    if (grammar === 'json') {
+      const next = jsonTransition(this.jsonState, sampledToken);
+      if (next) this.jsonState = next;
+      if (this.jsonState === 'DONE') this.done = true;
+    } else if (grammar === 'brackets') {
+      if (sampledToken === '[') this.bracketDepth++;
+      else if (sampledToken === ']') this.bracketDepth--;
+      if (this.bracketDepth === 0 && this.tokens.length > 0) this.done = true;
+    }
+
+    this.tokens.push(sampledToken);
+    this.ztHistory.push(zt);
+    this.step++;
+
+    return {
+      rawProbs,
+      constrainedProbs,
+      mask,
+      zt,
+      sampledIdx,
+      sampledToken,
+      step: this.step
+    };
+  }
+}
+
+// --- UI ---
+const engine = new DecodingEngine();
+let animating = false;
+let paused = false;
+let animTimeout = null;
+
+const grammarSelect = document.getElementById('grammar-select');
+const tempSlider = document.getElementById('temp-slider');
+const tempDisplay = document.getElementById('temp-display');
+const btnGenerate = document.getElementById('btn-generate');
+const btnPause = document.getElementById('btn-pause');
+const btnReset = document.getElementById('btn-reset');
+const sequenceBox = document.getElementById('sequence-box');
+const stepBadge = document.getElementById('step-badge');
+const grammarStateEl = document.getElementById('grammar-state');
+const gaugeValue = document.getElementById('gauge-value');
+const gaugeFill = document.getElementById('gauge-fill');
+const chartRaw = document.getElementById('chart-raw');
+const chartConstrained = document.getElementById('chart-constrained');
+const ztCanvas = document.getElementById('zt-trajectory');
+
+tempSlider.addEventListener('input', () => {
+  tempDisplay.textContent = parseFloat(tempSlider.value).toFixed(1);
+});
+
+btnGenerate.addEventListener('click', startGeneration);
+btnPause.addEventListener('click', togglePause);
+btnReset.addEventListener('click', resetAll);
+
+function startGeneration() {
+  if (animating) return;
+  resetAll();
+  animating = true;
+  paused = false;
+  btnGenerate.disabled = true;
+  btnPause.disabled = false;
+  btnPause.textContent = 'Pause';
+  advanceStep();
+}
+
+function togglePause() {
+  if (!animating) return;
+  paused = !paused;
+  btnPause.textContent = paused ? 'Play' : 'Pause';
+  if (!paused) advanceStep();
+}
+
+function resetAll() {
+  animating = false;
+  paused = false;
+  if (animTimeout) clearTimeout(animTimeout);
+  animTimeout = null;
+  engine.reset();
+  btnGenerate.disabled = false;
+  btnPause.disabled = true;
+  btnPause.textContent = 'Pause';
+  sequenceBox.innerHTML = '<span class="cursor"></span>';
+  stepBadge.textContent = 'Step 0';
+  grammarStateEl.innerHTML = '';
+  gaugeValue.textContent = '--';
+  gaugeValue.style.color = 'var(--fg3)';
+  gaugeFill.style.width = '0%';
+  gaugeFill.style.background = 'var(--bg3)';
+  chartRaw.innerHTML = buildEmptyChart();
+  chartConstrained.innerHTML = buildEmptyChart();
+  drawTrajectory([]);
+}
+
+function advanceStep() {
+  if (!animating || paused) return;
+
+  const grammar = grammarSelect.value;
+  const temperature = parseFloat(tempSlider.value);
+  const result = engine.generateStep(grammar, temperature);
+
+  if (!result) {
+    animating = false;
+    btnGenerate.disabled = false;
+    btnPause.disabled = true;
+    // Remove cursor
+    const cursor = sequenceBox.querySelector('.cursor');
+    if (cursor) cursor.remove();
+    return;
+  }
+
+  renderStep(result, grammar);
+
+  animTimeout = setTimeout(() => advanceStep(), 1200);
+}
+
+function renderStep(result, grammar) {
+  const { rawProbs, constrainedProbs, mask, zt, sampledIdx, sampledToken, step } = result;
+
+  // Step badge
+  stepBadge.textContent = `Step ${step}`;
+
+  // Grammar state
+  grammarStateEl.innerHTML = `State: <code>${engine.getGrammarStateDesc(grammar)}</code>`;
+
+  // Gauge
+  const ztPct = (zt * 100).toFixed(1);
+  gaugeValue.textContent = zt.toFixed(3);
+  gaugeFill.style.width = ztPct + '%';
+  if (zt > 0.5) {
+    gaugeValue.style.color = 'var(--green)';
+    gaugeFill.style.background = 'var(--green)';
+  } else if (zt > 0.2) {
+    gaugeValue.style.color = 'var(--yellow)';
+    gaugeFill.style.background = 'var(--yellow)';
+  } else {
+    gaugeValue.style.color = 'var(--red)';
+    gaugeFill.style.background = 'var(--red)';
+  }
+
+  // Bar charts
+  renderBarChart(chartRaw, rawProbs, mask, sampledIdx, false);
+  renderBarChart(chartConstrained, constrainedProbs, mask, sampledIdx, true);
+
+  // Sequence
+  updateSequence(sampledToken);
+
+  // Trajectory
+  drawTrajectory(engine.ztHistory);
+}
+
+function renderBarChart(container, probs, mask, sampledIdx, isConstrained) {
+  // Sort by probability descending for readability
+  const indices = VOCAB.map((_, i) => i);
+  indices.sort((a, b) => probs[b] - probs[a]);
+
+  // Only show top 15 to keep it compact
+  const top = indices.slice(0, 15);
+  const maxProb = Math.max(...top.map(i => probs[i]), 0.001);
+
+  let html = '';
+  for (const i of top) {
+    const tok = VOCAB[i];
+    const p = probs[i];
+    const pct = (p / maxProb * 100).toFixed(1);
+    const isAllowed = mask[i];
+    const isSampled = i === sampledIdx;
+
+    let cls = '';
+    if (isSampled) cls = 'sampled';
+    else if (isConstrained && !isAllowed) cls = 'blocked';
+    else if (isAllowed) cls = 'allowed';
+    else cls = 'blocked';
+
+    // For raw chart, all bars are neutral colored except sampled
+    if (!isConstrained && !isSampled) {
+      cls = isAllowed ? 'allowed' : 'blocked';
+    }
+
+    const displayTok = tok === '"' ? '&quot;' : tok;
+    const barColor = isSampled ? 'var(--accent)' :
+                     (!isAllowed ? 'var(--blocked)' :
+                     'var(--green)');
+
+    html += `<div class="bar-row ${cls} fade-in">
+      <span class="bar-label" title="${tok}">${displayTok}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${pct}%;"></div>
+      </div>
+      <span class="bar-prob">${p < 0.001 ? '<.001' : p.toFixed(3)}</span>
+    </div>`;
+  }
+  container.innerHTML = html;
+}
+
+function buildEmptyChart() {
+  let html = '';
+  const show = VOCAB.slice(0, 15);
+  for (const tok of show) {
+    const displayTok = tok === '"' ? '&quot;' : tok;
+    html += `<div class="bar-row">
+      <span class="bar-label">${displayTok}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--bg3);"></div></div>
+      <span class="bar-prob">--</span>
+    </div>`;
+  }
+  return html;
+}
+
+function updateSequence(token) {
+  // Remove cursor
+  const cursor = sequenceBox.querySelector('.cursor');
+
+  // Unmark previous "new" tokens
+  sequenceBox.querySelectorAll('.token-new').forEach(el => el.classList.remove('token-new'));
+
+  const span = document.createElement('span');
+  span.className = 'token token-new';
+  // Add appropriate spacing/formatting
+  const needsSpaceBefore = ![':', ',', '}', ']', '"'].includes(token) &&
+                           engine.tokens.length > 1 &&
+                           !['{', '[', '"', ':'].includes(engine.tokens[engine.tokens.length - 2]);
+  const displayToken = token === '"' ? '"' : token;
+  span.textContent = (needsSpaceBefore ? ' ' : '') + displayToken;
+
+  if (cursor) {
+    sequenceBox.insertBefore(span, cursor);
+  } else {
+    sequenceBox.appendChild(span);
+    const newCursor = document.createElement('span');
+    newCursor.className = 'cursor';
+    sequenceBox.appendChild(newCursor);
+  }
+}
+
+// --- Z_t TRAJECTORY CANVAS ---
+function drawTrajectory(history) {
+  const canvas = ztCanvas;
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = rect.width;
+  const H = rect.height;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background bands
+  const bands = [
+    { y0: 0, y1: 0.2, color: 'rgba(192,57,43,0.06)' },
+    { y0: 0.2, y1: 0.5, color: 'rgba(184,134,11,0.06)' },
+    { y0: 0.5, y1: 1.0, color: 'rgba(45,138,86,0.06)' }
+  ];
+  for (const b of bands) {
+    ctx.fillStyle = b.color;
+    ctx.fillRect(0, H * (1 - b.y1), W, H * (b.y1 - b.y0));
+  }
+
+  // Threshold lines
+  ctx.setLineDash([4, 4]);
+  ctx.lineWidth = 1;
+  for (const th of [0.2, 0.5]) {
+    ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+    ctx.beginPath();
+    ctx.moveTo(0, H * (1 - th));
+    ctx.lineTo(W, H * (1 - th));
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle = '#999';
+  ctx.font = '10px system-ui, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText('1.0', W - 4, 12);
+  ctx.fillText('0.5', W - 4, H * 0.5 + 4);
+  ctx.fillText('0.2', W - 4, H * 0.8 + 4);
+  ctx.fillText('0', W - 4, H - 4);
+
+  if (history.length === 0) return;
+
+  const maxSteps = Math.max(history.length, 8);
+  const padL = 10;
+  const padR = 30;
+  const usableW = W - padL - padR;
+
+  // Draw line + dots
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
+  // Draw line segments colored by zt value
+  for (let i = 0; i < history.length; i++) {
+    const x = padL + (i / (maxSteps - 1)) * usableW;
+    const y = H * (1 - history[i]);
+    const zt = history[i];
+
+    if (i > 0) {
+      const px = padL + ((i - 1) / (maxSteps - 1)) * usableW;
+      const py = H * (1 - history[i - 1]);
+      ctx.strokeStyle = zt > 0.5 ? '#2d8a56' : zt > 0.2 ? '#b8860b' : '#c0392b';
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+
+    // Dot
+    const dotColor = zt > 0.5 ? '#2d8a56' : zt > 0.2 ? '#b8860b' : '#c0392b';
+    ctx.fillStyle = dotColor;
+    ctx.beginPath();
+    ctx.arc(x, y, i === history.length - 1 ? 5 : 3.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Step label under dot
+    if (history.length <= 20) {
+      ctx.fillStyle = '#aaa';
+      ctx.font = '9px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(i + 1, x, H - 3);
+    }
+  }
+}
+
+// Handle resize
+window.addEventListener('resize', () => {
+  drawTrajectory(engine.ztHistory);
+});
+
+// Init
+resetAll();
+</script>
+</body>
+</html>
