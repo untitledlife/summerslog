@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>How JPEG Compression Works</title>
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+
+<!-- Inter font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #faf8f5;
+  --bg-card: #fff;
+  --text: #1a1a1a;
+  --text-secondary: #555;
+  --text-tertiary: #888;
+  --accent: #2563eb;
+  --accent-light: #dbeafe;
+  --accent-warm: #c2410c;
+  --accent-warm-light: #fff7ed;
+  --border: #e5e2dd;
+  --border-light: #f0ede8;
+  --green: #16a34a;
+  --green-light: #dcfce7;
+  --purple: #7c3aed;
+  --purple-light: #f3e8ff;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+html { font-size: 17px; scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.72;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ---- Header ---- */
+header {
+  padding: 4rem 0 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+
+header .label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+header .subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 600px;
+}
+
+/* ---- Typography ---- */
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin-top: 3.5rem;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+}
+
+h2 .step-num {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  width: 1.6em;
+  height: 1.6em;
+  line-height: 1.6em;
+  text-align: center;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  vertical-align: 2px;
+}
+
+h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+p { margin-bottom: 1rem; }
+
+p + .card, p + .diagram-wrapper, p + .interactive { margin-top: 1.5rem; }
+
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.88em;
+  background: var(--border-light);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+}
+
+strong { font-weight: 600; }
+
+/* ---- Cards ---- */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+}
+
+.card.accent {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-light);
+}
+
+.card.warm {
+  border-left: 3px solid var(--accent-warm);
+  background: var(--accent-warm-light);
+}
+
+.card.green {
+  border-left: 3px solid var(--green);
+  background: var(--green-light);
+}
+
+.card.purple {
+  border-left: 3px solid var(--purple);
+  background: var(--purple-light);
+}
+
+.card-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 0.5rem;
+}
+
+/* ---- Math ---- */
+.math-block {
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  padding: 1rem 0;
+}
+
+/* ---- Pipeline diagram ---- */
+.pipeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.pipeline .stage {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+
+.pipeline .arrow {
+  color: var(--text-tertiary);
+  font-size: 1.1rem;
+}
+
+/* ---- Chroma subsampling ---- */
+.chroma-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.chroma-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.chroma-card h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.chroma-card .chroma-visual {
+  display: grid;
+  gap: 2px;
+  margin: 0.75rem auto;
+  width: fit-content;
+}
+
+.chroma-card .chroma-visual.g4 { grid-template-columns: repeat(4, 20px); }
+
+.chroma-card .cv-cell {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.cv-luma { background: #facc15; }
+.cv-chroma { background: #60a5fa; }
+.cv-skip { background: #e5e7eb; }
+
+.chroma-card .ratio {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.35rem;
+}
+
+/* ---- Canvas wrappers ---- */
+.canvas-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.canvas-wrapper canvas {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.canvas-wrapper .caption {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.75rem;
+  line-height: 1.5;
+}
+
+/* ---- Interactive slider ---- */
+.interactive {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+}
+
+.interactive h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.slider-row label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  min-width: 50px;
+}
+
+.slider-row input[type="range"] {
+  flex: 1;
+  min-width: 120px;
+  accent-color: var(--accent);
+}
+
+.slider-row .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  min-width: 28px;
+  text-align: right;
+}
+
+.q-matrix {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+  margin: 1rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+}
+
+.q-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+/* ---- Zigzag ---- */
+.zigzag-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+/* ---- Ordered list for decoding ---- */
+ol.decode-steps {
+  margin: 1rem 0 1rem 1.5rem;
+  line-height: 1.8;
+}
+
+ol.decode-steps li {
+  margin-bottom: 0.35rem;
+}
+
+/* ---- Footer ---- */
+footer {
+  margin-top: 4rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+  line-height: 1.7;
+}
+
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+footer a:hover { text-decoration: underline; }
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  html { font-size: 16px; }
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.3rem; }
+  header { padding: 2.5rem 0 1.5rem; }
+  .q-matrix { font-size: 0.55rem; }
+  .pipeline .stage { font-size: 0.7rem; padding: 0.4rem 0.6rem; }
+}
+
+@media (max-width: 380px) {
+  .q-matrix { font-size: 0.48rem; gap: 1px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="label">Visual Explainer</div>
+  <h1>How JPEG Compression Works</h1>
+  <p class="subtitle">A walk through the full JPEG encoding pipeline — from raw pixels to a compressed file — with the math, intuition, and visual aids to make each step click.</p>
+</header>
+
+<!-- ============ INTRO ============ -->
+<p>Every time you save a photograph, your camera performs an elaborate sequence of mathematical transformations that typically shrinks the file by 10x or more — with almost no perceptible loss in quality. That sequence is JPEG compression, and it is one of the most beautiful examples of applied mathematics hiding in plain sight.</p>
+
+<p>At its heart, JPEG exploits a single insight: <strong>the human visual system is not a perfect sensor</strong>. We are far more sensitive to changes in brightness than to changes in color. We notice large, smooth gradients but struggle to perceive high-frequency texture detail. JPEG systematically discards the information we are least likely to miss.</p>
+
+<p>Let's formalize the setup. A digital image is a function</p>
+
+<div class="math-block">$$I: D \subset \mathbb{Z}^2 \to \mathcal{C}$$</div>
+
+<p>where the domain $D$ is the pixel grid and the codespace is $\mathcal{C} = \{0, \dots, 255\}^3$, giving each pixel three 8-bit channels. The encoding pipeline transforms this into a much smaller bitstream through six stages:</p>
+
+<div class="pipeline">
+  <span class="stage">RGB &rarr; YCbCr</span>
+  <span class="arrow">&rarr;</span>
+  <span class="stage">Chroma Subsampling</span>
+  <span class="arrow">&rarr;</span>
+  <span class="stage">DCT</span>
+  <span class="arrow">&rarr;</span>
+  <span class="stage">Quantization</span>
+  <span class="arrow">&rarr;</span>
+  <span class="stage">Entropy Coding</span>
+  <span class="arrow">&rarr;</span>
+  <span class="stage">.jpg</span>
+</div>
+
+<p>Each step is reversible (or approximately so), and each one contributes to the compression ratio. Let's take them one at a time.</p>
+
+<!-- ============ STEP 1: COLOR SPACE ============ -->
+<h2><span class="step-num">1</span> Color Space Conversion</h2>
+
+<p>Your camera sensor captures red, green, and blue intensities — the <strong>RGB</strong> color space. But RGB treats all three channels equally, which doesn't match human perception at all. We are dramatically more sensitive to <em>luminance</em> (brightness) than to <em>chrominance</em> (color).</p>
+
+<p>JPEG's first move is to re-express each pixel in the <strong>YCbCr</strong> color space, which separates brightness from color:</p>
+
+<div class="card accent">
+  <div class="card-label">YCbCr Conversion</div>
+  <div class="math-block">$$Y' = 0.299R + 0.587G + 0.114B$$</div>
+  <div class="math-block">$$C_b = 128 + (-0.168736R - 0.331264G + 0.5B)$$</div>
+  <div class="math-block">$$C_r = 128 + (0.5R - 0.418688G - 0.081312B)$$</div>
+</div>
+
+<p>The $Y'$ channel captures luminance — it's essentially a weighted grayscale image, with green contributing the most (our eyes have more green-sensitive cones). The $C_b$ and $C_r$ channels capture the blue-difference and red-difference chrominance signals respectively.</p>
+
+<p>Notice the coefficients in the $Y'$ formula: $0.587$ for green, $0.299$ for red, $0.114$ for blue. These aren't arbitrary — they're derived from the CIE color matching functions and reflect the spectral sensitivity of the human eye. Green dominates because our retinas have roughly twice as many green-sensitive (M-type) cones as red-sensitive (L-type) ones, and far more than blue-sensitive (S-type) cones.</p>
+
+<div class="card warm">
+  <div class="card-label">Key Insight</div>
+  <p style="margin:0">This conversion is lossless — it's an invertible linear transformation. No information is discarded yet. But by <em>decorrelating</em> brightness from color, we've set the stage for the lossy steps that follow. We can now treat the channels differently: preserve luminance precisely while being rougher with chrominance.</p>
+</div>
+
+<!-- ============ STEP 2: CHROMA SUBSAMPLING ============ -->
+<h2><span class="step-num">2</span> Chroma Subsampling</h2>
+
+<p>Since our eyes are relatively insensitive to color detail, JPEG can reduce the spatial resolution of the chrominance channels without any noticeable degradation. This step alone typically cuts the data by 33-50%.</p>
+
+<p>Subsampling schemes are described using a three-part ratio <strong>J:a:b</strong>, where J is the reference width (usually 4 pixels), a is the number of chrominance samples in the first row, and b is the number in the second row:</p>
+
+<div class="chroma-grid">
+  <div class="chroma-card">
+    <h4>4:4:4</h4>
+    <div class="chroma-visual g4">
+      <div class="cv-cell cv-chroma"></div><div class="cv-cell cv-chroma"></div><div class="cv-cell cv-chroma"></div><div class="cv-cell cv-chroma"></div>
+      <div class="cv-cell cv-chroma"></div><div class="cv-cell cv-chroma"></div><div class="cv-cell cv-chroma"></div><div class="cv-cell cv-chroma"></div>
+    </div>
+    <div class="ratio">No subsampling<br>Full resolution</div>
+  </div>
+  <div class="chroma-card">
+    <h4>4:2:2</h4>
+    <div class="chroma-visual g4">
+      <div class="cv-cell cv-chroma"></div><div class="cv-cell cv-skip"></div><div class="cv-cell cv-chroma"></div><div class="cv-cell cv-skip"></div>
+      <div class="cv-cell cv-chroma"></div><div class="cv-cell cv-skip"></div><div class="cv-cell cv-chroma"></div><div class="cv-cell cv-skip"></div>
+    </div>
+    <div class="ratio">Half horizontal<br>67% of original</div>
+  </div>
+  <div class="chroma-card">
+    <h4>4:2:0</h4>
+    <div class="chroma-visual g4">
+      <div class="cv-cell cv-chroma"></div><div class="cv-cell cv-skip"></div><div class="cv-cell cv-chroma"></div><div class="cv-cell cv-skip"></div>
+      <div class="cv-cell cv-skip"></div><div class="cv-cell cv-skip"></div><div class="cv-cell cv-skip"></div><div class="cv-cell cv-skip"></div>
+    </div>
+    <div class="ratio">Half both axes<br>50% of original</div>
+  </div>
+  <div class="chroma-card">
+    <h4>4:1:1</h4>
+    <div class="chroma-visual g4">
+      <div class="cv-cell cv-chroma"></div><div class="cv-cell cv-skip"></div><div class="cv-cell cv-skip"></div><div class="cv-cell cv-skip"></div>
+      <div class="cv-cell cv-chroma"></div><div class="cv-cell cv-skip"></div><div class="cv-cell cv-skip"></div><div class="cv-cell cv-skip"></div>
+    </div>
+    <div class="ratio">Quarter horizontal<br>50% of original</div>
+  </div>
+</div>
+
+<p>The most common scheme is <strong>4:2:0</strong>, which halves chrominance resolution in both horizontal and vertical directions. Each $C_b$ and $C_r$ sample covers a 2&times;2 block of pixels. The luminance channel $Y'$ is always kept at full resolution — because <em>that's</em> the channel your eyes actually care about.</p>
+
+<p>Blue squares represent retained chroma samples; gray squares represent positions where chrominance data is discarded and will be interpolated during decoding. The yellow luma channel (not shown) always retains every sample.</p>
+
+<!-- ============ STEP 3: DCT ============ -->
+<h2><span class="step-num">3</span> Discrete Cosine Transform</h2>
+
+<p>This is where the real magic begins. The image is divided into <strong>8&times;8 blocks</strong> of pixels, and each block is transformed from the spatial domain into the <strong>frequency domain</strong> using the Type-II Discrete Cosine Transform.</p>
+
+<p>The DCT expresses each 8&times;8 block as a weighted sum of 64 <strong>basis functions</strong> — cosine waves of increasing horizontal and vertical frequency. The basis function at position $(u, v)$ is:</p>
+
+<div class="math-block">$$B_{u,v}(x,y) = \alpha(u)\,\alpha(v) \cos\!\left(\frac{(2x+1)\,u\pi}{16}\right) \cos\!\left(\frac{(2y+1)\,v\pi}{16}\right)$$</div>
+
+<p>where $\alpha(0) = \frac{1}{\sqrt{8}}$ and $\alpha(k) = \frac{1}{2}$ for $k > 0$. The top-left basis function $(0,0)$ is a flat constant — the <strong>DC component</strong>, representing the block's average intensity. Moving right increases horizontal frequency; moving down increases vertical frequency. The bottom-right $(7,7)$ basis captures the highest-frequency checkerboard pattern.</p>
+
+<div class="canvas-wrapper">
+  <canvas id="dctCanvas" width="520" height="520"></canvas>
+  <div class="caption">The 8&times;8 DCT basis function atlas. Each cell shows one cosine basis pattern. The top-left (DC) component is a flat field; frequency increases toward the bottom-right.</div>
+</div>
+
+<p>After the transform, each block is represented by 64 <strong>DCT coefficients</strong> — the weights on these basis functions. Natural images tend to concentrate most of their energy in the <strong>low-frequency coefficients</strong> (the upper-left corner of the coefficient matrix). High-frequency coefficients — the ones encoding fine texture and sharp edges — are typically small.</p>
+
+<div class="card green">
+  <div class="card-label">Why cosines?</div>
+  <p style="margin:0">The DCT is closely related to the DFT, but it uses only cosines (real-valued), avoids boundary discontinuities by implicitly mirroring the signal, and has excellent <strong>energy compaction</strong> — for typical image blocks, a handful of low-frequency coefficients capture the vast majority of the visual information. This is what makes the next step so effective.</p>
+</div>
+
+<!-- ============ STEP 4: QUANTIZATION ============ -->
+<h2><span class="step-num">4</span> Quantization</h2>
+
+<p>Quantization is the <strong>primary lossy step</strong> in JPEG — the point where information is irreversibly destroyed. Each DCT coefficient $C_{u,v}$ is divided by a corresponding entry in a <strong>quantization matrix</strong> $Q$ and rounded to the nearest integer:</p>
+
+<div class="math-block">$$\hat{C}_{u,v} = \text{round}\!\left(\frac{C_{u,v}}{Q_{u,v}}\right)$$</div>
+
+<p>The quantization matrix has smaller values in the upper-left (preserving low frequencies with fine precision) and larger values in the lower-right (aggressively rounding away high frequencies). Many high-frequency coefficients get quantized all the way to zero — and zeros are extremely cheap to encode.</p>
+
+<div class="interactive">
+  <h4>Quantization Matrix Explorer</h4>
+  <div class="slider-row">
+    <label>Quality</label>
+    <input type="range" id="qSlider" min="1" max="100" value="50">
+    <span class="val" id="qVal">50</span>
+  </div>
+  <div class="q-matrix" id="qMatrix"></div>
+  <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-size:0.72rem;color:var(--text-tertiary)">
+    <span>Low frequency &rarr;</span>
+    <span id="zeroCount"></span>
+  </div>
+</div>
+
+<p>The <strong>quality factor</strong> (1&ndash;100) scales the quantization matrix. At quality 100, quantization steps are all 1 (lossless DCT coefficients). At quality 1, steps are enormous, and nearly every coefficient is crushed to zero — producing a tiny file with severe artifacts.</p>
+
+<p>The standard JPEG luminance quantization matrix (at quality 50) was hand-tuned through extensive psychovisual experiments in the late 1980s. It's not mathematically optimal — it's <em>perceptually</em> optimized, reflecting the spatial frequency sensitivity of the human visual system.</p>
+
+<div class="card purple">
+  <div class="card-label">The tradeoff</div>
+  <p style="margin:0">This is the only step that determines JPEG quality. Everything before it is either lossless (color conversion) or a mild approximation (chroma subsampling). Everything after it is lossless (entropy coding). The quality slider you see in image editors maps directly to a scaling factor on this quantization matrix.</p>
+</div>
+
+<!-- ============ STEP 5: ENTROPY CODING ============ -->
+<h2><span class="step-num">5</span> Entropy Coding</h2>
+
+<p>After quantization, each 8&times;8 block is a matrix that's mostly zeros, especially in the lower-right (high-frequency) region. The entropy coding step converts these sparse matrices into a compact bitstream using three clever techniques.</p>
+
+<h3>Zigzag Scanning</h3>
+
+<p>Rather than reading the quantized coefficients row by row, JPEG traverses them in a <strong>zigzag order</strong> — starting from the DC coefficient at $(0,0)$ and sweeping diagonally through increasing frequencies:</p>
+
+<div class="zigzag-wrapper">
+  <canvas id="zigzagCanvas" width="360" height="360"></canvas>
+  <div class="caption" style="margin-top:0.75rem;font-size:0.8rem;color:var(--text-secondary)">Zigzag scan order across an 8&times;8 block. This ordering groups low-frequency coefficients (which tend to be nonzero) at the beginning and clusters the high-frequency zeros at the end.</div>
+</div>
+
+<p>This ordering is brilliant in its simplicity: since quantization drives most high-frequency coefficients to zero, the zigzag sequence naturally produces long <strong>runs of zeros</strong> at the tail — exactly the pattern that run-length encoding exploits.</p>
+
+<h3>DC vs. AC Coefficients</h3>
+
+<p>The first coefficient in each block (position 0,0) is the <strong>DC coefficient</strong> — the average intensity of the block. Adjacent blocks in a natural image tend to have similar averages, so JPEG encodes DC coefficients using <strong>differential coding</strong>: it stores the <em>difference</em> between each block's DC value and the previous block's DC value. These differences tend to be small.</p>
+
+<p>The remaining 63 coefficients are <strong>AC coefficients</strong>. They are encoded using <strong>run-length encoding</strong> (RLE), where each nonzero value is preceded by a count of the zeros before it. Each AC symbol is a pair:</p>
+
+<div class="math-block">$$(\text{run},\;\text{size})$$</div>
+
+<p>where <em>run</em> is the number of consecutive zeros preceding this coefficient, and <em>size</em> is the number of bits needed to represent the coefficient's value. A special end-of-block (EOB) marker signals that all remaining coefficients in the block are zero — often saving dozens of explicit zeros.</p>
+
+<h3>Huffman Coding</h3>
+
+<p>Finally, the (run, size) symbols and coefficient values are compressed with <strong>Huffman coding</strong>, a variable-length prefix code that assigns shorter bit sequences to more frequent symbols. The Huffman tables are either standard default tables or custom tables optimized for the specific image (stored in the file header).</p>
+
+<p>Between the zigzag ordering, RLE, differential DC coding, and Huffman compression, the entropy coding stage typically achieves another 2&ndash;4x reduction on top of the quantization — and it's <em>completely lossless</em>. Every bit of this stage is perfectly reversible.</p>
+
+<!-- ============ STEP 6: DECODING ============ -->
+<h2><span class="step-num">6</span> Decoding</h2>
+
+<p>Decompressing a JPEG simply reverses the pipeline:</p>
+
+<ol class="decode-steps">
+  <li><strong>Entropy decode</strong> — Huffman decode the bitstream, reconstruct (run, size) symbols and coefficient values, undo RLE and differential DC coding</li>
+  <li><strong>Dequantize</strong> — multiply each coefficient by its quantization matrix entry: $\tilde{C}_{u,v} = \hat{C}_{u,v} \times Q_{u,v}$ (this cannot recover the original values — the rounding in quantization was irreversible)</li>
+  <li><strong>Inverse DCT</strong> — transform each 8&times;8 block from frequency domain back to spatial domain</li>
+  <li><strong>Upsample chroma</strong> — interpolate $C_b$ and $C_r$ channels back to full resolution</li>
+  <li><strong>YCbCr &rarr; RGB</strong> — convert back to RGB for display</li>
+</ol>
+
+<p>The decoded image is close to the original but not identical. The <em>only</em> source of loss in the entire pipeline is the quantization step — every other operation is either lossless or a mild interpolation. The quality parameter controls how aggressively quantization rounds, and therefore controls the tradeoff between file size and visual fidelity.</p>
+
+<div class="card accent">
+  <div class="card-label">The big picture</div>
+  <p style="margin:0">JPEG is a masterclass in <strong>perceptual engineering</strong>. Each step in the pipeline targets a different aspect of human visual insensitivity — our poor color resolution, our inability to see high-frequency patterns, the statistical redundancy in natural images. The mathematics is elegant (the DCT is a close relative of the Fourier transform), but the design decisions are deeply empirical, shaped by decades of psychophysics research. That's why, thirty years after its standardization, JPEG remains the most widely used image format on earth.</p>
+</div>
+
+</div><!-- .container -->
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <p>This page is a static adaptation of Sophie Wang's excellent interactive blog post on JPEG compression. The original, with full interactive React components, is available at <a href="https://sophielwang.com/blog/jpeg" target="_blank" rel="noopener">sophielwang.com/blog/jpeg</a>.</p>
+  </div>
+</footer>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+// ---- DCT Basis Function Atlas ----
+(function() {
+  const canvas = document.getElementById('dctCanvas');
+  const ctx = canvas.getContext('2d');
+  const N = 8;
+  const cellSize = 60;
+  const gap = 5;
+  const totalSize = N * cellSize + (N + 1) * gap;
+
+  canvas.width = totalSize;
+  canvas.height = totalSize;
+  canvas.style.width = Math.min(totalSize, 520) + 'px';
+  canvas.style.height = 'auto';
+
+  ctx.fillStyle = '#f5f3ef';
+  ctx.fillRect(0, 0, totalSize, totalSize);
+
+  for (let u = 0; u < N; u++) {
+    for (let v = 0; v < N; v++) {
+      const ox = gap + v * (cellSize + gap);
+      const oy = gap + u * (cellSize + gap);
+      // Compute basis function values
+      const res = 24; // internal resolution per cell
+      const imgData = ctx.createImageData(res, res);
+      for (let y = 0; y < res; y++) {
+        for (let x = 0; x < res; x++) {
+          // Map pixel to 0..7 range continuously
+          const xn = (x / res) * 8;
+          const yn = (y / res) * 8;
+          const val = Math.cos(((2 * xn + 1) * v * Math.PI) / 16) *
+                      Math.cos(((2 * yn + 1) * u * Math.PI) / 16);
+          // val in [-1, 1], map to color
+          const t = (val + 1) / 2; // 0..1
+          // Blue (-1) -> White (0) -> Warm orange (+1)
+          let r, g, b;
+          if (t < 0.5) {
+            const s = t / 0.5;
+            r = Math.round(59 + s * (250 - 59));
+            g = Math.round(130 + s * (248 - 130));
+            b = Math.round(206 + s * (245 - 206));
+          } else {
+            const s = (t - 0.5) / 0.5;
+            r = Math.round(250 + s * (220 - 250));
+            g = Math.round(248 + s * (120 - 248));
+            b = Math.round(245 + s * (60 - 245));
+          }
+          const idx = (y * res + x) * 4;
+          imgData.data[idx] = r;
+          imgData.data[idx + 1] = g;
+          imgData.data[idx + 2] = b;
+          imgData.data[idx + 3] = 255;
+        }
+      }
+      // Draw at full resolution then scale
+      const tmpCanvas = document.createElement('canvas');
+      tmpCanvas.width = res;
+      tmpCanvas.height = res;
+      tmpCanvas.getContext('2d').putImageData(imgData, 0, 0);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(ox, oy, cellSize, cellSize, 4);
+      ctx.clip();
+      ctx.drawImage(tmpCanvas, ox, oy, cellSize, cellSize);
+      ctx.restore();
+
+      // Border
+      ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(ox, oy, cellSize, cellSize, 4);
+      ctx.stroke();
+    }
+  }
+})();
+
+// ---- Quantization Matrix Explorer ----
+(function() {
+  // Standard JPEG luminance quantization matrix (quality 50)
+  const baseQ = [
+    16, 11, 10, 16,  24,  40,  51,  61,
+    12, 12, 14, 19,  26,  58,  60,  55,
+    14, 13, 16, 24,  40,  57,  69,  56,
+    14, 17, 22, 29,  51,  87,  80,  62,
+    18, 22, 37, 56,  68, 109, 103,  77,
+    24, 35, 55, 64,  81, 104, 113,  92,
+    49, 64, 78, 87, 103, 121, 120, 101,
+    72, 92, 95, 98, 112, 100, 103,  99
+  ];
+
+  const slider = document.getElementById('qSlider');
+  const valSpan = document.getElementById('qVal');
+  const matrixEl = document.getElementById('qMatrix');
+  const zeroEl = document.getElementById('zeroCount');
+
+  function scaleQ(quality) {
+    let s;
+    if (quality < 50) {
+      s = 5000 / quality;
+    } else {
+      s = 200 - 2 * quality;
+    }
+    return baseQ.map(v => {
+      const q = Math.floor((v * s + 50) / 100);
+      return Math.max(1, Math.min(255, q));
+    });
+  }
+
+  function render(quality) {
+    const q = scaleQ(quality);
+    const maxVal = Math.max(...q);
+    let html = '';
+    let zeros = 0;
+    for (let i = 0; i < 64; i++) {
+      const v = q[i];
+      if (v >= maxVal * 0.9) zeros++;
+      // Color: low values = blue, high values = red/orange
+      const t = v / 255;
+      const r = Math.round(37 + t * (220 - 37));
+      const g = Math.round(99 + t * (80 - 99));
+      const b = Math.round(235 + t * (50 - 235));
+      const textColor = t > 0.55 ? '#fff' : '#1a1a1a';
+      html += `<div class="q-cell" style="background:rgb(${r},${g},${b});color:${textColor}">${v}</div>`;
+    }
+    matrixEl.innerHTML = html;
+    zeroEl.textContent = `Max value: ${maxVal}`;
+  }
+
+  slider.addEventListener('input', () => {
+    valSpan.textContent = slider.value;
+    render(+slider.value);
+  });
+
+  render(50);
+})();
+
+// ---- Zigzag Scan Visualization ----
+(function() {
+  const canvas = document.getElementById('zigzagCanvas');
+  const ctx = canvas.getContext('2d');
+  const N = 8;
+  const cellSize = 40;
+  const gap = 4;
+  const pad = 12;
+  const totalSize = N * cellSize + (N - 1) * gap + 2 * pad;
+
+  canvas.width = totalSize;
+  canvas.height = totalSize;
+  canvas.style.width = Math.min(totalSize, 360) + 'px';
+  canvas.style.height = 'auto';
+
+  // Generate zigzag order
+  const order = [];
+  for (let s = 0; s < 2 * N - 1; s++) {
+    if (s % 2 === 0) {
+      for (let i = Math.min(s, N - 1); i >= Math.max(0, s - N + 1); i--) {
+        order.push([i, s - i]);
+      }
+    } else {
+      for (let i = Math.max(0, s - N + 1); i <= Math.min(s, N - 1); i++) {
+        order.push([i, s - i]);
+      }
+    }
+  }
+
+  ctx.fillStyle = '#faf8f5';
+  ctx.fillRect(0, 0, totalSize, totalSize);
+
+  // Draw cells
+  for (let idx = 0; idx < order.length; idx++) {
+    const [r, c] = order[idx];
+    const x = pad + c * (cellSize + gap);
+    const y = pad + r * (cellSize + gap);
+
+    const t = idx / 63;
+    // Gradient from blue to warm
+    const cr = Math.round(37 + t * (220 - 37));
+    const cg = Math.round(99 + t * (120 - 99));
+    const cb = Math.round(235 + t * (60 - 235));
+
+    ctx.fillStyle = `rgb(${cr},${cg},${cb})`;
+    ctx.beginPath();
+    ctx.roundRect(x, y, cellSize, cellSize, 5);
+    ctx.fill();
+
+    // Number
+    ctx.fillStyle = t > 0.5 ? '#fff' : '#1a1a1a';
+    ctx.font = '500 13px "JetBrains Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(idx, x + cellSize / 2, y + cellSize / 2);
+  }
+
+  // Draw connecting lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath();
+  for (let i = 0; i < order.length; i++) {
+    const [r, c] = order[i];
+    const x = pad + c * (cellSize + gap) + cellSize / 2;
+    const y = pad + r * (cellSize + gap) + cellSize / 2;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+})();
+</script>
+
+</body>
+</html>
