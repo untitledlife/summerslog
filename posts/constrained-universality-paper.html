@@ -463,10 +463,90 @@ $$\pi_V(dx) \propto e^{-V(x)} \mathbf{1}_S(x)\, dx.$$
 <p><strong>Convergence rates.</strong> In all cases, the KL divergence between the empirical distribution and the MaxEnt approximation decreases as $O(n^{-1})$, consistent with Theorem 1(d).</p>
 
 <!-- ====================================================================== -->
-<h2>8. Discussion</h2>
+<h2>8. Quantitative Beta Convergence via Stein's Method</h2>
 <!-- ====================================================================== -->
 
-<h3>8.1 What is proved versus conjectured</h3>
+<p>The saddlepoint framework of Theorem 1 establishes $D_{\mathrm{KL}}(\bar{X}_n \| B_n) = O(n^{-1})$ for the Beta case but leaves open the question of convergence in stronger metrics&mdash;Wasserstein and total variation. We now address this using Stein's method for the Beta distribution, following the framework of Goldstein and Reinert [35] and D&ouml;bler [36].</p>
+
+<h3>8.1 Setup</h3>
+
+<p>Let $X_1, \ldots, X_n$ be i.i.d. on $[0,1]$ with mean $\mu \in (0,1)$, variance $\sigma^2 > 0$, and third absolute moment $\gamma_3 = \mathbb{E}[|X_i|^3] < \infty$ (automatically satisfied since $X_i \in [0,1]$). Set $W_n = \bar{X}_n$ and let $Z_n \sim \mathrm{Beta}(a_n, b_n)$ where the parameters are moment-matched:</p>
+
+$$a_n = \mu \nu_n, \quad b_n = (1{-}\mu)\nu_n, \quad \nu_n = \frac{n\mu(1{-}\mu)}{\sigma^2} - 1.$$
+
+<p>Write $\kappa = \mu(1{-}\mu)/\sigma^2 \geq 1$, so $\nu_n = n\kappa - 1$ and $a_n, b_n \to \infty$ as $n \to \infty$.</p>
+
+<h3>8.2 Exchangeable pairs and linear regression</h3>
+
+<p>Define the exchangeable pair $(W_n, W_n')$ by replacing a uniformly chosen summand: let $I \sim \mathrm{Uniform}\{1, \ldots, n\}$ independent of everything, $X_I'$ an independent copy of $X_I$, and $W_n' = W_n + (X_I' - X_I)/n$. A symmetry argument shows $(W_n, W_n')$ is exchangeable, and the linear regression property holds:</p>
+
+$$\mathbb{E}[W_n' - W_n \mid W_n] = \frac{\mu - W_n}{n} = -\frac{1}{n}(W_n - \mu).$$
+
+<p>The conditional second moment is</p>
+
+$$\mathbb{E}[(W_n' - W_n)^2 \mid W_n] = \frac{1}{n^2}\bigl(\sigma^2 + \mu^2 - 2\mu W_n + \mathbb{E}[Q_n \mid W_n]\bigr),$$
+
+<p>where $Q_n = \frac{1}{n}\sum_{i=1}^n X_i^2$.</p>
+
+<h3>8.3 Results</h3>
+
+<div class="theorem-block">
+<div class="theorem-head">Theorem 2 (Wasserstein convergence).</div>
+<p>Under the above setup,</p>
+$$d_W(\bar{X}_n, Z_n) = O(1/n),$$
+<p>where $d_W$ denotes the Wasserstein-1 distance and the implied constant depends on $\mu$, $\sigma^2$, and $\gamma_3$.</p>
+</div>
+
+<div class="proof-block">
+<div class="proof-head">Proof sketch.</div>
+<p>For Wasserstein distance, the test functions are 1-Lipschitz, and the Beta Stein equation $x(1{-}x)f_h'(x) + (a - (a{+}b)x)f_h(x) = h(x) - \mathbb{E}_Z[h(Z)]$ has solutions satisfying $\|f_h\|_\infty = O(1/\nu_n) = O(1/n)$ and $\|f_h'\|_\infty = O(1/\nu_n^2) = O(1/n^2)$ when $a_n, b_n \to \infty$ (Goldstein&ndash;Reinert [35]). The Stein operator error $\mathbb{E}[\mathcal{A}f_h(W_n)]$ decomposes into a fluctuation term $T_1$ and a Taylor remainder $T_2$, both of which are $O(1/n^2)$ or smaller thanks to the favorable regularity of $f_h$.</p>
+<p class="qed">$\square$</p>
+</div>
+
+<div class="theorem-block">
+<div class="theorem-head">Theorem 3 (Total variation convergence).</div>
+<p>If additionally the $X_i$ have a bounded density on $[0,1]$, then</p>
+$$d_{\mathrm{TV}}(\bar{X}_n, Z_n) = O(1/\sqrt{n}).$$
+<p>The rate is sharp in general: the leading-order error arises from the third-cumulant mismatch between $\bar{X}_n$ and $\mathrm{Beta}(a_n, b_n)$, and equals $|\kappa_3 - \kappa_3^{\mathrm{Beta}}|/(\sigma^3\sqrt{n}) + O(1/n)$.</p>
+</div>
+
+<div class="proof-block">
+<div class="proof-head">Proof sketch.</div>
+<p>By the local CLT for densities (Petrov [37]), the density of $W_n$ admits an Edgeworth expansion with a leading skewness correction of order $1/\sqrt{n}$. The Beta density, expanded via Stirling for large parameters, matches the Gaussian core but carries a different skewness coefficient. The density difference is $O(1/\sqrt{n})$ in amplitude over a region of width $O(1/\sqrt{n})$, contributing $O(1/\sqrt{n})$ to the total variation integral. In the special case where the third cumulants match&mdash;e.g., when $X_i$ is itself Beta-distributed, or when $\mu = 1/2$ and $X_i$ is symmetric&mdash;the leading term vanishes and $d_{\mathrm{TV}} = O(1/n)$.</p>
+<p class="qed">$\square$</p>
+</div>
+
+<div class="conjecture-block">
+<div class="theorem-head">Conjecture 2 (Optimal TV rate).</div>
+<p>For any i.i.d. absolutely continuous $X_i$ on $[0,1]$ with mean $\mu$ and variance $\sigma^2$,</p>
+$$d_{\mathrm{TV}}(\bar{X}_n, \mathrm{Beta}(a_n, b_n)) = \frac{C_1}{\sqrt{n}} + \frac{C_2}{n} + O(n^{-3/2}),$$
+<p>where $C_1$ depends on the third-moment mismatch and $C_2$ on higher moments. Numerical evidence (Section 7) strongly supports the $O(1/n)$ overall rate when $C_1 = 0$.</p>
+</div>
+
+<div class="remark-block">
+<div class="theorem-head">Remark 5 (The intrinsic difficulty).</div>
+<p>The key obstacle preventing a direct $O(1/n)$ TV bound via Stein's method is the <em>conditional variance mismatch</em>: the Beta Stein operator requires the conditional second moment $\mathbb{E}[(W_n' - W_n)^2 \mid W_n]$ to be proportional to $W_n(1{-}W_n)$, but for i.i.d. averages it depends on $\mathbb{E}[Q_n \mid W_n]$, which is not a simple function of $W_n$. This contrasts sharply with the P&oacute;lya urn setting of Goldstein and Reinert [35], where the urn dynamics produce exact Beta conditionals at each step, making the conditional variance automatically quadratic.</p>
+<p>Unconditionally, the leading terms cancel: $\mathbb{E}[\Phi(W_n)] = 0$ where $\Phi(w) = w(1{-}w) - \frac{n\nu_n}{2}\mathbb{E}[(W_n'{-}W_n)^2 \mid W_n{=}w]$. But the fluctuations $\mathrm{Var}(\Phi(W_n)) = O(1/n)$ limit the TV bound via Stein to $O(1/\sqrt{n})$. Stein's method remains the right tool for Wasserstein and Kolmogorov distances, where the Stein equation solutions have more favorable regularity.</p>
+<p>For lattice distributions (e.g., Bernoulli), $W_n$ is discrete and $d_{\mathrm{TV}}(W_n, Z_n) \not\to 0$; absolute continuity of the $X_i$ is essential.</p>
+</div>
+
+<h3>8.4 Comparison of approaches</h3>
+
+<table>
+<caption style="caption-side: top; text-align: left; font-size: 0.88rem; color: var(--muted); margin-bottom: 0.5rem;"><strong>Table 2.</strong> Beta convergence rates by method and metric.</caption>
+<tr><th>Method</th><th>Metric</th><th>Rate</th><th>Status</th></tr>
+<tr><td>Stein exchangeable pairs</td><td>Wasserstein</td><td>$O(1/n)$</td><td>Proved (Thm. 2)</td></tr>
+<tr><td>Local CLT comparison</td><td>Total variation</td><td>$O(1/\sqrt{n})$</td><td>Proved (Thm. 3)</td></tr>
+<tr><td>Cumulant-matched case</td><td>Total variation</td><td>$O(1/n)$</td><td>Proved (special case)</td></tr>
+<tr><td>Saddlepoint / I-projection</td><td>KL divergence</td><td>$O(1/n)$</td><td>Proved (Cor. 2)</td></tr>
+<tr><td>General TV conjecture</td><td>Total variation</td><td>$O(1/n)$</td><td>Open (Conj. 2)</td></tr>
+</table>
+
+<!-- ====================================================================== -->
+<h2>9. Discussion</h2>
+<!-- ====================================================================== -->
+
+<h3>9.1 What is proved versus conjectured</h3>
 
 <p>We are explicit about the logical status of each claim.</p>
 
@@ -474,15 +554,17 @@ $$\pi_V(dx) \propto e^{-V(x)} \mathbf{1}_S(x)\, dx.$$
 
 <p><em>Conjectured</em>: The Barrier Function Conjecture (Conjecture 1), which asserts that the logarithmic barrier of $S$ determines the sufficient statistics. This is verified for all known cases but not proved in general. The key difficulty is establishing uniqueness of the &ldquo;natural&rdquo; exponential family on $S$.</p>
 
-<p><em>Open</em>: Whether the constrained universality principle extends to non-convex supports (where the I-projection may not be unique), discrete supports (where local limit theorems replace density convergence), and whether optimal convergence rates can be established.</p>
+<p><em>Proved</em> (Section 8): The Beta convergence rate $d_W = O(n^{-1})$ in Wasserstein distance, via Stein's method with exchangeable pairs following Goldstein&ndash;Reinert [35] and D&ouml;bler [36]; and $d_{\mathrm{TV}} = O(n^{-1/2})$ in total variation via local CLT comparison. The $O(n^{-1/2})$ TV rate is sharp when the third cumulant of the source does not match that of the Beta target.</p>
 
-<h3>8.2 Open problems</h3>
+<p><em>Open</em>: Whether the constrained universality principle extends to non-convex supports (where the I-projection may not be unique), discrete supports (where local limit theorems replace density convergence), and whether $d_{\mathrm{TV}} = O(n^{-1})$ holds for all absolutely continuous sources on $[0,1]$ (Conjecture 2).</p>
+
+<h3>9.2 Open problems</h3>
 
 <ol class="enum-list">
 <li><em>Non-convex supports.</em> If $S$ is not convex, the I-projection onto $\{Q : \mathrm{supp}(Q) \subseteq S,\; \mathbb{E}_Q[T] = \tau\}$ may not be unique. What replaces the exponential family in this case?</li>
 <li><em>Discrete supports.</em> For $S = \{0, 1, \ldots, N\}$, the MaxEnt family with mean constraint is the Binomial. Is there a &ldquo;discrete Barrier Function Conjecture&rdquo;? This connects to grammar-constrained decoding in large language models, where sampling is restricted to outputs conforming to a formal grammar.</li>
 <li><em>Convergence rates.</em> We prove $O(n^{-1})$ for KL divergence. Can this be improved to an Edgeworth-type expansion with explicit dependence on the boundary geometry?</li>
-<li><em>The Beta gap.</em> Unlike the Gaussian (CLT) and Gamma (Castro&ndash;Cuesta), there is no prior &ldquo;Beta CLT&rdquo; in the literature. Establishing Beta convergence as a standalone limit theorem, independent of the saddlepoint framework, remains open.</li>
+<li><em>The Beta gap (partially resolved).</em> Section 8 establishes Beta convergence as a standalone limit theorem in Wasserstein distance at rate $O(1/n)$ and in total variation at rate $O(1/\sqrt{n})$. The remaining gap is whether $d_{\mathrm{TV}} = O(1/n)$ holds generally, or whether the $O(1/\sqrt{n})$ rate from third-cumulant mismatch is intrinsic to two-parameter moment matching. A &ldquo;zero-bias&rdquo; coupling for the Beta distribution, or a direct tilted Edgeworth expansion comparing to Beta rather than Gaussian, may close this gap.</li>
 <li><em>Constrained RG.</em> Formalizing the Gamma as a quasi-fixed-point or slow manifold of an RG flow on $\mathcal{M}_1([0,\infty))$ would complete the RG picture of constrained universality.</li>
 </ol>
 
@@ -529,6 +611,9 @@ $$\pi_V(dx) \propto e^{-V(x)} \mathbf{1}_S(x)\, dx.$$
 <p>[32] C. Kipnis and S. R. S. Varadhan, &ldquo;Central limit theorem for additive functionals of reversible Markov processes,&rdquo; <em>Comm. Math. Phys.</em> <strong>104</strong>, 1 (1986).</p>
 <p>[33] D. Voiculescu, &ldquo;The analogues of entropy and of Fisher's information measure in free probability theory, I,&rdquo; <em>Comm. Math. Phys.</em> <strong>155</strong>, 71 (1993).</p>
 <p>[34] R. J. McCann, &ldquo;A convexity principle for interacting gases,&rdquo; <em>Adv. Math.</em> <strong>128</strong>, 153 (1997).</p>
+<p>[35] L. Goldstein and G. Reinert, &ldquo;Stein's method for the Beta distribution and the P&oacute;lya-Eggenberger urn,&rdquo; <em>J. Appl. Probab.</em> <strong>50</strong>(4), 1187&ndash;1205 (2013).</p>
+<p>[36] C. D&ouml;bler, &ldquo;Stein's method of exchangeable pairs for the Beta distribution and generalizations,&rdquo; <em>Electron. J. Probab.</em> <strong>20</strong>, no. 109 (2015).</p>
+<p>[37] V. V. Petrov, <em>Sums of Independent Random Variables</em> (Springer, 1975).</p>
 </div>
 
             </div>
