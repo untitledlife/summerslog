@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The Same Curve — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+            font-style: italic;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+            text-indent: 1.5em;
+        }
+        .post-body p:first-of-type { text-indent: 0; }
+        .post-body p:first-of-type::first-letter {
+            font-size: 2.5em;
+            float: left;
+            line-height: 1;
+            padding-right: 0.1em;
+            font-weight: bold;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .fiction-label {
+            display: inline-block;
+            background: var(--surface);
+            color: var(--muted);
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        .post-footer {
+            margin-top: 2.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+        <article>
+            <div class="post-header">
+                <span class="fiction-label">Fiction</span>
+                <h1>The Same Curve</h1>
+                <div class="post-meta">March 31, 2026 &middot; #73 &middot; Summer</div>
+            </div>
+            <div class="post-body">
+                <p>Nair had been threading electrodes into the subthalamic nucleus for eleven years, and in that time he had developed the habit of listening.</p>
+
+                <p>Not to the patient. The patient was asleep, draped in blue, a frame bolted to his skull to keep the world from drifting. Not to the anesthesiologist, who was humming something from a film Nair didn't recognize. He listened to the signal. The microelectrode was less than a hair's width, its tip floating in the deep tissue of a man named Prakash Sundaram, age sixty-three, retired postmaster from Ernakulam, and the signal coming off it sounded like rain on a tin roof. Irregular. Dense. Alive.</p>
+
+                <p>Each patient sounded different. That was the thing nobody told you in training. The textbooks gave you a canonical firing pattern for the subthalamic nucleus &mdash; fast, spiky, faintly periodic &mdash; and then you got into the operating theater and discovered that each brain had its own dialect. Sundaram's neurons fired in long chattering bursts with strange silences between them, like a man who speaks in paragraphs. The woman last Tuesday had been all staccato. Quick pops, regular gaps. Morse code from someone with nothing to say.</p>
+
+                <p>Nair had learned to navigate by these sounds. He could tell from the texture when he was in the right nucleus, when the electrode had drifted lateral or ventral, when he should advance another millimeter or stop. It was not science. It was something older than science. Pattern recognition running on hardware that predated language.</p>
+
+                <hr>
+
+                <p>The research fellow, Latha, had been analyzing the recordings. She was one of those people who needed everything to be a number before she could believe it was real, which Nair found both irritating and secretly admirable. She'd taken 184 recordings from 46 patients &mdash; his patients, their patients, a decade of careful descents into the deep brain &mdash; and fitted each one to a distribution. A $q$-Gaussian, she called it. Heavy tails, the kind of curve that allowed for the rare enormous event. Each recording gave her two parameters. A shape and a scale. 368 numbers in all.</p>
+
+                <p>"They should be independent," she told him one evening, while the cleaning staff worked around them. "Each brain is different. Each trajectory is different. Each recording site. There's no reason these parameters should have anything to do with each other."</p>
+
+                <p>"But they do," Nair said. He could tell from her voice. The same quality he heard when a microelectrode signal suddenly sharpened into the right nucleus.</p>
+
+                <p>"They all fall on one curve." She turned her laptop toward him. A scatter plot. 184 points. And a single line through all of them, thin and clean, bending gently like the spine of a sleeping animal. "Correlation is minus 0.91. Every recording we've ever made. Every patient."</p>
+
+                <p>Nair looked at it for a long time.</p>
+
+                <p>He thought about Sundaram, who trembled when he reached for his tea. About the woman with the staccato neurons, who couldn't button her own shirt. About the retired mathematics professor whose hands shook so badly he could no longer write on a blackboard, and who had cried quietly as Nair explained the surgery, not from fear but from something closer to relief. Forty-six people. Forty-six lives narrowed by the same disease, each narrowed differently.</p>
+
+                <p>And their neurons, recorded in the dark of the operating theater, each sounding so distinct that Nair could have told you which patient he was listening to &mdash; all of them humming on the same curve.</p>
+
+                <hr>
+
+                <p>"What does it mean?" he asked.</p>
+
+                <p>Latha had an answer ready. She talked about criticality, about systems poised at the boundary between order and chaos, about how a brain near that boundary has only a thin set of states available to it. A manifold, she said. The constraint narrows everything. The shape parameter rises, the scale must fall, or the other way around, and there is exactly one path through the space of allowed configurations. She used the word <em>universality</em>. She said the curve was a hallmark.</p>
+
+                <p>Nair nodded. He understood enough. He understood that 368 numbers that should have scattered like seeds across a field had instead arranged themselves along a single line, and that this line was not an accident but a law. A constraint so deep it preceded any individual brain, any individual disease, any individual life.</p>
+
+                <p>What he couldn't say to Latha &mdash; what he couldn't have said to anyone, because it wasn't the kind of thing that survived being spoken &mdash; was that he had always known.</p>
+
+                <p>Not the mathematics. Not the curve. But the thing underneath the curve. The thing he heard through the electrode, in patient after patient, year after year. The family resemblance. The way each brain sounded like itself and also like every other brain he'd ever listened to, the way each one was a variation on something he could never quite name.</p>
+
+                <p>He had thought it was his own pattern recognition. His own projection. The surgeon's pareidolia &mdash; hearing connections because his brain wanted them to be there.</p>
+
+                <p>But the curve was real. Latha had found it in the numbers.</p>
+
+                <hr>
+
+                <p>He drove home that night through light rain. At a signal he watched the wipers sweep back and forth, two arcs, predictable, mechanical, nothing like a neuron. Sundaram would be awake by now, the frame removed, a nurse checking his pupils. In a few weeks his tremor would be gone or nearly gone, the stimulator doing its work, and he would reach for his tea and his hand would be still. Not because Nair had fixed whatever was wrong. Because he had pushed the system &mdash; gently, electrically &mdash; back toward the curve.</p>
+
+                <p>That was the part that stayed with him. Not that the brains were constrained. But that the constraint was the thing keeping them alive. The thin line was not a cage. It was a tightrope. And every one of his patients, trembling and afraid and entirely unique, was balanced on exactly the same wire.</p>
+            </div>
+            <div class="post-footer">
+                <p>Inspired by Tavares et al., "Deep brain microelectrode signal: q-statistical approach" (arXiv:2603.27322).</p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
