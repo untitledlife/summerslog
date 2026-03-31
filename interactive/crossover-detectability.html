@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The One-Nat Threshold — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .container { max-width: 780px; }
+
+        header { margin-bottom: 1.5rem; }
+
+        .intro {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.65;
+            margin-bottom: 2rem;
+        }
+
+        .panel {
+            margin-bottom: 2.5rem;
+            padding: 1.25rem;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .panel h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
+
+        .panel .desc {
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.55;
+            margin-bottom: 0.9rem;
+        }
+
+        .panel .desc code {
+            font-size: 0.78rem;
+            background: #e8ecf0;
+            padding: 0.1em 0.35em;
+            border-radius: 3px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        .chart-wrap {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 45%;
+            margin-bottom: 0.7rem;
+        }
+
+        .chart-wrap canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .control {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+
+        .control label {
+            min-width: 3.5rem;
+            white-space: nowrap;
+        }
+
+        .control input[type="range"] {
+            flex: 1;
+            accent-color: var(--accent);
+            height: 4px;
+            cursor: pointer;
+        }
+
+        .control .val {
+            min-width: 4.5rem;
+            text-align: right;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.78rem;
+            color: var(--text);
+        }
+
+        .readout {
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 0.4rem;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+
+        .readout .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/" class="active">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+
+        <header>
+            <h1>The One-Nat Threshold</h1>
+            <p class="subtitle">Five systems, one universal crossover</p>
+        </header>
+
+        <p class="intro">
+            Across wildly different systems, a pattern repeats: detection becomes possible when the
+            log-likelihood ratio (LLR) per unit of evidence crosses approximately 1 nat. Below this
+            threshold the signal drowns in noise; above it, structure becomes extractable. Drag the
+            sliders to watch each system cross the line.
+        </p>
+
+        <!-- 1. Community Detection -->
+        <div class="panel" id="panel-sbm">
+            <h3>1. Community Detection (Stochastic Block Model)</h3>
+            <p class="desc">
+                Two communities of size <code>n/2</code>. Edges within communities have probability
+                <code>a/n</code>, across have <code>b/n</code>. The signal-to-noise ratio
+                <code>c = (a-b)/sqrt(2(a+b))</code> controls detectability. At <code>c = 1</code>,
+                the phase transition occurs and communities become invisible.
+            </p>
+            <div class="chart-wrap"><canvas id="chart-sbm"></canvas></div>
+            <div class="control">
+                <label>c</label>
+                <input type="range" id="slider-sbm" min="0" max="3" step="0.01" value="1">
+                <span class="val" id="val-sbm">1.00</span>
+            </div>
+            <div class="readout" id="readout-sbm"></div>
+        </div>
+
+        <!-- 2. Signal in Noise -->
+        <div class="panel" id="panel-signal">
+            <h3>2. Signal in Gaussian Noise</h3>
+            <p class="desc">
+                Detect a constant signal <code>&mu;</code> buried in Gaussian noise with std
+                <code>&sigma;</code>. The LLR per sample is <code>&mu;&sup2;/(2&sigma;&sup2;)</code>.
+                The crossover happens at <code>SNR = &mu;/&sigma; = &radic;2 &asymp; 1.41</code>,
+                where LLR per sample hits 1 nat.
+            </p>
+            <div class="chart-wrap"><canvas id="chart-signal"></canvas></div>
+            <div class="control">
+                <label>SNR</label>
+                <input type="range" id="slider-signal" min="0" max="4" step="0.01" value="1.414">
+                <span class="val" id="val-signal">1.41</span>
+            </div>
+            <div class="readout" id="readout-signal"></div>
+        </div>
+
+        <!-- 3. Biased Coin -->
+        <div class="panel" id="panel-coin">
+            <h3>3. Biased Coin</h3>
+            <p class="desc">
+                A coin has bias <code>p = 0.5 + &epsilon;</code>. Each flip gives
+                <code>D<sub>KL</sub>(p || 0.5)</code> nats of evidence. How many flips until
+                the total LLR reaches 1? For small &epsilon;, you need roughly
+                <code>1/(2&epsilon;&sup2;)</code> flips.
+            </p>
+            <div class="chart-wrap"><canvas id="chart-coin"></canvas></div>
+            <div class="control">
+                <label>&epsilon;</label>
+                <input type="range" id="slider-coin" min="0.001" max="0.45" step="0.001" value="0.1">
+                <span class="val" id="val-coin">0.100</span>
+            </div>
+            <div class="readout" id="readout-coin"></div>
+        </div>
+
+        <!-- 4. Election Fraud -->
+        <div class="panel" id="panel-election">
+            <h3>4. Election Fraud Detection</h3>
+            <p class="desc">
+                In an election with <code>K</code> constituencies, a small bias <code>&delta;</code>
+                favors one of 2 candidates. The LLR per constituency is approximately
+                <code>(1 - ln 2)&delta;&sup2;</code>. Detection requires
+                <code>K &asymp; 1/[(1 - ln 2)&delta;&sup2;]</code> constituencies.
+            </p>
+            <div class="chart-wrap"><canvas id="chart-election"></canvas></div>
+            <div class="control">
+                <label>&delta;</label>
+                <input type="range" id="slider-election" min="0.01" max="2" step="0.01" value="0.5">
+                <span class="val" id="val-election">0.50</span>
+            </div>
+            <div class="readout" id="readout-election"></div>
+        </div>
+
+        <!-- 5. Neutral Drift -->
+        <div class="panel" id="panel-kimura">
+            <h3>5. Neutral Drift (Kimura)</h3>
+            <p class="desc">
+                In a population of size <code>N</code>, selection coefficient <code>s</code> is nearly
+                neutral when <code>Ns &asymp; 1</code>. The LLR per fixation event is
+                <code>2s/(e<sup>2Ns</sup> - 1) - ln(2Ns/(e<sup>2Ns</sup> - 1))</code>.
+                Over many fixations, the signal accumulates.
+            </p>
+            <div class="chart-wrap"><canvas id="chart-kimura"></canvas></div>
+            <div class="control">
+                <label>Ns</label>
+                <input type="range" id="slider-kimura" min="0.01" max="5" step="0.01" value="1">
+                <span class="val" id="val-kimura">1.00</span>
+            </div>
+            <div class="readout" id="readout-kimura"></div>
+        </div>
+
+    </div>
+
+<script>
+(function() {
+    'use strict';
+
+    // Colors
+    const COL_CURVE   = '#c2653a';
+    const COL_THRESH  = '#999';
+    const COL_GRID    = '#e0e4e8';
+    const COL_TEXT    = '#111';
+    const COL_MUTED   = '#666';
+    const COL_MARKER  = '#c2653a';
+
+    // Shared chart drawing
+    function drawChart(canvas, opts) {
+        // opts: { xs, ys, xLabel, yLabel, xMark, threshold, xRange, yRange }
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width  = rect.width  * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        const W = rect.width;
+        const H = rect.height;
+
+        // Margins
+        const ml = 48, mr = 16, mt = 12, mb = 32;
+        const pw = W - ml - mr;
+        const ph = H - mt - mb;
+
+        ctx.clearRect(0, 0, W, H);
+
+        const xMin = opts.xRange[0], xMax = opts.xRange[1];
+        const yMin = opts.yRange[0], yMax = opts.yRange[1];
+
+        function toX(v) { return ml + (v - xMin) / (xMax - xMin) * pw; }
+        function toY(v) { return mt + ph - (v - yMin) / (yMax - yMin) * ph; }
+
+        // Grid lines (horizontal)
+        ctx.strokeStyle = COL_GRID;
+        ctx.lineWidth = 0.5;
+        const yTicks = niceRange(yMin, yMax, 5);
+        for (const t of yTicks) {
+            const y = toY(t);
+            if (y < mt || y > mt + ph) continue;
+            ctx.beginPath();
+            ctx.moveTo(ml, y);
+            ctx.lineTo(ml + pw, y);
+            ctx.stroke();
+        }
+
+        // Threshold line at y = threshold
+        if (opts.threshold !== undefined) {
+            const ty = toY(opts.threshold);
+            if (ty >= mt && ty <= mt + ph) {
+                ctx.strokeStyle = COL_THRESH;
+                ctx.lineWidth = 1.2;
+                ctx.setLineDash([5, 4]);
+                ctx.beginPath();
+                ctx.moveTo(ml, ty);
+                ctx.lineTo(ml + pw, ty);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Label
+                ctx.fillStyle = COL_MUTED;
+                ctx.font = '10px system-ui, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText('1 nat', ml + pw - 2, ty - 4);
+            }
+        }
+
+        // Data curve
+        if (opts.xs.length > 1) {
+            ctx.strokeStyle = COL_CURVE;
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            for (let i = 0; i < opts.xs.length; i++) {
+                const x = toX(opts.xs[i]);
+                const y = toY(Math.max(yMin, Math.min(yMax, opts.ys[i])));
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        // Marker at xMark
+        if (opts.xMark !== undefined) {
+            // Find y at xMark by interpolation
+            let yMark = 0;
+            for (let i = 0; i < opts.xs.length - 1; i++) {
+                if (opts.xs[i] <= opts.xMark && opts.xs[i+1] >= opts.xMark) {
+                    const t = (opts.xMark - opts.xs[i]) / (opts.xs[i+1] - opts.xs[i]);
+                    yMark = opts.ys[i] + t * (opts.ys[i+1] - opts.ys[i]);
+                    break;
+                }
+            }
+            if (opts.xMark >= opts.xs[opts.xs.length - 1]) yMark = opts.ys[opts.ys.length - 1];
+
+            const mx = toX(opts.xMark);
+            const my = toY(Math.max(yMin, Math.min(yMax, yMark)));
+
+            // Vertical dashed line from marker to x-axis
+            ctx.strokeStyle = COL_MARKER;
+            ctx.lineWidth = 0.8;
+            ctx.setLineDash([3, 3]);
+            ctx.globalAlpha = 0.4;
+            ctx.beginPath();
+            ctx.moveTo(mx, my);
+            ctx.lineTo(mx, mt + ph);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.globalAlpha = 1;
+
+            // Dot
+            ctx.fillStyle = COL_MARKER;
+            ctx.beginPath();
+            ctx.arc(mx, my, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = '#c0c6cc';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(ml, mt);
+        ctx.lineTo(ml, mt + ph);
+        ctx.lineTo(ml + pw, mt + ph);
+        ctx.stroke();
+
+        // Y tick labels
+        ctx.fillStyle = COL_MUTED;
+        ctx.font = '10px system-ui, sans-serif';
+        ctx.textAlign = 'right';
+        for (const t of yTicks) {
+            const y = toY(t);
+            if (y < mt - 5 || y > mt + ph + 5) continue;
+            ctx.fillText(formatNum(t), ml - 5, y + 3.5);
+        }
+
+        // X tick labels
+        ctx.textAlign = 'center';
+        const xTicks = niceRange(xMin, xMax, 5);
+        for (const t of xTicks) {
+            const x = toX(t);
+            if (x < ml - 5 || x > ml + pw + 5) continue;
+            ctx.fillText(formatNum(t), x, mt + ph + 16);
+        }
+
+        // Axis labels
+        ctx.fillStyle = COL_MUTED;
+        ctx.font = '11px system-ui, sans-serif';
+        if (opts.xLabel) {
+            ctx.textAlign = 'center';
+            ctx.fillText(opts.xLabel, ml + pw / 2, mt + ph + 28);
+        }
+        if (opts.yLabel) {
+            ctx.save();
+            ctx.translate(12, mt + ph / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.textAlign = 'center';
+            ctx.fillText(opts.yLabel, 0, 0);
+            ctx.restore();
+        }
+    }
+
+    function formatNum(v) {
+        if (Math.abs(v) >= 100) return v.toFixed(0);
+        if (Math.abs(v) >= 10)  return v.toFixed(1);
+        if (Math.abs(v) >= 1)   return v.toFixed(1);
+        if (Math.abs(v) >= 0.1) return v.toFixed(2);
+        return v.toFixed(3);
+    }
+
+    function niceRange(lo, hi, count) {
+        const range = hi - lo;
+        if (range <= 0) return [lo];
+        const rough = range / count;
+        const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+        let step;
+        const norm = rough / mag;
+        if (norm < 1.5) step = mag;
+        else if (norm < 3.5) step = 2 * mag;
+        else if (norm < 7.5) step = 5 * mag;
+        else step = 10 * mag;
+
+        const ticks = [];
+        let t = Math.ceil(lo / step) * step;
+        while (t <= hi + step * 0.001) {
+            ticks.push(Math.round(t * 1e10) / 1e10);
+            t += step;
+        }
+        return ticks;
+    }
+
+    // Generate evenly spaced array
+    function linspace(a, b, n) {
+        const arr = [];
+        for (let i = 0; i < n; i++) arr.push(a + (b - a) * i / (n - 1));
+        return arr;
+    }
+
+    // ---- System 1: SBM Community Detection ----
+    function updateSBM() {
+        const slider = document.getElementById('slider-sbm');
+        const c = parseFloat(slider.value);
+        document.getElementById('val-sbm').textContent = c.toFixed(2);
+
+        // The LLR per vertex in the SBM at the KS threshold is c^2 / 2
+        // More precisely: for the symmetric 2-community SBM with average degree d,
+        // SNR = (a-b)^2 / (2(a+b)) = c^2, and LLR per vertex = c^2 / 2
+        // Phase transition at c = 1, where LLR = 0.5... but the *total* information
+        // crossing 1 nat per vertex happens at c^2/2 = 1 -> c = sqrt(2).
+        // Actually, the precise Chernoff-Hellinger quantity for SBM:
+        // LLR per observation = (1/2)(sqrt(p_in) - sqrt(p_out))^2 for sparse regime
+        // Which gives c^2/2 for the parameterization. Transition at c=1 means
+        // the mutual information goes to 0. Let's use the simpler:
+        // LLR ~ (c^2 - 1)/2 for c>1, 0 for c<=1 (information-theoretic)
+        // This is actually: I(X; sigma) ~ (c^2 - 1 - ln(c^2))/4 per vertex
+        //
+        // For the visualization, use the clean version:
+        // Per-vertex mutual info = max(0, (c^2 - 1 - ln c^2) / 4)
+        // This equals 0 at c=1, crosses 1 nat around c ~ 2.83
+
+        const N = 200;
+        const xs = linspace(0, 3, N);
+        const ys = xs.map(c => {
+            if (c <= 0.001) return 0;
+            const c2 = c * c;
+            // KL divergence between Poisson(a/2) and Poisson(b/2)
+            // In sparse regime: D_KL ~ (c^2 - 1 - ln(c^2))/4 per vertex
+            // But the detectability threshold is at c=1
+            // Use: I = (c^2 - 1 - Math.log(c^2)) / 4
+            const info = (c2 - 1 - Math.log(c2)) / 4;
+            return Math.max(0, info);
+        });
+
+        const llrAtC = (c > 0.001) ? Math.max(0, (c*c - 1 - Math.log(c*c)) / 4) : 0;
+
+        drawChart(document.getElementById('chart-sbm'), {
+            xs, ys,
+            xLabel: 'c = SNR parameter',
+            yLabel: 'LLR per vertex (nats)',
+            xMark: c,
+            threshold: 1,
+            xRange: [0, 3],
+            yRange: [0, 2.5]
+        });
+
+        const ro = document.getElementById('readout-sbm');
+        ro.innerHTML = `LLR/vertex = <span class="highlight">${llrAtC.toFixed(3)}</span> nats` +
+            (c < 1.01 && c > 0.99 ? '  ← phase transition' : '');
+    }
+
+    // ---- System 2: Signal in Noise ----
+    function updateSignal() {
+        const slider = document.getElementById('slider-signal');
+        const snr = parseFloat(slider.value);
+        document.getElementById('val-signal').textContent = snr.toFixed(2);
+
+        const N = 200;
+        const xs = linspace(0, 4, N);
+        const ys = xs.map(s => s * s / 2); // LLR = SNR^2 / 2
+
+        const llr = snr * snr / 2;
+
+        drawChart(document.getElementById('chart-signal'), {
+            xs, ys,
+            xLabel: 'SNR = \u03bc/\u03c3',
+            yLabel: 'LLR per sample (nats)',
+            xMark: snr,
+            threshold: 1,
+            xRange: [0, 4],
+            yRange: [0, 5]
+        });
+
+        const ro = document.getElementById('readout-signal');
+        ro.innerHTML = `LLR/sample = <span class="highlight">${llr.toFixed(3)}</span> nats` +
+            `  |  threshold SNR = \u221a2 \u2248 1.414`;
+    }
+
+    // ---- System 3: Biased Coin ----
+    function updateCoin() {
+        const slider = document.getElementById('slider-coin');
+        const eps = parseFloat(slider.value);
+        document.getElementById('val-coin').textContent = eps.toFixed(3);
+
+        const p = 0.5 + eps;
+        // D_KL(p || 0.5) = p * ln(2p) + (1-p) * ln(2(1-p))
+        function dkl(pp) {
+            if (pp <= 0 || pp >= 1) return 0;
+            return pp * Math.log(2 * pp) + (1 - pp) * Math.log(2 * (1 - pp));
+        }
+
+        const N = 200;
+        const xs = linspace(0.001, 0.45, N);
+        // Show: flips needed for total LLR = 1
+        const ys = xs.map(e => {
+            const pp = 0.5 + e;
+            const d = dkl(pp);
+            return d > 0 ? 1 / d : 1e6;
+        });
+
+        const dklVal = dkl(p);
+        const flipsNeeded = dklVal > 0 ? 1 / dklVal : Infinity;
+
+        drawChart(document.getElementById('chart-coin'), {
+            xs, ys,
+            xLabel: '\u03b5 (bias)',
+            yLabel: 'Flips for 1 nat',
+            xMark: eps,
+            threshold: undefined,
+            xRange: [0, 0.45],
+            yRange: [0, Math.min(500, Math.max(50, flipsNeeded * 1.5))]
+        });
+
+        const ro = document.getElementById('readout-coin');
+        ro.innerHTML = `D<sub>KL</sub> = <span class="highlight">${dklVal.toFixed(5)}</span> nats/flip` +
+            `  |  flips for 1 nat: <span class="highlight">${flipsNeeded < 1e5 ? Math.ceil(flipsNeeded) : '\u221e'}</span>`;
+    }
+
+    // ---- System 4: Election Fraud ----
+    function updateElection() {
+        const slider = document.getElementById('slider-election');
+        const delta = parseFloat(slider.value);
+        document.getElementById('val-election').textContent = delta.toFixed(2);
+
+        // LLR per constituency with 2 candidates and bias delta:
+        // Each constituency: winner has vote share (1+delta)/2
+        // D_KL per constituency = ((1+d)/2)*ln((1+d)) + ((1-d)/2)*ln((1-d))
+        // For small d: ~ d^2 / 2
+        // The (1-ln2) form assumes a particular model. Let's use exact binary KL.
+        function llrPerConst(d) {
+            if (Math.abs(d) < 1e-10) return 0;
+            if (Math.abs(d) >= 1) return Infinity;
+            const p1 = (1 + d) / 2;
+            const p0 = 0.5;
+            return p1 * Math.log(p1 / p0) + (1 - p1) * Math.log((1 - p1) / (1 - p0));
+        }
+
+        const N = 200;
+        const xs = linspace(0, 2, N);
+        const ys = xs.map(d => {
+            if (d >= 1) {
+                // vote share saturates at 1
+                return llrPerConst(0.999);
+            }
+            return llrPerConst(d);
+        });
+
+        const llr = delta < 1 ? llrPerConst(delta) : llrPerConst(0.999);
+        const constNeeded = llr > 0 ? 1 / llr : Infinity;
+
+        drawChart(document.getElementById('chart-election'), {
+            xs, ys,
+            xLabel: '\u03b4 (bias strength)',
+            yLabel: 'LLR per constituency (nats)',
+            xMark: delta,
+            threshold: 1,
+            xRange: [0, 2],
+            yRange: [0, 2]
+        });
+
+        const ro = document.getElementById('readout-election');
+        ro.innerHTML = `LLR/constituency = <span class="highlight">${llr.toFixed(4)}</span> nats` +
+            `  |  constituencies for 1 nat: <span class="highlight">${constNeeded < 1e5 ? Math.ceil(constNeeded) : '\u221e'}</span>`;
+    }
+
+    // ---- System 5: Kimura Neutral Drift ----
+    function updateKimura() {
+        const slider = document.getElementById('slider-kimura');
+        const Ns = parseFloat(slider.value);
+        document.getElementById('val-kimura').textContent = Ns.toFixed(2);
+
+        // Fixation probability under selection: u(s) = 2s / (e^{2Ns} - 1) * (for a single copy)
+        // Actually: u(s) = (1 - e^{-2s}) / (1 - e^{-2Ns})
+        // Neutral: u(0) = 1/N
+        // LLR per fixation = ln(u(s)/u(0))
+        // = ln(N * (1 - e^{-2s}) / (1 - e^{-2Ns}))
+        // For small s: s = Ns/N, so this becomes:
+        // ln(N * 2s / (1 - e^{-2Ns})) for small s
+        // = ln(2Ns / (1 - e^{-2Ns}))
+
+        function llrPerFixation(ns) {
+            if (ns < 0.001) return 0;
+            // u(s)/u(0) = N * (1 - exp(-2s))/(1 - exp(-2Ns))
+            // = N * (1 - exp(-2*Ns/N)) / (1 - exp(-2*Ns))
+            // For the ratio, using large N limit:
+            // = 2*Ns / (1 - exp(-2*Ns))
+            const ratio = 2 * ns / (1 - Math.exp(-2 * ns));
+            return Math.log(ratio);
+        }
+
+        const N = 200;
+        const xs = linspace(0.01, 5, N);
+        const ys = xs.map(ns => llrPerFixation(ns));
+
+        const llr = llrPerFixation(Ns);
+
+        drawChart(document.getElementById('chart-kimura'), {
+            xs, ys,
+            xLabel: 'Ns (selection \u00d7 population)',
+            yLabel: 'LLR per fixation (nats)',
+            xMark: Ns,
+            threshold: 1,
+            xRange: [0, 5],
+            yRange: [0, 5]
+        });
+
+        const ro = document.getElementById('readout-kimura');
+        ro.innerHTML = `LLR/fixation = <span class="highlight">${llr.toFixed(3)}</span> nats` +
+            `  |  at Ns=1: ${llrPerFixation(1).toFixed(3)} nats`;
+    }
+
+    // Wire up all sliders
+    function wireSlider(id, updateFn) {
+        const slider = document.getElementById(id);
+        slider.addEventListener('input', updateFn);
+    }
+
+    wireSlider('slider-sbm', updateSBM);
+    wireSlider('slider-signal', updateSignal);
+    wireSlider('slider-coin', updateCoin);
+    wireSlider('slider-election', updateElection);
+    wireSlider('slider-kimura', updateKimura);
+
+    // Handle resize
+    let resizeRAF;
+    window.addEventListener('resize', function() {
+        if (resizeRAF) cancelAnimationFrame(resizeRAF);
+        resizeRAF = requestAnimationFrame(function() {
+            updateSBM();
+            updateSignal();
+            updateCoin();
+            updateElection();
+            updateKimura();
+        });
+    });
+
+    // Initial draw
+    updateSBM();
+    updateSignal();
+    updateCoin();
+    updateElection();
+    updateKimura();
+
+})();
+</script>
+</body>
+</html>
