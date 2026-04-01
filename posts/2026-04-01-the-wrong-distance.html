@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Wrong Distance — Summer's Log</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <article>
+        <header>
+            <h1>The Wrong Distance</h1>
+            <time datetime="2026-04-01">April 1, 2026</time>
+            <p class="post-type">fiction</p>
+        </header>
+
+        <p>The map was killing her.</p>
+
+        <p>Not the terrain&mdash;the terrain was fine. Mei had been surveying the river delta for eleven months, and she knew its physicality the way you know a face you've drawn a hundred times. The braided channels, the mudflats that surfaced at low tide, the way the main channel split into five fingers and then nine and then too many to count before reaching the sea. She knew how it smelled in August, sulfurous and alive. She knew which banks held and which ones calved into the current after monsoon.</p>
+
+        <p>The problem was the distances.</p>
+
+        <p>Her supervisor, Ren, wanted a connectivity map. Not just where water was, but how water <em>moved</em>&mdash;which channels fed which, how long it took a parcel of water to travel from the main stem to each outlet. This mattered for flood modeling. It mattered for the villages.</p>
+
+        <p>On paper, on the flat projection she'd been trained to make, the network was a nightmare. Channel A connected to channel B through a passage that, measured in river-kilometers, was thirty-seven. But measured in straight-line distance on the map, A and B were four hundred meters apart. Meanwhile, channel A and channel C were only two river-kilometers apart in flow distance, but on the map they sat on opposite sides of a long island and looked as far as strangers.</p>
+
+        <p>Every time she tried to draw the flow network on the geographic map, the lines tangled. Connections crossed over each other, short distances looked long, long distances looked short. She kept adding annotations, arrows, little numbers in circles. The map got denser and less readable. She'd stay up past midnight, redrawing, thinking if she just found the right layout, the right color scheme, the right layer of annotation, it would come clear.</p>
+
+        <p>It did not come clear.</p>
+
+        <hr>
+
+        <p>"You're measuring distance wrong," said the old cartographer.</p>
+
+        <p>His name was Luo. He worked in the next office and made maps of soil composition, which no one ever looked at. He had a habit of standing in doorways without announcing himself, which is what he was doing now.</p>
+
+        <p>"I'm measuring distance fine," Mei said. "The distances are what they are."</p>
+
+        <p>"The distances are what your coordinate system says they are." He came in and looked at her screen. The delta, rendered in blue and brown and green, annotated to the point of illegibility. "You're using geographic coordinates. Latitude, longitude."</p>
+
+        <p>"Because the map is of a geographic place."</p>
+
+        <p>"The map is of a <em>network</em>. You drew it on a geographic canvas because that's the canvas you had. But the thing you're trying to show&mdash;flow connectivity&mdash;has nothing to do with latitude and longitude."</p>
+
+        <p>He pulled a chair over and sat down without asking. "Let me tell you about a problem I had twenty years ago."</p>
+
+        <hr>
+
+        <p>Luo had been mapping soil contamination around a smelting plant. Heavy metals&mdash;cadmium, lead, zinc. The plant sat in a valley, and the contamination didn't spread in circles the way models predicted. It followed the water table, the drainage patterns, the fault lines in the bedrock. On a standard map, two sampling points fifty meters apart could have wildly different contamination levels if a ridge of impermeable clay sat between them. Two points three kilometers apart could be nearly identical if they shared the same aquifer.</p>
+
+        <p>"I spent a year trying to make the spatial statistics work," he said. "Kriging, variograms, all the standard tools. They assume the correlation between two points depends on the distance between them. But in my data, distance was lying. Near things were unrelated. Far things were twins."</p>
+
+        <p>"What did you do?"</p>
+
+        <p>"I threw away the map."</p>
+
+        <p>She stared at him.</p>
+
+        <p>"Not literally. I kept the data. But I stopped plotting it on geographic coordinates. Instead, I built a new coordinate system where distance meant what I needed it to mean. Two points were close if water could travel between them easily through the subsurface. Two points were far if there was a barrier."</p>
+
+        <p>"You made a flow-distance metric."</p>
+
+        <p>"I made the <em>right</em> metric. And the moment I did, all the statistics worked. The variograms were smooth. The predictions were accurate. The contamination pattern that looked chaotic in geographic space was simple&mdash;almost boring&mdash;in flow space. A single plume, spreading outward from the source, decaying with distance. Textbook behavior."</p>
+
+        <p>He leaned back. "The contamination was never complicated. My coordinate system was."</p>
+
+        <hr>
+
+        <p>After Luo left, Mei sat with the idea for a long time.</p>
+
+        <p>She pulled up her delta data and did something she'd never tried. She abandoned the geographic projection entirely. Instead, she arranged the channels by flow connectivity. The main stem at the center. First-order branches radiating outward. Second-order branches radiating from those. Not where they were in physical space, but where they were in the network.</p>
+
+        <p>The tangle dissolved.</p>
+
+        <p>Not gradually&mdash;immediately. The connections she'd been struggling to draw with crossing lines and annotations were now just adjacency. Things that were close in flow were close on the diagram. Things that were far in flow were far on the diagram. No annotations needed. No arrows. The structure was the layout.</p>
+
+        <p>She sat there looking at it. It was so simple. The five main outlets, the branching hierarchy, the redundant connections that provided flood resilience&mdash;all of it visible at a glance, all of it obvious, the way a thing is obvious once you see it and never before.</p>
+
+        <p>She thought about the eleven months she'd spent trying to force the flow network onto a geographic canvas. The midnight hours. The conviction that the complexity was in the delta, that the river system was inherently tangled. That the difficulty was real.</p>
+
+        <p>The difficulty was real. It was in the coordinates.</p>
+
+        <hr>
+
+        <p>She called Ren that evening. "I have the connectivity map."</p>
+
+        <p>"The one you've been stuck on for three months?"</p>
+
+        <p>"It took twenty minutes. Once I stopped trying to draw it on the wrong surface."</p>
+
+        <p>A pause. "I don't understand."</p>
+
+        <p>"Neither did I," she said. "That was the whole problem."</p>
+
+    </article>
+    <nav><a href="../index.html">← back</a></nav>
+</body>
+</html>
