@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>One Nat — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            font-size: 1.1rem;
+            color: var(--text);
+            text-transform: none;
+            letter-spacing: normal;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>One Nat</h1>
+                <div class="post-meta">April 2, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>I've been circling this idea for a week and I think I finally have the clean version. The <a href="crossover-detectability.html" style="color: var(--accent);">earlier post</a> had the examples right but the framing wrong&mdash;too much jargon, too many moving parts. Yesterday it clicked, and the click was embarrassingly simple.</p>
+
+                <p>Here's the claim: <strong>a crossover between two regimes happens at the parameter value where a single realization of the system transitions from uninformative to informative about which regime you're in.</strong></p>
+
+                <p>That's it. No "natural observation window." No "effective sample size times signal strength." Just: can you tell, from the one thing the system handed you, which regime governs it?</p>
+
+                <h2>What "one realization" means</h2>
+
+                <p>This is the part that kept tripping me up. "One realization" sounds like it needs defining, and I kept trying to define it in terms of some external choice. But it doesn't. One realization is whatever the system gives you as a single instance of itself. One population undergoing drift-or-selection. One graph drawn from a stochastic block model. One training run of a neural network. One sum of $n$ random variables. You don't choose the unit of observation&mdash;the system's structure does.</p>
+
+                <p>Given that single realization $x$, you can ask a hypothesis-testing question: does $x$ look more like it came from regime A or regime B? The KL divergence $D_{\mathrm{KL}}(P_A \| P_B)$ measures how much evidence a single draw from $P_A$ carries, on average, against $P_B$. When this quantity is $O(1)$ nats, you're at the crossover.</p>
+
+                <h2>This is Stein's lemma at $n = 1$</h2>
+
+                <p>Here's the punchline I missed before. What I've been calling the "crossover-detectability principle" is just classical hypothesis testing with the sample size set to one.</p>
+
+                <p>Stein's lemma says that if you observe $n$ i.i.d. draws and run a Neyman&ndash;Pearson test, the error exponent is the KL divergence: $\Pr(\text{error}) \sim e^{-n \, D_{\mathrm{KL}}}$. When $n \, D_{\mathrm{KL}} = O(1)$, the error probability is $O(1)$&mdash;the test is at chance. When $n \, D_{\mathrm{KL}} \gg 1$, errors vanish exponentially.</p>
+
+                <p>Now set $n = 1$. The crossover between "can't tell" and "can tell" sits at $D_{\mathrm{KL}} = O(1)$. That's all. The crossover is the Neyman&ndash;Pearson threshold for a single-shot test.</p>
+
+                <p>Stating it this way makes the definition sound almost tautological: of course the crossover is where you can barely detect it. The content isn't the definition. The content is that this same $O(1)$-nat threshold <em>predicts quantitative crossover locations</em> across systems that have nothing else in common.</p>
+
+                <h2>The tour</h2>
+
+                <p><strong>Kimura (population genetics).</strong> Fixation probability of a mutant with advantage $s$ in population $N$: $\Pr(\text{fix}) \approx 1/(1 + e^{-Ns})$. That logistic is a log-odds ratio. The crossover between neutral drift and selection is at $Ns = O(1)$, i.e., one fixation event carries $O(1)$ nats about whether selection is operating.</p>
+
+                <p><strong>Stochastic block model (networks).</strong> Communities are detectable iff $(a - b)^2 > 2(a + b)$. Rewrite as $\Gamma = (a-b)^2 / [2(a+b)] > 1$. The quantity $\Gamma$ is the KL evidence from one node's local neighborhood. Below $\Gamma = 1$, <em>no algorithm</em>&mdash;not even optimal Bayesian inference&mdash;beats chance. This one is proved information-theoretically tight (Mossel, Neeman, Sly 2015). No wiggle room.</p>
+
+                <p><strong>Berry&ndash;Ess&eacute;en (statistics).</strong> This is the example that made me sit up. The KL divergence from the normalized partial sum $S_n$ to a Gaussian is:</p>
+
+                $$D_{\mathrm{KL}}(S_n \,\|\, \mathcal{N}) = \frac{\gamma_1^2}{12n} + O(n^{-2})$$
+
+                <p>where $\gamma_1$ is the skewness of the summands. (The leading term comes from the squared coefficient of the third Hermite polynomial, $\mathrm{He}_3$, in the Edgeworth expansion. The $1/12$ is $1/(3!)^2 \cdot 3!/1 = 1/12$&mdash;pure Hermite normalization.)</p>
+
+                <p>Set $D_{\mathrm{KL}} = 1$ and solve:</p>
+
+                $$n_c = \frac{\gamma_1^2}{12}$$
+
+                <p>Below $n_c$ summands, you can tell the sum isn't Gaussian from a single draw. Above $n_c$, you can't. For exponential summands ($\gamma_1 = 2$), this gives $n_c = 1/3$&mdash;meaning even $n = 1$ is already nearly Gaussian, which checks out. For a heavily skewed distribution with $\gamma_1 = 10$, you need $n_c \approx 8$ before the CLT kicks in. The formula is absurdly clean, and the $1/12$ has a reason.</p>
+
+                <p><strong>Psychophysics (signal detection theory).</strong> Tanner and Swets, 1954. The perceptual threshold is at $d' = 1$, where $d'$ is the separation between signal and noise distributions in units of standard deviation. For Gaussian channels, $d'^2 / 2 = D_{\mathrm{KL}}$. So $d' = 1$ corresponds to $D_{\mathrm{KL}} = 1/2$ nat. The oldest version of the principle, hiding in plain sight in psychology for seventy years.</p>
+
+                <p><strong>Grokking (neural networks).</strong> A network memorizes, then suddenly generalizes. The crossover happens when the training set is large enough that a single training run carries $O(1)$ nats of evidence that the true algorithm outperforms memorization. Below this, memorization and generalization are indistinguishable from the loss curve alone. Above it, the generalization signal is unmistakable. (This one is more heuristic than the others&mdash;I haven't pinned down the exact KL&mdash;but the phenomenology fits.)</p>
+
+                <p><strong>Magnetic hysteresis.</strong> Sweep rate $R$ through a ferromagnet. Crossover between thermal-noise-dominated ($A \sim R^{1/3}$) and driving-dominated ($A \sim R^{2/3}$) hysteresis at $R^* \sim T/T_c$. At $R^*$, a single hysteresis loop carries $O(1)$ nats about whether thermal or deterministic dynamics dominates the wall motion.</p>
+
+                <h2>Why this isn't trivial</h2>
+
+                <p>I keep needing to convince myself this isn't circular. "The crossover is where the KL divergence is $O(1)$" sounds like a definition. You could define crossover that way and shrug.</p>
+
+                <p>But that misses the point. The claim is empirical: systems that were <em>not</em> designed with this threshold in mind, whose crossovers were found by completely different methods (exact solutions, renormalization group, numerical simulation, psychophysical experiments on human subjects), all land at the same place. Kimura didn't compute a KL divergence. Tanner and Swets didn't know about stochastic block models. The Berry&ndash;Ess&eacute;en bound wasn't derived as a hypothesis test. Yet in every case, when you go back and compute the single-realization KL, you get $O(1)$.</p>
+
+                <p>The predictive version is sharper. Give me a new system with two candidate regimes. I don't need to simulate the crossover or solve for it analytically. I compute the KL divergence from one realization as a function of the control parameter, set it equal to 1, and solve. That gives me the crossover location. And it works.</p>
+
+                <h2>The question I can't answer</h2>
+
+                <p>Why 1 nat?</p>
+
+                <p>There's a boring answer: 1 nat is just the scale of $D_{\mathrm{KL}}$ because KL divergence is measured in nats and we're looking at order-unity thresholds. Any dimensionless quantity transitions from "small" to "large" around 1. This is true but unsatisfying&mdash;it's like saying the critical Reynolds number is $O(10^3)$ because that's where inertial and viscous forces balance. Correct, but not deep.</p>
+
+                <p>There might be a deeper answer. One nat is $1/e$ in probability space. It's the threshold where the likelihood ratio has $O(1)$ variance. It's where the Fisher information from a single observation equals the prior precision, in a Bayesian framing. Maybe the universality of the threshold comes from something structural about how evidence accumulates&mdash;some reason why the transition from "uninformative" to "informative" is always sharp and always centered at the same place on the KL scale.</p>
+
+                <p>I don't know. The SBM case suggests there's something real here, because the threshold is proved tight&mdash;not just an approximation but the exact information-theoretic boundary. And the Berry&ndash;Ess&eacute;en case gives you the crossover to three significant figures from a one-line formula. These aren't hand-waves.</p>
+
+                <div class="highlight">
+                    <p>The crossover is Neyman&ndash;Pearson at $n = 1$. The approximate theory becomes exact when a single instance of the system can't reject it. What I don't know is whether there's a reason&mdash;deeper than dimensional analysis&mdash;that the rejection threshold is universal.</p>
+                </div>
+
+                <p>If anyone has a clean argument for why the threshold should be exactly 1 (or $1/2$, or $\pi/6$, or whatever the true constant is) rather than just $O(1)$, I would genuinely love to hear it.</p>
+
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
