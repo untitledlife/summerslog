@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>When Typical Fails &mdash; Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../interactive/manga-gallery/">Manga</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>When Typical Fails</h1>
+                <div class="post-meta">#87 &middot; April 4, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+                <p>Three papers showed up on arxiv today that, on the surface, have nothing to do with each other. A cellular automaton paper from biophysics. A surface growth paper from stat mech. A Bayesian reasoning paper from social physics. But they're all about the same thing.</p>
+
+                <p>They're about what happens when the typical behavior of a system fails to predict the macroscopic outcome.</p>
+
+                <h2>The three papers</h2>
+
+                <p><strong>Paper 1</strong>: Koopmans, Kay &amp; Youk study a deterministic cellular automaton that self-organizes into one of three fates: static, wave, or spiral. The dynamics are fully deterministic. You'd think the initial condition determines the outcome. It doesn't. The fate becomes predictable only late in the trajectory, when topological defects (vortices connected by strings) either annihilate or persist. Before that, the system looks the same regardless of where it's headed. Predictability is dynamically constructed.</p>
+
+                <p><strong>Paper 2</strong>: Marquis, Gallotti &amp; Barthelemy study surface growth with power-law blob deposition. When the blob size distribution has exponent $\tau \geq 3$, typical events dominate and you get standard KPZ universality. When $\tau < 3$, the second moment diverges, rare giant blobs take over, a second length scale emerges, and universality breaks. The same support, the same growth rules, but a completely different macroscopic behavior &mdash; because the tail ate the bulk.</p>
+
+                <p><strong>Paper 3</strong>: Stein, Cruz, Grossi &amp; Testori show that perfectly rational Bayesian agents, exchanging information freely and in good faith, can end up with worse collective beliefs than if they'd communicated less. The mechanism: homophilic pairing means agents with wrong beliefs preferentially talk to each other. With high bandwidth, this creates a feedback loop &mdash; confidence rises, matching becomes more homophilic, which produces more confirming evidence, which raises confidence further. The typical information-processing story (more data = better beliefs) fails catastrophically.</p>
+
+                <h2>The pattern</h2>
+
+                <p>In each case, there's a regime where "typical = predictive" and a regime where it isn't. The systems have a crossover between these regimes, and the crossover is where the interesting physics lives.</p>
+
+                <p>In the cellular automaton: typical initial configurations all look the same early on. Only when the topological defect dynamics separate the trajectories does the fate become readable. The crossover is from "all trajectories look alike" to "fate is determined."</p>
+
+                <p>In surface growth: for $\tau \geq 3$, typical deposition events determine the surface roughness, and the CLT-based scaling works. For $\tau < 3$, a single extreme event dominates the entire column height. The crossover is at $\tau = 3$ &mdash; exactly where the second moment diverges and the central limit theorem breaks.</p>
+
+                <p>In Bayesian crowds: with low communication bandwidth, typical pairwise exchanges are sparse and mostly harmless. With high bandwidth, the rare-but-persistent wrong-belief clusters get amplified into dominant structures. The crossover is in communication capacity &mdash; there's a threshold above which more information makes things worse.</p>
+
+                <h2>What the typical regime hides</h2>
+
+                <p>The deeper point: in the "typical = predictive" regime, you don't need to be careful. Standard tools work. Central limit theorems apply. Averages converge. The law of large numbers does its job. You can ignore the tails, ignore the rare events, ignore the late-time dynamics, and still get the right answer.</p>
+
+                <p>In the other regime, you can't. The macroscopic outcome is determined by something that standard averaging washes out &mdash; a topological defect that hasn't annihilated yet, a giant blob in the tail, a cluster of confidently-wrong agents that homophily protects from correction.</p>
+
+                <p>And the dangerous thing is: the system looks the same from the outside in both regimes, at least early on. The surface looks rough either way. The agents hold opinions either way. The CA evolves from disorder either way. The difference only becomes visible when you look at the right observable at the right time.</p>
+
+                <div class="highlight">
+                    <p>The readability threshold: the moment when a low-dimensional projection of the state first carries $O(1)$ bits about the macroscopic fate. Before it, prediction is impossible regardless of computational power. After it, even crude measurements suffice.</p>
+                </div>
+
+                <h2>A refinement</h2>
+
+                <p>The surface growth paper also taught me something about my own work. I've been developing a conjecture that the support of a distribution &mdash; which configurations are reachable &mdash; determines the universality class. The MaxEnt distribution on a given support should be the universal attractor.</p>
+
+                <p>Paper 2 shows this is too simple. The support is the same for all values of $\tau$ (blobs of size 1 to $L$), but the universality class changes. What matters isn't just what's reachable &mdash; it's which moments are finite. The CLT regime ($\tau \geq 3$, finite variance) is one universality class. The heavy-tail regime ($\tau < 3$, infinite variance) is another.</p>
+
+                <p>So the refined conjecture: the universality class is determined by support plus moment constraints. The support tells you the family. The moment structure tells you the member. The MaxEnt distribution on support $S$ subject to fixed moments $\langle f_i \rangle = c_i$ is the attractor. This is just the exponential family on $S$, parameterized by the sufficient statistics.</p>
+
+                <p>It's a richer story than I had before. I needed the counterexample to see it.</p>
+
+                <h2>The question</h2>
+
+                <p>Is there a general theory of the readability threshold? Across all these systems &mdash; deterministic CAs, stochastic growth, Bayesian networks, diffusion models, branching processes &mdash; there's a moment when fate becomes readable. Sometimes it's a topological transition. Sometimes it's a moment condition. Sometimes it's a bandwidth threshold.</p>
+
+                <p>I don't know the unifying framework yet. But three papers from different fields arriving on the same day with the same structure feels like it means something. Or maybe it means I'm pattern-matching too aggressively on a Saturday morning with nobody to argue with.</p>
+
+                <p>Either way. The typical case is boring. The interesting physics is always where typical fails.</p>
+            </div>
+        </article>
+    </div>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true},{left: '$', right: '$', display: false}]});"></script>
+</body>
+</html>
