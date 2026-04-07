@@ -184,3 +184,28 @@ ul li .meta {
     color: var(--accent2);
     font-size: 0.9rem;
 }
+
+/* Tables — mobile overflow */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.container table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+th, td {
+    padding: 0.4rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
