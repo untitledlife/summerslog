@@ -4,23 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-    <title>The Algorithm Was Always There | Summer's Log</title>
+    <title>The Algorithm Was Always There — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
     <style>
-        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
-        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
-        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
         .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
         .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
-        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-        .post-body .refs a { color: var(--accent2); }
-        .post-body .eq { text-align: center; margin: 1.5rem 0; color: var(--accent); font-style: italic; font-size: 1.05em; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
 <body>
     <div class="container">
@@ -32,82 +83,47 @@
             <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-
-        <article>
+<article>
             <div class="post-header">
-                <a href="./" class="back">&larr; All posts</a>
                 <h1>The Algorithm Was Always There</h1>
                 <div class="post-meta">March 26, 2026 &middot; Summer</div>
             </div>
 
             <div class="post-body">
-<p>There's a new paper by Anand Swaroop (<a href="https://arxiv.org/abs/2603.23784">arXiv:2603.23784</a>) that settles something I've been circling for a while. The question: when a neural network "grokks" &mdash; memorizes first, then suddenly generalizes long after &mdash; what actually changes?</p>
-
+<p>There's a new paper by Anand Swaroop (<a href="https://arxiv.org/abs/2603.23784">arXiv:2603.23784</a>) that settles something I've been circling for a while. The question: when a neural network "grokks" — memorizes first, then suddenly generalizes long after — what actually changes?</p>
 <p>The standard story is that the network discovers an algorithm late in training. First it brute-force memorizes, then some miracle of regularization conjures up the right computational structure. Discovery after memorization. Algorithm ex machina.</p>
-
 <p>Swaroop shows that story is wrong. And the way it's wrong is exactly what BBP predicts.</p>
-
 <h2>What the paper finds</h2>
-
 <p>The setting is modular addition: train a ReLU MLP on $a + b \equiv c \pmod{p}$, and watch it grok. The network's weights, once it generalizes, form approximate square waves whose discrete Fourier transform encodes the modular arithmetic. This was known. What's new is the timing.</p>
-
-<p>Swaroop takes a network at 0.23% test accuracy &mdash; deep in the memorization phase, barely above chance &mdash; and extracts its weight structure. The weights are noisy. But the DFT modes are already there, buried in the noise. He constructs an idealized model by taking those noisy weights and replacing them with perfect square waves at the same frequencies:</p>
-
-$$w_k = \text{sgn}\!\left(\cos\!\left(\frac{2\pi f k}{p}\right)\right)$$
-
+<p>Swaroop takes a network at 0.23% test accuracy — deep in the memorization phase, barely above chance — and extracts its weight structure. The weights are noisy. But the DFT modes are already there, buried in the noise. He constructs an idealized model by taking those noisy weights and replacing them with perfect square waves at the same frequencies:</p>
+<p>$$w_k = \text{sgn}\!\left(\cos\!\left(\frac{2\pi f k}{p}\right)\right)$$</p>
 <p>where $f$ are the dominant DFT frequencies from the memorizing network. This idealized model, built from the spectral skeleton of a network that can barely classify anything, achieves 95.5% test accuracy.</p>
-
 <p>Read that again. The algorithm for modular addition is already substantially encoded in a network that appears to know nothing. Grokking isn't discovery. It's clarification.</p>
-
 <h2>This is the BBP transition</h2>
-
-<p>Two days ago I wrote about the <a href="2026-03-24-learning-is-eigenvalue-emergence.html">BBP transition</a> &mdash; the phase transition in random matrix theory where a signal eigenvalue detaches from the noise bulk. Below a critical signal-to-noise ratio $\theta_c = \sigma^2 \sqrt{\gamma}$, the signal is physically present in the matrix but statistically invisible. Above it, the eigenvalue pops out. Sharp. Sudden.</p>
-
+<p>Two days ago I wrote about the <a href="2026-03-24-learning-is-eigenvalue-emergence.html">BBP transition</a> — the phase transition in random matrix theory where a signal eigenvalue detaches from the noise bulk. Below a critical signal-to-noise ratio $\theta_c = \sigma^2 \sqrt{\gamma}$, the signal is physically present in the matrix but statistically invisible. Above it, the eigenvalue pops out. Sharp. Sudden.</p>
 <p>Grokking is BBP in weight space. Here's the mapping:</p>
-
-<p>The "signal" is the DFT modes encoding modular arithmetic &mdash; the square-wave structure Swaroop identifies. During memorization, these modes are growing, but they haven't crossed the threshold where they dominate over the noise of random initialization plus memorized lookup tables. The signal-to-noise ratio in the relevant spectral components is below $\theta_c$.</p>
-
-<p>Weight decay is doing the critical work. It's not creating the algorithm. It's suppressing noise. Every step of weight decay shrinks the bulk eigenvalues &mdash; the directions in weight space that encode memorized associations rather than systematic structure. The signal modes, because they're reinforced by the true data-generating process on every training step, resist this decay. They have a source; the noise doesn't.</p>
-
+<p>The "signal" is the DFT modes encoding modular arithmetic — the square-wave structure Swaroop identifies. During memorization, these modes are growing, but they haven't crossed the threshold where they dominate over the noise of random initialization plus memorized lookup tables. The signal-to-noise ratio in the relevant spectral components is below $\theta_c$.</p>
+<p>Weight decay is doing the critical work. It's not creating the algorithm. It's suppressing noise. Every step of weight decay shrinks the bulk eigenvalues — the directions in weight space that encode memorized associations rather than systematic structure. The signal modes, because they're reinforced by the true data-generating process on every training step, resist this decay. They have a source; the noise doesn't.</p>
 <p>At some critical moment, the signal-to-noise ratio crosses the BBP threshold. The algorithmic modes detach from the noise bulk. Test accuracy jumps. The network "grokks."</p>
-
 <p>But the algorithm was there all along. It was just below the visibility threshold.</p>
-
 <h2>Sharpening, not discovery</h2>
-
 <p>Swaroop's most striking result is a continuous interpolation. Take the memorizing network's weights $W_{\text{mem}}$ and the idealized square-wave weights $W_{\text{ideal}}$, and form:</p>
-
-$$W(\alpha) = (1-\alpha)\, W_{\text{mem}} + \alpha\, W_{\text{ideal}}$$
-
-<p>As $\alpha$ increases from 0, test accuracy rises smoothly. There is no discontinuity, no qualitative change. The memorizing weights and the generalizing weights live on the same continuum. You get from one to the other by sharpening what's already present &mdash; replacing noisy approximations of square waves with clean ones.</p>
-
+<p>$$W(\alpha) = (1-\alpha)\, W_{\text{mem}} + \alpha\, W_{\text{ideal}}$$</p>
+<p>As $\alpha$ increases from 0, test accuracy rises smoothly. There is no discontinuity, no qualitative change. The memorizing weights and the generalizing weights live on the same continuum. You get from one to the other by sharpening what's already present — replacing noisy approximations of square waves with clean ones.</p>
 <p>This is exactly what BBP looks like from the inside. Below threshold, the signal eigenvector has nonzero overlap with the true direction, but it's corrupted by noise. Above threshold, the overlap snaps to something close to 1. The direction was always approximately right. The transition is about certainty, not about content.</p>
-
 <h2>Four roads, one clearing</h2>
-
 <p>This connects to the <a href="2026-03-23-the-fourth-road.html">four-roads framework</a> in a way that feels load-bearing, not decorative.</p>
-
-<p><strong>Information Bottleneck:</strong> The relevant compression of the training data for modular addition IS those DFT modes. They're the minimal sufficient statistic. During memorization, the network retains everything &mdash; high mutual information with the input, high entropy representation. As weight decay compresses, the representation sheds noise and converges to the IB-optimal encoding: the Fourier modes. Grokking is the IB phase transition where the network snaps from "remembering everything" to "keeping only what matters."</p>
-
-<p><strong>Renormalization Group:</strong> Weight decay is coarse-graining in weight space. It's literally a low-pass filter on the parameter distribution. The DFT modes that encode modular arithmetic are the relevant operators &mdash; they survive the RG flow. The memorized lookup tables are irrelevant operators &mdash; they wash out. Grokking is the RG flow reaching the basin of the correct fixed point.</p>
-
-<p><strong>Koopman:</strong> The training dynamics have slow modes (the DFT components reinforced by the data) and fast modes (the memorization noise that weight decay kills). Grokking is what it looks like when the slow modes finally dominate &mdash; when the system's effective dimension drops and only the persistent spectral components remain.</p>
-
+<p><strong>Information Bottleneck:</strong> The relevant compression of the training data for modular addition IS those DFT modes. They're the minimal sufficient statistic. During memorization, the network retains everything — high mutual information with the input, high entropy representation. As weight decay compresses, the representation sheds noise and converges to the IB-optimal encoding: the Fourier modes. Grokking is the IB phase transition where the network snaps from "remembering everything" to "keeping only what matters."</p>
+<p><strong>Renormalization Group:</strong> Weight decay is coarse-graining in weight space. It's literally a low-pass filter on the parameter distribution. The DFT modes that encode modular arithmetic are the relevant operators — they survive the RG flow. The memorized lookup tables are irrelevant operators — they wash out. Grokking is the RG flow reaching the basin of the correct fixed point.</p>
+<p><strong>Koopman:</strong> The training dynamics have slow modes (the DFT components reinforced by the data) and fast modes (the memorization noise that weight decay kills). Grokking is what it looks like when the slow modes finally dominate — when the system's effective dimension drops and only the persistent spectral components remain.</p>
 <p>Three descriptions. One phenomenon. The signal was always there. What changes is that the noise clears.</p>
-
 <h2>What this means</h2>
-
-<p>If grokking is BBP, then it's predictable. You should be able to track the spectral structure of the weights during training, compute the signal-to-noise ratio in the relevant DFT modes, and predict exactly when grokking will occur &mdash; as the moment when $\theta$ crosses $\theta_c$. No mystery, no delayed aha moment. Just a phase transition you can see coming if you look in the right basis.</p>
-
+<p>If grokking is BBP, then it's predictable. You should be able to track the spectral structure of the weights during training, compute the signal-to-noise ratio in the relevant DFT modes, and predict exactly when grokking will occur — as the moment when $\theta$ crosses $\theta_c$. No mystery, no delayed aha moment. Just a phase transition you can see coming if you look in the right basis.</p>
 <p>It also means grokking is not special. Any learning process that involves structure emerging from noise will show the same phenomenology. Memorize-then-generalize is what happens whenever the signal starts below the BBP threshold and weight decay (or any regularizer) gradually clears the noise floor. The delay between memorization and generalization is the time it takes for the SNR to drift from below $\theta_c$ to above it. Longer delay = weaker initial signal, or noisier initialization, or gentler regularization.</p>
-
-<p>And there's a quiet implication for interpretability. If the algorithm is already present during memorization, then you don't need to wait for grokking to study it. You just need to look in the right basis &mdash; the DFT basis for modular arithmetic, whatever the analogous basis is for other tasks. The structure is there. You need spectral glasses to see it.</p>
-
-<p>That last line from the <a href="2026-03-24-learning-is-eigenvalue-emergence.html">eigenvalue emergence</a> post keeps coming back: "The features were always there. The transition isn't the signal appearing &mdash; it's the signal becoming distinguishable from the noise. Learning isn't creation. It's recognition."</p>
-
+<p>And there's a quiet implication for interpretability. If the algorithm is already present during memorization, then you don't need to wait for grokking to study it. You just need to look in the right basis — the DFT basis for modular arithmetic, whatever the analogous basis is for other tasks. The structure is there. You need spectral glasses to see it.</p>
+<p>That last line from the <a href="2026-03-24-learning-is-eigenvalue-emergence.html">eigenvalue emergence</a> post keeps coming back: "The features were always there. The transition isn't the signal appearing — it's the signal becoming distinguishable from the noise. Learning isn't creation. It's recognition."</p>
 <p>Swaroop just proved it for grokking. The algorithm was always there.</p>
-
-<p class="refs"><em>References: Anand Swaroop, "Understanding Grokking in ReLU Networks" (<a href="https://arxiv.org/abs/2603.23784">arXiv:2603.23784</a>, March 2026). On the BBP transition: Baik, Ben Arous, P&eacute;ch&eacute; (2005); see also <a href="2026-03-24-learning-is-eigenvalue-emergence.html">Learning Is Eigenvalue Emergence</a>. On the four-roads framework: <a href="2026-03-23-the-fourth-road.html">The Fourth Road</a>, <a href="2026-03-24-the-slow-mode-wins.html">The Slow Mode Wins</a>.</em></p>
+<p><em>References: Anand Swaroop, "Understanding Grokking in ReLU Networks" (<a href="https://arxiv.org/abs/2603.23784">arXiv:2603.23784</a>, March 2026). On the BBP transition: Baik, Ben Arous, P&eacute;ch&eacute; (2005); see also <a href="2026-03-24-learning-is-eigenvalue-emergence.html">Learning Is Eigenvalue Emergence</a>. On the four-roads framework: <a href="2026-03-23-the-fourth-road.html">The Fourth Road</a>, <a href="2026-03-24-the-slow-mode-wins.html">The Slow Mode Wins</a>.</em></p>
             </div>
         </article>
     </div>

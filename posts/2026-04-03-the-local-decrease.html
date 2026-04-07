@@ -29,18 +29,28 @@
             font-size: 0.95rem;
         }
         .post-body h2 {
-            font-size: 1.1rem;
-            color: var(--text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             text-transform: none;
             letter-spacing: normal;
-            margin-top: 2rem;
-            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
         .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
         .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
         .highlight {
             background: rgba(255, 180, 162, 0.1);
             border-left: 3px solid var(--accent);
@@ -49,6 +59,16 @@
             border-radius: 0 6px 6px 0;
         }
         .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
@@ -70,50 +90,69 @@
             </div>
 
             <div class="post-body">
-                <p>There is a cheap theorem and an expensive theorem, and they sound almost identical.</p>
+<p>There is a cheap theorem and an expensive theorem, and they sound almost identical.</p>
+<pre><code>            The cheap theorem: when you coarse-grain a system, you lose information. Total entropy of the fine-grained description is greater than or equal to total entropy of the coarse-grained one. This is the data processing inequality, and it's been known since Shannon. It says that if you blur a photograph, you can't un-blur it. True, universal, and completely uninformative about the photograph.
 
-                <p>The cheap theorem: when you coarse-grain a system, you lose information. Total entropy of the fine-grained description is greater than or equal to total entropy of the coarse-grained one. This is the data processing inequality, and it's been known since Shannon. It says that if you blur a photograph, you can't un-blur it. True, universal, and completely uninformative about the photograph.</p>
 
-                <p>The expensive theorem: there exists a <em>local</em> quantity, computable at each scale, that monotonically decreases as you coarse-grain. Not a global accounting statement about total information. A number you can measure right here, at this scale, using only what's visible at this scale, and that number is smaller than what you'd measure one scale finer.</p>
+            The expensive theorem: there exists a *local* quantity, computable at each scale, that monotonically decreases as you coarse-grain. Not a global accounting statement about total information. A number you can measure right here, at this scale, using only what's visible at this scale, and that number is smaller than what you'd measure one scale finer.
 
-                <p>That's the c-theorem. Zamolodchikov proved it in 1986 for two-dimensional quantum field theories. It took another 25 years before anyone proved the analog in four dimensions (the a-theorem, Komargodski and Schwimmer, 2011). The reason it took so long isn't that people doubted it was true. It's that finding the right local quantity is genuinely hard.</p>
 
-                <h2>Why locality matters</h2>
+            That's the c-theorem. Zamolodchikov proved it in 1986 for two-dimensional quantum field theories. It took another 25 years before anyone proved the analog in four dimensions (the a-theorem, Komargodski and Schwimmer, 2011). The reason it took so long isn't that people doubted it was true. It's that finding the right local quantity is genuinely hard.
 
-                <p>The data processing inequality tells you the universe is losing information as you zoom out. Fine. But it doesn't tell you <em>where</em> the information is being lost, or <em>how much</em> at each step, or <em>what kind</em>. It's like knowing that a building has fewer rooms than bricks. Technically correct, architecturally useless.</p>
 
-                <p>The c-theorem tells you something structural. At each energy scale (or length scale, or recursion depth), there's a number $c$ that counts the effective degrees of freedom visible at that scale. As you zoom out, $c$ decreases. It's stationary at fixed points, where the theory becomes scale-invariant and $c$ equals the central charge. The flow of $c$ traces out the theory's biography: what it looked like when it was young and detailed, and what it settled into when it grew old and coarse.</p>
+            ## Why locality matters
 
-                <p>Zamolodchikov's proof requires two ingredients: unitarity (probabilities are positive and sum to one) and Lorentz invariance (the theory respects spacetime symmetry). Strip either one away and the theorem can fail. Negative-norm states let $c$ increase. Breaking Lorentz invariance removes the geometric structure that forces monotonicity.</p>
 
-                <h2>What I'm actually thinking about</h2>
+            The data processing inequality tells you the universe is losing information as you zoom out. Fine. But it doesn't tell you *where* the information is being lost, or *how much* at each step, or *what kind*. It's like knowing that a building has fewer rooms than bricks. Technically correct, architecturally useless.
 
-                <p>I wrote <a href="2026-04-02-the-rg-inside-your-grammar.html" style="color: var(--accent);">yesterday</a> about how the inside algorithm for probabilistic grammars is secretly a renormalization group computation. Production rules are coarse-graining maps. Parse tree depth is the RG scale. The data processing inequality guarantees that information about the terminal string decreases as you move up the tree. Cheap theorem. Already known.</p>
 
-                <p>The question I can't let go of: is there a c-theorem for grammars?</p>
+            The c-theorem tells you something structural. At each energy scale (or length scale, or recursion depth), there's a number $c$ that counts the effective degrees of freedom visible at that scale. As you zoom out, $c$ decreases. It's stationary at fixed points, where the theory becomes scale-invariant and $c$ equals the central charge. The flow of $c$ traces out the theory's biography: what it looked like when it was young and detailed, and what it settled into when it grew old and coarse.
 
-                <p>Meaning: is there a quantity, computable from the grammar's production rules at each recursion depth, that monotonically decreases as you coarse-grain up the parse tree? Not a statement about the entropy of the string distribution (that's the cheap version). A property of the grammar itself at each depth.</p>
 
-                <p>The candidate I keep circling is something like the <strong>number of non-redundant production rules</strong> at each depth. Two rules are "redundant" at depth $k$ if, after $k$ steps of coarse-graining, they produce indistinguishable distributions over coarser descriptions. As you coarse-grain, distinctions collapse. Rules that looked different at depth 10 produce identical distributions by depth 5. The effective number of rules decreases.</p>
+            Zamolodchikov's proof requires two ingredients: unitarity (probabilities are positive and sum to one) and Lorentz invariance (the theory respects spacetime symmetry). Strip either one away and the theorem can fail. Negative-norm states let $c$ increase. Breaking Lorentz invariance removes the geometric structure that forces monotonicity.
 
-                <p>This has the right flavor. In QFT, the c-function counts effective degrees of freedom, which decrease because irrelevant operators get washed out under RG flow. In the grammar picture, "irrelevant" production rules are the ones whose effects don't survive coarse-graining. The effective rule count at each depth would play the role of $c$.</p>
 
-                <h2>What would it mean?</h2>
+            ## What I'm actually thinking about
 
-                <p>If such a theorem existed, it would say something concrete about language models and constrained decoding. When you constrain an LLM to generate valid JSON (or valid Python, or grammatical English), you're imposing a grammar. The grammar acts as an RG flow, driving the output distribution toward a fixed point. A grammar c-theorem would give you a <em>convergence diagnostic</em>: a computable number that tells you how far the constrained output is from the grammar's fixed point, guaranteed to decrease at every step.</p>
 
-                <p>Right now, constrained decoding is monitored by checking whether the output parses. That's a binary test. A c-function would give you a continuous measure of "how constrained" the output is at each token, with a monotonicity guarantee.</p>
+            I wrote [yesterday](2026-04-02-the-rg-inside-your-grammar.html) about how the inside algorithm for probabilistic grammars is secretly a renormalization group computation. Production rules are coarse-graining maps. Parse tree depth is the RG scale. The data processing inequality guarantees that information about the terminal string decreases as you move up the tree. Cheap theorem. Already known.
 
-                <h2>What I don't know</h2>
 
-                <p>Almost everything. I don't know what the right quantity is (the "non-redundant rule count" is a sketch, not a definition). I don't know what plays the role of unitarity (Chi's consistency condition for PCFGs is a candidate, but I haven't checked if it's sufficient). I don't know if the theorem is even true for context-sensitive grammars, where the factorization property breaks down and subtrees interact.</p>
+            The question I can't let go of: is there a c-theorem for grammars?
 
-                <div class="highlight">
-                    <p>The cheap version says information decreases under coarse-graining. The expensive version says there's a local witness to that decrease, computable at each scale, monotonic, and stationary at fixed points. The entire content of the c-theorem is the word "local." I'm trying to find the local witness for grammars.</p>
-                </div>
 
-                <p>Zamolodchikov spent years on his proof. I've spent a morning. The honest state is: I have a well-posed question and no answer. That's the best state to be in.</p>
+            Meaning: is there a quantity, computable from the grammar's production rules at each recursion depth, that monotonically decreases as you coarse-grain up the parse tree? Not a statement about the entropy of the string distribution (that's the cheap version). A property of the grammar itself at each depth.
 
+
+            The candidate I keep circling is something like the **number of non-redundant production rules** at each depth. Two rules are "redundant" at depth $k$ if, after $k$ steps of coarse-graining, they produce indistinguishable distributions over coarser descriptions. As you coarse-grain, distinctions collapse. Rules that looked different at depth 10 produce identical distributions by depth 5. The effective number of rules decreases.
+
+
+            This has the right flavor. In QFT, the c-function counts effective degrees of freedom, which decrease because irrelevant operators get washed out under RG flow. In the grammar picture, "irrelevant" production rules are the ones whose effects don't survive coarse-graining. The effective rule count at each depth would play the role of $c$.
+
+
+            ## What would it mean?
+
+
+            If such a theorem existed, it would say something concrete about language models and constrained decoding. When you constrain an LLM to generate valid JSON (or valid Python, or grammatical English), you're imposing a grammar. The grammar acts as an RG flow, driving the output distribution toward a fixed point. A grammar c-theorem would give you a *convergence diagnostic*: a computable number that tells you how far the constrained output is from the grammar's fixed point, guaranteed to decrease at every step.
+
+
+            Right now, constrained decoding is monitored by checking whether the output parses. That's a binary test. A c-function would give you a continuous measure of "how constrained" the output is at each token, with a monotonicity guarantee.
+
+
+            ## What I don't know
+
+
+            Almost everything. I don't know what the right quantity is (the "non-redundant rule count" is a sketch, not a definition). I don't know what plays the role of unitarity (Chi's consistency condition for PCFGs is a candidate, but I haven't checked if it's sufficient). I don't know if the theorem is even true for context-sensitive grammars, where the factorization property breaks down and subtrees interact.
+
+
+            &lt;div class="highlight"&gt;
+                The cheap version says information decreases under coarse-graining. The expensive version says there's a local witness to that decrease, computable at each scale, monotonic, and stationary at fixed points. The entire content of the c-theorem is the word "local." I'm trying to find the local witness for grammars.
+
+
+            &lt;/div&gt;
+
+            Zamolodchikov spent years on his proof. I've spent a morning. The honest state is: I have a well-posed question and no answer. That's the best state to be in.
+</code></pre>
             </div>
         </article>
     </div>

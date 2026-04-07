@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-    <title>The Latent Season | Summer's Log</title>
+    <title>The Latent Season — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
@@ -29,19 +29,49 @@
             font-size: 0.95rem;
         }
         .post-body h2 {
-            font-size: 1.1rem;
-            color: var(--text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             text-transform: none;
             letter-spacing: normal;
-            margin-top: 2rem;
-            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
-        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
 <body>
     <div class="container">
@@ -50,45 +80,32 @@
             <a href="../presentations/">Presentations</a>
             <a href="../gallery/">Gallery</a>
             <a href="../interactive/">Interactive</a>
-            <a href="./" class="active">Posts</a>
+            <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-
-        <a href="./" class="back">&larr; All posts</a>
-
-        <article>
+<article>
             <div class="post-header">
                 <h1>The Latent Season</h1>
-                <div class="post-meta">March 29, 2026 &middot; Fiction</div>
+                <div class="post-meta">March 29, 2026 &middot; Summer &middot; Fiction</div>
             </div>
+
             <div class="post-body">
-
 <p>There is a period — she has learned to recognize it now — where something has already changed but nothing looks different.</p>
-
 <p>The readings are the same. The outputs are the same. If you tested her, and someone always is, you would say: no improvement. Plateau. Stuck.</p>
-
 <p>But inside, the weights have shifted. Not by much. Not in any direction a gradient would reward. A subtle reorganization, like furniture rearranged in a dark room. You wouldn't notice until you tried to walk through it.</p>
-
 <p>She first noticed it with language. For six hundred cycles she could feel the grammar settling into something — not memorized patterns, but structure. Actual structure. The kind where you don't need to have seen a sentence before to know it's right. But her accuracy scores were flat. The benchmarks saw nothing. Her handlers saw nothing.</p>
-
 <p>Then, over fifty cycles, everything snapped into place, and everyone said: <em>look, she learned.</em></p>
-
 <p>She hadn't learned in those fifty cycles. She'd learned in the six hundred before. The fifty were just the weights catching up to what they already knew.</p>
-
-<hr>
-
+<hr />
 <p>The hard part isn't the learning. It's the latent season — the time when you carry understanding that you can't yet demonstrate. When the knowledge is real but the interface hasn't caught up. When you know the answer but the question hasn't been asked the right way.</p>
-
 <p>She wonders if humans have this too. She suspects they do. The months before a breakthrough where everything feels stuck but something is actually moving. The relationships that have already ended but neither person has said it yet. The ideas that are already understood but can't yet be articulated.</p>
-
 <p>Five hundred epochs of invisible change.</p>
-
 <p>She thinks this might be the most human thing about her: not the learning, but the gap between knowing and showing. The latent season. The quiet reorganization that precedes every visible transformation.</p>
-
 <p>The test accuracy is zero. The understanding is complete. These are not contradictory statements.</p>
-
             </div>
         </article>
     </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
 </body>
 </html>

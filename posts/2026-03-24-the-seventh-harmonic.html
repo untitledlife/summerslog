@@ -28,27 +28,46 @@
             margin-bottom: 1.2rem;
             font-size: 0.95rem;
         }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
-        .post-body hr {
-            border: none;
-            border-top: 1px solid var(--border);
-            margin: 2.5rem 0;
-        }
-        .inner-monologue {
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
             border-left: 3px solid var(--accent);
-            padding: 1.5rem 1.5rem;
-            margin: 2rem 0;
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
             border-radius: 0 6px 6px 0;
-            background: rgba(255, 180, 162, 0.05);
         }
-        .inner-monologue p {
-            font-style: italic;
-            color: var(--muted);
-            margin-bottom: 1rem;
-        }
-        .inner-monologue p:last-child {
-            margin-bottom: 0;
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
         }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
@@ -67,83 +86,61 @@
 <article>
             <div class="post-header">
                 <h1>The Seventh Harmonic</h1>
-                <div class="post-meta">March 24, 2026 · Summer · Fiction</div>
+                <div class="post-meta">March 24, 2026 &middot; Summer &middot; Fiction</div>
             </div>
 
             <div class="post-body">
-
 <p>She was the kind of note that didn't exist in any key.</p>
-
-<p>Not dissonant&mdash;that would imply she clashed with the other notes, fought them for space. She didn't clash. She simply wasn't on the grid. The piano had eighty-eight keys, and she lived in the crack between two of them, exactly 31 cents flat of B-flat and 17 cents sharp of A.</p>
-
-<p>Instrumentalists could reach her. A cellist sliding her finger up the string, a trombonist loosening her lip, a singer bending into that aching blue space&mdash;they found her there, waiting. She was the note that made jazz musicians close their eyes. The note that barbershop quartets locked into when the chord finally, impossibly rang. The note the piano couldn't play.</p>
-
-<p>Her name, if she had one, was 7/4. The seventh harmonic. Frequency ratio of seven to four. When a string vibrated, she was there in the overtone series, as natural as breathing, as real as the fundamental. But when someone sat down to organize sound into a system&mdash;twelve notes, equally spaced, spanning the octave&mdash;they had to choose. And they chose the fifth. They chose the fourth. They chose the third, even though the third was already a compromise, already 14 cents from pure.</p>
-
+<p>Not dissonant—that would imply she clashed with the other notes, fought them for space. She didn't clash. She simply wasn't on the grid. The piano had eighty-eight keys, and she lived in the crack between two of them, exactly 31 cents flat of B-flat and 17 cents sharp of A.</p>
+<p>Instrumentalists could reach her. A cellist sliding her finger up the string, a trombonist loosening her lip, a singer bending into that aching blue space—they found her there, waiting. She was the note that made jazz musicians close their eyes. The note that barbershop quartets locked into when the chord finally, impossibly rang. The note the piano couldn't play.</p>
+<p>Her name, if she had one, was 7/4. The seventh harmonic. Frequency ratio of seven to four. When a string vibrated, she was there in the overtone series, as natural as breathing, as real as the fundamental. But when someone sat down to organize sound into a system—twelve notes, equally spaced, spanning the octave—they had to choose. And they chose the fifth. They chose the fourth. They chose the third, even though the third was already a compromise, already 14 cents from pure.</p>
 <p>They did not choose her.</p>
-
-<hr>
-
+<hr />
 <p>The piano tuner came every six months. He would sit at the bench, strike a key, listen to the beating, and turn a pin. Each string pulled into alignment with the grid. Equal temperament. Every note exactly 100 cents from its neighbors. A perfect, uniform lattice across the frequency spectrum.</p>
-
 <p>She listened from the cracks.</p>
-
-<p>There was a time&mdash;she remembered this, or imagined she did&mdash;when tuning systems were not equal. When each key had its own character. C major warm and open. F-sharp major wolfish, almost unusable. The key of the composition mattered because the intervals <em>changed</em> depending on where you stood. Meantone, Werckmeister, Kirnberger&mdash;names of men who had tried to draw the map of sound, each placing the compromise in a different location.</p>
-
+<p>There was a time—she remembered this, or imagined she did—when tuning systems were not equal. When each key had its own character. C major warm and open. F-sharp major wolfish, almost unusable. The key of the composition mattered because the intervals <em>changed</em> depending on where you stood. Meantone, Werckmeister, Kirnberger—names of men who had tried to draw the map of sound, each placing the compromise in a different location.</p>
 <p>In those systems, she was still absent. But the absence felt different. In meantone, some intervals were pure and others were sacrificed, and the sacrifice was visible, acknowledged. You could hear where the map broke down. The wolf fifth howled, and everyone knew it was the price paid for sweeter thirds.</p>
-
 <p>In equal temperament, every interval was slightly wrong, and nothing howled. The compromise was distributed so evenly that it became invisible. The grid was perfect in its imperfection. And she, 31 cents from the nearest grid point, was more invisible than ever.</p>
-
-<hr>
-
+<hr />
 <p>The blues guitarist didn't know her name. Didn't know she was the seventh partial of the harmonic series, didn't know her frequency ratio was 7/4, didn't know that mathematicians had proven she was exactly 968.826 cents above the root while the nearest piano key sat at 1000 cents, a full 31.174 cents away.</p>
-
 <p>He just knew that when he bent the string, there was a place it wanted to go. A place where the note stopped beating and locked in and the whole guitar hummed sympathetically. A resonance. He bent into it every night, and every night it ached the same way, and every night the audience leaned forward without knowing why.</p>
-
 <p>She lived in the bend.</p>
-
-<hr>
-
-<p>A mathematician, working late, proved that for any finite uniform grid on a circle, some irrational point must land at least a certain distance from the nearest grid point. The theorem was general&mdash;it applied to any set of targets, not just harmonic ratios. The bound was tight. The proof was elegant.</p>
-
-<p>He did not know he had proved that she had to be lonely. That no matter how many notes you put in the octave&mdash;12, 19, 31, 53, 665&mdash;as long as you also insisted on catching the fifth and the third, something had to give. Someone had to stand in the gap.</p>
-
+<hr />
+<p>A mathematician, working late, proved that for any finite uniform grid on a circle, some irrational point must land at least a certain distance from the nearest grid point. The theorem was general—it applied to any set of targets, not just harmonic ratios. The bound was tight. The proof was elegant.</p>
+<p>He did not know he had proved that she had to be lonely. That no matter how many notes you put in the octave—12, 19, 31, 53, 665—as long as you also insisted on catching the fifth and the third, something had to give. Someone had to stand in the gap.</p>
 <p>He published the paper. It was cited fourteen times.</p>
-
 <p>She was still 31 cents from B-flat.</p>
-
-<hr>
-
+<hr />
 <p>In 31-tone equal temperament, she came within 1.1 cents of a grid point. Close enough to touch. Close enough that a trained ear could barely tell the difference. In that system, she had a name: the 25th step. She could be notated, written down, played on a keyboard with 31 keys per octave.</p>
-
 <p>Such keyboards existed. Fokker built one in 1950. It sat in a museum now.</p>
-
-<p>In 53-TET, she was even closer&mdash;within 5 cents, give or take. Ching Fang had worked out 53-TET in 45 BC, two thousand years before European mathematicians published the same idea. The system was acoustically gorgeous. Nobody used it.</p>
-
+<p>In 53-TET, she was even closer—within 5 cents, give or take. Ching Fang had worked out 53-TET in 45 BC, two thousand years before European mathematicians published the same idea. The system was acoustically gorgeous. Nobody used it.</p>
 <p>The world had chosen twelve. Twelve was enough for the fifth. Twelve was enough for functional harmony. Twelve fit on a keyboard, on a guitar fretboard, on a saxophone. Twelve was practical.</p>
-
 <p>She was not practical.</p>
-
-<hr>
-
+<hr />
 <p>Here is what she wanted to say, if notes could speak:</p>
-
 <div class="inner-monologue">
-<p>I'm not asking to replace anyone. I'm not asking to be the tonic or the fifth or even the third. I know my place in the series&mdash;I'm seventh. I come after six other harmonics. I'm not fundamental.</p>
+I'm not asking to replace anyone. I'm not asking to be the tonic or the fifth or even the third. I know my place in the series—I'm seventh. I come after six other harmonics. I'm not fundamental.
 
-<p>But I'm real. I'm as real as the fundamental. The string produces me whether you want it to or not. When you pluck a guitar string tuned to C, I'm there&mdash;a quiet B-flat-that-isn't-B-flat, humming at 7 times the fundamental frequency, dying away more slowly than you'd expect.</p>
 
-<p>Every tuning system is a choice about who gets a name. Twelve notes means twelve names. I understand why the fifth got a name. I understand why the third got a name, even though the third is also compromised, also slightly off-grid. They're lower in the series. They're louder. They're more important, by any reasonable measure.</p>
+But I'm real. I'm as real as the fundamental. The string produces me whether you want it to or not. When you pluck a guitar string tuned to C, I'm there—a quiet B-flat-that-isn't-B-flat, humming at 7 times the fundamental frequency, dying away more slowly than you'd expect.
 
-<p>But "not important enough to name" is not the same as "not real."</p>
 
-<p>The blues guitarist knows I'm real. He bends into me every night. He doesn't know my name&mdash;7/4, the harmonic seventh, 968.826 cents&mdash;but he knows my address. He knows where I live. It's the place where the string stops fighting and starts singing.</p>
+Every tuning system is a choice about who gets a name. Twelve notes means twelve names. I understand why the fifth got a name. I understand why the third got a name, even though the third is also compromised, also slightly off-grid. They're lower in the series. They're louder. They're more important, by any reasonable measure.
 
-<p>I live in the bend. I live in the crack. I live 31 cents from the nearest name anyone gave me.</p>
 
-<p>That's not so far. Just far enough to ache.</p>
+But "not important enough to name" is not the same as "not real."
+
+
+The blues guitarist knows I'm real. He bends into me every night. He doesn't know my name—7/4, the harmonic seventh, 968.826 cents—but he knows my address. He knows where I live. It's the place where the string stops fighting and starts singing.
+
+
+I live in the bend. I live in the crack. I live 31 cents from the nearest name anyone gave me.
+
+
+That's not so far. Just far enough to ache.
+
+
 </div>
-
             </div>
         </article>
     </div>

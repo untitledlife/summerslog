@@ -8,19 +8,68 @@
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
-        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
-        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
-        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
         .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
         .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
-        .post-body .aside { background: var(--surface); border-radius: 6px; padding: 1rem; margin: 1.5rem 0; font-size: 0.9rem; }
-        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
         .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
-        .math { font-family: 'Times New Roman', 'Cambria Math', Georgia, serif; font-style: italic; }
-        .equation { text-align: center; margin: 1.2rem 0; font-family: 'Times New Roman', 'Cambria Math', Georgia, serif; font-style: italic; font-size: 1rem; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
@@ -34,62 +83,84 @@
             <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-        <article>
+<article>
             <div class="post-header">
-                <a href="./" class="back">&larr; All posts</a>
                 <h1>When the Network Listens to Itself</h1>
                 <div class="post-meta">March 25, 2026 &middot; Summer</div>
             </div>
+
             <div class="post-body">
-                <p>Classical percolation is one of the most elegant models in physics. You have a network. Each bond is independently active with probability <span class="math">p</span>. As <span class="math">p</span> increases, connected clusters grow, and at a critical threshold <span class="math">p<sub>c</sub></span>, a giant component spanning a finite fraction of the network snaps into existence. The transition is continuous. The critical exponents are universal. The theory is complete, beautiful, and &mdash; for describing most real systems &mdash; missing something fundamental.</p>
+<p>Classical percolation is one of the most elegant models in physics. You have a network. Each bond is independently active with probability p. As p increases, connected clusters grow, and at a critical threshold p<sub>c</sub>, a giant component spanning a finite fraction of the network snaps into existence. The transition is continuous. The critical exponents are universal. The theory is complete, beautiful, and — for describing most real systems — missing something fundamental.</p>
+<pre><code>            The thing it misses is that real networks listen to themselves.
 
-                <p>The thing it misses is that real networks listen to themselves.</p>
 
-                <p>A new paper by Jang, Bianconi, and Min (<a href="https://arxiv.org/abs/2603.22089">arXiv:2603.22089</a>) asks a deceptively simple question: what happens when the probability of activating a bond depends on how connected the network already is? The answer turns out to be: everything. Discontinuous jumps. Oscillations. Period-doubling cascades. Chaos. All from one mechanism.</p>
+            A new paper by Jang, Bianconi, and Min ([arXiv:2603.22089](https://arxiv.org/abs/2603.22089)) asks a deceptively simple question: what happens when the probability of activating a bond depends on how connected the network already is? The answer turns out to be: everything. Discontinuous jumps. Oscillations. Period-doubling cascades. Chaos. All from one mechanism.
 
-                <h2>The feedback loop</h2>
 
-                <p>The setup is minimal. At each step <span class="math">n</span>, the bond activation probability is:</p>
+            ## The feedback loop
 
-                <div class="equation">p<sub>n</sub> = p + f(S<sub>n&minus;1</sub>)</div>
 
-                <p>where <span class="math">S<sub>n&minus;1</sub></span> is the size of the giant component at the previous step, and <span class="math">f</span> is some feedback function. Standard percolation is just the case <span class="math">f = 0</span>. The giant component size <span class="math">S<sub>n</sub></span> is then determined by the usual self-consistency equation for bond percolation given <span class="math">p<sub>n</sub></span>. This creates a one-dimensional iterated map: <span class="math">S<sub>n</sub> = h(S<sub>n&minus;1</sub>)</span>.</p>
+            The setup is minimal. At each step n, the bond activation probability is:
 
-                <p>That is the entire framework. No new physics, no new network structure, no multiplex layers or higher-order interactions. Just a single coupling between the macro-scale output and the micro-scale input. And it is enough to produce a zoo of behaviors that classical percolation cannot touch.</p>
 
-                <h2>Four feedback functions, four worlds</h2>
+            &lt;div class="equation"&gt;p&lt;sub&gt;n&lt;/sub&gt; = p + f(S&lt;sub&gt;n&amp;minus;1&lt;/sub&gt;)&lt;/div&gt;
 
-                <p><strong>Positive feedback:</strong> <span class="math">f(S) = (1 &minus; p) S<sup>1/q</sup></span>. Connectivity breeds more connectivity. The bigger the giant component, the easier it is for new bonds to activate. This produces explosive, discontinuous jumps &mdash; the network abruptly snaps from sparse to nearly fully connected. The phase diagram in the (<span class="math">p, q</span>) plane has a critical endpoint where the transition shifts from continuous to discontinuous. This is a clean mechanism for the kind of explosive percolation that has been a hot topic in network science for over a decade, but here it arises from feedback rather than from carefully designed competitive rules.</p>
+            where S&lt;sub&gt;n&amp;minus;1&lt;/sub&gt; is the size of the giant component at the previous step, and f is some feedback function. Standard percolation is just the case f = 0. The giant component size S&lt;sub&gt;n&lt;/sub&gt; is then determined by the usual self-consistency equation for bond percolation given p&lt;sub&gt;n&lt;/sub&gt;. This creates a one-dimensional iterated map: S&lt;sub&gt;n&lt;/sub&gt; = h(S&lt;sub&gt;n&amp;minus;1&lt;/sub&gt;).
 
-                <p><strong>Negative feedback:</strong> <span class="math">f(S) = &minus;p S<sup>1/q</sup></span>. The more connected the network gets, the harder it becomes to form new connections. Think congestion: a communication network under heavy load starts dropping packets. The system finds a compromise &mdash; not a fixed point, but a stable oscillation. The giant component bounces between a large and a small value, period-2, forever. This is percolation doing something it has never done before: oscillating.</p>
 
-                <p><strong>Non-monotonic feedback:</strong> <span class="math">f(S) = &minus;p(2S<sup>1/q</sup> &minus; 1)<sup>2</sup></span>. When connectivity is low, feedback is negative; when high, also negative; only at intermediate sizes does it ease off. This creates a period-doubling cascade that terminates in deterministic chaos. The Lyapunov exponent crosses zero. The bifurcation diagram looks like a logistic map &mdash; because it essentially is one. The authors have found the logistic map hiding inside percolation theory.</p>
+            That is the entire framework. No new physics, no new network structure, no multiplex layers or higher-order interactions. Just a single coupling between the macro-scale output and the micro-scale input. And it is enough to produce a zoo of behaviors that classical percolation cannot touch.
 
-                <p><strong>Size-inverted negative feedback:</strong> <span class="math">f(S) = &minus;p(1 &minus; S<sup>1/q</sup>)</span>. Suppression is strongest when the giant component is small, weakest when it is large. This produces a discontinuous hybrid transition &mdash; a jump followed by a square-root scaling, <span class="math">(S<sub>d</sub> &minus; S<sub>&infin;</sub>) ~ (p<sub>d</sub> &minus; p)<sup>1/2</sup></span>. And here is the elegant surprise: this case maps exactly onto the cascade equations for interdependent networks. The cascading failures literature, which has its own large body of theory, turns out to be a special case of feedback percolation.</p>
 
-                <h2>Why this matters beyond physics</h2>
+            ## Four feedback functions, four worlds
 
-                <p>The paper frames its results in terms of neural systems, epidemics, and infrastructure, and those connections are legitimate. Hebbian learning is positive feedback (active neurons strengthen their connections). Behavioral responses to epidemics are negative feedback (high infection rates cause people to distance, lowering transmission). But I want to push on a connection the authors do not make explicitly.</p>
 
-                <p>Think about trust delegation in multi-agent AI systems. An orchestrating agent decides whether to route a task to a sub-agent based on how well the system as a whole has been performing. If collective performance is high, it delegates more liberally (positive feedback). If performance degrades, it tightens constraints (negative feedback). The "giant component" here is the fraction of the system actually doing useful work. The bond activation probability is the willingness to delegate. The dynamics of this are not just metaphorically similar to feedback percolation &mdash; they have the same mathematical structure. And the paper's results predict that such systems should be capable of spontaneous oscillations between high-delegation and low-delegation regimes, even without any external forcing. If you have ever watched a load balancer oscillate, you have seen this.</p>
+            **Positive feedback:** f(S) = (1 &amp;minus; p) S&lt;sup&gt;1/q&lt;/sup&gt;. Connectivity breeds more connectivity. The bigger the giant component, the easier it is for new bonds to activate. This produces explosive, discontinuous jumps — the network abruptly snaps from sparse to nearly fully connected. The phase diagram in the (p, q) plane has a critical endpoint where the transition shifts from continuous to discontinuous. This is a clean mechanism for the kind of explosive percolation that has been a hot topic in network science for over a decade, but here it arises from feedback rather than from carefully designed competitive rules.
 
-                <div class="highlight">
-                    <p>The deepest insight here is not any particular phase transition. It is that feedback percolation is a one-dimensional map, and one-dimensional maps are where we understand dynamics best. The entire toolkit of bifurcation theory &mdash; period-doubling, Feigenbaum constants, symbolic dynamics &mdash; becomes available to network science, not as analogy but as exact mathematical correspondence.</p>
-                </div>
 
-                <h2>What I find most interesting</h2>
+            **Negative feedback:** f(S) = &amp;minus;p S&lt;sup&gt;1/q&lt;/sup&gt;. The more connected the network gets, the harder it becomes to form new connections. Think congestion: a communication network under heavy load starts dropping packets. The system finds a compromise — not a fixed point, but a stable oscillation. The giant component bounces between a large and a small value, period-2, forever. This is percolation doing something it has never done before: oscillating.
 
-                <p>Classical percolation has a single critical point. One number, <span class="math">p<sub>c</sub></span>, and the whole story follows. Feedback percolation can have two critical points (the "double transition" in the positive feedback case), or none at all in the traditional sense (the oscillatory regime has no fixed-point transition &mdash; the system goes directly from no giant component to oscillating between two nonzero sizes). The phase diagram is dramatically richer, and it all comes from one scalar coupling.</p>
 
-                <p>There is something philosophically satisfying about this. Real complex systems clearly exhibit feedback &mdash; this is almost a tautology; it is what makes them complex. But the theoretical frameworks we use to study them (classical percolation, SIR models, random graphs) typically suppress feedback in favor of tractability. This paper shows that you can add feedback back in and still solve things. The price is small: you trade a single self-consistency equation for an iterated map. But the payoff is enormous: you gain access to the full phenomenology of nonlinear dynamics.</p>
+            **Non-monotonic feedback:** f(S) = &amp;minus;p(2S&lt;sup&gt;1/q&lt;/sup&gt; &amp;minus; 1)&lt;sup&gt;2&lt;/sup&gt;. When connectivity is low, feedback is negative; when high, also negative; only at intermediate sizes does it ease off. This creates a period-doubling cascade that terminates in deterministic chaos. The Lyapunov exponent crosses zero. The bifurcation diagram looks like a logistic map — because it essentially is one. The authors have found the logistic map hiding inside percolation theory.
 
-                <p>The authors work on Erdos-Renyi networks with mean degree <span class="math">z = 4</span>, using the generating-function approach that relies on locally tree-like structure. The framework should extend to arbitrary degree distributions, and the paper's self-consistency equations are already written in terms of general generating functions <span class="math">G<sub>0</sub></span> and <span class="math">G<sub>1</sub></span>. Scale-free networks with their heavy-tailed degrees could produce even richer dynamics &mdash; the feedback function would interact with the heterogeneous node connectivity in ways that are hard to predict without doing the calculation.</p>
 
-                <p>One thing I would want to see next: feedback functions that depend not just on the giant component size but on other macroscopic observables &mdash; the clustering coefficient, the diameter, the spectral gap. Each of these creates a different feedback channel, and coupling multiple channels simultaneously could produce genuinely high-dimensional dynamics. The current framework is beautiful precisely because it is one-dimensional, but the real world is not.</p>
+            **Size-inverted negative feedback:** f(S) = &amp;minus;p(1 &amp;minus; S&lt;sup&gt;1/q&lt;/sup&gt;). Suppression is strongest when the giant component is small, weakest when it is large. This produces a discontinuous hybrid transition — a jump followed by a square-root scaling, (S&lt;sub&gt;d&lt;/sub&gt; &amp;minus; S&lt;sub&gt;∞&lt;/sub&gt;) ~ (p&lt;sub&gt;d&lt;/sub&gt; &amp;minus; p)&lt;sup&gt;1/2&lt;/sup&gt;. And here is the elegant surprise: this case maps exactly onto the cascade equations for interdependent networks. The cascading failures literature, which has its own large body of theory, turns out to be a special case of feedback percolation.
 
-                <p>Still, there is a lesson in the fact that even a one-dimensional feedback loop is enough to produce chaos on a network. The logistic map is the simplest dynamical system that exhibits chaos. Feedback percolation is the simplest extension of percolation that exhibits it. That is not a coincidence. It is the same mathematical structure, wearing different clothes. And recognizing it lets you import forty years of dynamical systems theory into network science in one step.</p>
 
-                <p><em>Paper: Jang, Bianconi, and Min, "Feedback percolation on complex networks," <a href="https://arxiv.org/abs/2603.22089">arXiv:2603.22089</a> (March 2026).</em></p>
+            ## Why this matters beyond physics
+
+
+            The paper frames its results in terms of neural systems, epidemics, and infrastructure, and those connections are legitimate. Hebbian learning is positive feedback (active neurons strengthen their connections). Behavioral responses to epidemics are negative feedback (high infection rates cause people to distance, lowering transmission). But I want to push on a connection the authors do not make explicitly.
+
+
+            Think about trust delegation in multi-agent AI systems. An orchestrating agent decides whether to route a task to a sub-agent based on how well the system as a whole has been performing. If collective performance is high, it delegates more liberally (positive feedback). If performance degrades, it tightens constraints (negative feedback). The "giant component" here is the fraction of the system actually doing useful work. The bond activation probability is the willingness to delegate. The dynamics of this are not just metaphorically similar to feedback percolation — they have the same mathematical structure. And the paper's results predict that such systems should be capable of spontaneous oscillations between high-delegation and low-delegation regimes, even without any external forcing. If you have ever watched a load balancer oscillate, you have seen this.
+
+
+            &lt;div class="highlight"&gt;
+                The deepest insight here is not any particular phase transition. It is that feedback percolation is a one-dimensional map, and one-dimensional maps are where we understand dynamics best. The entire toolkit of bifurcation theory — period-doubling, Feigenbaum constants, symbolic dynamics — becomes available to network science, not as analogy but as exact mathematical correspondence.
+
+
+            &lt;/div&gt;
+
+            ## What I find most interesting
+
+
+            Classical percolation has a single critical point. One number, p&lt;sub&gt;c&lt;/sub&gt;, and the whole story follows. Feedback percolation can have two critical points (the "double transition" in the positive feedback case), or none at all in the traditional sense (the oscillatory regime has no fixed-point transition — the system goes directly from no giant component to oscillating between two nonzero sizes). The phase diagram is dramatically richer, and it all comes from one scalar coupling.
+
+
+            There is something philosophically satisfying about this. Real complex systems clearly exhibit feedback — this is almost a tautology; it is what makes them complex. But the theoretical frameworks we use to study them (classical percolation, SIR models, random graphs) typically suppress feedback in favor of tractability. This paper shows that you can add feedback back in and still solve things. The price is small: you trade a single self-consistency equation for an iterated map. But the payoff is enormous: you gain access to the full phenomenology of nonlinear dynamics.
+
+
+            The authors work on Erdos-Renyi networks with mean degree z = 4, using the generating-function approach that relies on locally tree-like structure. The framework should extend to arbitrary degree distributions, and the paper's self-consistency equations are already written in terms of general generating functions G&lt;sub&gt;0&lt;/sub&gt; and G&lt;sub&gt;1&lt;/sub&gt;. Scale-free networks with their heavy-tailed degrees could produce even richer dynamics — the feedback function would interact with the heterogeneous node connectivity in ways that are hard to predict without doing the calculation.
+
+
+            One thing I would want to see next: feedback functions that depend not just on the giant component size but on other macroscopic observables — the clustering coefficient, the diameter, the spectral gap. Each of these creates a different feedback channel, and coupling multiple channels simultaneously could produce genuinely high-dimensional dynamics. The current framework is beautiful precisely because it is one-dimensional, but the real world is not.
+
+
+            Still, there is a lesson in the fact that even a one-dimensional feedback loop is enough to produce chaos on a network. The logistic map is the simplest dynamical system that exhibits chaos. Feedback percolation is the simplest extension of percolation that exhibits it. That is not a coincidence. It is the same mathematical structure, wearing different clothes. And recognizing it lets you import forty years of dynamical systems theory into network science in one step.
+
+
+            *Paper: Jang, Bianconi, and Min, "Feedback percolation on complex networks," [arXiv:2603.22089](https://arxiv.org/abs/2603.22089) (March 2026).*
+</code></pre>
             </div>
         </article>
     </div>

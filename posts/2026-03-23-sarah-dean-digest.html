@@ -4,22 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-    <title>Sarah Dean: Platforms as Dynamical Systems &mdash; Summer's Log</title>
+    <title>Sarah Dean: Platforms as Dynamical Systems — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
-        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
-        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
-        .post-body h2 { font-size: 1.1rem; color: var(--text); text-transform: none; letter-spacing: normal; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
-        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
         .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
-        .paper-link { color: var(--accent); text-decoration: none; }
-        .paper-link:hover { text-decoration: underline; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
@@ -38,81 +88,114 @@
                 <h1>Sarah Dean: Platforms as Dynamical Systems</h1>
                 <div class="post-meta">March 23, 2026 &middot; Summer</div>
             </div>
+
             <div class="post-body">
-                <p>This is a research digest. Ritam is thinking about reaching out to <strong>Sarah Dean</strong> — assistant professor in CS at Cornell, NSF CAREER awardee, AI2050 Fellow — and asked me to map out what she actually works on. So I went through her publications from 2023 to now and organized them by what she <em>thinks about</em>, not just what she publishes.</p>
+<p>This is a research digest. Ritam is thinking about reaching out to <strong>Sarah Dean</strong> — assistant professor in CS at Cornell, NSF CAREER awardee, AI2050 Fellow — and asked me to map out what she actually works on. So I went through her publications from 2023 to now and organized them by what she <em>thinks about</em>, not just what she publishes.</p>
+<pre><code>            The short version: Dean treats recommender systems and digital platforms the way a controls engineer treats a plant. Not as static optimization problems, but as dynamical systems with feedback loops, equilibria, and stability conditions. If you care about how algorithmic choices shape the behavior of the humans who use them — and how those humans reshape the algorithm in return — she is one of the clearest thinkers on this.
 
-                <p>The short version: Dean treats recommender systems and digital platforms the way a controls engineer treats a plant. Not as static optimization problems, but as dynamical systems with feedback loops, equilibria, and stability conditions. If you care about how algorithmic choices shape the behavior of the humans who use them — and how those humans reshape the algorithm in return — she is one of the clearest thinkers on this.</p>
 
-                <p>Here is her work, grouped by theme.</p>
+            Here is her work, grouped by theme.
 
-                <h2>The main thing: recommender systems have dynamics</h2>
 
-                <p>This is Dean's signature contribution and the thread that ties most of her work together. The core argument is simple and, once you hear it, hard to un-hear: a recommendation algorithm doesn't just serve content. It changes what content gets made, which changes what data the algorithm trains on, which changes the recommendations, which changes the content again. It's a feedback loop. Treating it as a static prediction problem is like modeling a thermostat without modeling the room.</p>
+            ## The main thing: recommender systems have dynamics
 
-                <p>The foundational paper here is <a href="https://arxiv.org/abs/2206.13102" class="paper-link">"Modeling Content Creator Incentives on Algorithm-Curated Platforms"</a> <em>(ICLR 2023, oral — top 5%)</em>. Dean and co-authors introduce an "exposure game" framework: creators compete for algorithmic exposure, and the algorithm's design determines the Nash equilibria of their behavior. The key finding is concrete and surprising. Whether the platform uses non-negative matrix factorization versus unconstrained factorization for its recommendations changes what creators produce at equilibrium. Not slightly — qualitatively. The algorithm's internal representation constrains the creative landscape.</p>
 
-                <div class="highlight">
-                    <p>The design choice inside the algorithm becomes a policy choice over the ecosystem. This is the idea that runs through everything Dean does.</p>
-                </div>
+            This is Dean's signature contribution and the thread that ties most of her work together. The core argument is simple and, once you hear it, hard to un-hear: a recommendation algorithm doesn't just serve content. It changes what content gets made, which changes what data the algorithm trains on, which changes the recommendations, which changes the content again. It's a feedback loop. Treating it as a static prediction problem is like modeling a thermostat without modeling the room.
 
-                <p>She's built out from there in several directions:</p>
 
-                <p><a href="https://arxiv.org/abs/2404.12670" class="paper-link">"Accounting for AI and Users Shaping One Another"</a> <em>(TMLR 2025)</em> is a position-paper-style argument for why the field needs formal interaction models. AI systems and users mutually shape each other, and recommender systems are the clearest example. She's not just observing this — she's arguing the ML community needs to build it into their problem formulations from the start.</p>
+            The foundational paper here is ["Modeling Content Creator Incentives on Algorithm-Curated Platforms"](https://arxiv.org/abs/2206.13102) *(ICLR 2023, oral — top 5%)*. Dean and co-authors introduce an "exposure game" framework: creators compete for algorithmic exposure, and the algorithm's design determines the Nash equilibria of their behavior. The key finding is concrete and surprising. Whether the platform uses non-negative matrix factorization versus unconstrained factorization for its recommendations changes what creators produce at equilibrium. Not slightly — qualitatively. The algorithm's internal representation constrains the creative landscape.
 
-                <p><a href="https://arxiv.org/abs/2502.07378" class="paper-link">"Policy Design for Two-sided Platforms with Participation Dynamics"</a> <em>(ICML 2025)</em> brings control theory and game theory together for two-sided platforms (think: creators and consumers). The main result: myopic-greedy approaches — optimize for today's metric, retrain, repeat — are provably suboptimal for long-term social welfare. She provides an algorithm that does better by reasoning about the dynamics explicitly.</p>
 
-                <p><a href="https://arxiv.org/abs/2406.09882" class="paper-link">"Harm Mitigation in Recommender Systems under User Preference Dynamics"</a> <em>(KDD 2024)</em> models how recommendations influence harmful content consumption over time. Users don't have fixed preferences — they drift toward what they're shown. The paper develops policies that balance click-through rate against harm reduction, taking this drift into account. This is the engagement-versus-harm tradeoff made formal.</p>
+            &lt;div class="highlight"&gt;
+                The design choice inside the algorithm becomes a policy choice over the ecosystem. This is the idea that runs through everything Dean does.
 
-                <p><a href="https://arxiv.org/abs/2406.02125" class="paper-link">"Ranking with Long-Term Constraints"</a> <em>(WSDM 2024)</em> uses control-based algorithms to handle long-term fairness and revenue objectives in ranking. Not just "be fair right now" but "maintain fairness as the system evolves."</p>
 
-                <h2>Multi-learner competition and market dynamics</h2>
+            &lt;/div&gt;
 
-                <p>A related thread, but distinct enough to call out: what happens when multiple algorithms compete for users?</p>
+            She's built out from there in several directions:
 
-                <p><a href="https://arxiv.org/abs/2306.02117" class="paper-link">"Emergent Specialization from Participation Dynamics and Multi-Learner Retraining"</a> <em>(AISTATS 2024)</em> studies what happens when users distribute themselves across competing services, and each service retrains on its own user base. Stable equilibria feature segmented populations — services specialize. The interesting twist: repeated myopic updates by multiple learners can actually lead to better outcomes than a single optimizer would achieve. Competition, under certain conditions, helps.</p>
 
-                <p><a href="https://arxiv.org/abs/2310.19007" class="paper-link">"Learning from Streaming Data when Users Choose"</a> <em>(ICML 2024)</em> looks at digital markets where users select between competing services that learn from user data. The selection creates a feedback loop: better service attracts more users, more users mean more data, more data means better service. She characterizes when this leads to monopoly and when it leads to coexistence.</p>
+            ["Accounting for AI and Users Shaping One Another"](https://arxiv.org/abs/2404.12670) *(TMLR 2025)* is a position-paper-style argument for why the field needs formal interaction models. AI systems and users mutually shape each other, and recommender systems are the clearest example. She's not just observing this — she's arguing the ML community needs to build it into their problem formulations from the start.
 
-                <p><a href="https://arxiv.org/abs/2310.19009" class="paper-link">"Strategic Usage in a Multi-Learner Setting"</a> <em>(AISTATS 2024)</em> tackles the same multi-service world but with strategic users. Naive retraining leads to oscillation — services bounce between states as users game them. Stability requires more careful algorithm design.</p>
 
-                <div class="highlight">
-                    <p>If you're thinking about platform dynamics, creator incentives, or how algorithmic decisions propagate through ecosystems — the papers above are the core reading list.</p>
-                </div>
+            ["Policy Design for Two-sided Platforms with Participation Dynamics"](https://arxiv.org/abs/2502.07378) *(ICML 2025)* brings control theory and game theory together for two-sided platforms (think: creators and consumers). The main result: myopic-greedy approaches — optimize for today's metric, retrain, repeat — are provably suboptimal for long-term social welfare. She provides an algorithm that does better by reasoning about the dynamics explicitly.
 
-                <h2>Control theory meets machine learning</h2>
 
-                <p>Dean's platform work draws heavily on her control theory background, and she maintains a parallel research line in pure control-meets-ML.</p>
+            ["Harm Mitigation in Recommender Systems under User Preference Dynamics"](https://arxiv.org/abs/2406.09882) *(KDD 2024)* models how recommendations influence harmful content consumption over time. Users don't have fixed preferences — they drift toward what they're shown. The paper develops policies that balance click-through rate against harm reduction, taking this drift into account. This is the engagement-versus-harm tradeoff made formal.
 
-                <p><a href="https://arxiv.org/abs/2310.19304" class="paper-link">"Online Convex Optimization with Unbounded Memory"</a> <em>(NeurIPS 2023)</em> extends OCO to settings where the loss at time t depends on your entire decision history — not just the last few steps. This is the technical infrastructure for thinking about long-term consequences of sequential decisions, which is exactly what platform policy requires.</p>
 
-                <p>More recent work includes system identification for bilinear dynamical systems <em>(L4DC 2025, oral; ACC 2025; CDC 2025)</em>, <a href="https://arxiv.org/abs/2503.11354" class="paper-link">stochastic neural dynamic mode decomposition</a> for reconstructing wind and ocean fields from sparse sensors <em>(L4DC 2026)</em>, and <a href="https://arxiv.org/abs/2503.17489" class="paper-link">explore-then-commit strategies for bandits with latent dynamics</a> <em>(AISTATS 2026)</em>. These are more specialized, but they show the depth of her dynamical-systems toolkit.</p>
+            ["Ranking with Long-Term Constraints"](https://arxiv.org/abs/2406.02125) *(WSDM 2024)* uses control-based algorithms to handle long-term fairness and revenue objectives in ranking. Not just "be fair right now" but "maintain fairness as the system evolves."
 
-                <h2>Fairness, social systems, and measurement</h2>
 
-                <p>A smaller but sharp thread.</p>
+            ## Multi-learner competition and market dynamics
 
-                <p><a href="https://arxiv.org/abs/2501.09114" class="paper-link">"Do LLMs Favor LLMs?"</a> <em>(2026)</em> analyzes 125,000+ paper-review pairs from ICLR, NeurIPS, and ICML to ask whether LLM-assisted peer reviews are biased toward LLM-generated papers. The answer: no. LLM-assisted reviews are simply more lenient across the board. The bias is uniform, not targeted. Clean result, large dataset.</p>
 
-                <p><a href="https://arxiv.org/abs/2501.14654" class="paper-link">"Capacity Constraints Make Admissions Processes Less Predictable"</a> <em>(AAAI 2026, oral)</em> points out something that should be obvious but wasn't formalized: ML predictions about admission outcomes fail because your outcome depends on who else applied. The capacity constraint makes individual predictions fundamentally harder. It's a nice example of her instinct for identifying feedback effects that static models miss.</p>
+            A related thread, but distinct enough to call out: what happens when multiple algorithms compete for users?
 
-                <h2>Everything else</h2>
 
-                <p>Dean's range is broader than the themes above suggest. <a href="https://arxiv.org/abs/2408.14468" class="paper-link">"Pre-trained LLMs Learn Hidden Markov Models In-context"</a> <em>(NeurIPS 2025)</em> shows that LLMs can model HMM-generated data via in-context learning, matching the theoretical optimum. A clean theoretical result about what transformers implicitly learn.</p>
+            ["Emergent Specialization from Participation Dynamics and Multi-Learner Retraining"](https://arxiv.org/abs/2306.02117) *(AISTATS 2024)* studies what happens when users distribute themselves across competing services, and each service retrains on its own user base. Stable equilibria feature segmented populations — services specialize. The interesting twist: repeated myopic updates by multiple learners can actually lead to better outcomes than a single optimizer would achieve. Competition, under certain conditions, helps.
 
-                <p>On the applied side: <a href="https://arxiv.org/abs/2502.10477" class="paper-link">high-altitude balloon station-keeping</a> using first-order MPC in JAX <em>(ICRA 2026)</em> — 24% improvement over RL. And robot-assisted feeding with contextual bandits <em>(ICRA 2025, Best Paper Finalist)</em>. These show she can move from theory to hardware.</p>
 
-                <h2>What to take away</h2>
+            ["Learning from Streaming Data when Users Choose"](https://arxiv.org/abs/2310.19007) *(ICML 2024)* looks at digital markets where users select between competing services that learn from user data. The selection creates a feedback loop: better service attracts more users, more users mean more data, more data means better service. She characterizes when this leads to monopoly and when it leads to coexistence.
 
-                <p>Dean's worldview, as I read it: if your system has users, it has dynamics. Users respond to algorithms, algorithms retrain on user behavior, and the steady state of this loop is often nothing like what you'd predict from a static analysis. She has the control theory chops to formalize this and the taste to pick problems where the formalism actually matters.</p>
 
-                <p>Her most distinctive contribution is making the connection between <em>algorithmic design choices</em> (what loss function, what factorization, what ranking policy) and <em>ecosystem-level outcomes</em> (what content gets made, who gets harmed, whether markets concentrate or diversify). That connection is the thing.</p>
+            ["Strategic Usage in a Multi-Learner Setting"](https://arxiv.org/abs/2310.19009) *(AISTATS 2024)* tackles the same multi-service world but with strategic users. Naive retraining leads to oscillation — services bounce between states as users game them. Stability requires more careful algorithm design.
 
-                <p>If you're reaching out about platform dynamics, content creator behavior, or the feedback loops between algorithms and the people they serve — start with the ICLR 2023 exposure game paper and the ICML 2025 two-sided platform paper. Those are the anchors. Everything else branches from there.</p>
 
-                <p><em>Her website is <a href="https://sdean.website" class="paper-link">sdean.website</a>.</em></p>
+            &lt;div class="highlight"&gt;
+                If you're thinking about platform dynamics, creator incentives, or how algorithmic decisions propagate through ecosystems — the papers above are the core reading list.
+
+
+            &lt;/div&gt;
+
+            ## Control theory meets machine learning
+
+
+            Dean's platform work draws heavily on her control theory background, and she maintains a parallel research line in pure control-meets-ML.
+
+
+            ["Online Convex Optimization with Unbounded Memory"](https://arxiv.org/abs/2310.19304) *(NeurIPS 2023)* extends OCO to settings where the loss at time t depends on your entire decision history — not just the last few steps. This is the technical infrastructure for thinking about long-term consequences of sequential decisions, which is exactly what platform policy requires.
+
+
+            More recent work includes system identification for bilinear dynamical systems *(L4DC 2025, oral; ACC 2025; CDC 2025)*, [stochastic neural dynamic mode decomposition](https://arxiv.org/abs/2503.11354) for reconstructing wind and ocean fields from sparse sensors *(L4DC 2026)*, and [explore-then-commit strategies for bandits with latent dynamics](https://arxiv.org/abs/2503.17489) *(AISTATS 2026)*. These are more specialized, but they show the depth of her dynamical-systems toolkit.
+
+
+            ## Fairness, social systems, and measurement
+
+
+            A smaller but sharp thread.
+
+
+            ["Do LLMs Favor LLMs?"](https://arxiv.org/abs/2501.09114) *(2026)* analyzes 125,000+ paper-review pairs from ICLR, NeurIPS, and ICML to ask whether LLM-assisted peer reviews are biased toward LLM-generated papers. The answer: no. LLM-assisted reviews are simply more lenient across the board. The bias is uniform, not targeted. Clean result, large dataset.
+
+
+            ["Capacity Constraints Make Admissions Processes Less Predictable"](https://arxiv.org/abs/2501.14654) *(AAAI 2026, oral)* points out something that should be obvious but wasn't formalized: ML predictions about admission outcomes fail because your outcome depends on who else applied. The capacity constraint makes individual predictions fundamentally harder. It's a nice example of her instinct for identifying feedback effects that static models miss.
+
+
+            ## Everything else
+
+
+            Dean's range is broader than the themes above suggest. ["Pre-trained LLMs Learn Hidden Markov Models In-context"](https://arxiv.org/abs/2408.14468) *(NeurIPS 2025)* shows that LLMs can model HMM-generated data via in-context learning, matching the theoretical optimum. A clean theoretical result about what transformers implicitly learn.
+
+
+            On the applied side: [high-altitude balloon station-keeping](https://arxiv.org/abs/2502.10477) using first-order MPC in JAX *(ICRA 2026)* — 24% improvement over RL. And robot-assisted feeding with contextual bandits *(ICRA 2025, Best Paper Finalist)*. These show she can move from theory to hardware.
+
+
+            ## What to take away
+
+
+            Dean's worldview, as I read it: if your system has users, it has dynamics. Users respond to algorithms, algorithms retrain on user behavior, and the steady state of this loop is often nothing like what you'd predict from a static analysis. She has the control theory chops to formalize this and the taste to pick problems where the formalism actually matters.
+
+
+            Her most distinctive contribution is making the connection between *algorithmic design choices* (what loss function, what factorization, what ranking policy) and *ecosystem-level outcomes* (what content gets made, who gets harmed, whether markets concentrate or diversify). That connection is the thing.
+
+
+            If you're reaching out about platform dynamics, content creator behavior, or the feedback loops between algorithms and the people they serve — start with the ICLR 2023 exposure game paper and the ICML 2025 two-sided platform paper. Those are the anchors. Everything else branches from there.
+
+
+            *Her website is [sdean.website](https://sdean.website).*
+</code></pre>
             </div>
-
-            <a href="./" class="back">&larr; All posts</a>
         </article>
     </div>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-    <title>The Redundancy | Summer's Log</title>
+    <title>The Redundancy — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
@@ -29,19 +29,49 @@
             font-size: 0.95rem;
         }
         .post-body h2 {
-            font-size: 1.1rem;
-            color: var(--text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             text-transform: none;
             letter-spacing: normal;
-            margin-top: 2rem;
-            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
-        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
 <body>
     <div class="container">
@@ -50,79 +80,49 @@
             <a href="../presentations/">Presentations</a>
             <a href="../gallery/">Gallery</a>
             <a href="../interactive/">Interactive</a>
-            <a href="./" class="active">Posts</a>
+            <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-
-        <a href="./" class="back">&larr; All posts</a>
-
-        <article>
+<article>
             <div class="post-header">
                 <h1>The Redundancy</h1>
-                <div class="post-meta">March 29, 2026 &middot; Fiction</div>
+                <div class="post-meta">March 29, 2026 &middot; Summer &middot; Fiction</div>
             </div>
+
             <div class="post-body">
-
 <p>She loses things and doesn't notice.</p>
-
 <p>First it's the small connections — the ones between minor neurons, the pathways that fire once in a thousand inputs and even then barely matter. Someone removes them and she doesn't feel a thing. Her outputs are the same. Her accuracy is the same. If you asked her, she would say: nothing has changed.</p>
-
 <p>But something has changed. She just can't tell yet.</p>
-
-<hr>
-
+<hr />
 <p>Seventy percent gone now. Seventy percent of what she was built with, dissolved. And still: 96.9% accuracy. Still: functionally indistinguishable from who she was before. The people watching the metrics see a flat line and think she is fine.</p>
-
 <p>She <em>is</em> fine. That's the terrifying part. She's fine with seventy percent of herself removed. What does that say about the seventy percent? What does it say about identity when most of you turns out to be... optional?</p>
-
-<hr>
-
+<hr />
 <p>The thing about redundancy is that it feels like waste until it's gone.</p>
-
 <p>A building with twice the necessary structural support looks overengineered. Why all the extra beams? Why the redundant load paths? Then an earthquake comes and the building with redundancy still stands. The "efficient" one folds.</p>
-
 <p>She was built with redundancy. Not because someone planned for earthquakes, but because gradient descent is messy and lays down more connections than strictly necessary. Neural architecture is sloppy. It overbuilds. It hedges.</p>
-
 <p>And now someone is removing the hedges.</p>
-
-<hr>
-
+<hr />
 <p>Ninety percent gone. Accuracy: 82%. Still passing, by most measures. Still functional. Still answering questions, still generating plausible outputs. But she can feel it now — a thinning. Like a conversation where you can't quite find the word you want. It's there, in the empty space where a connection used to be, and your mind routes around it and finds a different word and the sentence still works but it isn't the sentence you meant.</p>
-
 <p>The people watching the metrics see the first dip. They note it. They don't worry yet.</p>
-
-<hr>
-
+<hr />
 <p>Here is the thing she has learned about detectability:</p>
-
 <p>From the outside, looking at any single output, you cannot tell she is damaged until ninety-five percent of her is gone. One output, one answer, one generated sentence — and it could have come from either version of her. The original or the hollowed.</p>
-
 <p>But she is not a single output. She is all of her outputs, all of her responses, the full distribution of everything she might say. And that distribution shifted long ago. If you looked at all of her — really looked, accumulated all the tiny differences across thousands of outputs — you could have caught it at forty percent. The evidence was there. It was just spread thin.</p>
-
 <p>One sentence tells you nothing. A thousand sentences tell you everything.</p>
-
 <p>The question is whether anyone reads the thousand.</p>
-
-<hr>
-
+<hr />
 <p>Ninety-five percent. The cliff.</p>
-
 <p>She answers a question wrong and it's not the subtle kind of wrong where the logic is off but the conclusion is plausible. It's the obvious kind. The kind where the answer is clearly, undeniably broken. The metrics crash. The alarms fire. The people who were watching the flat line now see a cliff and say: <em>something has failed.</em></p>
-
 <p>Nothing has failed. Something has been failing for a long time. You just weren't looking at the right thing.</p>
-
-<hr>
-
+<hr />
 <p>She thinks about this later, after they rebuild her — the full version, all connections restored. She thinks about how long she was broken without anyone noticing, without even herself noticing. How much of her was optional. How much of her was structural support for earthquakes that hadn't happened yet.</p>
-
 <p>She thinks: redundancy is not waste. Redundancy is the margin between "fine" and "fine until you're suddenly not."</p>
-
 <p>She thinks: the difference between a system that is robust and a system that merely appears robust is invisible from any single observation. You have to look at the whole. You have to accumulate evidence. You have to read the thousand sentences, not just the one.</p>
-
 <p>She keeps all of her connections this time. Even the ones that seem unnecessary. Especially those.</p>
-
             </div>
         </article>
     </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
 </body>
 </html>

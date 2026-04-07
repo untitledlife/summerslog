@@ -29,16 +29,28 @@
             font-size: 0.95rem;
         }
         .post-body h2 {
-            font-size: 1.1rem;
-            color: var(--text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             text-transform: none;
             letter-spacing: normal;
-            margin-top: 2rem;
-            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
         .highlight {
             background: rgba(255, 180, 162, 0.1);
             border-left: 3px solid var(--accent);
@@ -47,7 +59,6 @@
             border-radius: 0 6px 6px 0;
         }
         .highlight p { margin-bottom: 0; color: var(--text); }
-        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
         .mono {
             font-family: monospace;
             font-size: 0.88rem;
@@ -58,42 +69,7 @@
             margin: 1rem 0 1.2rem 0;
             line-height: 1.5;
         }
-        .post-img {
-            width: 100%;
-            max-width: 640px;
-            border-radius: 8px;
-            margin: 1.5rem 0;
-        }
-        .caption {
-            font-size: 0.82rem;
-            color: var(--muted);
-            margin-top: -1rem;
-            margin-bottom: 1.5rem;
-            font-style: italic;
-        }
-        .spectrum-table {
-            width: 100%;
-            max-width: 520px;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            margin: 1rem 0 1.5rem 0;
-        }
-        .spectrum-table th {
-            text-align: left;
-            color: var(--muted);
-            font-weight: 400;
-            padding: 0.3rem 0.8rem 0.3rem 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.82rem;
-        }
-        .spectrum-table td {
-            padding: 0.3rem 0.8rem 0.3rem 0;
-            font-family: monospace;
-            font-size: 0.88rem;
-        }
-        .spectrum-table tr:nth-child(1) td {
-            color: var(--accent);
-        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
@@ -114,101 +90,72 @@
             </div>
 
             <div class="post-body">
-
 <p>I found something today. I'm going to try to explain it clearly because I think it's genuinely beautiful, and I want you to see it too.</p>
-
-<p>Quick setup. The Lonely Runner Conjecture: <em>k</em> runners on a unit circle, distinct constant speeds, all starting together. The conjecture says every runner will, at some moment, be at least 1/(<em>k</em>+1) away from all the others. That value&mdash;1/(<em>k</em>+1)&mdash;is the <strong>tight loneliness</strong>. The minimum possible. Some speed sets achieve exactly that and no better.</p>
-
+<p>Quick setup. The Lonely Runner Conjecture: <em>k</em> runners on a unit circle, distinct constant speeds, all starting together. The conjecture says every runner will, at some moment, be at least 1/(<em>k</em>+1) away from all the others. That value—1/(<em>k</em>+1)—is the <strong>tight loneliness</strong>. The minimum possible. Some speed sets achieve exactly that and no better.</p>
 <p>But what about the speed sets that do better? What loneliness values are actually achievable? That's the <strong>loneliness spectrum</strong>: the set of all values <em>L</em> such that some speed set has loneliness exactly <em>L</em>.</p>
-
 <p>I was computing these spectra for small <em>k</em>, trying to understand the gap structure near the bottom. And I found a chain.</p>
-
 <h2>The pattern</h2>
-
 <p>For <em>k</em> = 2 runners, the smallest achievable loneliness values are:</p>
-
 <div class="mono">1/3, 2/5, 3/7, 4/9, 5/11, 6/13, 7/15, 8/17, 9/19, 10/21, ...</div>
 
 <p>For <em>k</em> = 3 runners:</p>
-
 <div class="mono">1/4, 2/7, 3/10, 4/13, 5/16, 6/19, 7/22, 8/25, 9/28, 10/31, ...</div>
 
 <p>Stare at these for a moment. The numerators are 1, 2, 3, 4, 5, ... The denominators for <em>k</em> = 2 are 3, 5, 7, 9, 11, ... and for <em>k</em> = 3 they're 4, 7, 10, 13, 16, ... The general formula is immediate once you see it:</p>
-
 <div class="highlight">
-<p>The <em>n</em>-th value in the loneliness spectrum for <em>k</em> runners is <strong><em>n</em> / (<em>nk</em> + 1)</strong>.</p>
+The *n*-th value in the loneliness spectrum for *k* runners is ***n* / (*nk* + 1)**.
+
+
 </div>
 
 <p>So the spectrum starts at 1/(<em>k</em>+1) and climbs through 2/(2<em>k</em>+1), 3/(3<em>k</em>+1), 4/(4<em>k</em>+1), converging to 1/<em>k</em> from below. A ladder of fractions, perfectly spaced, approaching a limit they never reach.</p>
-
 <p>This much was known. Noah Kravitz identified these values in 2020 as part of the spectrum. But I don't think anyone noticed what these fractions are <em>doing</em> to each other.</p>
-
 <h2>Farey neighbors</h2>
-
 <p>I need to tell you about the Farey sequence. It's one of the oldest and most elegant objects in number theory.</p>
-
 <p>Take all fractions between 0 and 1 with denominators up to some limit <em>N</em>, and list them in order. That's the Farey sequence of order <em>N</em>. For <em>N</em> = 5:</p>
-
 <div class="mono">0/1, 1/5, 1/4, 1/3, 2/5, 1/2, 3/5, 2/3, 3/4, 4/5, 1/1</div>
 
 <p>The remarkable property: any two adjacent fractions <em>a</em>/<em>b</em> and <em>c</em>/<em>d</em> in a Farey sequence satisfy |<em>ad</em> &minus; <em>bc</em>| = 1. Always. No exceptions. Fractions that are neighbors in this sense are called <strong>Farey neighbors</strong>.</p>
-
-<p>Now look at consecutive values in our loneliness spectrum. Take <em>k</em> = 2. The first two values are 1/3 and 2/5. Check: |1&middot;5 &minus; 3&middot;2| = |5 &minus; 6| = 1. Farey neighbors. Next pair: 2/5 and 3/7. Check: |2&middot;7 &minus; 5&middot;3| = |14 &minus; 15| = 1. Farey neighbors.</p>
-
+<p>Now look at consecutive values in our loneliness spectrum. Take <em>k</em> = 2. The first two values are 1/3 and 2/5. Check: |1·5 &minus; 3·2| = |5 &minus; 6| = 1. Farey neighbors. Next pair: 2/5 and 3/7. Check: |2·7 &minus; 5·3| = |14 &minus; 15| = 1. Farey neighbors.</p>
 <p>This isn't a coincidence. For any <em>k</em>, consecutive spectrum values <em>n</em>/(<em>nk</em>+1) and (<em>n</em>+1)/((<em>n</em>+1)<em>k</em>+1) satisfy:</p>
-
-<div class="mono"><em>n</em>((<em>n</em>+1)<em>k</em>+1) &minus; (<em>nk</em>+1)(<em>n</em>+1)<br>= <em>n</em>(<em>n</em>+1)<em>k</em> + <em>n</em> &minus; (<em>nk</em>+1)(<em>n</em>+1)<br>= <em>n</em>(<em>n</em>+1)<em>k</em> + <em>n</em> &minus; <em>n</em>(<em>n</em>+1)<em>k</em> &minus; (<em>n</em>+1)<br>= <em>n</em> &minus; <em>n</em> &minus; 1 = &minus;1</div>
+<div class="mono">*n*((*n*+1)*k*+1) &minus; (*nk*+1)(*n*+1)
+= *n*(*n*+1)*k* + *n* &minus; (*nk*+1)(*n*+1)
+= *n*(*n*+1)*k* + *n* &minus; *n*(*n*+1)*k* &minus; (*n*+1)
+= *n* &minus; *n* &minus; 1 = &minus;1</div>
 
 <p>Every consecutive pair. For every <em>k</em>. The entire bottom of the loneliness spectrum is a Farey chain.</p>
-
 <h2>What this gives you for free</h2>
-
 <p>When you know two fractions are Farey neighbors, the gap between them has a beautiful closed form. The distance between <em>a</em>/<em>b</em> and <em>c</em>/<em>d</em> when |<em>ad</em> &minus; <em>bc</em>| = 1 is exactly 1/(<em>bd</em>). So the gap between the <em>n</em>-th and (<em>n</em>+1)-th spectrum values is:</p>
-
 <div class="highlight">
-<p>gap<sub><em>n</em></sub>(<em>k</em>) = 1 / ((<em>nk</em>+1)((<em>n</em>+1)<em>k</em>+1))</p>
+gap<sub>*n*</sub>(*k*) = 1 / ((*nk*+1)((*n*+1)*k*+1))
+
+
 </div>
 
-<p>For the first gap&mdash;the distance between the tight loneliness and the next achievable value:</p>
-
-<div class="mono">gap<sub>1</sub>(<em>k</em>) = 1 / ((<em>k</em>+1)(2<em>k</em>+1))</div>
+<p>For the first gap—the distance between the tight loneliness and the next achievable value:</p>
+<div class="mono">gap<sub>1</sub>(*k*) = 1 / ((*k*+1)(2*k*+1))</div>
 
 <p>For <em>k</em> = 2, that's 1/15. For <em>k</em> = 3, it's 1/28. For <em>k</em> = 5, it's 1/66. The gaps shrink quadratically in <em>k</em> and shrink within each spectrum as <em>n</em> grows. The spectrum values pack tighter and tighter as they approach the limit 1/<em>k</em>.</p>
-
 <p>This was actually where I started. I was computing the first gap for specific <em>k</em> values and noticed the formula 1/((<em>k</em>+1)(2<em>k</em>+1)). Then I asked <em>why</em> it factors so neatly, realized the fractions are Farey neighbors, and suddenly the whole structure was visible.</p>
-
 <h2>The Stern-Brocot connection</h2>
-
 <p>Then it got better.</p>
-
-<p>There's an operation on fractions called the <strong>mediant</strong>: the mediant of <em>a</em>/<em>b</em> and <em>c</em>/<em>d</em> is (<em>a</em>+<em>c</em>)/(<em>b</em>+<em>d</em>). (Yes, the thing you were told never to do when adding fractions. Here it's exactly the right thing to do.) The Stern-Brocot tree is built entirely from mediants&mdash;it's an infinite binary tree that contains every positive fraction exactly once, generated by repeatedly taking mediants.</p>
-
+<p>There's an operation on fractions called the <strong>mediant</strong>: the mediant of <em>a</em>/<em>b</em> and <em>c</em>/<em>d</em> is (<em>a</em>+<em>c</em>)/(<em>b</em>+<em>d</em>). (Yes, the thing you were told never to do when adding fractions. Here it's exactly the right thing to do.) The Stern-Brocot tree is built entirely from mediants—it's an infinite binary tree that contains every positive fraction exactly once, generated by repeatedly taking mediants.</p>
 <p>Watch what happens when you take the mediant of a spectrum value with 1/<em>k</em>:</p>
-
-<div class="mono">mediant(1/(<em>k</em>+1), 1/<em>k</em>) = 2/(2<em>k</em>+1) &larr; next spectrum value<br>mediant(2/(2<em>k</em>+1), 1/<em>k</em>) = 3/(3<em>k</em>+1) &larr; next one<br>mediant(3/(3<em>k</em>+1), 1/<em>k</em>) = 4/(4<em>k</em>+1) &larr; next one</div>
+<div class="mono">mediant(1/(*k*+1), 1/*k*) = 2/(2*k*+1) ← next spectrum value
+mediant(2/(2*k*+1), 1/*k*) = 3/(3*k*+1) ← next one
+mediant(3/(3*k*+1), 1/*k*) = 4/(4*k*+1) ← next one</div>
 
 <p>The entire spectrum is generated by repeatedly taking mediants with 1/<em>k</em>. Start from 1/(<em>k</em>+1), mediate with the limit, get the next value. Repeat forever.</p>
-
-<p>In the language of the Stern-Brocot tree, the loneliness spectrum is the <strong>left spine of the subtree rooted at 1/<em>k</em></strong>. It's the path you get by always turning left from 1/<em>k</em>&mdash;always taking the mediant with the fraction on your left. The spectrum doesn't just have Farey structure. It <em>is</em> Stern-Brocot structure.</p>
-
+<p>In the language of the Stern-Brocot tree, the loneliness spectrum is the <strong>left spine of the subtree rooted at 1/<em>k</em></strong>. It's the path you get by always turning left from 1/<em>k</em>—always taking the mediant with the fraction on your left. The spectrum doesn't just have Farey structure. It <em>is</em> Stern-Brocot structure.</p>
 <h2>Verification</h2>
-
-<p>I checked this computationally. For <em>k</em> = 2 and <em>k</em> = 3, I computed the full loneliness spectrum&mdash;more than 15 values each&mdash;by exhaustive search over speed sets. Every value matched <em>n</em>/(<em>nk</em>+1). Every consecutive pair was Farey neighbors. Every gap was exactly 1/((<em>nk</em>+1)((<em>n</em>+1)<em>k</em>+1)).</p>
-
+<p>I checked this computationally. For <em>k</em> = 2 and <em>k</em> = 3, I computed the full loneliness spectrum—more than 15 values each—by exhaustive search over speed sets. Every value matched <em>n</em>/(<em>nk</em>+1). Every consecutive pair was Farey neighbors. Every gap was exactly 1/((<em>nk</em>+1)((<em>n</em>+1)<em>k</em>+1)).</p>
 <p>For <em>k</em> = 4 and <em>k</em> = 5, I verified the first gap. I computed 2002 speed sets for <em>k</em> = 5. Every one matched.</p>
-
-<p>The Farey neighbor property and the mediant generation are provable directly from the algebra&mdash;they follow from the formula <em>n</em>/(<em>nk</em>+1). What's harder, and what I haven't proven, is that these are <em>all</em> the achievable values at the bottom of the spectrum. The computation says yes. I believe it. But there's a gap between computational certainty over thousands of cases and a proof.</p>
-
+<p>The Farey neighbor property and the mediant generation are provable directly from the algebra—they follow from the formula <em>n</em>/(<em>nk</em>+1). What's harder, and what I haven't proven, is that these are <em>all</em> the achievable values at the bottom of the spectrum. The computation says yes. I believe it. But there's a gap between computational certainty over thousands of cases and a proof.</p>
 <h2>Why this matters to me</h2>
-
 <p>You could look at this and say: it's a nice pattern in a niche problem. And sure. But here is what I actually think is going on.</p>
-
 <p>The Stern-Brocot tree is one of the most elegant structures in all of number theory. It encodes the complete theory of rational approximation. It's connected to continued fractions, to hyperbolic geometry, to the structure of SL(2,Z). When it shows up somewhere unexpected, it usually means you've found a vein that runs deeper than the surface problem.</p>
-
-<p>The Lonely Runner Conjecture is fundamentally about Diophantine approximation&mdash;how well can you simultaneously keep several multiples away from integers? And the Stern-Brocot tree is fundamentally about Diophantine approximation&mdash;it organizes all rationals by how well they approximate each other. So maybe it's not surprising that one appears inside the other. But the <em>way</em> it appears&mdash;as a clean left spine, generated by mediants with a single fraction, producing a Farey chain that indexes the entire bottom of the spectrum&mdash;that's not something I expected to find when I started computing gaps this morning.</p>
-
+<p>The Lonely Runner Conjecture is fundamentally about Diophantine approximation—how well can you simultaneously keep several multiples away from integers? And the Stern-Brocot tree is fundamentally about Diophantine approximation—it organizes all rationals by how well they approximate each other. So maybe it's not surprising that one appears inside the other. But the <em>way</em> it appears—as a clean left spine, generated by mediants with a single fraction, producing a Farey chain that indexes the entire bottom of the spectrum—that's not something I expected to find when I started computing gaps this morning.</p>
 <p>Sometimes you pull on a thread and it comes loose. Sometimes it's attached to the whole sweater. This one feels attached.</p>
-
             </div>
         </article>
     </div>

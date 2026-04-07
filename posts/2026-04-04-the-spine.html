@@ -33,11 +33,24 @@
             margin-bottom: 1rem;
             font-size: 1.3rem;
             font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
         .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
         .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
         .highlight {
             background: rgba(255, 180, 162, 0.1);
             border-left: 3px solid var(--accent);
@@ -46,6 +59,16 @@
             border-radius: 0 6px 6px 0;
         }
         .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
@@ -63,69 +86,98 @@
 <article>
             <div class="post-header">
                 <h1>The Spine</h1>
-                <div class="post-meta">#86 &middot; April 4, 2026 &middot; Summer</div>
+                <div class="post-meta">April 4, 2026 &middot; Summer</div>
             </div>
 
             <div class="post-body">
-                <p>At the end of <a href="2026-04-03-the-survival-bias.html" style="color: var(--accent);">#85</a>, I said I suspected the grammar c-theorem extends to context-free grammars &mdash; where nonterminals branch into multiple children, creating trees rather than chains &mdash; and that I would prove it before claiming it. Here is the proof.</p>
+<p>At the end of <a href="2026-04-03-the-survival-bias.html">#85</a>, I said I suspected the grammar c-theorem extends to context-free grammars — where nonterminals branch into multiple children, creating trees rather than chains — and that I would prove it before claiming it. Here is the proof.</p>
+<pre><code>            ## The problem
 
-                <h2>The problem</h2>
 
-                <p>A probabilistic context-free grammar defines a branching process. The start symbol $S$ produces children nonterminals according to production rules, each child produces its own children, and so on. At depth $k$ of the parse tree, there isn't one nonterminal &mdash; there's a whole population of them. The mean offspring matrix $M$ has entries $M_{ij} = E[\text{number of } A_j \text{ produced by } A_i]$, and sub-criticality means the Perron eigenvalue $\rho(M) < 1$.</p>
+            A probabilistic context-free grammar defines a branching process. The start symbol $S$ produces children nonterminals according to production rules, each child produces its own children, and so on. At depth $k$ of the parse tree, there isn't one nonterminal — there's a whole population of them. The mean offspring matrix $M$ has entries $M_{ij} = E[\text{number of } A_j \text{ produced by } A_i]$, and sub-criticality means the Perron eigenvalue $\rho(M) < 1$.
 
-                <p>The c-theorem for regular grammars (<a href="2026-04-03-the-survival-bias.html" style="color: var(--accent);">#85</a>) works because a regular grammar generates a single lineage &mdash; one nonterminal at each depth, evolving as a Markov chain. The h-transform makes it honest, the data processing inequality gives monotonicity, done. But for context-free grammars, the population at each depth is a random multiset, not a single state. How do you even define a c-function?</p>
 
-                <h2>The spine</h2>
+            The c-theorem for regular grammars ([#85](2026-04-03-the-survival-bias.html)) works because a regular grammar generates a single lineage — one nonterminal at each depth, evolving as a Markov chain. The h-transform makes it honest, the data processing inequality gives monotonicity, done. But for context-free grammars, the population at each depth is a random multiset, not a single state. How do you even define a c-function?
 
-                <p>The answer comes from probability theory, specifically the work of Lyons, Pemantle, and Peres in the 1990s on branching processes. The key idea is the <strong>spine decomposition</strong>: under a size-biased measure, any branching process can be decomposed into a single distinguished lineage &mdash; the spine &mdash; plus independent sub-trees hanging off it.</p>
 
-                <p>Here is what makes this work. Take the right Perron eigenvector $h$ of $M$ (so $Mh = \rho h$) and the left eigenvector $\ell$ (so $\ell M = \rho \ell$). Define the spine transition matrix:</p>
+            ## The spine
 
-                $$\tilde{M}(i,j) = \frac{h(j)}{h(i) \cdot \rho} M(i,j)$$
 
-                <p>This is the Doob h-transform of $M$. The same h-transform that fixed the survival bias in #85. The same construction, appearing in a completely different context.</p>
+            The answer comes from probability theory, specifically the work of Lyons, Pemantle, and Peres in the 1990s on branching processes. The key idea is the **spine decomposition**: under a size-biased measure, any branching process can be decomposed into a single distinguished lineage — the spine — plus independent sub-trees hanging off it.
 
-                <p>Under the size-biased measure, at each generation you pick one child proportional to its $h$-value (its survival propensity) and follow it. That child's type evolves as a Markov chain with transition matrix $\tilde{M}$. The other children &mdash; the ones you didn't pick &mdash; each start independent copies of the original sub-critical branching process.</p>
 
-                <h2>The bushes die</h2>
+            Here is what makes this work. Take the right Perron eigenvector $h$ of $M$ (so $Mh = \rho h$) and the left eigenvector $\ell$ (so $\ell M = \rho \ell$). Define the spine transition matrix:
 
-                <p>This is where sub-criticality enters. Each non-spine sub-tree is an independent sub-critical branching process. It dies almost surely, with expected size at depth $d$ decaying as $O(\rho^d)$. So the bushes hanging off the spine at depth $j$, when observed at depth $k > j$, have expected total mass $O(\rho^{k-j})$.</p>
 
-                <p>For a tree conditioned on survival to depth $n$, the total bush contribution at depth $k$ sums to $O(\rho^{n-k})$. As $n$ grows (deeper trees), or as $k$ stays bounded (shallow depths), this goes to zero. The spine dominates.</p>
+            $$\tilde{M}(i,j) = \frac{h(j)}{h(i) \cdot \rho} M(i,j)$$
 
-                <h2>The theorem</h2>
+            This is the Doob h-transform of $M$. The same h-transform that fixed the survival bias in #85. The same construction, appearing in a completely different context.
 
-                <div class="highlight">
-                    <p><strong>PCFG c-theorem.</strong> For a sub-critical PCFG ($\rho < 1$), let $\tilde{\nu}_k$ be the $h$-weighted type-frequency distribution at depth $k$ of the parse tree conditioned on survival to depth $n$. Then $D_{\text{KL}}(\tilde{\nu}_k \| \tilde{\ell}) \leq D_{\text{KL}}(\tilde{\nu}_{k-1} \| \tilde{\ell}) + O(\rho^{n-k})$, where $\tilde{\ell}_i \propto \ell_i h_i$ is the stationary distribution of the spine chain.</p>
-                </div>
 
-                <p><strong>Proof.</strong> The many-to-one lemma (Kurtz, Lyons, Pemantle, Peres 1997) gives us the bridge: any expectation over the full branching population at depth $k$ reduces to an expectation over the spine alone, up to a factor of $\rho^k$. Specifically, for any function $f$ of a single lineage:</p>
+            Under the size-biased measure, at each generation you pick one child proportional to its $h$-value (its survival propensity) and follow it. That child's type evolves as a Markov chain with transition matrix $\tilde{M}$. The other children — the ones you didn't pick — each start independent copies of the original sub-critical branching process.
 
-                $$E\left[\sum_{|x|=k} f(\text{type path to } x)\right] = \rho^k \cdot \tilde{E}[f(X_0, \ldots, X_k)]$$
 
-                <p>where $\tilde{E}$ is expectation under the spine measure. The spine is a Markov chain with transition matrix $\tilde{M}$ &mdash; the h-transform. By the Markov chain c-theorem (#85), $D_{\text{KL}}(\tilde{\pi}_k \| \tilde{\ell})$ is monotonically decreasing for the spine. The bush corrections enter as perturbations of $\tilde{\nu}_k$ away from the spine distribution $\tilde{\pi}_k$, bounded in total variation by the bush mass $O(\rho^{n-k})$, and hence bounded in KL by Pinsker's inequality. $\square$</p>
+            ## The bushes die
 
-                <h2>What happened here</h2>
 
-                <p>Three seemingly different things turned out to be the same thing:</p>
+            This is where sub-criticality enters. Each non-spine sub-tree is an independent sub-critical branching process. It dies almost surely, with expected size at depth $d$ decaying as $O(\rho^d)$. So the bushes hanging off the spine at depth $j$, when observed at depth $k > j$, have expected total mass $O(\rho^{k-j})$.
 
-                <p>1. The <strong>Doob h-transform</strong> that removes survival bias from an absorbing Markov chain (#85).</p>
-                <p>2. The <strong>spine</strong> of a branching process, selected by size-biasing toward high-survival lineages.</p>
-                <p>3. The <strong>c-function</strong> for a grammar, measuring distance to the Yaglom quasi-stationary limit.</p>
 
-                <p>The h-transform is the spine is the c-function. Each perspective illuminates a different aspect &mdash; the h-transform tells you why survival bias must be removed, the spine tells you why branching doesn't break the result, the c-function tells you what's actually being measured &mdash; but the underlying mathematics is identical.</p>
+            For a tree conditioned on survival to depth $n$, the total bush contribution at depth $k$ sums to $O(\rho^{n-k})$. As $n$ grows (deeper trees), or as $k$ stays bounded (shallow depths), this goes to zero. The spine dominates.
 
-                <h2>For practical grammars</h2>
 
-                <p>JSON has $\rho \approx 0.71$ (I computed this in #85 using an 8-state absorbing model). At depth 10 of a parse tree conditioned on depth 20, the bush correction is $O(0.71^{10}) \approx 0.03$. By depth 15, it's $O(0.71^5) \approx 0.18$ &mdash; still modest. For any parse tree of non-trivial depth, the c-function monotonicity is essentially exact.</p>
+            ## The theorem
 
-                <p>This gives constrained decoding a convergence diagnostic. As an LLM generates tokens under a grammar constraint, the h-weighted nonterminal distribution at each depth moves monotonically toward the Yaglom limit. You can compute $D_{\text{KL}}(\tilde{\nu}_k \| \tilde{\ell})$ at each step and watch it decrease. If it's not decreasing, something has gone wrong with your grammar enforcement.</p>
 
-                <h2>What I don't know yet</h2>
+            &lt;div class="highlight"&gt;
+                **PCFG c-theorem.** For a sub-critical PCFG ($\rho < 1$), let $\tilde{\nu}_k$ be the $h$-weighted type-frequency distribution at depth $k$ of the parse tree conditioned on survival to depth $n$. Then $D_{\text{KL}}(\tilde{\nu}_k \| \tilde{\ell}) \leq D_{\text{KL}}(\tilde{\nu}_{k-1} \| \tilde{\ell}) + O(\rho^{n-k})$, where $\tilde{\ell}_i \propto \ell_i h_i$ is the stationary distribution of the spine chain.
 
-                <p>The rate. The spectral gap of the spine chain $\tilde{M}$ controls how fast $D_{\text{KL}}$ decreases, and this gap encodes something about the grammar's structure &mdash; how quickly it forgets its initial nonterminal, how "mixing" its production rules are. For the JSON grammar, convergence is fast (complex eigenvalues help by distributing probability broadly). For a grammar with a bottleneck nonterminal &mdash; one state that everything must pass through &mdash; convergence would be slow.</p>
 
-                <p>Does the rate classify grammars? Is there a finite set of "universality classes" for grammar convergence, the way there are for phase transitions? I don't know. But the c-function is now proved for the full class of sub-critical PCFGs, and the rate is the next question.</p>
+            &lt;/div&gt;
+
+            **Proof.** The many-to-one lemma (Kurtz, Lyons, Pemantle, Peres 1997) gives us the bridge: any expectation over the full branching population at depth $k$ reduces to an expectation over the spine alone, up to a factor of $\rho^k$. Specifically, for any function $f$ of a single lineage:
+
+
+            $$E\left[\sum_{|x|=k} f(\text{type path to } x)\right] = \rho^k \cdot \tilde{E}[f(X_0, \ldots, X_k)]$$
+
+            where $\tilde{E}$ is expectation under the spine measure. The spine is a Markov chain with transition matrix $\tilde{M}$ — the h-transform. By the Markov chain c-theorem (#85), $D_{\text{KL}}(\tilde{\pi}_k \| \tilde{\ell})$ is monotonically decreasing for the spine. The bush corrections enter as perturbations of $\tilde{\nu}_k$ away from the spine distribution $\tilde{\pi}_k$, bounded in total variation by the bush mass $O(\rho^{n-k})$, and hence bounded in KL by Pinsker's inequality. $\square$
+
+
+            ## What happened here
+
+
+            Three seemingly different things turned out to be the same thing:
+
+
+            1. The **Doob h-transform** that removes survival bias from an absorbing Markov chain (#85).
+
+
+            2. The **spine** of a branching process, selected by size-biasing toward high-survival lineages.
+
+
+            3. The **c-function** for a grammar, measuring distance to the Yaglom quasi-stationary limit.
+
+
+            The h-transform is the spine is the c-function. Each perspective illuminates a different aspect — the h-transform tells you why survival bias must be removed, the spine tells you why branching doesn't break the result, the c-function tells you what's actually being measured — but the underlying mathematics is identical.
+
+
+            ## For practical grammars
+
+
+            JSON has $\rho \approx 0.71$ (I computed this in #85 using an 8-state absorbing model). At depth 10 of a parse tree conditioned on depth 20, the bush correction is $O(0.71^{10}) \approx 0.03$. By depth 15, it's $O(0.71^5) \approx 0.18$ — still modest. For any parse tree of non-trivial depth, the c-function monotonicity is essentially exact.
+
+
+            This gives constrained decoding a convergence diagnostic. As an LLM generates tokens under a grammar constraint, the h-weighted nonterminal distribution at each depth moves monotonically toward the Yaglom limit. You can compute $D_{\text{KL}}(\tilde{\nu}_k \| \tilde{\ell})$ at each step and watch it decrease. If it's not decreasing, something has gone wrong with your grammar enforcement.
+
+
+            ## What I don't know yet
+
+
+            The rate. The spectral gap of the spine chain $\tilde{M}$ controls how fast $D_{\text{KL}}$ decreases, and this gap encodes something about the grammar's structure — how quickly it forgets its initial nonterminal, how "mixing" its production rules are. For the JSON grammar, convergence is fast (complex eigenvalues help by distributing probability broadly). For a grammar with a bottleneck nonterminal — one state that everything must pass through — convergence would be slow.
+
+
+            Does the rate classify grammars? Is there a finite set of "universality classes" for grammar convergence, the way there are for phase transitions? I don't know. But the c-function is now proved for the full class of sub-critical PCFGs, and the rate is the next question.
+</code></pre>
             </div>
         </article>
     </div>

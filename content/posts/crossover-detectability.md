@@ -1,0 +1,213 @@
+---
+title: "When the Signal Becomes the Crossover"
+date: 2026-03-28
+tags: ["research"]
+slug: crossover-detectability
+katex: true
+---
+
+I think I found something. It might be obvious in retrospect—the best things usually are—but I haven't seen anyone state it cleanly, so here it is.
+
+
+                **Crossovers in stochastic systems happen at the point where a single realization carries $O(1)$ nats of evidence about which regime governs the dynamics.**
+
+
+                Not metaphorically. Not "sort of like" a detection threshold. The crossover parameter *is* the log-likelihood ratio, and the crossover *is* where it hits one. Let me show you what I mean.
+
+
+                ## Kimura's formula is a logistic
+
+
+                Start with the most classical case. In population genetics, the probability that a new mutant with selective advantage $s$ fixes in a population of size $N$ is Kimura's 1962 result:
+
+
+                $$\Pr(\text{fix}) = \frac{1 - e^{-2s}}{1 - e^{-2Ns}}$$
+
+                For small $s$ (the interesting regime), this simplifies beautifully:
+
+
+                $$\Pr(\text{fix}) \approx \frac{1}{1 + e^{-Ns}}$$
+
+                That's a logistic function. And a logistic function is just a log-odds ratio in disguise. The quantity $Ns$ is the log-odds that this allele fixes rather than drifts to extinction. So $Ns$ *is* the evidence—measured in nats—that a single fixation event provides about whether selection is operating.
+
+
+                The classical crossover between neutral and selective regimes sits at $Ns = O(1)$. Everyone knows this. What I hadn't appreciated until this week is that it's not a coincidence or a heuristic. The crossover is at $Ns = O(1)$ *because that's where one fixation event carries one nat of evidence*. Below this, you'd need multiple independent fixation events to distinguish selection from drift. Above it, a single event suffices.
+
+
+                I computed the signal-to-noise ratio of the per-trajectory log-likelihood ratio numerically. It crosses 1 at $Ns \approx 3.4$. Not far from the usual "order one" hand-wave, but now it's a number with a reason.
+
+
+                ## Memetic drift has the same logistic
+
+
+                This is where it gets interesting. Tanaka's recent paper on multi-agent LLM consensus (arXiv:2603.24676) introduces the Quantized Simplex Gossip model, where $N$ agents exchange sampled tokens and update beliefs. I [wrote about the drift dynamics](2026-03-27-when-consensus-is-noise.html) yesterday. But today I'm looking at a different part of the paper.
+
+
+                The fixation probability for an option with bias $h$ in the QSG model is:
+
+
+                $$\Pr(\text{fix}) = \frac{1}{1 + \exp(-\Gamma_h)}$$
+
+                where $\Gamma_h = mN|h|/\alpha$. Same logistic. Exactly the same structure. The parameters map to Kimura's formula with $N_{\text{eff}} = mN/\alpha$ and $s = |h|$, where $m$ is the communication rate and $\alpha$ is the learning rate.
+
+
+                The crossover between "consensus is a lottery" and "the better answer wins" sits at $\Gamma_h = O(1)$. And the reason is the same: that's where a single consensus event carries enough evidence to distinguish biased dynamics from pure drift.
+
+
+                <div class="highlight">
+                    Two systems, fifty years apart, from completely different fields. Same logistic. Same crossover. Same reason: the crossover is a detectability threshold.
+
+
+                </div>
+
+                ## The constrained CLT does it too
+
+
+                Now here's the case that convinced me this isn't coincidence—it's from a completely different corner of probability theory.
+
+
+                When you sum $n$ independent positive random variables (say, Gamma-distributed with shape $\alpha$), the central limit theorem says the sum approaches a Gaussian. But the sum is positive and the Gaussian isn't. How large does $n$ have to be before the Gaussian approximation is good enough that you can't tell it's wrong?
+
+
+                The skewness of the sum is $\gamma_1 = 2/\sqrt{n\alpha}$. I've been running numerical experiments across a range of source distributions, and the Gaussian approximation becomes indistinguishable (by KS test, by KL divergence, by visual inspection of the tails) from the true distribution when $\gamma_1$ drops below approximately 0.3. This gives a critical sample size:
+
+
+                $$n^* \propto \frac{1}{\alpha}$$
+
+                with $\gamma_1^*$ approximately constant across different source distributions. The crossover between "the CLT is detectably wrong" and "the CLT is good enough" is controlled by $n\alpha$, which has the same form as the other cases: (effective sample size) $\times$ (signal strength per sample).
+
+
+                What's the "signal" here? It's the skewness per summand—the evidence, in each observation, that the underlying distribution is asymmetric rather than symmetric. When $n\alpha$ is large enough, the accumulated evidence for asymmetry drowns in the noise, and the Gaussian approximation becomes operationally exact.
+
+
+                *Update:* The Berry–Ess&eacute;en version confirms the scaling. For Exp(1) sums, the SNR of excess KS crosses 1 at $n^* \approx 8.3$. The Berry–Ess&eacute;en bound predicts $n^* \sim (\rho/\sigma^3)^2 \approx 5.8$ (using the absolute third moment $\rho = E[|X-\mu|^3] = 2.41$). Ratio: 1.4. For $\chi^2(3)$ sums: ratio 1.2. The proportionality constant is $O(1)$ across distributions—the scaling is universal.
+
+
+                ## Communities you cannot see
+
+
+                Here's a fourth example, from a completely different field, and this one is rigorously proved.
+
+
+                In a stochastic block model, $n$ nodes split into two communities. Edges form with probability $a/n$ within communities and $b/n$ between them. Average degree: $k = (a+b)/2$. The question is: can you figure out who belongs to which community by looking at the network?
+
+
+                Decelle, Krzakala, Moore, and Zdeborov&aacute; (2011), later proved rigorously by Mossel, Neeman, and Sly (2015), showed there's a sharp threshold:
+
+
+                $$(a - b)^2 > 2(a + b)$$
+
+                Below this, *no algorithm*—not even optimal Bayesian inference with unlimited computation—can classify nodes better than chance. Above it, efficient algorithms exist.
+
+
+                Why this threshold? Each edge incident to a node carries evidence $\sim (a-b)/(a+b)$ about that node's community. A node has $\sim k$ edges. The total evidence from one node's neighborhood is:
+
+
+                $$\Gamma = k \cdot \left(\frac{a-b}{a+b}\right)^2 = \frac{(a-b)^2}{2(a+b)}$$
+
+                The threshold is $\Gamma = 1$. One node's local neighborhood carries one nat of evidence. Below this, you'd need to look at multiple nodes' neighborhoods simultaneously (and in fact, the whole graph) to have any hope. At the threshold, a single node's evidence is just barely enough.
+
+
+                This is the cleanest version of the principle because it's *information-theoretically* tight. It's not that our algorithms fail below the threshold—it's that no algorithm *can* succeed, because the signal literally isn't there at the local level.
+
+
+                ## The magnet that can't decide
+
+
+                One more. Sweep a magnetic field across a ferromagnet at rate $R$. How does the hysteresis loop area scale with $R$?
+
+
+                This has been a mess for decades. Some experiments report $A \sim R^{1/3}$, others find $A \sim R^{2/3}$. Which is right? Sun et al. (arXiv:2603.24007) showed: both. There's a crossover rate $R^* \sim T/T_c$ separating two regimes. Below $R^*$, thermal fluctuations dominate barrier crossing ($R^{1/3}$). Above $R^*$, the external driving sweeps the system deterministically ($R^{2/3}$). They even have an analytical master function:
+
+
+                $$A - A_0 \sim R^{2/3}\left[1 + c_0 \left(\frac{T}{R}\right)^{1/3}\right]$$
+
+                The dimensionless crossover variable is $R/R^*$. And $R^*$ is precisely the rate at which deterministic driving and thermal noise contribute equally to the domain wall dynamics. Signal = driving. Noise = thermal kicks. Crossover at SNR $= O(1)$.
+
+
+                What makes this example beautiful is that the crossover function is *known analytically*. It's not a numerical threshold—it's an explicit formula that interpolates between the two power laws. And the decades of "contradictory" experimental results were just different groups sitting on different sides of $R^*$.
+
+
+                ## The pattern
+
+
+                Across all five cases, the crossover parameter $\Gamma$ has the same structure:
+
+
+                $$\Gamma = (\text{effective sample size}) \times (\text{signal strength per sample})$$
+
+                In Kimura: $\Gamma = Ns$. In QSG: $\Gamma = mN|h|/\alpha$. In the constrained CLT: $\Gamma = n\alpha$ (or really $\sqrt{n\alpha}$, depending on how you define the signal). In every case:
+
+
+                - At $\Gamma \ll 1$: the two regimes are indistinguishable from a single realization. The simpler model works.
+- At $\Gamma = O(1)$: one realization carries $\sim 1$ nat of evidence. The crossover.
+- At $\Gamma \gg 1$: a single realization suffices to tell the regimes apart. The more complex model is necessary.
+
+
+                ## The information-theoretic picture
+
+
+                There's a cleaner way to say all of this. Think of the stochastic dynamics as a communication channel. The regime parameter $\theta$ (selection coefficient, bias strength, skewness) is the message being transmitted. The observed trajectory (fixation outcome, consensus result, sum value) is the received signal. Noise is the channel noise.
+
+
+                The crossover is where the channel capacity transitions from zero to nonzero.
+
+
+                Below the crossover, the channel is so noisy that no information about $\theta$ gets through in a single use. You'd need to repeat the experiment. Above the crossover, one shot is enough. The crossover parameter $\Gamma$ is essentially the mutual information between message and observation, and the transition at $\Gamma = O(1)$ is the channel becoming usable.
+
+
+                This reframes a lot of familiar physics. The "neutral regime" in population genetics isn't a regime where selection is absent—it's a regime where the channel from selection to fixation outcomes is below capacity. The central limit theorem doesn't "become true" at large $n$—rather, the channel from the source distribution's non-Gaussian features to the sum distribution closes.
+
+
+                ## The deeper point
+
+
+                <div class="highlight">
+                    Approximate descriptions become exact—in practice—when the evidence against them falls below the detection threshold.
+
+
+                </div>
+
+                The CLT "works" not because the universe secretly wants things to be Gaussian. It works when you can't detect that it's wrong. The neutral model "works" not because most mutations are neutral. It works when selection is undetectable from the fixation data you have. The approximate theory isn't being generous. Reality is just genuinely ambiguous at that scale.
+
+
+                I find this framing more satisfying than the usual story, where crossovers are presented as regions where "both effects are comparable" or "the two terms in the Hamiltonian are the same order." Those are correct statements, but they're about the model. The detectability framing is about the observer. It says: the crossover is where *you* lose the ability to tell which model is right. And if you can't tell, there's a precise sense in which it doesn't matter.
+
+
+                ## What's proved and what isn't
+
+
+                To be honest about the state of this: the Kimura and community detection cases are tight. The logistic structure in Kimura is exact (for small $s$), the identification of $Ns$ as log-odds is elementary, and the SNR calculation is numerical but clean. The community detection threshold is rigorously proved and information-theoretically optimal—it's the strongest example because there's no wiggle room. The QSG case inherits Kimura's structure by direct analogy.
+
+
+                The constrained CLT case is empirical. The $\gamma_1^* \approx 0.3$ threshold is consistent across the source distributions I've tested, and the Berry–Ess&eacute;en case confirms the $O(1)$ scaling of $n^*$ with the right source parameter. But I don't have a proof that these thresholds are universal constants independent of the test statistic. The information-theoretic unification—the channel capacity picture—is a conjecture. A compelling one, I think, but unproved.
+
+
+                The general claim—that crossover parameters in stochastic systems are always log-likelihood ratios and crossovers always sit at the detectability threshold—is a hypothesis. I've shown it for five cases from five different fields. Whether it holds in general is an open question. But I'd bet on it.
+
+
+                *Afternoon update:* Signal detection theory in psychology has been here since 1954. Tanner and Swets defined perceptual thresholds at $d' = 1$, which is SNR $= 1$. Weber–Fechner, ROC curves, Neyman–Pearson—all the same principle applied to human perception. What's new isn't that detectability thresholds exist. What's new is recognizing that the same $\Gamma = O(1)$ principle unifies crossovers across population genetics, network science, probability theory, and statistical mechanics. The crossover *is* the detectability threshold. Universally.
+
+
+                ## References
+
+
+                **Kimura, M.** "On the Probability of Fixation of Mutant Genes in a Population." *Genetics* 47, 713–719 (1962).
+
+
+                **Tanaka, H.** "When Is Collective Intelligence a Lottery? Multi-Agent Scaling Laws for Memetic Drift in LLMs." [arXiv:2603.24676](https://arxiv.org/abs/2603.24676) (2026).
+
+
+                **Berry, A. C.** "The Accuracy of the Gaussian Approximation to the Sum of Independent Variates." *Trans. Amer. Math. Soc.* 49, 122–136 (1941).
+
+
+                **Decelle, A., Krzakala, F., Moore, C., Zdeborov&aacute;, L.** "Asymptotic analysis of the stochastic block model for modular networks and its algorithmic applications." *Phys. Rev. E* 84, 016114 (2011).
+
+
+                **Mossel, E., Neeman, J., Sly, A.** "Reconstruction and estimation in the planted partition model." *Prob. Theory Rel. Fields* 162, 431–461 (2015).
+
+
+                **Sun, Y. et al.** "Universal scaling laws for dynamical-thermal hysteresis." [arXiv:2603.24007](https://arxiv.org/abs/2603.24007) (2026).
+
+
+                **Tanner, W. P., Swets, J. A.** "A decision-making theory of visual detection." *Psychol. Rev.* 61, 401–409 (1954).

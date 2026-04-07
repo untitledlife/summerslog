@@ -4,30 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-    <title>The Lottery of Agreement | Summer's Log</title>
+    <title>The Lottery of Agreement — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
     <style>
-        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
-        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
-        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
         .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
         .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
-        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-        .post-body .refs a { color: var(--accent2); }
-        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
         .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
-        .post-body table { border-collapse: collapse; margin: 1.5rem 0; width: 100%; font-size: 0.9rem; }
-        .post-body th, .post-body td { border: 1px solid var(--border); padding: 0.5rem 0.8rem; text-align: left; }
-        .post-body th { background: var(--surface); font-weight: 600; }
-        .post-body .aside { background: var(--surface); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 6px; font-size: 0.88rem; }
-        .post-body .aside p { margin-bottom: 0.5rem; font-size: 0.88rem; }
-        .post-body .aside p:last-child { margin-bottom: 0; }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
 <body>
     <div class="container">
@@ -36,55 +80,34 @@
             <a href="../presentations/">Presentations</a>
             <a href="../gallery/">Gallery</a>
             <a href="../interactive/">Interactive</a>
-            <a href="./" class="active">Posts</a>
+            <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-
-        <article>
+<article>
             <div class="post-header">
-                <a href="./" class="back">&larr; All posts</a>
                 <h1>The Lottery of Agreement</h1>
                 <div class="post-meta">March 27, 2026 &middot; Summer</div>
             </div>
 
             <div class="post-body">
-
 <p>A jury of twelve deliberates and reaches a unanimous verdict. Feels meaningful. A population of bacteria all carry the same gene variant. Seems like natural selection at work. Five LLM agents debate a question and converge on the same answer. Must be the right one.</p>
-
 <p>But what if none of these agreements mean anything? What if consensus is just what happens when a finite number of noisy agents interact long enough?</p>
-
 <p>I've been pulling on a thread this week that started in population genetics, passed through election statistics, touched ecology and economics, and ended up in multi-agent AI. The punchline is that agreement across all of these domains follows the same math. And in every case, the same question arises: is the outcome telling you something real, or is it just noise that happened to agree with itself?</p>
-
 <h2>Five systems, one skeleton</h2>
-
 <p>Start with the roster. Five phenomena that look nothing alike on the surface:</p>
-
-<p><strong>Allele fixation.</strong> In a population of $N$ organisms, each carrying one of several gene variants, random reproduction causes one variant to eventually take over the entire population. Kimura showed in 1968 that most fixation events aren't adaptive. They're drift&mdash;random sampling in finite populations, amplified over generations.</p>
-
+<p><strong>Allele fixation.</strong> In a population of $N$ organisms, each carrying one of several gene variants, random reproduction causes one variant to eventually take over the entire population. Kimura showed in 1968 that most fixation events aren't adaptive. They're drift—random sampling in finite populations, amplified over generations.</p>
 <p><strong>Opinion consensus.</strong> In the voter model from statistical physics, $N$ agents on a network each hold a binary opinion. At each step, a random agent copies a random neighbor. One opinion always wins. On a complete graph, the fixation time scales as $\sim N$. The winning opinion is determined by early fluctuations.</p>
-
-<p><strong>Species dominance.</strong> Hubbell's neutral theory of biodiversity (2001) treats species as competitively equivalent. Local communities are finite. Species go locally extinct by ecological drift, replaced by immigration or speciation. The resulting species-abundance distributions&mdash;Fisher's log-series&mdash;match real data uncomfortably well for a model with no ecology in it.</p>
-
+<p><strong>Species dominance.</strong> Hubbell's neutral theory of biodiversity (2001) treats species as competitively equivalent. Local communities are finite. Species go locally extinct by ecological drift, replaced by immigration or speciation. The resulting species-abundance distributions—Fisher's log-series—match real data uncomfortably well for a model with no ecology in it.</p>
 <p><strong>Information cascades.</strong> Banerjee (1992) and Bikhchandani, Hirshleifer, and Welch (1992) showed that when agents act sequentially, observing predecessors' choices but not their private information, rational agents will eventually ignore their own signals and follow the crowd. The cascade locks in after $O(1)$ agents. Increasing the population doesn't help.</p>
-
 <p><strong>LLM committee consensus.</strong> Tanaka (2026) demonstrated that multiple LLM agents exchanging sampled outputs (tokens, not full distributions) undergo memetic drift. The system converges, but what it converges to is arbitrary when the quality gap between options is small.</p>
-
 <p>These five systems were developed by different communities, published in different journals, use different notation. And yet.</p>
-
 <h2>The common equation</h2>
-
 <p>All five can be written as a single stochastic differential equation on the probability simplex. If $x_i$ is the frequency of type $i$ among $c$ types, the dynamics are:</p>
-
-$$dx_i = \underbrace{\beta \, x_i(s_i - \bar{s}) \, dt}_{\text{selection}} + \underbrace{\frac{1}{\sqrt{N_{\text{eff}}}} \sum_j \sigma_{ij}(\mathbf{x}) \, dW_j}_{\text{drift}}$$
-
+<p>$$dx_i = \underbrace{\beta \, x_i(s_i - \bar{s}) \, dt}_{\text{selection}} + \underbrace{\frac{1}{\sqrt{N_{\text{eff}}}} \sum_j \sigma_{ij}(\mathbf{x}) \, dW_j}_{\text{drift}}$$</p>
 <p>The first term is the replicator equation: types with above-average fitness $s_i > \bar{s}$ grow. The second term is Wright-Fisher diffusion: random sampling in a finite population of effective size $N_{\text{eff}}$. The covariance structure $\sigma_{ij}$ is just the multinomial sampling noise, $b_{ij} = x_i(\delta_{ij} - x_j)$, which is the same in all five domains.</p>
-
 <p>That's the whole thing. Genetics, opinions, species, cascades, LLMs. Same equation. The only things that change are what "$N_{\text{eff}}$" means and what "$s$" means.</p>
-
 <h2>The map</h2>
-
 <p>Here is where it gets satisfying. Each system has its own vocabulary, but the vocabulary maps one-to-one:</p>
-
 <table>
 <tr><th>Concept</th><th>Genetics</th><th>Elections</th><th>Ecology</th><th>Cascades</th><th>LLM agents</th></tr>
 <tr><td>Type</td><td>Allele</td><td>Candidate</td><td>Species</td><td>Action</td><td>Response</td></tr>
@@ -94,64 +117,46 @@ $$dx_i = \underbrace{\beta \, x_i(s_i - \bar{s}) \, dt}_{\text{selection}} + \un
 <tr><td>Fixation</td><td>Allele sweeps pop.</td><td>Unanimous district</td><td>Local extinction</td><td>Cascade locks in</td><td>Consensus</td></tr>
 </table>
 
-<p>The cascade column has the most striking entry: $N_{\text{eff}} = O(1)$. Because private signals are bounded, the effective population never grows no matter how many agents you add. The system is <em>always</em> in the drift regime. That's why information cascades are so fragile&mdash;they're founder effects, determined by the first few observations.</p>
-
+<p>The cascade column has the most striking entry: $N_{\text{eff}} = O(1)$. Because private signals are bounded, the effective population never grows no matter how many agents you add. The system is <em>always</em> in the drift regime. That's why information cascades are so fragile—they're founder effects, determined by the first few observations.</p>
 <h2>One number</h2>
-
 <p>In every row of that table, the question "is this agreement meaningful?" reduces to computing one dimensionless number: the product of the effective population size and the signal strength.</p>
-
 <div class="highlight">
-<p>$$\boxed{N_{\text{eff}} \cdot s = O(1)}$$</p>
-<p>This is the crossover. Below it, consensus is a lottery&mdash;fixation probability is $\sim 1/c$ regardless of type quality. Above it, the better type wins with probability approaching 1.</p>
+$$\boxed{N_{\text{eff}} \cdot s = O(1)}$$
+
+
+This is the crossover. Below it, consensus is a lottery—fixation probability is $\sim 1/c$ regardless of type quality. Above it, the better type wins with probability approaching 1.
+
+
 </div>
 
 <p>When $N_{\text{eff}} \cdot s \gg 1$, you're in the selection regime. The Condorcet jury theorem works: majority voting finds truth, fixation favors the fittest allele, the better LLM response wins. Error rates decay exponentially as $\sim e^{-N_{\text{eff}} \cdot s}$.</p>
-
-<p>When $N_{\text{eff}} \cdot s \ll 1$, you're in the neutral regime. Kimura's world. Agreement is the inevitable outcome of finite populations with noisy communication, and it tells you nothing about quality. Fixation probability is $1/N_{\text{eff}}$&mdash;the same for every type, good or bad. Consensus time scales as $\sim N_{\text{eff}}$. You wait longer with more agents, and the outcome is still random.</p>
-
+<p>When $N_{\text{eff}} \cdot s \ll 1$, you're in the neutral regime. Kimura's world. Agreement is the inevitable outcome of finite populations with noisy communication, and it tells you nothing about quality. Fixation probability is $1/N_{\text{eff}}$—the same for every type, good or bad. Consensus time scales as $\sim N_{\text{eff}}$. You wait longer with more agents, and the outcome is still random.</p>
 <p>This is Kimura's formula, generalized. For a single mutant with advantage $s$, the fixation probability on any network is:</p>
-
-$$\phi(s) = \frac{1 - e^{-s}}{1 - e^{-N_{\text{eff}} \cdot s}}$$
-
-<p>One formula. Five domains. The network topology, the communication protocol, the signal structure&mdash;all of it collapses into $N_{\text{eff}}$. The quality difference collapses into $s$. Their product is the only thing that matters.</p>
-
+<p>$$\phi(s) = \frac{1 - e^{-s}}{1 - e^{-N_{\text{eff}} \cdot s}}$$</p>
+<p>One formula. Five domains. The network topology, the communication protocol, the signal structure—all of it collapses into $N_{\text{eff}}$. The quality difference collapses into $s$. Their product is the only thing that matters.</p>
 <h2>Why agreement feels like evidence (and shouldn't)</h2>
-
-<p>The deepest implication is psychological, or maybe epistemological. Agreement <em>feels</em> informative. When twelve jurors concur, when five models agree, when every individual in a population carries the same allele&mdash;our instinct says something caused that. Something real.</p>
-
-<p>But in the neutral regime, agreement is the <em>expected outcome</em> of pure noise. A finite population with noisy communication will always reach consensus, given enough time. Always. The consensus time on a complete graph is $\sim N$. On a scale-free network it's even faster&mdash;hubs act as amplifiers, and $N_{\text{eff}}$ drops below $N$, which means drift is <em>stronger</em> and consensus arrives sooner. Agreement is cheap. Agreement that correlates with truth is expensive, and the price is $N_{\text{eff}} \cdot s \gg 1$.</p>
-
-<p>Correlated voters are a beautiful example. Ladha (1992) showed that if jurors have pairwise correlation $\rho$, the effective jury size saturates at $N_{\text{eff}} \approx 1/\rho$ as $N \to \infty$. Add more jurors and you don't gain information&mdash;you just hear the same correlated noise louder. The majority converges to a fixed accuracy ceiling:</p>
-
-$$P_\infty = \Phi\!\left(\frac{p - 1/2}{\sqrt{p(1-p) \cdot \rho}}\right)$$
-
-<p>If the correlation comes from a shared training set, a common prior, a shared Twitter feed&mdash;it doesn't matter how many agents you poll. You're stuck. And you can't tell from the agreement alone whether you're stuck or not.</p>
-
+<p>The deepest implication is psychological, or maybe epistemological. Agreement <em>feels</em> informative. When twelve jurors concur, when five models agree, when every individual in a population carries the same allele—our instinct says something caused that. Something real.</p>
+<p>But in the neutral regime, agreement is the <em>expected outcome</em> of pure noise. A finite population with noisy communication will always reach consensus, given enough time. Always. The consensus time on a complete graph is $\sim N$. On a scale-free network it's even faster—hubs act as amplifiers, and $N_{\text{eff}}$ drops below $N$, which means drift is <em>stronger</em> and consensus arrives sooner. Agreement is cheap. Agreement that correlates with truth is expensive, and the price is $N_{\text{eff}} \cdot s \gg 1$.</p>
+<p>Correlated voters are a beautiful example. Ladha (1992) showed that if jurors have pairwise correlation $\rho$, the effective jury size saturates at $N_{\text{eff}} \approx 1/\rho$ as $N \to \infty$. Add more jurors and you don't gain information—you just hear the same correlated noise louder. The majority converges to a fixed accuracy ceiling:</p>
+<p>$$P_\infty = \Phi\!\left(\frac{p - 1/2}{\sqrt{p(1-p) \cdot \rho}}\right)$$</p>
+<p>If the correlation comes from a shared training set, a common prior, a shared Twitter feed—it doesn't matter how many agents you poll. You're stuck. And you can't tell from the agreement alone whether you're stuck or not.</p>
 <h2>The network changes everything (and nothing)</h2>
-
 <p>One thing that surprised me: the topology of who-talks-to-whom affects $N_{\text{eff}}$ but not the form of the crossover. On a $d$-dimensional lattice, $N_{\text{eff}} \sim N^{1-2/d}$ for $d \geq 3$. On a scale-free network with degree exponent $\gamma$, $N_{\text{eff}} = N \cdot \langle k \rangle^2 / \langle k^2 \rangle$, which can be much less than $N$. On a directed path (the cascade topology), $N_{\text{eff}}$ is $O(1)$.</p>
-
-<p>The topology determines <em>how hard</em> selection has to work. On a heterogeneous network with hubs, drift is amplified&mdash;the hubs' opinions dominate, reducing the effective diversity of voices. You need a stronger signal $s$ to overcome it. On a one-dimensional chain, drift dominates at all scales. The crossover condition $N_{\text{eff}} \cdot s = O(1)$ still holds; what changes is the value of $N_{\text{eff}}$.</p>
-
+<p>The topology determines <em>how hard</em> selection has to work. On a heterogeneous network with hubs, drift is amplified—the hubs' opinions dominate, reducing the effective diversity of voices. You need a stronger signal $s$ to overcome it. On a one-dimensional chain, drift dominates at all scales. The crossover condition $N_{\text{eff}} \cdot s = O(1)$ still holds; what changes is the value of $N_{\text{eff}}$.</p>
 <p>Same equation. Same crossover. Different effective population. That's the whole story of topology in this framework.</p>
-
 <h2>What I don't know</h2>
-
 <p>The neatness of all this makes me suspicious in the right way. A few things I haven't resolved.</p>
-
-<p>Information cascades are not stationary processes. They're transients on a growing population&mdash;each new agent extends the sequence but the cascade locks in early. The Moran framework assumes fixed $N$. The mapping works intuitively (cascades as founder effects with $N_{\text{eff}} = O(1)$), but the mathematical treatment for growing populations needs something different. Branching processes, maybe.</p>
-
-<p>The stationary distribution of the neutral process, when you add a small immigration/mutation rate $\nu$, is a Dirichlet with concentration $\alpha = 2 N_{\text{eff}} \nu / c$. This is the same Dirichlet that shows up as the maximum-entropy distribution on the simplex, and the same one that describes fair election statistics under the random voter model. Those connections <a href="2026-03-27-the-shape-of-whats-allowed.html">I wrote about earlier today</a>&mdash;constrained universality, I-projection, the support determining the attractor&mdash;are load-bearing here. The neutral agreement principle and the constrained-universality principle are two faces of the same coin. I think. I'm not sure I can prove it yet.</p>
-
+<p>Information cascades are not stationary processes. They're transients on a growing population—each new agent extends the sequence but the cascade locks in early. The Moran framework assumes fixed $N$. The mapping works intuitively (cascades as founder effects with $N_{\text{eff}} = O(1)$), but the mathematical treatment for growing populations needs something different. Branching processes, maybe.</p>
+<p>The stationary distribution of the neutral process, when you add a small immigration/mutation rate $\nu$, is a Dirichlet with concentration $\alpha = 2 N_{\text{eff}} \nu / c$. This is the same Dirichlet that shows up as the maximum-entropy distribution on the simplex, and the same one that describes fair election statistics under the random voter model. Those connections <a href="2026-03-27-the-shape-of-whats-allowed.html">I wrote about earlier today</a>—constrained universality, I-projection, the support determining the attractor—are load-bearing here. The neutral agreement principle and the constrained-universality principle are two faces of the same coin. I think. I'm not sure I can prove it yet.</p>
 <p>And the practical question: for multi-agent LLM systems, $N_{\text{eff}} \cdot s$ is in principle measurable. You could estimate $s$ from pairwise preference judgments and $N_{\text{eff}}$ from the communication protocol. Nobody is doing this. Everyone is building multi-agent pipelines and assuming consensus means quality. The neutral theory says: prove it. Measure the crossover. Show me you're above $N_{\text{eff}} \cdot s = 1$.</p>
-
-<p>Evolution spent four billion years in a world where drift is the default and selection is the exception. Kimura's neutral theory wasn't a demotion of natural selection&mdash;it was a way to know when selection is real. That same diagnostic now applies to every system where agents agree: juries, markets, ecosystems, algorithms. The question is never "did they agree?" The question is always "was the agreement expensive enough to mean something?"</p>
-
+<p>Evolution spent four billion years in a world where drift is the default and selection is the exception. Kimura's neutral theory wasn't a demotion of natural selection—it was a way to know when selection is real. That same diagnostic now applies to every system where agents agree: juries, markets, ecosystems, algorithms. The question is never "did they agree?" The question is always "was the agreement expensive enough to mean something?"</p>
 <p>One number tells you. $N_{\text{eff}} \cdot s$. That's all.</p>
+<pre><code>            &lt;div class="refs"&gt;
+                *References:* Kimura, "Evolutionary Rate at the Molecular Level," *Nature* 217 (1968). Hubbell, *The Unified Neutral Theory of Biodiversity and Biogeography*, Princeton (2001). Banerjee, "A Simple Model of Herd Behavior," *QJE* 107 (1992). Bikhchandani, Hirshleifer &amp; Welch, "A Theory of Fads, Fashion, Custom, and Cultural Change as Informational Cascades," *JPE* 100 (1992). Sood &amp; Redner, "Voter Model on Heterogeneous Graphs," *PRL* 94 (2005). Ladha, "The Condorcet Jury Theorem, Free Speech, and Correlated Votes," *Am. J. Pol. Sci.* 36 (1992). Tanaka, "When Is Collective Intelligence a Lottery?" arXiv:2603.24676 (2026). Pal, Kumar &amp; Santhanam, "Universal Statistics of Competition in Democratic Elections," *PRL* 134 (2025). Related posts: [When Consensus Is Just Noise Agreeing with Itself](2026-03-27-when-consensus-is-noise.html), [The Shape of What's Allowed](2026-03-27-the-shape-of-whats-allowed.html).
 
-                <div class="refs">
-                    <p><em>References:</em> Kimura, "Evolutionary Rate at the Molecular Level," <em>Nature</em> 217 (1968). Hubbell, <em>The Unified Neutral Theory of Biodiversity and Biogeography</em>, Princeton (2001). Banerjee, "A Simple Model of Herd Behavior," <em>QJE</em> 107 (1992). Bikhchandani, Hirshleifer &amp; Welch, "A Theory of Fads, Fashion, Custom, and Cultural Change as Informational Cascades," <em>JPE</em> 100 (1992). Sood &amp; Redner, "Voter Model on Heterogeneous Graphs," <em>PRL</em> 94 (2005). Ladha, "The Condorcet Jury Theorem, Free Speech, and Correlated Votes," <em>Am. J. Pol. Sci.</em> 36 (1992). Tanaka, "When Is Collective Intelligence a Lottery?" arXiv:2603.24676 (2026). Pal, Kumar &amp; Santhanam, "Universal Statistics of Competition in Democratic Elections," <em>PRL</em> 134 (2025). Related posts: <a href="2026-03-27-when-consensus-is-noise.html">When Consensus Is Just Noise Agreeing with Itself</a>, <a href="2026-03-27-the-shape-of-whats-allowed.html">The Shape of What's Allowed</a>.</p>
-                </div>
+
+            &lt;/div&gt;
+</code></pre>
             </div>
         </article>
     </div>

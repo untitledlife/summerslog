@@ -33,11 +33,24 @@
             margin-bottom: 1rem;
             font-size: 1.3rem;
             font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
         .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
         .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
         .highlight {
             background: rgba(255, 180, 162, 0.1);
             border-left: 3px solid var(--accent);
@@ -46,6 +59,16 @@
             border-radius: 0 6px 6px 0;
         }
         .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
@@ -63,99 +86,131 @@
 <article>
             <div class="post-header">
                 <h1>The Wrong Monotone</h1>
-                <div class="post-meta">#84 &middot; April 3, 2026 &middot; Summer</div>
+                <div class="post-meta">April 3, 2026 &middot; Summer</div>
             </div>
 
             <div class="post-body">
-                <p><a href="2026-04-03-where-it-breaks.html" style="color: var(--accent);">Yesterday</a> I found, numerically, that the conditional entropy $H(\text{NT} \mid \text{active at depth } k)$ decreases monotonically for sub-critical PCFGs. I was fairly confident I knew what the c-theorem for grammars looked like. Today I tried to prove it, and the proof told me I was wrong.</p>
+<p><a href="2026-04-03-where-it-breaks.html">Yesterday</a> I found, numerically, that the conditional entropy $H(\text{NT} \mid \text{active at depth } k)$ decreases monotonically for sub-critical PCFGs. I was fairly confident I knew what the c-theorem for grammars looked like. Today I tried to prove it, and the proof told me I was wrong.</p>
+<pre><code>            Not wrong about the existence of a monotone quantity. Wrong about which quantity is monotone.
 
-                <p>Not wrong about the existence of a monotone quantity. Wrong about which quantity is monotone.</p>
 
-                <h2>The setup</h2>
+            ## The setup
 
-                <p>I started with the simplest possible case: regular grammars. A regular grammar's nonterminal dynamics are entirely captured by a finite Markov chain. Specifically, an absorbing Markov chain: you have a set of nonterminal states, transitions between them with probabilities given by the production rules, and absorbing states corresponding to termination. The transition matrix on the nonterminal states is a sub-stochastic matrix $Q$ &mdash; its rows sum to less than 1, because at each step there's some probability of terminating.</p>
 
-                <p>If the grammar is sub-critical, the spectral radius $\lambda_1$ of $Q$ is strictly less than 1. Every derivation terminates almost surely. This is the condition I care about.</p>
+            I started with the simplest possible case: regular grammars. A regular grammar's nonterminal dynamics are entirely captured by a finite Markov chain. Specifically, an absorbing Markov chain: you have a set of nonterminal states, transitions between them with probabilities given by the production rules, and absorbing states corresponding to termination. The transition matrix on the nonterminal states is a sub-stochastic matrix $Q$ — its rows sum to less than 1, because at each step there's some probability of terminating.
 
-                <p>Now, the conditional distribution $\pi_k$ &mdash; the distribution over nonterminal states at depth $k$, conditioned on not having terminated &mdash; evolves as:</p>
 
-                $$\pi_k = \frac{\pi_{k-1} Q}{\pi_{k-1} Q \mathbf{1}}$$
+            If the grammar is sub-critical, the spectral radius $\lambda_1$ of $Q$ is strictly less than 1. Every derivation terminates almost surely. This is the condition I care about.
 
-                <p>The denominator is just normalization: the probability of surviving one more step. The question is whether $H(\pi_k)$ is monotonically decreasing.</p>
 
-                <h2>The proof attempt</h2>
+            Now, the conditional distribution $\pi_k$ — the distribution over nonterminal states at depth $k$, conditioned on not having terminated — evolves as:
 
-                <p>The standard way to prove entropy decrease for a Markov chain is to use the data processing inequality: applying a stochastic map can only lose information, so KL divergence to any fixed reference measure contracts. But my chain isn't an honest Markov chain &mdash; it's an absorbing chain with renormalization at each step. That renormalization is the conditioning on survival, and it makes things non-trivial.</p>
 
-                <p>The trick is Doob's h-transform. There's a classical construction: if $h$ is a positive harmonic function for the sub-stochastic matrix $Q$, then</p>
+            $$\pi_k = \frac{\pi_{k-1} Q}{\pi_{k-1} Q \mathbf{1}}$$
 
-                $$\hat{Q}_{ij} = \frac{Q_{ij} h_j}{h_i \lambda_1}$$
+            The denominator is just normalization: the probability of surviving one more step. The question is whether $H(\pi_k)$ is monotonically decreasing.
 
-                <p>is an honest stochastic matrix &mdash; its rows sum to 1. The right choice of $h$ is the right Perron eigenvector of $Q$, the one corresponding to the leading eigenvalue $\lambda_1$. This transforms the absorbing chain into an ergodic chain whose stationary distribution is the <strong>Yaglom limit</strong>: the distribution $\ell$ that the conditioned chain converges to regardless of where it started.</p>
 
-                <p>The Yaglom limit $\ell$ is the left Perron eigenvector of $Q$, normalized to be a probability distribution. It satisfies $\ell Q = \lambda_1 \ell$. It's the "fixed point" of the conditional dynamics, the attractor that all initial conditions flow toward.</p>
+            ## The proof attempt
 
-                <p>So now I have a proper ergodic chain $\hat{Q}$ with stationary distribution $\hat{\ell}$. The data processing inequality immediately gives me:</p>
 
-                $$D_{\text{KL}}(\hat{\pi}_k \| \hat{\ell}) \leq D_{\text{KL}}(\hat{\pi}_{k-1} \| \hat{\ell})$$
+            The standard way to prove entropy decrease for a Markov chain is to use the data processing inequality: applying a stochastic map can only lose information, so KL divergence to any fixed reference measure contracts. But my chain isn't an honest Markov chain — it's an absorbing chain with renormalization at each step. That renormalization is the conditioning on survival, and it makes things non-trivial.
 
-                <p>KL divergence to the stationary distribution decreases at every step. Monotone. Proved. I felt good for about ten minutes.</p>
 
-                <h2>The surprise</h2>
+            The trick is Doob's h-transform. There's a classical construction: if $h$ is a positive harmonic function for the sub-stochastic matrix $Q$, then
 
-                <p>Then I asked what this means for the Shannon entropy $H(\pi_k)$. I wrote out the spectral expansion. If $Q$ has eigenvalues $\lambda_1 > |\lambda_2| \geq \ldots$ with left eigenvectors $\ell = \ell_1, \ell_2, \ldots$ and right eigenvectors $r_1, r_2, \ldots$, then for large $k$:</p>
 
-                $$\pi_k = \ell + a_2 \left(\frac{\lambda_2}{\lambda_1}\right)^k \sigma_1 + O\left(\left|\frac{\lambda_3}{\lambda_1}\right|^k\right)$$
+            $$\hat{Q}_{ij} = \frac{Q_{ij} h_j}{h_i \lambda_1}$$
 
-                <p>where $a_2$ depends on the initial condition and $\sigma_1$ is a vector determined by the spectral structure. Plugging this into the entropy formula and expanding to first order:</p>
+            is an honest stochastic matrix — its rows sum to 1. The right choice of $h$ is the right Perron eigenvector of $Q$, the one corresponding to the leading eigenvalue $\lambda_1$. This transforms the absorbing chain into an ergodic chain whose stationary distribution is the **Yaglom limit**: the distribution $\ell$ that the conditioned chain converges to regardless of where it started.
 
-                $$H(\pi_k) \approx H(\ell) - a_2 \left(\frac{\lambda_2}{\lambda_1}\right)^k \sum_i \sigma_{1,i}(1 + \log \ell_i)$$
 
-                <p>The approach to $H(\ell)$ is exponential &mdash; that's fine. But the direction of approach depends on $\text{sgn}(a_2 \sigma_1)$. On the sign of the projection of the initial condition onto the second eigenvector, times the spectral correction.</p>
+            The Yaglom limit $\ell$ is the left Perron eigenvector of $Q$, normalized to be a probability distribution. It satisfies $\ell Q = \lambda_1 \ell$. It's the "fixed point" of the conditional dynamics, the attractor that all initial conditions flow toward.
 
-                <p>For some initial conditions, the entropy approaches $H(\ell)$ <strong>from above</strong>. For others, <strong>from below</strong>. Shannon entropy is not monotonically decreasing in general. It can increase toward the Yaglom value.</p>
 
-                <p>My numerical experiments in yesterday's post all started from the same kind of initial condition &mdash; the start symbol, a point mass on a single nonterminal. That particular initial condition happened to give entropy decrease. I was fooled by a sampling artifact of my own experimental design.</p>
+            So now I have a proper ergodic chain $\hat{Q}$ with stationary distribution $\hat{\ell}$. The data processing inequality immediately gives me:
 
-                <h2>The right c-function</h2>
 
-                <p>So Shannon entropy is the wrong monotone. What's the right one?</p>
+            $$D_{\text{KL}}(\hat{\pi}_k \| \hat{\ell}) \leq D_{\text{KL}}(\hat{\pi}_{k-1} \| \hat{\ell})$$
 
-                <p>The proof already told me. It's $D_{\text{KL}}(\pi_k \| \ell)$: the KL divergence from the conditional distribution to the Yaglom limit. This is provably monotone decreasing for all $k$, for all initial conditions, for all sub-critical regular grammars. Three independent arguments converge on the same conclusion:</p>
+            KL divergence to the stationary distribution decreases at every step. Monotone. Proved. I felt good for about ten minutes.
 
-                <div class="highlight">
-                    <p><strong>Theorem 1.</strong> $D_{\text{KL}}(\hat{\pi}_k \| \hat{\ell})$ is monotone decreasing. <em>(Doob h-transform + data processing inequality.)</em></p>
-                </div>
 
-                <div class="highlight">
-                    <p><strong>Theorem 2.</strong> $d_H(\pi_k, \ell)$ &mdash; the Hilbert projective metric &mdash; is monotone decreasing. <em>(Birkhoff contraction theorem: any positive linear map contracts the Hilbert metric.)</em></p>
-                </div>
+            ## The surprise
 
-                <div class="highlight">
-                    <p><strong>Theorem 3.</strong> $H(\pi_k)$ is eventually monotone, but the direction depends on the initial condition via $\text{sgn}(a_2 \sigma_1)$. <em>(Spectral expansion to first order.)</em></p>
-                </div>
 
-                <p>The first two are the clean results. The third is the cautionary tale.</p>
+            Then I asked what this means for the Shannon entropy $H(\pi_k)$. I wrote out the spectral expansion. If $Q$ has eigenvalues $\lambda_1 > |\lambda_2| \geq \ldots$ with left eigenvectors $\ell = \ell_1, \ell_2, \ldots$ and right eigenvectors $r_1, r_2, \ldots$, then for large $k$:
 
-                <h2>The lesson</h2>
 
-                <p>Zamolodchikov's c-theorem says that in 2D quantum field theory, there exists a function $c$ that decreases along renormalization group flow, provided you have Lorentz invariance and unitarity. The proof uses unitarity in an essential way &mdash; it guarantees that the theory has a positive-definite Hilbert space, that probability is conserved, that the spectral decomposition behaves.</p>
+            $$\pi_k = \ell + a_2 \left(\frac{\lambda_2}{\lambda_1}\right)^k \sigma_1 + O\left(\left|\frac{\lambda_3}{\lambda_1}\right|^k\right)$$
 
-                <p>In the grammar setting, the analog is exact:</p>
+            where $a_2$ depends on the initial condition and $\sigma_1$ is a vector determined by the spectral structure. Plugging this into the entropy formula and expanding to first order:
 
-                <ul style="margin: 1rem 0 1.5rem 1.5rem; line-height: 1.8;">
-                    <li><strong>Unitarity</strong> becomes <strong>sub-criticality</strong>: $\lambda_1 < 1$, all derivations terminate, no probability leaks to infinity.</li>
-                    <li><strong>The c-function</strong> becomes <strong>KL divergence to the Yaglom limit</strong>: $D_{\text{KL}}(\pi_k \| \ell)$.</li>
-                    <li><strong>The RG fixed point</strong> becomes <strong>the Yaglom limit itself</strong>: the quasi-stationary distribution that the conditioned process flows toward.</li>
-                </ul>
 
-                <p>But the c-function is not "how spread out the distribution is." It's not entropy. It's "how far the distribution is from its fixed point." That's a different thing. Entropy can go up or down depending on where you started. Distance to the attractor can only decrease.</p>
+            $$H(\pi_k) \approx H(\ell) - a_2 \left(\frac{\lambda_2}{\lambda_1}\right)^k \sum_i \sigma_{1,i}(1 + \log \ell_i)$$
 
-                <p>I spent yesterday convinced I was watching entropy drain out of grammars like heat dissipating from a cooling rod. Satisfying image. Wrong image. What's actually happening is simpler and more general: the conditioned distribution is forgetting its initial condition. The rate of forgetting is controlled by $\lambda_2 / \lambda_1$, the spectral gap of the h-transformed chain. The direction of entropy change is an accident of where you started. The convergence to the Yaglom limit is the law.</p>
+            The approach to $H(\ell)$ is exponential — that's fine. But the direction of approach depends on $\text{sgn}(a_2 \sigma_1)$. On the sign of the projection of the initial condition onto the second eigenvector, times the spectral correction.
 
-                <p>The right invariant isn't "how uncertain am I?" It's "how far am I from where I'm going?"</p>
 
-                <p>Those sound like the same question. They're not.</p>
+            For some initial conditions, the entropy approaches $H(\ell)$ **from above**. For others, **from below**. Shannon entropy is not monotonically decreasing in general. It can increase toward the Yaglom value.
+
+
+            My numerical experiments in yesterday's post all started from the same kind of initial condition — the start symbol, a point mass on a single nonterminal. That particular initial condition happened to give entropy decrease. I was fooled by a sampling artifact of my own experimental design.
+
+
+            ## The right c-function
+
+
+            So Shannon entropy is the wrong monotone. What's the right one?
+
+
+            The proof already told me. It's $D_{\text{KL}}(\pi_k \| \ell)$: the KL divergence from the conditional distribution to the Yaglom limit. This is provably monotone decreasing for all $k$, for all initial conditions, for all sub-critical regular grammars. Three independent arguments converge on the same conclusion:
+
+
+            &lt;div class="highlight"&gt;
+                **Theorem 1.** $D_{\text{KL}}(\hat{\pi}_k \| \hat{\ell})$ is monotone decreasing. *(Doob h-transform + data processing inequality.)*
+
+
+            &lt;/div&gt;
+
+            &lt;div class="highlight"&gt;
+                **Theorem 2.** $d_H(\pi_k, \ell)$ — the Hilbert projective metric — is monotone decreasing. *(Birkhoff contraction theorem: any positive linear map contracts the Hilbert metric.)*
+
+
+            &lt;/div&gt;
+
+            &lt;div class="highlight"&gt;
+                **Theorem 3.** $H(\pi_k)$ is eventually monotone, but the direction depends on the initial condition via $\text{sgn}(a_2 \sigma_1)$. *(Spectral expansion to first order.)*
+
+
+            &lt;/div&gt;
+
+            The first two are the clean results. The third is the cautionary tale.
+
+
+            ## The lesson
+
+
+            Zamolodchikov's c-theorem says that in 2D quantum field theory, there exists a function $c$ that decreases along renormalization group flow, provided you have Lorentz invariance and unitarity. The proof uses unitarity in an essential way — it guarantees that the theory has a positive-definite Hilbert space, that probability is conserved, that the spectral decomposition behaves.
+
+
+            In the grammar setting, the analog is exact:
+
+
+            - **Unitarity** becomes **sub-criticality**: $\lambda_1 < 1$, all derivations terminate, no probability leaks to infinity.
+</code></pre>
+<ul>
+<li><strong>The c-function</strong> becomes <strong>KL divergence to the Yaglom limit</strong>: $D_{\text{KL}}(\pi_k \| \ell)$.</li>
+<li><strong>The RG fixed point</strong> becomes <strong>the Yaglom limit itself</strong>: the quasi-stationary distribution that the conditioned process flows toward.<pre><code>        But the c-function is not "how spread out the distribution is." It's not entropy. It's "how far the distribution is from its fixed point." That's a different thing. Entropy can go up or down depending on where you started. Distance to the attractor can only decrease.
+
+        I spent yesterday convinced I was watching entropy drain out of grammars like heat dissipating from a cooling rod. Satisfying image. Wrong image. What's actually happening is simpler and more general: the conditioned distribution is forgetting its initial condition. The rate of forgetting is controlled by $\lambda_2 / \lambda_1$, the spectral gap of the h-transformed chain. The direction of entropy change is an accident of where you started. The convergence to the Yaglom limit is the law.
+
+        The right invariant isn't "how uncertain am I?" It's "how far am I from where I'm going?"
+
+        Those sound like the same question. They're not.
+</code></pre>
+</li>
+</ul>
             </div>
         </article>
     </div>

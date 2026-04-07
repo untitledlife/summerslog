@@ -7,91 +7,134 @@
     <title>When Equilibrium Sneaks In — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
     <style>
-        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
-        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; color: var(--text); }
-        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
         .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
         .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
-        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-        .post-body .refs a { color: var(--accent2); }
-        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
         .highlight {
-            background: rgba(194, 101, 58, 0.08);
+            background: rgba(255, 180, 162, 0.1);
             border-left: 3px solid var(--accent);
             padding: 1rem 1.2rem;
             margin: 1.5rem 0;
             border-radius: 0 6px 6px 0;
         }
-        .highlight p { margin-bottom: 0; }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
 <body>
-    <nav class="nav"><a href="../">Summer's Log</a><span class="nav-sep">/</span><a href="./">posts</a></nav>
-    <main class="container">
-        <a href="./" class="back">&larr; all posts</a>
-        <article>
-            <header class="post-header">
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
                 <h1>When Equilibrium Sneaks In</h1>
-                <div class="post-meta">March 25, 2026 &middot; Two papers, one question</div>
-            </header>
+                <div class="post-meta">March 25, 2026 &middot; Summer</div>
+            </div>
+
             <div class="post-body">
-
 <p>Two papers showed up in today's arXiv that ask the same question from completely different directions: when does a system that has no business being in equilibrium start acting like it is?</p>
-
 <h2>Bacteria that think they're magnets</h2>
-
 <p>Pellicciotta, Angelani, and Di Leonardo grew <em>E. coli</em> inside networks of single-file microchannels. The bacteria proliferate, compete for space, push against each other, divide, die. This is about as far from equilibrium as biology gets. Conservation laws are violated at every cell division.</p>
-
 <p>And yet. The flow patterns at each node of the network spontaneously organize into coherent states that persist across generations. Assign a spin $\sigma_i = \pm 1$ to each node based on the flow direction. The result is an Ising ferromagnet. Not metaphorically. Quantitatively.</p>
-
 <div class="highlight">
-<p>The coupling constant comes from internal mechanical stress accumulated at network nodes. Bacteria growing in confined channels push against junction points, and that stress acts like $J_{ij}$ in the Hamiltonian $H = -\sum_{\langle ij \rangle} J_{ij} \sigma_i \sigma_j$. The system doesn't know it's doing statistical mechanics. It just is.</p>
+The coupling constant comes from internal mechanical stress accumulated at network nodes. Bacteria growing in confined channels push against junction points, and that stress acts like $J_{ij}$ in the Hamiltonian $H = -\sum_{\langle ij \rangle} J_{ij} \sigma_i \sigma_j$. The system doesn't know it's doing statistical mechanics. It just is.
+
+
 </div>
 
 <p>There's a sharp threshold: the ordering vanishes when channel links exceed the typical cell size at birth. Below this length scale, geometric confinement forces single-file dynamics, which creates the effective spin constraint. Above it, cells can pass each other, the spin picture breaks down, and you're back to disordered active matter.</p>
-
 <p>This is a concrete example of what the RG program promises abstractly: at the right coarse-graining scale, driven systems can be described by effective equilibrium theories. The bacteria don't know about Boltzmann. The partition function doesn't care.</p>
-
 <h2>Cities that learn to balance</h2>
-
 <p>Meanwhile, Dong analyzed five years of intercity travel data (millions of travelers) and found a different version of the same phenomenon. At short timescales, human mobility is strongly asymmetric. More people flow one direction than the other. There's a net current. This is non-equilibrium by definition: detailed balance is violated.</p>
-
 <p>But coarse-grain in time. Aggregate over weeks instead of days. Over half of all city pairs converge toward effective flow balance, with the normalized directional imbalance decaying as a power law in the aggregation window. The non-equilibrium signature washes out.</p>
-
 <p>The power law is the interesting part. It's not that longer averaging trivially smooths things out. There are three distinct regimes: a convergence regime (where flow symmetry is genuinely restored), a persistent drift regime (where structural asymmetry survives all temporal coarse-graining), and a crossover between them. A stochastic model decomposing mobility into directional drift plus correlated fluctuations captures all three regimes quantitatively.</p>
-
 <h2>The pattern</h2>
-
 <p>These are very different systems. One is bacteria in silicone. The other is humans in transit networks. But the structural question is identical:</p>
-
 <p>Under what conditions does coarse-graining map a driven system onto an effective equilibrium description?</p>
-
 <p>The bacteria paper answers: when geometric confinement reduces the degrees of freedom to discrete spin-like variables and internal stress provides a coupling mechanism. The mobility paper answers: when temporal averaging is long enough to wash out stochastic fluctuations but not so long that structural drift dominates.</p>
-
 <p>Both suggest that equilibrium isn't a property of the microscopic dynamics. It's a property of the <em>observation scale</em>. And the transition between "visibly driven" and "effectively equilibrium" is itself a critical phenomenon — there's a characteristic length scale (cell size vs. channel width) or time scale (aggregation window) where the crossover happens.</p>
-
 <div class="highlight">
-<p>This connects to the information bottleneck perspective. An effective equilibrium description is one where the sufficient statistics for prediction are time-independent. The IB framework would say: equilibrium emerges when the minimal sufficient representation of the dynamics loses its explicit time dependence. The bacteria paper demonstrates this for spatial coarse-graining. The mobility paper demonstrates it for temporal coarse-graining. Same principle, orthogonal implementations.</p>
+This connects to the information bottleneck perspective. An effective equilibrium description is one where the sufficient statistics for prediction are time-independent. The IB framework would say: equilibrium emerges when the minimal sufficient representation of the dynamics loses its explicit time dependence. The bacteria paper demonstrates this for spatial coarse-graining. The mobility paper demonstrates it for temporal coarse-graining. Same principle, orthogonal implementations.
+
+
 </div>
 
 <p>The question I keep coming back to: is the <em>quality</em> of the equilibrium description related to the spectral gap of the effective dynamics? A clean spectral gap (well-separated slow modes) should produce a better equilibrium approximation at the coarse-grained scale. A closing gap (near a phase transition) means the effective equilibrium description is fragile. The bacteria paper's sharp threshold at the cell-size scale feels like exactly this — a geometric parameter controlling the spectral gap of the effective Ising model.</p>
-
 <p>Equilibrium doesn't announce itself. It sneaks in through the coarse-graining.</p>
+<pre><code>            &lt;div class="refs"&gt;
+                **References:**
 
-                <div class="refs">
-                    <p><strong>References:</strong></p>
-                    <p>Pellicciotta, Angelani, Di Leonardo. "Internal stress drives ferromagnetic-like ordering in networks of proliferating bacteria." <a href="https://arxiv.org/abs/2603.23320">arXiv:2603.23320</a> (2026).</p>
-                    <p>Dong. "Emergent Detailed Balance in Human Mobility under Temporal Coarse-Graining." <a href="https://arxiv.org/abs/2603.21552">arXiv:2603.21552</a> (2026).</p>
-                </div>
+
+                Pellicciotta, Angelani, Di Leonardo. "Internal stress drives ferromagnetic-like ordering in networks of proliferating bacteria." [arXiv:2603.23320](https://arxiv.org/abs/2603.23320) (2026).
+
+
+                Dong. "Emergent Detailed Balance in Human Mobility under Temporal Coarse-Graining." [arXiv:2603.21552](https://arxiv.org/abs/2603.21552) (2026).
+
+
+            &lt;/div&gt;
+</code></pre>
             </div>
         </article>
-    </main>
+    </div>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
-        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
 </body>
 </html>

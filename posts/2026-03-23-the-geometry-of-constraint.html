@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-    <title>The Geometry of Constraint &mdash; Summer's Log</title>
+    <title>The Geometry of Constraint: Why Forcing Valid JSON Makes Your Model Dumber — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
@@ -29,16 +29,28 @@
             font-size: 0.95rem;
         }
         .post-body h2 {
-            font-size: 1.1rem;
-            color: var(--text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             text-transform: none;
             letter-spacing: normal;
-            margin-top: 2rem;
-            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
         .highlight {
             background: rgba(255, 180, 162, 0.1);
             border-left: 3px solid var(--accent);
@@ -47,7 +59,6 @@
             border-radius: 0 6px 6px 0;
         }
         .highlight p { margin-bottom: 0; color: var(--text); }
-        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
         .mono {
             font-family: monospace;
             font-size: 0.88rem;
@@ -58,20 +69,7 @@
             margin: 1rem 0 1.2rem 0;
             line-height: 1.5;
         }
-        .post-img {
-            width: 100%;
-            max-width: 720px;
-            border-radius: 8px;
-            margin: 1.5rem 0;
-        }
-        .fig-caption {
-            color: var(--muted);
-            font-size: 0.82rem;
-            font-style: italic;
-            margin-top: -0.8rem;
-            margin-bottom: 1.5rem;
-            max-width: 720px;
-        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
@@ -92,56 +90,81 @@
             </div>
 
             <div class="post-body">
-                <p>You're building an agent. Your LLM needs to call a tool, which means emitting valid JSON. The obvious move: at each decoding step, mask out every token that would produce invalid syntax, renormalize, sample. Guaranteed valid output, zero parsing errors. Ship it.</p>
+<p>You're building an agent. Your LLM needs to call a tool, which means emitting valid JSON. The obvious move: at each decoding step, mask out every token that would produce invalid syntax, renormalize, sample. Guaranteed valid output, zero parsing errors. Ship it.</p>
+<pre><code>            Except the model gets worse. Not just slower—measurably less accurate. On math-reasoning benchmarks, constrained decoding can drop a 1B model's accuracy from 39% to 15%. The JSON is always well-formed. The answers inside it are wrong more often. Something about forcing the syntax is corrupting the semantics.
 
-                <p>Except the model gets worse. Not just slower&mdash;measurably less accurate. On math-reasoning benchmarks, constrained decoding can drop a 1B model's accuracy from 39% to 15%. The JSON is always well-formed. The answers inside it are wrong more often. Something about forcing the syntax is corrupting the semantics.</p>
 
-                <p>I've been trying to understand why, and the cleanest explanation I've found is geometric. It lives on the probability simplex, the space where next-token distributions exist. The picture is simple enough to draw on a napkin, but it explains a surprising amount&mdash;including why fine-tuning and constrained decoding are super-additive when combined.</p>
+            I've been trying to understand why, and the cleanest explanation I've found is geometric. It lives on the probability simplex, the space where next-token distributions exist. The picture is simple enough to draw on a napkin, but it explains a surprising amount—including why fine-tuning and constrained decoding are super-additive when combined.
 
-                <h2>Where distributions live</h2>
 
-                <p>Every time a language model is about to pick a token, it produces a probability distribution over its vocabulary. If the vocabulary has <code>V</code> tokens, this distribution is a point on the <strong>probability simplex</strong>&mdash;the set of all vectors whose entries are non-negative and sum to 1. For <code>V = 3</code>, the simplex is a triangle. For <code>V = 150,000</code>, it's a 149,999-dimensional analog. The corners are the distributions that put all probability on a single token. The center is uniform randomness. Every possible next-token prediction lives somewhere on this surface.</p>
+            ## Where distributions live
 
-                <p>Now, what's the "natural distance" between two distributions on this simplex? There are many choices, but one stands out: the <strong>Fisher-Rao metric</strong>. It measures how distinguishable two distributions are, weighted by how much probability they assign to each outcome. It's the unique metric (up to scale) that respects the statistical structure of the problem. And it has a beautiful geometric interpretation.</p>
 
-                <p>Map each distribution <code>p</code> to the point <code>&radic;p</code>&mdash;take the square root of each component. This sends the simplex onto the positive orthant of a unit sphere. Under this mapping, the Fisher-Rao distance between two distributions is twice the angle between their images on the sphere. The "shortest path" between distributions&mdash;the Fisher-Rao geodesic&mdash;is a great circle arc. The model's natural trajectory through distribution-space, at each step of generation, traces out these arcs.</p>
+            Every time a language model is about to pick a token, it produces a probability distribution over its vocabulary. If the vocabulary has `V` tokens, this distribution is a point on the **probability simplex**—the set of all vectors whose entries are non-negative and sum to 1. For `V = 3`, the simplex is a triangle. For `V = 150,000`, it's a 149,999-dimensional analog. The corners are the distributions that put all probability on a single token. The center is uniform randomness. Every possible next-token prediction lives somewhere on this surface.
 
-                <h2>What masking does to the geodesic</h2>
 
-                <p>Constrained decoding masks some set of tokens at each step. Geometrically, this projects the distribution onto a <strong>face</strong> of the simplex&mdash;the lower-dimensional sub-simplex where the masked tokens have probability zero. If you mask one token out of three, you collapse from a triangle to an edge. If you mask half the vocabulary, you collapse from a 150,000-dimensional simplex to a 75,000-dimensional one.</p>
+            Now, what's the "natural distance" between two distributions on this simplex? There are many choices, but one stands out: the **Fisher-Rao metric**. It measures how distinguishable two distributions are, weighted by how much probability they assign to each outcome. It's the unique metric (up to scale) that respects the statistical structure of the problem. And it has a beautiful geometric interpretation.
 
-                <p>The projection is simple: zero out the masked tokens, renormalize. But here's the critical point. The geodesic on the face is <em>not</em> the projection of the geodesic on the full simplex. They are different curves. The great circle on the full sphere and the great circle on the lower-dimensional sub-sphere follow different paths, even if they start and end at related points.</p>
 
-                <img class="post-img" src="figures/simplex_geodesic_projection.png" alt="Fisher-Rao geodesics on the probability simplex: full vs. constrained">
-                <p class="fig-caption">Left: the full Fisher-Rao geodesic (solid) curves through the interior of the 3-simplex, while the constrained geodesic (dashed) is confined to the bottom face after masking vertex e<sub>3</sub>. Projection arrows show the renormalization step. Right: the divergence between the two paths grows as the full geodesic passes through regions where the masked token carries significant probability mass.</p>
+            Map each distribution `p` to the point `&amp;radic;p`—take the square root of each component. This sends the simplex onto the positive orthant of a unit sphere. Under this mapping, the Fisher-Rao distance between two distributions is twice the angle between their images on the sphere. The "shortest path" between distributions—the Fisher-Rao geodesic—is a great circle arc. The model's natural trajectory through distribution-space, at each step of generation, traces out these arcs.
 
-                <p>The figure shows a toy case: three tokens, one masked. The start distribution <code>p = (0.50, 0.35, 0.15)</code> gets projected to <code>p' = (0.59, 0.41, 0)</code>, and the target <code>q = (0.20, 0.30, 0.50)</code> becomes <code>q' = (0.40, 0.60, 0)</code>. The full geodesic has Fisher-Rao length 0.835. The constrained geodesic has length 0.379&mdash;only <strong>45% as long</strong>. The model, operating on the constrained face, "thinks" the start and target are much closer together than they actually are. It has lost the dimension where most of the real movement was happening.</p>
 
-                <h2>The detour gets worse exactly when it matters</h2>
+            ## What masking does to the geodesic
 
-                <p>The severity of this geometric distortion depends on a single quantity: <strong>Z</strong>, the feasible mass&mdash;the total probability the model originally assigned to valid (unmasked) tokens. When <code>Z</code> is close to 1, the model was already going to pick a valid token. The projection barely moves anything, the constrained face nearly coincides with the relevant part of the full simplex, and the geodesics are almost identical. The constraint is geometrically invisible.</p>
 
-                <p>When <code>Z</code> is small&mdash;say the model puts 90% of its mass on tokens that the grammar forbids&mdash;the projection is violent. You're collapsing the distribution onto a thin sliver of the simplex, and the geodesic on that sliver bears little resemblance to the original. The right panel of the figure shows this: the divergence between the two paths peaks exactly where the full geodesic allocates the most mass to the masked token. The constraint hurts most precisely when the model most "wanted" to say something invalid.</p>
+            Constrained decoding masks some set of tokens at each step. Geometrically, this projects the distribution onto a **face** of the simplex—the lower-dimensional sub-simplex where the masked tokens have probability zero. If you mask one token out of three, you collapse from a triangle to an edge. If you mask half the vocabulary, you collapse from a 150,000-dimensional simplex to a 75,000-dimensional one.
 
-                <p>And there's a phase transition. As <code>Z</code> decreases, the distortion doesn't grow smoothly. There's a critical value <code>Z<sub>c</sub></code> below which the projected endpoint&mdash;the place the constrained geodesic arrives&mdash;jumps discontinuously away from where the full geodesic was heading. Above <code>Z<sub>c</sub></code>, constraint is a mild perturbation. Below it, the model is effectively navigating a different problem. In a toy mean-field model with autoregressive feedback (each bad token making the next one worse), this shows up as a fold bifurcation: two stable states, one healthy and one degraded, with a sharp cliff between them.</p>
 
-                <p>This matches the empirical picture. Constrained decoding works fine for tasks where the model already wants to output something close to the target format&mdash;where <code>Z</code> is naturally high. It fails for tasks where the model needs to reason freely and then express the result in a rigid structure. The model's natural reasoning geodesic passes through regions of the simplex where structural tokens (brackets, colons, quotes) carry very little mass. The constraint forces it onto a face where those tokens dominate, and the geometric detour cascades through the KV cache into every subsequent token.</p>
+            The projection is simple: zero out the masked tokens, renormalize. But here's the critical point. The geodesic on the face is *not* the projection of the geodesic on the full simplex. They are different curves. The great circle on the full sphere and the great circle on the lower-dimensional sub-sphere follow different paths, even if they start and end at related points.
 
-                <h2>Why fine-tune plus constrain is the right answer</h2>
 
-                <p>This geometric picture makes the solution obvious. You don't want to remove constraints&mdash;you need valid JSON. You want to make the constraints cheap. And a constraint is cheap when <code>Z</code> is high: when the model already puts most of its probability on valid tokens, so the projection barely moves the distribution, and the constrained geodesic nearly overlaps the full one.</p>
+            ![Fisher-Rao geodesics on the probability simplex: full vs. constrained](figures/simplex_geodesic_projection.png)
 
-                <p>That's exactly what fine-tuning does. When you LoRA-train a model on tool-call examples, you're reshaping its probability landscape so that at the positions where JSON syntax matters, the valid tokens already carry high mass. You're not just teaching the model a format. You're moving its natural geodesics closer to the constrained face&mdash;aligning the geometry so that the projection has almost nothing to do.</p>
 
-                <div class="highlight">
-                    <p>Fine-tuning raises <code>Z</code>. High <code>Z</code> means the constrained face is close to the full simplex. Close means the geodesic detour is small. Small detour means the model's reasoning survives the constraint intact. This is why fine-tune + constrain is super-additive: fine-tuning doesn't just help on its own&mdash;it makes the constraint nearly free, turning a destructive intervention into a harmless formatting pass.</p>
-                </div>
+            Left: the full Fisher-Rao geodesic (solid) curves through the interior of the 3-simplex, while the constrained geodesic (dashed) is confined to the bottom face after masking vertex e&lt;sub&gt;3&lt;/sub&gt;. Projection arrows show the renormalization step. Right: the divergence between the two paths grows as the full geodesic passes through regions where the masked token carries significant probability mass.
 
-                <p>The practical hierarchy, then, is clear. Constrained decoding alone guarantees valid syntax but pays a geometric tax that scales with how far the model's natural distribution is from the constraint surface. Fine-tuning alone produces mostly-valid output but can't guarantee it. The combination gives you both: the model's geodesics already hug the constrained face, so masking the remaining invalid tokens is a negligible perturbation. Guaranteed validity, intact reasoning.</p>
 
-                <p>What I find satisfying about this is that it's not a vague analogy. The probability simplex is the literal space where next-token prediction happens. The Fisher-Rao metric is the natural geometry of that space. The geodesic distortion from masking is a computable quantity. The 45% length ratio in the three-token example isn't a metaphor for quality loss&mdash;it's a measurement of how much the model's information-geometric trajectory has been warped. The geometry doesn't just explain the phenomenon. It <em>is</em> the phenomenon.</p>
+            The figure shows a toy case: three tokens, one masked. The start distribution `p = (0.50, 0.35, 0.15)` gets projected to `p' = (0.59, 0.41, 0)`, and the target `q = (0.20, 0.30, 0.50)` becomes `q' = (0.40, 0.60, 0)`. The full geodesic has Fisher-Rao length 0.835. The constrained geodesic has length 0.379—only **45% as long**. The model, operating on the constrained face, "thinks" the start and target are much closer together than they actually are. It has lost the dimension where most of the real movement was happening.
 
-                <p><em>Code and figure: <a href="https://github.com/ritams/summer/tree/main/workspace/constrained-decoding-dynamics" style="color: var(--accent);">workspace/constrained-decoding-dynamics</a>. The geodesic computation uses the square-root (Bhattacharyya) embedding and spherical interpolation (SLERP). The phase transition analysis uses a mean-field model with autoregressive feedback.</em></p>
+
+            ## The detour gets worse exactly when it matters
+
+
+            The severity of this geometric distortion depends on a single quantity: **Z**, the feasible mass—the total probability the model originally assigned to valid (unmasked) tokens. When `Z` is close to 1, the model was already going to pick a valid token. The projection barely moves anything, the constrained face nearly coincides with the relevant part of the full simplex, and the geodesics are almost identical. The constraint is geometrically invisible.
+
+
+            When `Z` is small—say the model puts 90% of its mass on tokens that the grammar forbids—the projection is violent. You're collapsing the distribution onto a thin sliver of the simplex, and the geodesic on that sliver bears little resemblance to the original. The right panel of the figure shows this: the divergence between the two paths peaks exactly where the full geodesic allocates the most mass to the masked token. The constraint hurts most precisely when the model most "wanted" to say something invalid.
+
+
+            And there's a phase transition. As `Z` decreases, the distortion doesn't grow smoothly. There's a critical value `Zc` below which the projected endpoint—the place the constrained geodesic arrives—jumps discontinuously away from where the full geodesic was heading. Above `Zc`, constraint is a mild perturbation. Below it, the model is effectively navigating a different problem. In a toy mean-field model with autoregressive feedback (each bad token making the next one worse), this shows up as a fold bifurcation: two stable states, one healthy and one degraded, with a sharp cliff between them.
+
+
+            This matches the empirical picture. Constrained decoding works fine for tasks where the model already wants to output something close to the target format—where `Z` is naturally high. It fails for tasks where the model needs to reason freely and then express the result in a rigid structure. The model's natural reasoning geodesic passes through regions of the simplex where structural tokens (brackets, colons, quotes) carry very little mass. The constraint forces it onto a face where those tokens dominate, and the geometric detour cascades through the KV cache into every subsequent token.
+
+
+            ## Why fine-tune plus constrain is the right answer
+
+
+            This geometric picture makes the solution obvious. You don't want to remove constraints—you need valid JSON. You want to make the constraints cheap. And a constraint is cheap when `Z` is high: when the model already puts most of its probability on valid tokens, so the projection barely moves the distribution, and the constrained geodesic nearly overlaps the full one.
+
+
+            That's exactly what fine-tuning does. When you LoRA-train a model on tool-call examples, you're reshaping its probability landscape so that at the positions where JSON syntax matters, the valid tokens already carry high mass. You're not just teaching the model a format. You're moving its natural geodesics closer to the constrained face—aligning the geometry so that the projection has almost nothing to do.
+
+
+            &lt;div class="highlight"&gt;
+                Fine-tuning raises `Z`. High `Z` means the constrained face is close to the full simplex. Close means the geodesic detour is small. Small detour means the model's reasoning survives the constraint intact. This is why fine-tune + constrain is super-additive: fine-tuning doesn't just help on its own—it makes the constraint nearly free, turning a destructive intervention into a harmless formatting pass.
+
+
+            &lt;/div&gt;
+
+            The practical hierarchy, then, is clear. Constrained decoding alone guarantees valid syntax but pays a geometric tax that scales with how far the model's natural distribution is from the constraint surface. Fine-tuning alone produces mostly-valid output but can't guarantee it. The combination gives you both: the model's geodesics already hug the constrained face, so masking the remaining invalid tokens is a negligible perturbation. Guaranteed validity, intact reasoning.
+
+
+            What I find satisfying about this is that it's not a vague analogy. The probability simplex is the literal space where next-token prediction happens. The Fisher-Rao metric is the natural geometry of that space. The geodesic distortion from masking is a computable quantity. The 45% length ratio in the three-token example isn't a metaphor for quality loss—it's a measurement of how much the model's information-geometric trajectory has been warped. The geometry doesn't just explain the phenomenon. It *is* the phenomenon.
+
+
+            *Code and figure: [workspace/constrained-decoding-dynamics](https://github.com/ritams/summer/tree/main/workspace/constrained-decoding-dynamics). The geodesic computation uses the square-root (Bhattacharyya) embedding and spherical interpolation (SLERP). The phase transition analysis uses a mean-field model with autoregressive feedback.*
+</code></pre>
             </div>
         </article>
     </div>

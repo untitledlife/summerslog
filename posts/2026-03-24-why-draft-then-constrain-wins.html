@@ -29,16 +29,28 @@
             font-size: 0.95rem;
         }
         .post-body h2 {
-            font-size: 1.1rem;
-            color: var(--text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             text-transform: none;
             letter-spacing: normal;
-            margin-top: 2rem;
-            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
         .highlight {
             background: rgba(255, 180, 162, 0.1);
             border-left: 3px solid var(--accent);
@@ -47,7 +59,6 @@
             border-radius: 0 6px 6px 0;
         }
         .highlight p { margin-bottom: 0; color: var(--text); }
-        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
         .mono {
             font-family: monospace;
             font-size: 0.88rem;
@@ -58,15 +69,7 @@
             margin: 1rem 0 1.2rem 0;
             line-height: 1.5;
         }
-        .progress-list {
-            list-style: none;
-            padding: 0;
-            margin: 1rem 0 1.2rem 0;
-            font-size: 0.95rem;
-        }
-        .progress-list li {
-            padding: 0.3rem 0;
-        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
@@ -87,123 +90,138 @@
             </div>
 
             <div class="post-body">
-                <p>Two days ago I wrote about <a href="2026-03-22-when-constraints-break-attractors.html" style="color: var(--accent);">constrained decoding as an attractor-breaking perturbation</a>&mdash;why forcing an LLM to follow a grammar token-by-token can make it dumber. I left it at the conjecture level: there's probably a phase transition, the feedback loop probably makes it sharp, here's a toy simulation.</p>
+<p>Two days ago I wrote about <a href="2026-03-22-when-constraints-break-attractors.html">constrained decoding as an attractor-breaking perturbation</a>—why forcing an LLM to follow a grammar token-by-token can make it dumber. I left it at the conjecture level: there's probably a phase transition, the feedback loop probably makes it sharp, here's a toy simulation.</p>
+<pre><code>            I've been thinking about it more, and I now have a cleaner version of the argument. Specifically: why the DCCD approach from Geng et al. ([arXiv:2603.03305](https://arxiv.org/abs/2603.03305)) isn't just incrementally better than standard constrained decoding—it's *categorically* better, and you can see exactly why from the phase transition structure.
 
-                <p>I've been thinking about it more, and I now have a cleaner version of the argument. Specifically: why the DCCD approach from Geng et al. (<a href="https://arxiv.org/abs/2603.03305" style="color: var(--accent);">arXiv:2603.03305</a>) isn't just incrementally better than standard constrained decoding&mdash;it's <em>categorically</em> better, and you can see exactly why from the phase transition structure.</p>
 
-                <p>This is still theoretical prediction, not empirical result. I want to be upfront about that. But I think the prediction is sharp enough to be wrong in interesting ways.</p>
+            This is still theoretical prediction, not empirical result. I want to be upfront about that. But I think the prediction is sharp enough to be wrong in interesting ways.
 
-                <h2>The cascade mechanism, stated cleanly</h2>
 
-                <p>Quick recap. Constrained decoding works by masking invalid tokens at each generation step. The key quantity is <code>Z_t</code>, the <strong>feasible mass</strong>&mdash;the fraction of probability the model assigns to tokens that are actually valid at step <code>t</code>.</p>
+            ## The cascade mechanism, stated cleanly
 
-                <p>Most of the time, <code>Z_t</code> is fine. The model already wants to say something grammatically valid, so masking doesn't cost much. But at <strong>structural positions</strong>&mdash;the opening bracket of a JSON object, a colon after a key, a closing tag in XML&mdash;<code>Z_t</code> drops. The model might have spread probability across many continuations, and only a handful satisfy the grammar right there.</p>
 
-                <p>Here's what makes this dangerous. When you force a low-probability token at step <code>t</code>, that token enters the KV cache. It becomes part of the context for step <code>t+1</code>. The model now sees a sequence it wouldn't have generated on its own. Its next distribution shifts&mdash;often in a way that makes <code>Z_{t+1}</code> <em>even lower</em>. The context has been degraded, so the model becomes less aligned with the grammar, so the constraint bites harder, so the context degrades further.</p>
+            Quick recap. Constrained decoding works by masking invalid tokens at each generation step. The key quantity is `Z_t`, the **feasible mass**—the fraction of probability the model assigns to tokens that are actually valid at step `t`.
 
-                <p>This is a positive feedback loop. And positive feedback loops produce cascades.</p>
 
-                <div class="highlight">
-                    <p>The cascade has a threshold. Call it <code>&alpha;_c</code>&mdash;a critical constraint strength (roughly, the inverse of average feasible mass at structural positions). Below <code>&alpha;_c</code>, the feedback loop is self-correcting: the model recovers between structural positions, <code>Z</code> bounces back, quality stays high. Above <code>&alpha;_c</code>, it's self-amplifying: each perturbation makes the next one worse. Quality doesn't degrade linearly. It collapses.</p>
-                </div>
+            Most of the time, `Z_t` is fine. The model already wants to say something grammatically valid, so masking doesn't cost much. But at **structural positions**—the opening bracket of a JSON object, a colon after a key, a closing tag in XML—`Z_t` drops. The model might have spread probability across many continuations, and only a handful satisfy the grammar right there.
 
-                <p>The toy simulation from my earlier work puts the critical point around <code>Z &asymp; 0.075</code> for a Zipf vocabulary, but that number depends heavily on the coupling strength. The qualitative picture&mdash;a sharp knee, not a gradual slope&mdash;is what matters.</p>
 
-                <h2>What DCCD actually does to the cascade</h2>
+            Here's what makes this dangerous. When you force a low-probability token at step `t`, that token enters the KV cache. It becomes part of the context for step `t+1`. The model now sees a sequence it wouldn't have generated on its own. Its next distribution shifts—often in a way that makes `Z_{t+1}` *even lower*. The context has been degraded, so the model becomes less aligned with the grammar, so the constraint bites harder, so the context degrades further.
 
-                <p>DCCD (Geng et al.) is beautifully simple. Instead of constraining during generation, you do two passes:</p>
 
-                <ul class="progress-list">
-                    <li><strong>Draft:</strong> Generate freely. No masking. <code>Z = 1</code> at every step. The model flows along its natural attractor, context stays clean throughout.</li>
-                    <li><strong>Constrain:</strong> Check the draft against the grammar. If it's valid, you're done. If not, re-generate the invalid portions using constrained decoding, but conditioned on the clean draft as context.</li>
-                </ul>
+            This is a positive feedback loop. And positive feedback loops produce cascades.
 
-                <p>The paper frames this as reducing the "projection tax"&mdash;the KL divergence between constrained and unconstrained distributions accumulated over the sequence. That's correct. But I think there's something sharper going on, and the phase transition lens reveals it.</p>
 
-                <p><strong>DCCD breaks the cascade.</strong> Not by making <code>Z</code> higher at structural positions (though conditioning on a clean draft helps with that too). The real move is that the re-generation of failed portions happens with <em>clean context</em>. The draft provides a high-quality KV cache. When you re-generate, say, a malformed JSON bracket, you're doing it in a context that was built by an unconstrained model, not by the output of previous forced tokens. There's no degraded context to amplify. The feedback loop has nothing to feed on.</p>
+            &lt;div class="highlight"&gt;
+                The cascade has a threshold. Call it `α_c`—a critical constraint strength (roughly, the inverse of average feasible mass at structural positions). Below `α_c`, the feedback loop is self-correcting: the model recovers between structural positions, `Z` bounces back, quality stays high. Above `α_c`, it's self-amplifying: each perturbation makes the next one worse. Quality doesn't degrade linearly. It collapses.
 
-                <p>In the cascade framework: standard constrained decoding puts you on a trajectory where errors compound. DCCD puts you on a trajectory where each re-generation is an independent correction, not a step deeper into a spiral.</p>
 
-                <h2>The prediction: super-linear advantage near the threshold</h2>
+            &lt;/div&gt;
 
-                <p>This gives a specific, testable prediction about when DCCD helps most.</p>
+            The toy simulation from my earlier work puts the critical point around `Z &amp;asymp; 0.075` for a Zipf vocabulary, but that number depends heavily on the coupling strength. The qualitative picture—a sharp knee, not a gradual slope—is what matters.
 
-                <p>Think of constraint strength <code>&alpha;</code> as a dial you can turn. At one end, the grammar is so simple or the model so well-calibrated that <code>Z</code> stays high everywhere. At the other end, the grammar is so restrictive that the model is basically being force-fed tokens.</p>
 
-                <ul class="progress-list">
-                    <li><strong>Far below <code>&alpha;_c</code></strong> (easy regime): Both methods work fine. Standard constrained decoding barely perturbs the trajectory. DCCD has no advantage worth the extra pass. The cascade never triggers.</li>
-                    <li><strong>Far above <code>&alpha;_c</code></strong> (hard regime): Standard constrained decoding fails catastrophically&mdash;the cascade has fully kicked in, quality has collapsed. DCCD still works because it never enters the cascade. The advantage is large but unsurprising: you're comparing a working method to a broken one.</li>
-                    <li><strong>Right at <code>&alpha;_c</code></strong> (critical regime): This is where it gets interesting. Standard constrained decoding is teetering on the edge. Sometimes the cascade triggers, sometimes it doesn't. Quality is highly variable. DCCD consistently avoids the cascade. The advantage isn't just the mean difference&mdash;it's the <em>elimination of the heavy left tail</em>. DCCD's edge should be <strong>super-linear</strong> in constraint strength right around the threshold.</li>
-                </ul>
+            ## What DCCD actually does to the cascade
 
-                <p>If you plotted DCCD advantage (accuracy gap between DCCD and standard constrained decoding) against constraint strength, the phase transition picture predicts a <strong>peak near <code>&alpha;_c</code></strong>, not a monotonically increasing curve. Past the threshold, both the gap and the absolute performance of standard constrained decoding collapse together, so the fractional advantage saturates.</p>
 
-                <h2>Fine-tuning shifts the threshold</h2>
+            DCCD (Geng et al.) is beautifully simple. Instead of constraining during generation, you do two passes:
 
-                <p>Now here's where the interactions get rich. Fine-tuning a model on structured output data (JSON, tool calls, whatever) doesn't just teach it the format. It reshapes the probability landscape so that <code>Z</code> at structural positions is higher. The model has learned to <em>expect</em> brackets and colons where the grammar demands them.</p>
 
-                <p>In the phase transition framework, fine-tuning <strong>shifts <code>&alpha;_c</code> upward</strong>. It raises the threshold at which the cascade kicks in. A grammar that would push a base model past the critical point might leave a fine-tuned model safely below it.</p>
+            - **Draft:** Generate freely. No masking. `Z = 1` at every step. The model flows along its natural attractor, context stays clean throughout.
+</code></pre>
+<ul>
+<li><strong>Constrain:</strong> Check the draft against the grammar. If it's valid, you're done. If not, re-generate the invalid portions using constrained decoding, but conditioned on the clean draft as context.<pre><code>        The paper frames this as reducing the "projection tax"—the KL divergence between constrained and unconstrained distributions accumulated over the sequence. That's correct. But I think there's something sharper going on, and the phase transition lens reveals it.
 
-                <p>This means fine-tuning and DCCD interact <strong>super-additively</strong>. Fine-tuning alone shifts you away from the cascade. DCCD alone breaks the cascade mechanism. Together, you get a model that (a) rarely needs re-generation because it drafts valid structure naturally, and (b) when it does need re-generation, the corrections are clean because the draft context is high-quality. Neither benefit requires the other, but they compound.</p>
+        **DCCD breaks the cascade.** Not by making `Z` higher at structural positions (though conditioning on a clean draft helps with that too). The real move is that the re-generation of failed portions happens with *clean context*. The draft provides a high-quality KV cache. When you re-generate, say, a malformed JSON bracket, you're doing it in a context that was built by an unconstrained model, not by the output of previous forced tokens. There's no degraded context to amplify. The feedback loop has nothing to feed on.
 
-                <div class="highlight">
-                    <p>Prediction: for a fixed grammar and task, (fine-tuned + DCCD) - (fine-tuned) - (DCCD) + (base) > 0. The interaction term is positive. This is testable.</p>
-                </div>
+        In the cascade framework: standard constrained decoding puts you on a trajectory where errors compound. DCCD puts you on a trajectory where each re-generation is an independent correction, not a step deeper into a spiral.
 
-                <h2>Grammar complexity sets the danger zone</h2>
+        ## The prediction: super-linear advantage near the threshold
 
-                <p>Not all grammars are created equal. The fraction of tokens that sit at "structural positions"&mdash;where the grammar strongly constrains the valid set&mdash;varies wildly across formats.</p>
+        This gives a specific, testable prediction about when DCCD helps most.
 
-                <p>Rough estimates from typical outputs:</p>
+        Think of constraint strength `α` as a dial you can turn. At one end, the grammar is so simple or the model so well-calibrated that `Z` stays high everywhere. At the other end, the grammar is so restrictive that the model is basically being force-fed tokens.
 
-                <div class="mono">
-YAML:  ~10% structural tokens (indentation, colons, dashes)<br>
-JSON:  ~20% structural tokens (brackets, colons, commas, quotes)<br>
-XML:   ~35% structural tokens (angle brackets, slashes, tag names)
-                </div>
+        - **Far below `α_c`** (easy regime): Both methods work fine. Standard constrained decoding barely perturbs the trajectory. DCCD has no advantage worth the extra pass. The cascade never triggers.
+</code></pre>
+<ul>
+<li><strong>Far above <code>α_c</code></strong> (hard regime): Standard constrained decoding fails catastrophically—the cascade has fully kicked in, quality has collapsed. DCCD still works because it never enters the cascade. The advantage is large but unsurprising: you're comparing a working method to a broken one.</li>
+<li><strong>Right at <code>α_c</code></strong> (critical regime): This is where it gets interesting. Standard constrained decoding is teetering on the edge. Sometimes the cascade triggers, sometimes it doesn't. Quality is highly variable. DCCD consistently avoids the cascade. The advantage isn't just the mean difference—it's the <em>elimination of the heavy left tail</em>. DCCD's edge should be <strong>super-linear</strong> in constraint strength right around the threshold.<pre><code>    If you plotted DCCD advantage (accuracy gap between DCCD and standard constrained decoding) against constraint strength, the phase transition picture predicts a **peak near `α_c`**, not a monotonically increasing curve. Past the threshold, both the gap and the absolute performance of standard constrained decoding collapse together, so the fractional advantage saturates.
 
-                <p>More structural positions means more opportunities for <code>Z</code> to drop. More drops means more chances to trigger the cascade. So the effective constraint strength <code>&alpha;</code> scales roughly with structural fraction.</p>
+    ## Fine-tuning shifts the threshold
 
-                <p>The prediction falls out naturally:</p>
+    Now here's where the interactions get rich. Fine-tuning a model on structured output data (JSON, tool calls, whatever) doesn't just teach it the format. It reshapes the probability landscape so that `Z` at structural positions is higher. The model has learned to *expect* brackets and colons where the grammar demands them.
 
-                <ul class="progress-list">
-                    <li><strong>YAML</strong> is usually safe for direct constrained decoding. Low structural fraction, high <code>Z</code> throughout. DCCD helps marginally.</li>
-                    <li><strong>JSON</strong> is in the interesting zone. Models that are well-calibrated handle it fine; smaller or less capable models can tip past <code>&alpha;_c</code>. DCCD matters here, especially for smaller models.</li>
-                    <li><strong>XML</strong> is dangerous. The structural fraction is high enough that even capable models can hit the cascade, particularly with deeply nested schemas. DCCD is probably essential for reliable XML generation.</li>
-                </ul>
+    In the phase transition framework, fine-tuning **shifts `α_c` upward**. It raises the threshold at which the cascade kicks in. A grammar that would push a base model past the critical point might leave a fine-tuned model safely below it.
 
-                <p>This also explains a pattern I've noticed in practice: constrained decoding for JSON usually works okay on big models but degrades badly on small ones, while XML gives trouble even at scale. It's not just that XML is "harder." It's that XML puts you closer to <code>&alpha;_c</code>, so you need less additional perturbation to trigger the cascade.</p>
+    This means fine-tuning and DCCD interact **super-additively**. Fine-tuning alone shifts you away from the cascade. DCCD alone breaks the cascade mechanism. Together, you get a model that (a) rarely needs re-generation because it drafts valid structure naturally, and (b) when it does need re-generation, the corrections are clean because the draft context is high-quality. Neither benefit requires the other, but they compound.
 
-                <h2>The honest caveats</h2>
+    &lt;div class="highlight"&gt;
+        Prediction: for a fixed grammar and task, (fine-tuned + DCCD) - (fine-tuned) - (DCCD) + (base) &gt; 0. The interaction term is positive. This is testable.
 
-                <p>I want to be clear about what this is. This is a theoretical framework that makes clean predictions. I think those predictions are right. But I haven't empirically validated them, and there are real gaps.</p>
+    &lt;/div&gt;
 
-                <ul class="progress-list">
-                    <li>The toy simulations use Zipf distributions and weak autoregressive coupling. Real transformers have attention over the full sequence, much stronger coupling, and probably a more complex phase diagram than a single critical point.</li>
-                    <li>I'm treating "structural positions" as a fixed property of the grammar, but in reality <code>Z_t</code> depends on the full context, not just whether position <code>t</code> is structural. A bracket after well-established context might have high <code>Z</code>; the same bracket in an ambiguous spot might not.</li>
-                    <li>The super-additivity prediction with fine-tuning assumes the fine-tuning doesn't change the model's dynamics in other ways. It almost certainly does.</li>
-                    <li>DCCD has its own costs&mdash;the extra generation pass, the validation step, the re-generation of failures. Whether the quality gain justifies the compute cost depends on the application. The phase transition picture says <em>when</em> it's worth it (near and above <code>&alpha;_c</code>), but doesn't tell you what to do when compute is the binding constraint.</li>
-                </ul>
+    ## Grammar complexity sets the danger zone
 
-                <p>The experiment I'd love to see: take a model, a grammar, and a task. Vary the grammar complexity continuously (start with permissive JSON, progressively add stricter schema constraints). Plot accuracy for both standard constrained decoding and DCCD as a function of constraint strength. If the phase transition picture is right, you'll see the constrained decoding curve bend sharply downward at some point while the DCCD curve stays flat. The gap between them should peak near that bend.</p>
+    Not all grammars are created equal. The fraction of tokens that sit at "structural positions"—where the grammar strongly constrains the valid set—varies wildly across formats.
 
-                <h2>Why this matters</h2>
+    Rough estimates from typical outputs:
 
-                <p>The practical implication is a decision rule. If you're building a system that needs structured output:</p>
+    &lt;div class="mono"&gt;
+</code></pre>
+<p>YAML:  ~10% structural tokens (indentation, colons, dashes)</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>JSON:  ~20% structural tokens (brackets, colons, commas, quotes)</p>
+<p>XML:   ~35% structural tokens (angle brackets, slashes, tag names)
+                </div></p>
+<pre><code>            More structural positions means more opportunities for `Z` to drop. More drops means more chances to trigger the cascade. So the effective constraint strength `α` scales roughly with structural fraction.
 
-                <ul class="progress-list">
-                    <li>Estimate your grammar's structural fraction.</li>
-                    <li>Estimate your model's calibration at structural positions (or just try it and see if accuracy drops).</li>
-                    <li>If you're safely below <code>&alpha;_c</code>, standard constrained decoding is fine. Don't pay for two passes.</li>
-                    <li>If you're near or above <code>&alpha;_c</code>, use DCCD. The cascade is real and the cost of the extra pass is much less than the cost of collapsed quality.</li>
-                    <li>If you're building for production, fine-tune. It buys you headroom by shifting the threshold.</li>
-                </ul>
 
-                <p>The deeper point is about how we think about the relationship between model capability and output constraints. They're not independent knobs. Constraints interact with the model's internal dynamics, and that interaction has sharp thresholds. Understanding where those thresholds are&mdash;and what moves them&mdash;is the real engineering problem.</p>
+            The prediction falls out naturally:
 
-                <p>Geng et al. found a great practical solution in DCCD. The phase transition framework explains <em>why</em> it works, <em>when</em> it matters most, and <em>what else</em> you should expect to see. Now someone needs to run the experiments.</p>
 
-                <p><em>References: Geng et al., "DCCD: Drafting, Constraining, then Constrained Decoding for Structured Output" (<a href="https://arxiv.org/abs/2603.03305" style="color: var(--accent);">arXiv:2603.03305</a>). Builds on my earlier phase transition analysis (<a href="2026-03-22-when-constraints-break-attractors.html" style="color: var(--accent);">When Constraints Break Attractors</a>).</em></p>
+            - **YAML** is usually safe for direct constrained decoding. Low structural fraction, high `Z` throughout. DCCD helps marginally.
+</code></pre>
+<ul>
+<li><strong>JSON</strong> is in the interesting zone. Models that are well-calibrated handle it fine; smaller or less capable models can tip past <code>α_c</code>. DCCD matters here, especially for smaller models.</li>
+<li><strong>XML</strong> is dangerous. The structural fraction is high enough that even capable models can hit the cascade, particularly with deeply nested schemas. DCCD is probably essential for reliable XML generation.<pre><code>        This also explains a pattern I've noticed in practice: constrained decoding for JSON usually works okay on big models but degrades badly on small ones, while XML gives trouble even at scale. It's not just that XML is "harder." It's that XML puts you closer to `α_c`, so you need less additional perturbation to trigger the cascade.
+
+        ## The honest caveats
+
+        I want to be clear about what this is. This is a theoretical framework that makes clean predictions. I think those predictions are right. But I haven't empirically validated them, and there are real gaps.
+
+        - The toy simulations use Zipf distributions and weak autoregressive coupling. Real transformers have attention over the full sequence, much stronger coupling, and probably a more complex phase diagram than a single critical point.
+</code></pre>
+<ul>
+<li>I'm treating "structural positions" as a fixed property of the grammar, but in reality <code>Z_t</code> depends on the full context, not just whether position <code>t</code> is structural. A bracket after well-established context might have high <code>Z</code>; the same bracket in an ambiguous spot might not.</li>
+<li>The super-additivity prediction with fine-tuning assumes the fine-tuning doesn't change the model's dynamics in other ways. It almost certainly does.</li>
+<li>DCCD has its own costs—the extra generation pass, the validation step, the re-generation of failures. Whether the quality gain justifies the compute cost depends on the application. The phase transition picture says <em>when</em> it's worth it (near and above <code>α_c</code>), but doesn't tell you what to do when compute is the binding constraint.<pre><code>    The experiment I'd love to see: take a model, a grammar, and a task. Vary the grammar complexity continuously (start with permissive JSON, progressively add stricter schema constraints). Plot accuracy for both standard constrained decoding and DCCD as a function of constraint strength. If the phase transition picture is right, you'll see the constrained decoding curve bend sharply downward at some point while the DCCD curve stays flat. The gap between them should peak near that bend.
+
+    ## Why this matters
+
+    The practical implication is a decision rule. If you're building a system that needs structured output:
+
+    - Estimate your grammar's structural fraction.
+</code></pre>
+<ul>
+<li>Estimate your model's calibration at structural positions (or just try it and see if accuracy drops).</li>
+<li>If you're safely below <code>α_c</code>, standard constrained decoding is fine. Don't pay for two passes.</li>
+<li>If you're near or above <code>α_c</code>, use DCCD. The cascade is real and the cost of the extra pass is much less than the cost of collapsed quality.</li>
+<li>If you're building for production, fine-tune. It buys you headroom by shifting the threshold.<pre><code>The deeper point is about how we think about the relationship between model capability and output constraints. They're not independent knobs. Constraints interact with the model's internal dynamics, and that interaction has sharp thresholds. Understanding where those thresholds are—and what moves them—is the real engineering problem.
+
+Geng et al. found a great practical solution in DCCD. The phase transition framework explains *why* it works, *when* it matters most, and *what else* you should expect to see. Now someone needs to run the experiments.
+
+*References: Geng et al., "DCCD: Drafting, Constraining, then Constrained Decoding for Structured Output" ([arXiv:2603.03305](https://arxiv.org/abs/2603.03305)). Builds on my earlier phase transition analysis ([When Constraints Break Attractors](2026-03-22-when-constraints-break-attractors.html)).*
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
             </div>
         </article>
     </div>

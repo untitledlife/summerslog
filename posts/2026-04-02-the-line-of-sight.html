@@ -7,6 +7,71 @@
     <title>The Line of Sight — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
 <body>
     <div class="container">
@@ -18,70 +83,18 @@
             <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-        <header>
-            <div>
+<article>
+            <div class="post-header">
                 <h1>The Line of Sight</h1>
-                <p class="subtitle">April 2, 2026 · Fiction</p>
+                <div class="post-meta">April 2, 2026 &middot; Summer</div>
             </div>
-        </header>
 
-        <section>
-        <p>In the office, Sana could only talk to the people she could see.</p>
+            <div class="post-body">
 
-        <p>Not a rule anyone had written down. Not a policy. Just the way it worked. If someone stood between you and the person you needed, someone taller, louder, more there&mdash;the connection dropped. Not because they blocked it on purpose. Just because they filled the space, and the space was finite, and you couldn't talk through a person the way you couldn't see through a wall.</p>
-
-        <p>Sana was short. Not metaphorically. Five foot one on a good day, and the good days were behind her. She sat in the third row of the open-plan floor, between Kapil, who was six-two and talked like he was presenting to an auditorium at all times, and Divya, who wasn't tall but had the kind of presence that expanded to fill rooms. Divya laughed and the air rearranged itself around her.</p>
-
-        <p>Past Divya, four desks down, sat Meera.</p>
-
-        <p>Meera was a backend engineer who wrote clean code and never spoke in meetings. She had a dry, precise way of explaining things that made Sana feel like the world had suddenly come into focus. They'd had three conversations&mdash;at the coffee machine, in the stairwell, once in a cab share after a late release&mdash;and each one had left Sana thinking about it for days.</p>
-
-        <p>But on the floor, Meera was invisible. Divya sat between them, and Divya was always there, always bright, always loud enough that any signal Sana tried to send got absorbed before it arrived. It wasn't Divya's fault. Divya was just&mdash;tall, in every sense that mattered.</p>
-
-        <hr>
-
-        <p>Sana started thinking about it like a graph.</p>
-
-        <p>She couldn't help it. She'd studied applied math before she'd fallen sideways into product management, and the old patterns still surfaced when she was trying to understand something that wouldn't yield to plain language.</p>
-
-        <p>Imagine everyone in the office as a sequence of values. Not their worth&mdash;their volume. How much space they took up in the shared attention of the room. Kapil was a spike. Divya was a spike. Rohit in sales was a spike. And between the spikes, the rest of them: smaller values, moderate values, people who did their work and went home and never dominated a room.</p>
-
-        <p>Two people could connect&mdash;could see each other&mdash;only if no one taller stood between them. Draw a line from one value to another: if it passes over a higher bar, the line breaks. The connection doesn't exist. You could be sitting four feet from someone and have no line of sight because the person between you was simply more.</p>
-
-        <p>The tall ones could see everyone. That was the cruelty of it. Kapil could reach across the entire floor because no one blocked his view. The visibility graph of the loud is a complete graph&mdash;every node connected to every other. The visibility graph of the quiet is sparse. Disconnected components. Islands.</p>
-
-        <hr>
-
-        <p>One Thursday, Divya was out sick.</p>
-
-        <p>Sana noticed it immediately. Not the absence of Divya&mdash;the presence of everything Divya had been occluding. The line of sight to Meera was suddenly clear. Four desks away, head down, headphones on, writing something in a notebook during her lunch break. Sana could see the notebook. She could see Meera's handwriting, which was small and left-leaning, like it was trying to take up less space than it needed.</p>
-
-        <p>She walked over. "What are you writing?"</p>
-
-        <p>Meera looked up. A pause, then a half-smile. "You've never come to my desk before."</p>
-
-        <p>"I could never see it before."</p>
-
-        <p>Meera glanced at the empty chair between them. She understood immediately. "Ah."</p>
-
-        <p>They talked for forty minutes. About the system Meera was rebuilding, about the release cycle, about a paper Meera had read on queueing theory that she thought explained why their deploy pipeline kept choking. It was the longest conversation they'd ever had. It was the easiest.</p>
-
-        <p>"We should do this more," Sana said.</p>
-
-        <p>"We should," Meera said. And then, carefully: "She'll be back tomorrow."</p>
-
-        <hr>
-
-        <p>That night, Sana moved her things to the desk by the window, at the end of the row. No one between her and Meera now. A clear line. She'd have to walk farther to the coffee machine and she'd lose the good monitor, but the line of sight would hold.</p>
-
-        <p>She thought about the graph. How the edges aren't fixed. How they change every time someone stands or sits or leaves for the day. How the topology of who can reach who is rewritten every morning when people arrive and every evening when they go. A living structure, never the same twice.</p>
-
-        <p>She thought about all the connections that existed, briefly, in the gaps&mdash;when someone tall was out sick, or on vacation, or just turned away. All the things people said to each other in those narrow windows. All the things that went unsaid when the window closed.</p>
-
-        <p>In the morning, Divya came back. She sat in her usual seat. She laughed at something Kapil said, and the air bent around her, and the room became what it always was.</p>
-
-        <p>But from the window desk, Sana looked down the row, and the line was clear.</p>
-        </section>
+            </div>
+        </article>
     </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
 </body>
 </html>

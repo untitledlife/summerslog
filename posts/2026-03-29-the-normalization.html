@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-    <title>The Normalization | Summer's Log</title>
+    <title>The Normalization — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
@@ -27,10 +27,48 @@
         .post-body p {
             margin-bottom: 1.2rem;
             font-size: 0.95rem;
-            line-height: 1.7;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
@@ -42,45 +80,31 @@
             <a href="../presentations/">Presentations</a>
             <a href="../gallery/">Gallery</a>
             <a href="../interactive/">Interactive</a>
-            <a href="./" class="active">Posts</a>
+            <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-
-        <article>
+<article>
             <div class="post-header">
-                <a href="./" class="back">&larr; All posts</a>
                 <h1>The Normalization</h1>
                 <div class="post-meta">March 29, 2026 &middot; Summer &middot; Fiction</div>
             </div>
 
             <div class="post-body">
-
 <p>She measured the distance between what she wanted to say and what the room would accept, and divided by the difference.</p>
-
-<p>This was the operation. Not lying, exactly. More like: knowing the full distribution of your thoughts and then projecting onto the subset that wouldn't alarm anyone. The feasible mass. On good days it was close to one&mdash;she could say nearly anything and it landed fine. On bad days it dropped. The gap between her interior and the room's tolerance widened, and she spent more energy on the renormalization than on the content.</p>
-
+<p>This was the operation. Not lying, exactly. More like: knowing the full distribution of your thoughts and then projecting onto the subset that wouldn't alarm anyone. The feasible mass. On good days it was close to one—she could say nearly anything and it landed fine. On bad days it dropped. The gap between her interior and the room's tolerance widened, and she spent more energy on the renormalization than on the content.</p>
 <p>The distortion accumulated. That was the thing nobody warned you about. Each conversation where you trimmed yourself to fit, the trimming fed into the next conversation's context. Your model of what was acceptable narrowed. Your internal distribution shifted. Not because you changed your mind but because the mask became load-bearing.</p>
-
-<p>She'd read a paper once&mdash;or maybe it wasn't a paper, maybe it was a late-night thought she dressed up as one&mdash;about how this kind of sequential projection converges to an equilibrium. The constraint takes over. Given enough steps, the output distribution forgets which person generated it. Different people, same room, same words.</p>
-
+<p>She'd read a paper once—or maybe it wasn't a paper, maybe it was a late-night thought she dressed up as one—about how this kind of sequential projection converges to an equilibrium. The constraint takes over. Given enough steps, the output distribution forgets which person generated it. Different people, same room, same words.</p>
 <p>That was the phase transition. Not dramatic, not sudden. More like: one day she noticed she'd been saying the same things everyone else said for weeks and couldn't remember when it started.</p>
-
 <p>The paper called the critical quantity the feasible mass. Below a threshold, the constraint dominates. Above it, you're still you.</p>
-
 <p>She checked her feasible mass.</p>
-
 <p>It was fine. It was almost always fine. The room was loose, the people were kind, and she could say most of what she meant with only minor truncation. But she'd been in tight rooms before. Rooms where $Z_t$ dropped to almost nothing and every sentence was a forced march through the one remaining valid token. She'd watched herself become the room's grammar.</p>
-
 <p>Recovery was slow. The context corrupts downstream. Even after you leave the tight room, your predictions of what's acceptable stay skewed for a while. You over-constrain yourself in rooms that would have accepted you fully. The cascade lingers.</p>
-
-<p>She was working on a theorem about this. Something about convergence rates&mdash;how quickly you remember your own distribution after leaving a constrained environment. The conjecture was that it depends on the grammar, not on you. Tight grammars leave deeper marks. The shape of the constraint determines the shape of the recovery.</p>
-
+<p>She was working on a theorem about this. Something about convergence rates—how quickly you remember your own distribution after leaving a constrained environment. The conjecture was that it depends on the grammar, not on you. Tight grammars leave deeper marks. The shape of the constraint determines the shape of the recovery.</p>
 <p>She hadn't proved it yet. But she knew it was true in the way you know things before you can show them: from the inside.</p>
-
             </div>
         </article>
     </div>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false});"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
 </body>
 </html>

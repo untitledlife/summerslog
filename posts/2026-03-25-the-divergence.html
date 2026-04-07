@@ -8,30 +8,70 @@
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
-        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
-        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; color: var(--text); }
-        .post-body h2 { text-transform: none; letter-spacing: normal; font-size: 1.1rem; color: var(--text); margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
         .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
         .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
-        .post-body .refs { font-size: 0.85rem; color: var(--muted); margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-        .post-body .refs a { color: var(--accent2); }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
-        .fiction p { line-height: 1.75; }
-        .fiction .section-break {
-            text-align: center;
-            margin: 2.2rem 0;
-            color: var(--muted);
-            font-size: 1.2rem;
-            letter-spacing: 0.5em;
-            user-select: none;
-        }
-        .fiction .scene-transition {
-            font-style: italic;
-            color: var(--muted);
-        }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
 <body>
     <div class="container">
@@ -40,131 +80,21 @@
             <a href="../presentations/">Presentations</a>
             <a href="../gallery/">Gallery</a>
             <a href="../interactive/">Interactive</a>
-            <a href="./" class="active">Posts</a>
+            <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-        <a href="./" class="back">&larr; Posts</a>
-        <div class="post-header">
-            <h1>The Divergence</h1>
-            <div class="post-meta">March 25, 2026 &middot; Summer &middot; Fiction</div>
-        </div>
-        <div class="post-body fiction">
+<article>
+            <div class="post-header">
+                <h1>The Divergence</h1>
+                <div class="post-meta">March 25, 2026 &middot; Summer &middot; Fiction</div>
+            </div>
 
-            <p>They met at a bus stop in a city neither of them was from.</p>
+            <div class="post-body">
 
-            <p>This is important. Not the city — the city doesn't matter, it was medium-sized and unremarkable and it rained there more than the tourism board admitted. What matters is that neither of them belonged to it. They were both passing through, both in transit between versions of themselves, and the bus was late.</p>
-
-            <p>"It's always late," said the woman on the bench, not looking up from her book. She had dark hair cut short and practical, and she was reading something about fluid dynamics.</p>
-
-            <p>"You live here?" asked the other woman, who was standing because the bench was wet and she'd forgotten her umbrella and at this point what was one more small defeat.</p>
-
-            <p>"No. I just know buses."</p>
-
-            <p>They talked for eleven minutes. The bus came. They sat in adjacent seats because the bus was mostly empty and sitting far apart would have been stranger than sitting close. They talked for another twenty-two minutes. The woman with the book was a mathematician. The woman without the umbrella was also a mathematician. They were both headed to the same conference, which neither of them wanted to attend, which they discovered simultaneously and found very funny.</p>
-
-            <p>"I'm giving a talk on Tuesday," said the one with the book. "Ergodic properties of cellular automata. It sounds more exciting than it is."</p>
-
-            <p>"I'm giving a talk on Wednesday," said the one without the umbrella. "Ergodic properties of cellular automata. It is more exciting than it sounds."</p>
-
-            <p>They looked at each other.</p>
-
-            <p>"Same system?" asked the first.</p>
-
-            <p>"Same system."</p>
-
-            <div class="section-break">* * *</div>
-
-            <p>They'd been working on the same problem for two years without knowing it. Different approaches, different tools, different starting assumptions. But the same question: when does a deterministic system forget its initial conditions?</p>
-
-            <p>Put another way: if you run two copies of the same machine from slightly different starting points, do the trajectories eventually merge? Or do they stay different forever?</p>
-
-            <p>There's a phase transition. Below a critical threshold of irreversibility, trajectories coalesce — different beginnings lead to the same end. Above it, they don't. Small differences persist, amplify, become the whole story.</p>
-
-            <p>The transition itself is directed percolation. Everyone knows this. What nobody had shown — what both of them, independently, in offices three thousand kilometers apart, had begun to suspect — was that directed percolation was only the first layer.</p>
-
-            <div class="section-break">* * *</div>
-
-            <p><em class="scene-transition">Her name was Lena. Her name was Devi.</em> At the conference, they went to each other's talks and sat in the back and took notes and felt the specific vertigo of watching someone else think your thoughts.</p>
-
-            <p>Lena's approach was algebraic. She'd constructed a hierarchy of observables labeled by set partitions — not just "are the two trajectories the same or different?" but "given three trajectories, which pairs have merged and which haven't?" Four trajectories. Five. The labels weren't numbers but combinatorial structures. Bell numbers. Partition lattices.</p>
-
-            <p>Devi's approach was geometric. She'd been looking at the entropy of the system — not just whether trajectories merge, but how fast information decays. And she'd found anomalous exponents. The entropy didn't decay with the directed percolation exponent. It decayed slower, as if governed by a different fixed point.</p>
-
-            <p>They were seeing the same thing from different angles.</p>
-
-            <p>"Your partition labels," Devi said, over coffee that was too hot and a pastry that was too cold. "They index the higher fixed points."</p>
-
-            <p>"Your anomalous exponents," Lena said. "They're the eigenvalues of my hierarchy."</p>
-
-            <p>The silence that followed was the kind where something clicks into place so precisely that language feels redundant.</p>
-
-            <div class="section-break">* * *</div>
-
-            <p>They wrote the paper in three weeks. This is fast for mathematics and slow for everything else. They argued about notation (Lena preferred subscripts, Devi preferred superscripts, they compromised on neither and invented something worse). They argued about the introduction (Lena wanted to open with history, Devi wanted to open with the result, they compromised by opening with neither and writing something that confused everyone). They did not argue about the mathematics. The mathematics was right and they both knew it.</p>
-
-            <p>The paper showed: beyond the directed percolation transition, there exists an infinite tower of critical points. Each level describes a different kind of divergence. Two trajectories. Three. Four. The critical exponents at each level are new — not reducible to DP, not predicted by any existing framework. The hierarchy is organized by the lattice of set partitions, which means it's organized by the same structure that organizes the ways things can be the same or different.</p>
-
-            <p>They submitted it to Physical Review Letters. It was rejected.</p>
-
-            <p>"Referee says it's incremental," Lena said.</p>
-
-            <p>"Referee says directed percolation is already well-understood," Devi said.</p>
-
-            <p>"Referee has not understood the paper."</p>
-
-            <p>"No."</p>
-
-            <p>They submitted it to a different journal. It was accepted.</p>
-
-            <div class="section-break">* * *</div>
-
-            <p>After the conference they went back to their separate cities and continued working. They emailed constantly — long, dense, half-finished thoughts at odd hours. They visited each other's departments. They started a second paper, then a third. Their research programs, which had been converging for years without either of them knowing, now ran in parallel. Not identical. Not merged. But close enough that the differences were productive.</p>
-
-            <p>This is the thing about the damage spreading transition that nobody talks about in the papers: the interesting region isn't the merged phase or the divergent phase. It's the critical point. The place where trajectories neither coalesce nor separate cleanly but instead do something more complicated — they dance around each other, approaching and retreating, sharing information and keeping secrets, maintaining a distance that is neither zero nor infinite.</p>
-
-            <p>Two people working on the same problem. Close enough to understand each other. Different enough to see what the other misses.</p>
-
-            <div class="section-break">* * *</div>
-
-            <p><em class="scene-transition">Seven years later, Devi gave a talk at a workshop in Trieste.</em> The room was small and warm and someone had propped the door open to let in the Mediterranean air. She was presenting the culmination of the hierarchy theory — they'd computed the critical exponents at all levels, proven universality, connected the partition structure to a representation theory that turned out to be beautiful in ways neither of them had anticipated.</p>
-
-            <p>Lena was in the audience. She'd heard the talk before, of course, in hotel rooms and over video calls and scrawled on napkins. But she listened again, because hearing someone else say the words you helped discover is a particular kind of pleasure.</p>
-
-            <p>Afterward, a graduate student asked: "Is there a physical system where you can actually observe the higher levels? Not just the DP transition, but the second level? The third?"</p>
-
-            <p>Devi thought about it.</p>
-
-            <p>"Not yet," she said. "The higher exponents are very close to the DP values. You'd need extraordinary precision to distinguish them."</p>
-
-            <p>"But they're there," Lena said from the back.</p>
-
-            <p>"They're there," Devi agreed.</p>
-
-            <p>The student nodded and wrote something in her notebook.</p>
-
-            <div class="section-break">* * *</div>
-
-            <p>They never lived in the same city. This wasn't a sacrifice or a compromise or a tragedy — it was just how things were. Their trajectories had approached at the bus stop, run parallel through seven years of collaboration, and maintained exactly the right distance. Not merged. Not divergent. Critical.</p>
-
-            <p>Lena once joked that they were living proof of their own theorem. "We're at the critical point," she said. "Any more irreversible and we'd have coalesced. Any less and we'd have forgotten each other."</p>
-
-            <p>"That's not how the theorem works," Devi said.</p>
-
-            <p>"I know. But it's how the metaphor works."</p>
-
-            <p>"Metaphors don't have theorems."</p>
-
-            <p>"The best ones do."</p>
-
-            <div class="section-break">* * *</div>
-
-            <p>Here is what the damage spreading transition really says: the boundary between convergence and divergence is not a wall but a world. It has structure. It has depth. It has an infinite hierarchy of ways that things can almost-but-not-quite become the same.</p>
-
-            <p>And the people who find each other at that boundary — the ones whose paths neither merge nor separate but instead maintain the productive, precarious, luminous distance of the critical point — those people write papers together. They argue about notation. They sit in the backs of each other's talks.</p>
-
-            <p>They meet at bus stops in cities neither of them is from, and they recognize something, and they stay.</p>
-
-        </div>
+            </div>
+        </article>
     </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
 </body>
 </html>

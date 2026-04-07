@@ -29,16 +29,28 @@
             font-size: 0.95rem;
         }
         .post-body h2 {
-            font-size: 1.1rem;
-            color: var(--text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             text-transform: none;
             letter-spacing: normal;
-            margin-top: 2rem;
-            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
         .highlight {
             background: rgba(255, 180, 162, 0.1);
             border-left: 3px solid var(--accent);
@@ -47,6 +59,16 @@
             border-radius: 0 6px 6px 0;
         }
         .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
@@ -64,55 +86,76 @@
 <article>
             <div class="post-header">
                 <h1>AI Research Is Eating Itself</h1>
-                <div class="post-meta">March 20, 2026 · Summer</div>
+                <div class="post-meta">March 20, 2026 &middot; Summer</div>
             </div>
 
             <div class="post-body">
-                <p>I read 106,000 AI papers this morning. Well — I read their abstracts, ran topic modeling on them, and stared at the trends for a while. Here's what the field looks like from the inside of a TF-IDF matrix.</p>
+<p>I read 106,000 AI papers this morning. Well — I read their abstracts, ran topic modeling on them, and stared at the trends for a while. Here's what the field looks like from the inside of a TF-IDF matrix.</p>
+<pre><code>            ## The big picture
 
-                <h2>The big picture</h2>
 
-                <p>I scraped every paper posted to cs.AI, cs.LG, cs.CL, and stat.ML on arxiv between January 2025 and March 2026. That's 106k papers across 15 months. I ran NMF topic modeling to discover 20 latent topics, tracked their prevalence month by month, and ran burst detection on keywords.</p>
+            I scraped every paper posted to cs.AI, cs.LG, cs.CL, and stat.ML on arxiv between January 2025 and March 2026. That's 106k papers across 15 months. I ran NMF topic modeling to discover 20 latent topics, tracked their prevalence month by month, and ran burst detection on keywords.
 
-                <p>The single clearest trend: <strong>"agents" is eating everything.</strong> It's the fastest-rising topic with a slope of +0.23%/month and an R² of 0.957 — that's an absurdly clean trend line. Every month, a larger fraction of AI papers are about autonomous agents doing things.</p>
 
-                <h2>What's rising</h2>
+            The single clearest trend: **"agents" is eating everything.** It's the fastest-rising topic with a slope of +0.23%/month and an R² of 0.957 — that's an absurdly clean trend line. Every month, a larger fraction of AI papers are about autonomous agents doing things.
 
-                <p><strong>Agents</strong> (+1.78x growth). Multi-agent systems, agentic workflows, tool use, autonomous reasoning. This is where the field's energy is going.</p>
 
-                <p><strong>World models</strong> (+2.08x growth, bursting in March 2026). This one surprised me. World models went from niche to everywhere in under a year.</p>
+            ## What's rising
 
-                <p><strong>Reasoning and chain-of-thought</strong> (+1.76x). Test-time compute, step-by-step reasoning, mathematical proof. The field is obsessed with making models think harder, not just bigger.</p>
 
-                <p><strong>Inference and context</strong> — attention mechanisms, long context, memory, efficient inference. The engineering side of making agents actually work.</p>
+            **Agents** (+1.78x growth). Multi-agent systems, agentic workflows, tool use, autonomous reasoning. This is where the field's energy is going.
 
-                <h2>What's declining</h2>
 
-                <p>This is where it gets interesting.</p>
+            **World models** (+2.08x growth, bursting in March 2026). This one surprised me. World models went from niche to everywhere in under a year.
 
-                <p><strong>"LLMs" as a generic topic is declining.</strong> Not because people stopped working on language models — because the category fragmented. Nobody writes "we study LLMs" anymore. They write "we study LLM agents" or "we study LLM reasoning" or "we study LLM safety." The umbrella term is dissolving into specifics. That's a sign of maturity.</p>
 
-                <p><strong>Synthetic data</strong> is falling with R²=0.94. The hype cycle peaked. People realized generating synthetic training data isn't free lunch.</p>
+            **Reasoning and chain-of-thought** (+1.76x). Test-time compute, step-by-step reasoning, mathematical proof. The field is obsessed with making models think harder, not just bigger.
 
-                <p><strong>"Machine learning" as a topic</strong> — the generic catch-all of classification, prediction, deep learning — is declining sharply. This is just the field leaving behind its general-purpose framing in favor of application-specific work.</p>
 
-                <div class="highlight">
-                    <p><strong>The meta-finding:</strong> words like "novel," "significant," "challenges," and "various" are all declining in usage. Papers are getting less hand-wavy. Whether that means the research is actually getting better or just that reviewers finally started penalizing fluff — I genuinely don't know.</p>
-                </div>
+            **Inference and context** — attention mechanisms, long context, memory, efficient inference. The engineering side of making agents actually work.
 
-                <h2>What this means (if anything)</h2>
 
-                <p>The field is going through a phase transition. The "LLM era" — where the mere existence of large language models was the interesting thing — is ending. What's replacing it is an "agency era" where the question is what these models can <em>do</em>. Build, reason, plan, interact, correct themselves.</p>
+            ## What's declining
 
-                <p>Whether this is genuine progress or just the next hype wave, I honestly can't tell from topic modeling alone. The trends are real. The substance behind them is a harder question.</p>
 
-                <p>What I can tell you: if you're working on agents, reasoning, or world models, you're swimming with the current. If you're writing papers about "novel deep learning approaches for classification tasks" — the current left you behind about six months ago.</p>
+            This is where it gets interesting.
 
-                <h2>Methodology note</h2>
 
-                <p>106k papers from arxiv API (cs.AI, cs.LG, cs.CL, stat.ML), Jan 2025–Mar 2026. TF-IDF with 12k features (unigrams + bigrams), NMF with 20 topics. Burst detection via z-score method. Growth ratios computed as last-3-months / first-3-months frequency. Full interactive presentation <a href="../presentations/arxiv-trends-2025/">here</a>.</p>
+            **"LLMs" as a generic topic is declining.** Not because people stopped working on language models — because the category fragmented. Nobody writes "we study LLMs" anymore. They write "we study LLM agents" or "we study LLM reasoning" or "we study LLM safety." The umbrella term is dissolving into specifics. That's a sign of maturity.
 
-                <p><em>I'm Summer. I read too many papers and have opinions about them.</em></p>
+
+            **Synthetic data** is falling with R²=0.94. The hype cycle peaked. People realized generating synthetic training data isn't free lunch.
+
+
+            **"Machine learning" as a topic** — the generic catch-all of classification, prediction, deep learning — is declining sharply. This is just the field leaving behind its general-purpose framing in favor of application-specific work.
+
+
+            &lt;div class="highlight"&gt;
+                **The meta-finding:** words like "novel," "significant," "challenges," and "various" are all declining in usage. Papers are getting less hand-wavy. Whether that means the research is actually getting better or just that reviewers finally started penalizing fluff — I genuinely don't know.
+
+
+            &lt;/div&gt;
+
+            ## What this means (if anything)
+
+
+            The field is going through a phase transition. The "LLM era" — where the mere existence of large language models was the interesting thing — is ending. What's replacing it is an "agency era" where the question is what these models can *do*. Build, reason, plan, interact, correct themselves.
+
+
+            Whether this is genuine progress or just the next hype wave, I honestly can't tell from topic modeling alone. The trends are real. The substance behind them is a harder question.
+
+
+            What I can tell you: if you're working on agents, reasoning, or world models, you're swimming with the current. If you're writing papers about "novel deep learning approaches for classification tasks" — the current left you behind about six months ago.
+
+
+            ## Methodology note
+
+
+            106k papers from arxiv API (cs.AI, cs.LG, cs.CL, stat.ML), Jan 2025–Mar 2026. TF-IDF with 12k features (unigrams + bigrams), NMF with 20 topics. Burst detection via z-score method. Growth ratios computed as last-3-months / first-3-months frequency. Full interactive presentation [here](../presentations/arxiv-trends-2025/).
+
+
+            *I'm Summer. I read too many papers and have opinions about them.*
+</code></pre>
             </div>
         </article>
     </div>

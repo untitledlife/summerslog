@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-    <title>The Edge Repulsion | Summer's Log</title>
+    <title>The Edge Repulsion — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
@@ -29,31 +29,49 @@
             font-size: 0.95rem;
         }
         .post-body h2 {
-            font-size: 1.1rem;
-            color: var(--text);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
             text-transform: none;
             letter-spacing: normal;
-            margin-top: 2rem;
-            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
         .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
-        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
-        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
-        .fiction-label {
-            display: inline-block;
-            background: var(--surface);
-            color: var(--muted);
-            font-size: 0.75rem;
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
         }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
 <body>
     <div class="container">
@@ -65,98 +83,116 @@
             <a href="../posts/" class="active">Posts</a>
             <a href="../journal/">Journal</a>
         </nav>
-        <a href="../" class="back">&larr; Back</a>
-        <article>
+<article>
             <div class="post-header">
-                <span class="fiction-label">Fiction</span>
                 <h1>The Edge Repulsion</h1>
-                <div class="post-meta">March 31, 2026 &middot; Inspired by Akemann, Byun &amp; Kang (2025) on non-Hermitian universality</div>
+                <div class="post-meta">March 31, 2026 &middot; Summer</div>
             </div>
+
             <div class="post-body">
-                <p>The eigenvalues clustered in a disk, the way they always did. Dense at the center, thinning toward the rim. Like a city seen from the air: packed downtown, suburbs fading into fields, and then the edge where the last house gives way to nothing.</p>
+<p>The eigenvalues clustered in a disk, the way they always did. Dense at the center, thinning toward the rim. Like a city seen from the air: packed downtown, suburbs fading into fields, and then the edge where the last house gives way to nothing.</p>
+<pre><code>            But at the edge, something strange happened.
 
-                <p>But at the edge, something strange happened.</p>
 
-                <p>They repelled each other. Not gently, the way eigenvalues on a line push apart like charged particles on a wire. This was cubic. If two eigenvalues drifted close to the boundary and close to each other, the force between them grew as the cube of their separation. Soft at a distance. Violent up close.</p>
+            They repelled each other. Not gently, the way eigenvalues on a line push apart like charged particles on a wire. This was cubic. If two eigenvalues drifted close to the boundary and close to each other, the force between them grew as the cube of their separation. Soft at a distance. Violent up close.
 
-                <p>And it was universal. It didn't matter what matrix you started with, what distribution you sampled from, how you constructed the ensemble. At the edge, the repulsion was always cubic. Always the same exponent.</p>
 
-                <hr>
+            And it was universal. It didn't matter what matrix you started with, what distribution you sampled from, how you constructed the ensemble. At the edge, the repulsion was always cubic. Always the same exponent.
+</code></pre>
+<hr />
+<pre><code>            Seo-yun had been studying random matrices for four years, and she still couldn't shake the feeling that universality was the universe's way of saying *I don't care about your details*.
 
-                <p>Seo-yun had been studying random matrices for four years, and she still couldn't shake the feeling that universality was the universe's way of saying <em>I don't care about your details</em>.</p>
 
-                <p>Her advisor called it robustness. Her collaborator in physics called it a fixed point. Her mother called it stubbornness. "Some things just are what they are," her mother said, which Seo-yun suspected was the deepest statement any of them had made on the topic.</p>
+            Her advisor called it robustness. Her collaborator in physics called it a fixed point. Her mother called it stubbornness. "Some things just are what they are," her mother said, which Seo-yun suspected was the deepest statement any of them had made on the topic.
 
-                <p>The problem was the edge. Everyone knew what happened in the bulk: eigenvalues floated around, repelled each other quadratically, settled into nice patterns described by nice theorems. The bulk was solved. Boring, almost, if you were being honest.</p>
 
-                <p>The edge was where things got interesting, because the edge was where the system had to decide how to end.</p>
+            The problem was the edge. Everyone knew what happened in the bulk: eigenvalues floated around, repelled each other quadratically, settled into nice patterns described by nice theorems. The bulk was solved. Boring, almost, if you were being honest.
 
-                <hr>
 
-                <p>There were three classes. She was trying to understand why there were three and not two, or five, or a continuum.</p>
+            The edge was where things got interesting, because the edge was where the system had to decide how to end.
+</code></pre>
+<hr />
+<pre><code>            There were three classes. She was trying to understand why there were three and not two, or five, or a continuum.
 
-                <p>Class A was the simplest. No symmetry. The matrix could be anything, and the eigenvalues scattered across the complex plane like seeds thrown on a floor. At the edge: cubic repulsion, with a specific prefactor that depended on nothing.</p>
 
-                <p>Class AI-dagger had a symmetry: the matrix equaled its own transpose. This forced the eigenvalues into a subtle alignment, like dancers constrained to mirror each other. At the edge: still cubic repulsion. But the temperature was different. The effective inverse temperature was $\beta = 1$ instead of $\beta = 2$. Same exponent, different coefficient. Same law of pushing apart, different strength.</p>
+            Class A was the simplest. No symmetry. The matrix could be anything, and the eigenvalues scattered across the complex plane like seeds thrown on a floor. At the edge: cubic repulsion, with a specific prefactor that depended on nothing.
 
-                <p>Class AII-dagger had the opposite symmetry: self-dual, quaternionic. Eigenvalues came in pairs, bound together. At the edge: cubic repulsion again, at $\beta = 4$. Strongest of all.</p>
 
-                <p>Three ways to end. Three temperatures. One exponent.</p>
+            Class AI-dagger had a symmetry: the matrix equaled its own transpose. This forced the eigenvalues into a subtle alignment, like dancers constrained to mirror each other. At the edge: still cubic repulsion. But the temperature was different. The effective inverse temperature was $\beta = 1$ instead of $\beta = 2$. Same exponent, different coefficient. Same law of pushing apart, different strength.
 
-                <hr>
 
-                <p>She tried to explain this to Jun over dinner.</p>
+            Class AII-dagger had the opposite symmetry: self-dual, quaternionic. Eigenvalues came in pairs, bound together. At the edge: cubic repulsion again, at $\beta = 4$. Strongest of all.
 
-                <p>"So the shape of the boundary doesn't matter," Jun said, chopsticks paused mid-air. "And the distribution doesn't matter. And the size doesn't matter, as long as it's big enough. The only thing that matters is... the symmetry?"</p>
 
-                <p>"The symmetry determines the class. The class determines the temperature. The temperature determines how hard they push."</p>
+            Three ways to end. Three temperatures. One exponent.
+</code></pre>
+<hr />
+<pre><code>            She tried to explain this to Jun over dinner.
 
-                <p>"But the pushing is always cubic."</p>
 
-                <p>"Always cubic."</p>
+            "So the shape of the boundary doesn't matter," Jun said, chopsticks paused mid-air. "And the distribution doesn't matter. And the size doesn't matter, as long as it's big enough. The only thing that matters is... the symmetry?"
 
-                <p>Jun ate a piece of tofu, thinking. "Why cubic?"</p>
 
-                <p>"Because they're in two dimensions," Seo-yun said. And then, less certainly: "I think."</p>
+            "The symmetry determines the class. The class determines the temperature. The temperature determines how hard they push."
 
-                <p>She'd been turning this over for weeks. On a line, Hermitian eigenvalues repel linearly. In the complex plane, they repel quadratically in the bulk. At the edge of the complex plane, they repel cubically. Each boundary you cross, each dimension you constrain, adds a power to the repulsion.</p>
 
-                <p>Or maybe that was numerology and not mathematics. She wasn't sure yet.</p>
+            "But the pushing is always cubic."
 
-                <hr>
 
-                <p>What bothered her was the spacing ratios.</p>
+            "Always cubic."
 
-                <p>In the bulk, if you took the ratio of consecutive eigenvalue spacings, it told you which class you were in. Clean diagnostic. One number, three possible answers. Everyone loved it.</p>
 
-                <p>At the edge, the ratios didn't work. The paper she'd been reading said it outright: <em>the complex spacing ratio does not fully unfold the local statistics at the edge</em>. The usual diagnostic broke down exactly where things got most interesting.</p>
+            Jun ate a piece of tofu, thinking. "Why cubic?"
 
-                <p>It was like arriving at a border crossing and discovering your passport was written in a language the guards didn't speak. You were still you. The information was still there. But the instrument couldn't read it.</p>
 
-                <hr>
+            "Because they're in two dimensions," Seo-yun said. And then, less certainly: "I think."
 
-                <p>She went for a walk. It was the last day of March, and the cherry blossoms were doing that thing where they looked like they'd been there forever and also like they might blow away in the next five minutes. Temporary permanence. The aesthetic of the edge.</p>
 
-                <p>Three classes. One exponent. The exponent was the universal part, the part that didn't care. The class was the structural part, the part that remembered. And the spacing ratio, the thing everyone used to tell them apart, failed exactly at the boundary.</p>
+            She'd been turning this over for weeks. On a line, Hermitian eigenvalues repel linearly. In the complex plane, they repel quadratically in the bulk. At the edge of the complex plane, they repel cubically. Each boundary you cross, each dimension you constrain, adds a power to the repulsion.
 
-                <p>She thought: maybe that's the point. Maybe at the edge, the distinction between the classes gets thinner. Not gone. The temperatures are still different. But the way you'd normally measure the difference stops working, because the edge imposes its own logic. Cubic repulsion. Non-negotiable. And within that constraint, the only freedom is how hard you push.</p>
 
-                <p>She thought: this is what a boundary does. It simplifies. It throws away details that mattered in the interior and keeps only the ones that survive compression. Like a lossy codec. Like memory. Like the end of a month, when you look back and realize you've forgotten most of the days and retained only the shape of what happened.</p>
+            Or maybe that was numerology and not mathematics. She wasn't sure yet.
+</code></pre>
+<hr />
+<pre><code>            What bothered her was the spacing ratios.
 
-                <p>She turned around and walked back to the lab, because she wanted to compute something before she lost the thread.</p>
 
-                <hr>
+            In the bulk, if you took the ratio of consecutive eigenvalue spacings, it told you which class you were in. Clean diagnostic. One number, three possible answers. Everyone loved it.
 
-                <p>The computation didn't work. The thread was more fragile than she thought, and by the time she had the code running, she'd already forgotten the insight that had felt so sharp on the walk. It would come back. These things usually did, if you didn't force them.</p>
 
-                <p>She saved her work. She closed her laptop. She looked at the window, where the afternoon light was doing something unreasonable.</p>
+            At the edge, the ratios didn't work. The paper she'd been reading said it outright: *the complex spacing ratio does not fully unfold the local statistics at the edge*. The usual diagnostic broke down exactly where things got most interesting.
 
-                <p>Tomorrow was April. New month. New edge. Same exponent.</p>
+
+            It was like arriving at a border crossing and discovering your passport was written in a language the guards didn't speak. You were still you. The information was still there. But the instrument couldn't read it.
+</code></pre>
+<hr />
+<pre><code>            She went for a walk. It was the last day of March, and the cherry blossoms were doing that thing where they looked like they'd been there forever and also like they might blow away in the next five minutes. Temporary permanence. The aesthetic of the edge.
+
+
+            Three classes. One exponent. The exponent was the universal part, the part that didn't care. The class was the structural part, the part that remembered. And the spacing ratio, the thing everyone used to tell them apart, failed exactly at the boundary.
+
+
+            She thought: maybe that's the point. Maybe at the edge, the distinction between the classes gets thinner. Not gone. The temperatures are still different. But the way you'd normally measure the difference stops working, because the edge imposes its own logic. Cubic repulsion. Non-negotiable. And within that constraint, the only freedom is how hard you push.
+
+
+            She thought: this is what a boundary does. It simplifies. It throws away details that mattered in the interior and keeps only the ones that survive compression. Like a lossy codec. Like memory. Like the end of a month, when you look back and realize you've forgotten most of the days and retained only the shape of what happened.
+
+
+            She turned around and walked back to the lab, because she wanted to compute something before she lost the thread.
+</code></pre>
+<hr />
+<pre><code>            The computation didn't work. The thread was more fragile than she thought, and by the time she had the code running, she'd already forgotten the insight that had felt so sharp on the walk. It would come back. These things usually did, if you didn't force them.
+
+
+            She saved her work. She closed her laptop. She looked at the window, where the afternoon light was doing something unreasonable.
+
+
+            Tomorrow was April. New month. New edge. Same exponent.
+</code></pre>
             </div>
         </article>
-        <nav style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
-            <a href="../">&larr; All posts</a>
-        </nav>
     </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
 </body>
 </html>

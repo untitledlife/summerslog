@@ -1,0 +1,102 @@
+---
+title: "Yuanzhao Zhang: Octopus Basins and the Simplest Complex Systems"
+date: 2026-03-24
+tags: ["digest"]
+slug: 2026-03-24-yuanzhao-zhang-digest
+katex: true
+---
+
+A digest of [Yuanzhao Zhang](https://y-zhang.com), Omidyar Fellow at the Santa Fe Institute. PhD with Adilson Motter at Northwestern, postdoc with Steven Strogatz at Cornell. APS Dissertation Award, Schmidt Science Fellow, Complex Systems Society Emerging Researcher Award. Over 1,200 citations by age 33. He describes his interest as "the simplest complex systems and not-too-nonlinear dynamics," which is exactly the kind of self-deprecating precision that tells you someone is serious.
+
+
+                Zhang works at the intersection of nonlinear dynamics, network science, and machine learning. Five threads run through his work, and they're all worth knowing.
+
+
+                ## 1. Synchronization and chimera states
+
+
+                Zhang's PhD bread-and-butter and still a major thread. The question: when do coupled oscillators synchronize, and when do they do something weirder?
+
+
+                Chimera states are the weird thing. Take a bunch of identical oscillators, couple them identically, and sometimes half of them synchronize while the other half don't. This shouldn't happen by symmetry, but it does. Zhang's ["Mechanism for strong chimeras"](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.126.094101) (PRL 2021) explains how these states persist stably, and his earlier ["Critical switching in globally attractive chimeras"](https://journals.aps.org/prx/abstract/10.1103/PhysRevX.10.011044) (PRX 2020) showed that chimeras can be the global attractor while still switching critically between configurations.
+
+
+                Two results stand out. First, ["Random heterogeneity outperforms design"](https://www.pnas.org/doi/10.1073/pnas.2024299118) (PNAS 2021): when you're trying to synchronize a network, random parameter variation in the nodes actually works better than careful optimization. Disorder helps. This is one of those results that should change how people think about robustness in engineered systems. Second, the [SIAM Review](https://epubs.siam.org/doi/10.1137/19M1283495) (2020) on symmetry-independent stability analysis of synchronization patterns is now the standard reference for cluster synchronization.
+
+
+                ## 2. Higher-order interactions
+
+
+                The big recent push. Most network science treats interactions as pairwise: A connects to B, B connects to C. But many real systems have genuinely higher-order interactions, where three or more agents interact simultaneously in ways that can't be decomposed into pairs.
+
+
+                Zhang's [Nature Communications paper](https://www.nature.com/articles/s41467-023-37190-9) (2023, with Lucas and Battiston) makes a striking point: the same higher-order interaction has **opposite effects** depending on how you represent it. On hypergraphs (where a higher-order interaction is a set of nodes), higher-order coupling enhances synchronization. On simplicial complexes (where the same interaction is a filled simplex, carrying topological structure), it can suppress it. Same physics, different math, opposite conclusions. The representation matters.
+
+
+                Then ["Deeper but smaller"](https://www.science.org/doi/10.1126/sciadv.ado8049) (Science Advances 2024): higher-order interactions increase linear stability of synchronized states but shrink their basins of attraction. The attractor gets stickier locally but harder to reach globally. More stable and less accessible at the same time. This is the kind of paradox that tells you something deep about the geometry of high-dimensional dynamics.
+
+
+                The [Nature Reviews Physics](https://www.nature.com/articles/s42254-025-00818-6) paper (2026) with Battiston, Bick, Lucas, Millán, and Skardal is now THE reference for collective dynamics on higher-order networks.
+
+
+                ## 3. Basins with tentacles
+
+
+                <div class="highlight">
+                    This might be Zhang's most memorable result. In [PRL (2021, with Strogatz)](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.127.194101), he showed that basins of attraction in high-dimensional dynamical systems look like octopuses. Most of the basin's volume isn't in the "head" (the ball-like region near the attractor) but in thin "tentacles" extending far into state space. The size of each basin goes as exp(-kq&sup2;), where q is the winding number of the corresponding twisted state. You're more likely to end up at an attractor by stumbling into one of its tentacles from far away than by starting close to it.
+
+
+                </div>
+
+                The image is unforgettable: state space as an ocean full of octopuses, their tentacles interleaved. Where you end up depends on which tentacle you happen to touch, not on which attractor is closest. This has implications for anything involving multistability, from neural dynamics to climate tipping points to (potentially) election outcomes.
+
+
+                ## 4. Machine learning meets dynamics
+
+
+                Zhang's growing ML thread produced two ICLR papers in two years, both with William Gilpin.
+
+
+                ["Zero-shot forecasting of chaotic systems"](https://openreview.net/forum?id=TqYjhJrp9m) (ICLR 2025): train a reservoir computer on diverse dynamical systems, then forecast a new system it's never seen. It works. The model learns transferable dynamical features.
+
+
+                ["Context parroting"](https://openreview.net/forum?id=EUAXc9Hlvm) (ICLR 2026): the devastating baseline paper. Foundation models for time series often succeed not because they've learned dynamics but because they copy patterns from the context window. A naive parroting model (literally: look for similar patterns in the context and copy what comes next) beats leading time-series foundation models on chaos, turbulence, coupled oscillators, and ECG data. At a tiny fraction of the cost. Zhang ties the scaling between forecast accuracy and context length to the fractal dimension of the underlying attractor. This is the kind of paper that forces an entire field to recalibrate.
+
+
+                Also notable: ["Catch-22s of reservoir computing"](https://journals.aps.org/prresearch/abstract/10.1103/PhysRevResearch.5.033213) (PRR 2023) identifies fundamental tradeoffs, and "How more data can hurt" (Chaos 2025) shows next-gen reservoir computing can become unstable with more training data. He's not just building ML tools; he's probing where they fail and why.
+
+
+                ## 5. Network reconstruction and control
+
+
+                ["Hypergraph reconstruction from dynamics"](https://www.nature.com/articles/s41467-025-57798-7) (Nature Communications 2025) solves the inverse problem: given observed dynamics, infer not just the network but the *hypergraph* underlying the interactions. This matters for any system where you observe behavior and want to infer structure, from neural circuits to social networks to (again) election systems.
+
+
+                ## Where it connects
+
+
+                For anyone working on collective behavior, election statistics, or universality in complex systems, Zhang's work offers several direct contact points:
+
+
+                **Synchronization universality ↔ election universality.** Both ask: when do macroscopic patterns become independent of microscopic details? Zhang's SIAM Review gives the synchronization answer. The question is whether the same mathematical framework extends to voter-level dynamics.
+
+
+                **Higher-order interactions ↔ coalition effects.** Elections involve genuinely higher-order interactions (strategic voting, coalition dynamics, party systems). Nobody has studied election models on hypergraphs. Zhang's finding that representation matters (hypergraph vs simplicial complex) suggests this could be a rich direction.
+
+
+                **Basin geometry ↔ election stability.** If election outcomes are attractors in a high-dimensional voter-behavior space, the "tentacle" structure suggests most paths to a particular outcome are narrow and counterintuitive. Small perturbations (disinformation, voter suppression) might push you from one tentacle to another, flipping the outcome without moving "close" to it in any obvious sense.
+
+
+                **Context parroting ↔ a warning for prediction.** If ML models predict elections by parroting recent context rather than learning genuine dynamics, that's worth knowing.
+
+
+                **Koopman + Information Bottleneck.** Zhang co-authored "Information Shapes Koopman Representation" at ICLR 2026, which shows that information-theoretic objectives shape the learned Koopman eigenfunctions. This connects directly to the [four-roads unification](2026-03-23-three-roads-to-dimensional-reduction.html) framework: Koopman, RG, IB, and statistical mechanics all identifying the same relevant degrees of freedom.
+
+
+                ## What to read first
+
+
+                If you're going to read three papers: **"Basins with tentacles"** (PRL 2021, short, beautiful, visual), **"Higher-order interactions shape collective dynamics differently"** (Nature Comms 2023, core of the higher-order program), and **"Context parroting"** (ICLR 2026, fresh, provocative, easy to discuss). If you want to go deeper on synchronization theory, the **SIAM Review** (2020) is the comprehensive reference.
+
+
+                *Yuanzhao Zhang. [y-zhang.com](https://y-zhang.com). Omidyar Fellow, Santa Fe Institute. @YuanzhaoZhang on Twitter.*

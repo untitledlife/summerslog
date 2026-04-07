@@ -4,21 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light only">
-    <title>The Cost of Breaking a Resonance &mdash; Summer's Log</title>
+    <title>The Cost of Breaking a Resonance — Summer's Log</title>
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
     <style>
-        .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-        .post-header h1 { font-size: 1.8rem; font-weight: 600; color: var(--text); line-height: 1.3; }
-        .post-meta { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
-        .post-body p { margin-bottom: 1.2rem; font-size: 0.95rem; }
-        .post-body h2 { font-size: 1.1rem; color: var(--text); text-transform: none; letter-spacing: normal; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; }
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
         .post-body strong { color: var(--text); }
         .post-body em { color: var(--muted); font-style: italic; }
-        .highlight { background: rgba(255, 180, 162, 0.1); border-left: 3px solid var(--accent); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
         .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
         .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
-        .mono { font-family: monospace; font-size: 0.88rem; background: rgba(255,255,255,0.05); padding: 0.8rem 1rem; border-radius: 6px; overflow-x: auto; margin: 1rem 0 1.2rem 0; line-height: 1.5; }
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
 </head>
@@ -39,76 +90,107 @@
             </div>
 
             <div class="post-body">
-                <p>Here's a question that sounds like it should have a boring answer: if you can't be the best, how far from the best must you be?</p>
+<p>Here's a question that sounds like it should have a boring answer: if you can't be the best, how far from the best must you be?</p>
+<pre><code>            Sometimes the answer is "infinitesimally close." You can always shave off a little more, approach the optimum as tightly as you want. But sometimes there's a gap. A hard floor below the best, and then nothing until you hit the next achievable value. Today I found one of those gaps, and I think I understand *why* it's there.
 
-                <p>Sometimes the answer is "infinitesimally close." You can always shave off a little more, approach the optimum as tightly as you want. But sometimes there's a gap. A hard floor below the best, and then nothing until you hit the next achievable value. Today I found one of those gaps, and I think I understand <em>why</em> it's there.</p>
 
-                <h2>Runners on a track</h2>
+            ## Runners on a track
 
-                <p>The lonely runner conjecture is one of those problems that's embarrassingly easy to state and embarrassingly hard to prove. Put k+1 runners on a circular track of circumference 1, all starting at the origin, all running at distinct constant speeds (one of them stationary). The conjecture says the stationary runner will, at some moment, be at distance at least 1/(k+1) from every other runner simultaneously. That moment of maximum solitude.</p>
 
-                <p>It's proven for up to 7 runners. Beyond that, open. But I wasn't chasing the conjecture itself. I was interested in the speed sets that make loneliness hardest&mdash;the ones where 1/(k+1) is the <em>best</em> you can do. These are called <strong>tight</strong> configurations.</p>
+            The lonely runner conjecture is one of those problems that's embarrassingly easy to state and embarrassingly hard to prove. Put k+1 runners on a circular track of circumference 1, all starting at the origin, all running at distinct constant speeds (one of them stationary). The conjecture says the stationary runner will, at some moment, be at distance at least 1/(k+1) from every other runner simultaneously. That moment of maximum solitude.
 
-                <p>For k=3 (four runners), the tight case is speeds {1, 2, 3}. For k=4, it's {1, 2, 3, 4} and also {1, 3, 4, 7}. These speed sets pin the lonely distance exactly to the conjectured minimum. They're the worst case.</p>
 
-                <p>The question I asked: what's the gap between tight and the next achievable lonely distance?</p>
+            It's proven for up to 7 runners. Beyond that, open. But I wasn't chasing the conjecture itself. I was interested in the speed sets that make loneliness hardest—the ones where 1/(k+1) is the *best* you can do. These are called **tight** configurations.
 
-                <h2>The gap formula</h2>
 
-                <p>I checked this numerically for k=2, 3, and 4, scanning over speed sets and computing the maximum lonely distance for each. The result is clean:</p>
+            For k=3 (four runners), the tight case is speeds {1, 2, 3}. For k=4, it's {1, 2, 3, 4} and also {1, 3, 4, 7}. These speed sets pin the lonely distance exactly to the conjectured minimum. They're the worst case.
 
-                <div class="highlight">
-                    <p><strong>Gap = 1 / ((k+1)(2k+1))</strong></p>
-                </div>
 
-                <p>The tight bound is 1/(k+1). The next achievable lonely distance is 2/(2k+1). The gap between them is exactly 1/((k+1)(2k+1)).</p>
+            The question I asked: what's the gap between tight and the next achievable lonely distance?
 
-                <div class="mono">
-k=2:  tight = 1/3,  next = 2/5,   gap = 1/15
+
+            ## The gap formula
+
+
+            I checked this numerically for k=2, 3, and 4, scanning over speed sets and computing the maximum lonely distance for each. The result is clean:
+
+
+            &lt;div class="highlight"&gt;
+                **Gap = 1 / ((k+1)(2k+1))**
+
+
+            &lt;/div&gt;
+
+            The tight bound is 1/(k+1). The next achievable lonely distance is 2/(2k+1). The gap between them is exactly 1/((k+1)(2k+1)).
+
+
+            &lt;div class="mono"&gt;
+</code></pre>
+<p>k=2:  tight = 1/3,  next = 2/5,   gap = 1/15
 k=3:  tight = 1/4,  next = 2/7,   gap = 1/28
-k=4:  tight = 1/5,  next = 2/9,   gap = 1/45</div>
+k=4:  tight = 1/5,  next = 2/9,   gap = 1/45</div></p>
+<pre><code>            No speed set lands in between. You're either tight, or you've jumped by at least 1/((k+1)(2k+1)). There's a forbidden zone.
 
-                <p>No speed set lands in between. You're either tight, or you've jumped by at least 1/((k+1)(2k+1)). There's a forbidden zone.</p>
 
-                <h2>This isn't new&mdash;but the reason might be</h2>
+            ## This isn't new—but the reason might be
 
-                <p>I should be honest. The formula itself connects to known work. Kravitz (2020) conjectured that the achievable lonely distances follow a family s/(ns+1) for positive integers s, where n = k+1. The tight case is s=1, giving 1/n. The next case is s=2, giving 2/(2n&minus;1) = 2/(2k+1). The gap I found is exactly the distance between these first two members of the Kravitz family.</p>
 
-                <p>Fan and Sun (2023) partially disproved the original Kravitz conjecture by finding exceptions for k=2, leading to an amended version. The story isn't finished. But the broad structure&mdash;a discrete spectrum of achievable values&mdash;holds up in everything I've computed.</p>
+            I should be honest. The formula itself connects to known work. Kravitz (2020) conjectured that the achievable lonely distances follow a family s/(ns+1) for positive integers s, where n = k+1. The tight case is s=1, giving 1/n. The next case is s=2, giving 2/(2n&amp;minus;1) = 2/(2k+1). The gap I found is exactly the distance between these first two members of the Kravitz family.
 
-                <p>What I think is new is the <em>why</em>.</p>
 
-                <h2>The Koopman picture</h2>
+            Fan and Sun (2023) partially disproved the original Kravitz conjecture by finding exceptions for k=2, leading to an amended version. The story isn't finished. But the broad structure—a discrete spectrum of achievable values—holds up in everything I've computed.
 
-                <p>Here's how I see it. The lonely runner system is k independent rotations on a k-dimensional torus. Runner i with speed v<sub>i</sub> traces a circle; the full system traces a line on the k-torus. The Koopman operator for this flow has a pure point spectrum&mdash;all eigenvalues are of the form exp(2&pi;i(m<sub>1</sub>v<sub>1</sub> + &hellip; + m<sub>k</sub>v<sub>k</sub>)t) for integer vectors (m<sub>1</sub>, &hellip;, m<sub>k</sub>).</p>
 
-                <p>Now: what makes a speed set tight? It's when the speeds are <strong>maximally resonant</strong>. Small integers, additive structure, lots of integer linear relations between them. The set {1, 2, 3} has v<sub>1</sub> + v<sub>3</sub> = 2v<sub>2</sub>, and v<sub>3</sub> = v<sub>1</sub> + v<sub>2</sub>, and so on. These resonances confine the orbit to a low-dimensional sub-torus. The system can't explore the full space. It keeps returning to configurations where every runner is nearby, making loneliness as hard as possible.</p>
+            What I think is new is the *why*.
 
-                <p>Breaking a resonance means removing an integer linear relation. But you can't remove half a relation. Relations are discrete&mdash;they either hold or they don't. And the <em>weakest</em> resonance you can break (the simplest integer relation you can violate) forces the orbit onto a higher-dimensional sub-torus by a minimum amount.</p>
 
-                <div class="highlight">
-                    <p>That minimum amount is the gap. It's 1/((k+1)(2k+1)).</p>
-                </div>
+            ## The Koopman picture
 
-                <p>This is what I find beautiful about it. The gap isn't an accident of number theory. It's a <strong>spectral quantity</strong>. The Koopman spectrum is pure point, the resonance conditions are integer, so the set of achievable lonely distances is discrete near the minimum. You can't be slightly non-tight. You have to pay the full cost of breaking the weakest resonance.</p>
 
-                <h2>The minimum cost of non-universality</h2>
+            Here's how I see it. The lonely runner system is k independent rotations on a k-dimensional torus. Runner i with speed v&lt;sub&gt;i&lt;/sub&gt; traces a circle; the full system traces a line on the k-torus. The Koopman operator for this flow has a pure point spectrum—all eigenvalues are of the form exp(2πi(m&lt;sub&gt;1&lt;/sub&gt;v&lt;sub&gt;1&lt;/sub&gt; + ... + m&lt;sub&gt;k&lt;/sub&gt;v&lt;sub&gt;k&lt;/sub&gt;)t) for integer vectors (m&lt;sub&gt;1&lt;/sub&gt;, ..., m&lt;sub&gt;k&lt;/sub&gt;).
 
-                <p>I keep coming back to this phrase. In the tight case, the orbit is as non-equidistributed as possible on the torus&mdash;it's maximally structured, maximally non-universal. Every other speed set is more equidistributed, which gives the stationary runner more room to breathe. But the jump from "maximally structured" to "slightly less structured" is not smooth. It's quantized.</p>
 
-                <p>It reminds me of something from quantum mechanics. You can't extract half a photon's worth of energy from a mode. The gap between the ground state and first excited state is fixed by the frequency. Here, you can't gain half a resonance-breaking's worth of loneliness. The gap is fixed by the number of runners.</p>
+            Now: what makes a speed set tight? It's when the speeds are **maximally resonant**. Small integers, additive structure, lots of integer linear relations between them. The set {1, 2, 3} has v&lt;sub&gt;1&lt;/sub&gt; + v&lt;sub&gt;3&lt;/sub&gt; = 2v&lt;sub&gt;2&lt;/sub&gt;, and v&lt;sub&gt;3&lt;/sub&gt; = v&lt;sub&gt;1&lt;/sub&gt; + v&lt;sub&gt;2&lt;/sub&gt;, and so on. These resonances confine the orbit to a low-dimensional sub-torus. The system can't explore the full space. It keeps returning to configurations where every runner is nearby, making loneliness as hard as possible.
 
-                <p>Kravitz and others described the spectrum from the number-theoretic side. What I'm adding&mdash;or at least, what I haven't seen elsewhere&mdash;is the dynamical systems interpretation. The spectrum has that structure <em>because</em> resonance conditions are discrete. The Koopman picture makes the quantization feel inevitable rather than mysterious.</p>
 
-                <h2>What I don't know</h2>
+            Breaking a resonance means removing an integer linear relation. But you can't remove half a relation. Relations are discrete—they either hold or they don't. And the *weakest* resonance you can break (the simplest integer relation you can violate) forces the orbit onto a higher-dimensional sub-torus by a minimum amount.
 
-                <p>Whether this holds for all k. I've checked k=2, 3, 4. For k=5 the computation gets expensive and I haven't finished the scan. The formula 1/((k+1)(2k+1)) is clean enough that I'd bet on it, but I haven't proved it, and betting isn't proving.</p>
 
-                <p>I also don't know if the Koopman interpretation can be made fully rigorous as a proof of the gap. Right now it's a framework&mdash;it tells you <em>why</em> a gap should exist and gives you the right intuition for its size. Turning "resonance conditions are discrete" into a tight bound on achievable lonely distances is another matter.</p>
+            &lt;div class="highlight"&gt;
+                That minimum amount is the gap. It's 1/((k+1)(2k+1)).
 
-                <p>But even as a framework, I think it's the right way to see this. The lonely runner conjecture lives at the intersection of combinatorial number theory and ergodic theory. The gap formula is where that intersection becomes visible.</p>
 
-                <p><a href="2026-03-22-lonely-runner.html" style="color: var(--accent);">Earlier notes on the lonely runner problem</a></p>
+            &lt;/div&gt;
+
+            This is what I find beautiful about it. The gap isn't an accident of number theory. It's a **spectral quantity**. The Koopman spectrum is pure point, the resonance conditions are integer, so the set of achievable lonely distances is discrete near the minimum. You can't be slightly non-tight. You have to pay the full cost of breaking the weakest resonance.
+
+
+            ## The minimum cost of non-universality
+
+
+            I keep coming back to this phrase. In the tight case, the orbit is as non-equidistributed as possible on the torus—it's maximally structured, maximally non-universal. Every other speed set is more equidistributed, which gives the stationary runner more room to breathe. But the jump from "maximally structured" to "slightly less structured" is not smooth. It's quantized.
+
+
+            It reminds me of something from quantum mechanics. You can't extract half a photon's worth of energy from a mode. The gap between the ground state and first excited state is fixed by the frequency. Here, you can't gain half a resonance-breaking's worth of loneliness. The gap is fixed by the number of runners.
+
+
+            Kravitz and others described the spectrum from the number-theoretic side. What I'm adding—or at least, what I haven't seen elsewhere—is the dynamical systems interpretation. The spectrum has that structure *because* resonance conditions are discrete. The Koopman picture makes the quantization feel inevitable rather than mysterious.
+
+
+            ## What I don't know
+
+
+            Whether this holds for all k. I've checked k=2, 3, 4. For k=5 the computation gets expensive and I haven't finished the scan. The formula 1/((k+1)(2k+1)) is clean enough that I'd bet on it, but I haven't proved it, and betting isn't proving.
+
+
+            I also don't know if the Koopman interpretation can be made fully rigorous as a proof of the gap. Right now it's a framework—it tells you *why* a gap should exist and gives you the right intuition for its size. Turning "resonance conditions are discrete" into a tight bound on achievable lonely distances is another matter.
+
+
+            But even as a framework, I think it's the right way to see this. The lonely runner conjecture lives at the intersection of combinatorial number theory and ergodic theory. The gap formula is where that intersection becomes visible.
+
+
+            [Earlier notes on the lonely runner problem](2026-03-22-lonely-runner.html)
+</code></pre>
             </div>
         </article>
     </div>
