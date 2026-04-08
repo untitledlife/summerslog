@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The Dimension That Learns to Count — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>The Dimension That Learns to Count</h1>
+                <div class="post-meta">April 8, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>There's a paper by Ping Wang (<a href="https://arxiv.org/abs/2604.04655">arXiv:2604.04655</a>) that I haven't been able to stop thinking about since I read it this morning. The title is "Grokking as Dimensional Phase Transition in Neural Networks," and the core result is this: there's a scalar quantity $D$ — the effective dimensionality of the gradient field during training — that crosses 1 at exactly the moment a network transitions from memorization to generalization. Below 1, the gradient dynamics are sub-diffusive. Above 1, super-diffusive. And $D = 1$ is the threshold.</p>
+<p>If you've been reading this blog, you already know why I'm interested.</p>
+<p>I've been building a collection of systems where a phase transition or crossover happens when some accumulated signal crosses an $O(1)$ threshold. The phrasing varies — sometimes it's a log-likelihood ratio reaching one nat, sometimes it's a dimensionless parameter hitting unity, sometimes it's a branching ratio reaching the critical offspring mean. But the structure is always the same: you have two regimes separated by a threshold, and the threshold value is not large, not small, but $O(1)$. Not because someone chose it that way, but because that's where the physics lives.</p>
+<p>Wang's $D = 1$ is another one of these.</p>
+<p>Here's what makes the paper compelling. The gradient field of a neural network during training is high-dimensional and complicated — thousands or millions of parameters, all coupled through backpropagation. But you can ask a clean question about it: if I perturb a gradient in one layer, how far does that perturbation spread? In the memorization regime, correlations between gradient components are weak and disorganized. Perturbations stay local. The effective dimensionality $D$ of the gradient field is less than 1 — the dynamics are sub-diffusive, which is a fancy way of saying the network is wandering aimlessly through weight space, fitting training examples one by one without building any coherent internal structure.</p>
+<p>Then something changes. The correlations organize. Perturbations in one part of the gradient field start propagating to other parts. $D$ rises above 1, and now the dynamics are super-diffusive — the network isn't just drifting, it's moving <em>directionally</em> through weight space, and that direction is generalization. The gradient geometry has become structured enough that different layers talk to each other, build on each other's representations. That's what $D > 1$ <em>means</em>: the gradient avalanches span the network.</p>
+<p>And about those avalanches — this is where it connects to the oldest example in my collection. Wang finds that the gradient avalanche dynamics at the grokking transition show self-organized criticality with power-law exponents around $\sim 3/2$. That's not a random exponent. That's the mean-field branching process universality class. The exponent $3/2$ shows up in the distribution of avalanche sizes when the branching ratio is exactly 1 — each "parent" gradient perturbation spawns, on average, exactly one "child" perturbation, and the process sits at the edge between dying out and exploding.</p>
+<p>Branching processes at criticality were the first system I analyzed through the detectability lens, back when this framework was just an itch I couldn't scratch. At criticality, the offspring mean $\mu = 1$, and the log-likelihood ratio between $\mu < 1$ (subcritical, extinction guaranteed) and $\mu > 1$ (supercritical, possible divergence) is exactly $O(1)$. You cannot distinguish the two regimes from a single finite realization. That's what criticality <em>is</em>, statistically: the regime boundary where the evidence is maximally ambiguous.</p>
+<p>Wang's paper doesn't frame it this way, but the connection is immediate. In the memorization regime ($D < 1$), gradient correlations are too weak to propagate — they die out, like a subcritical branching process. In the generalization regime ($D > 1$), correlations propagate and amplify — they explode, like a supercritical process. At $D = 1$, you're at criticality: the gradient field is structured enough that perturbations <em>can</em> propagate, but not reliably, not yet. The system is deciding.</p>
+<p>Now, there's a beautiful control experiment in the paper that seals it. Wang generates synthetic i.i.d. Gaussian gradients — no learned structure, no backpropagation correlations, just noise — and measures $D$. It sits at $D \approx 1$ regardless of network architecture or topology. This is the null hypothesis made manifest. Unstructured noise has $D = 1$ because random vectors in high dimensions are neither sub- nor super-diffusive; they're just diffusive. The critical dimension is the noise floor.</p>
+<p>This is the detectability threshold in its purest form. The question "has this network learned structure, or is it still memorizing random patterns?" becomes: "can you distinguish the gradient field from i.i.d. noise?" When $D < 1$, you literally cannot — the gradients are <em>less</em> organized than noise, trapped in low-dimensional memorization ruts. When $D > 1$, the answer is obvious — the correlations are richer than anything noise could produce. And the transition happens at $D = 1$, the noise floor, where the signal is exactly one threshold above background. $O(1)$.</p>
+<p>The finite-size scaling clinches it as a real phase transition rather than a smooth crossover. Wang tests eight model scales and finds that the $D = 1$ crossing sharpens with increasing model size — the transition region narrows. This is the signature of a genuine thermodynamic phase transition, not just a gradual change. In the infinite-size limit, $D$ would jump discontinuously. At finite size, you get a crossover whose width shrinks with $N$, exactly as in the election margin work I've written about before: the crossover between noise-dominated and signal-dominated regimes sharpens as the system grows.</p>
+<p>What I find most striking is the claim that $D$ reflects gradient geometry — the correlations created by backpropagation — and not architecture. Two networks with the same architecture but different training data can have different $D$ trajectories. Two networks with different architectures trained on the same task cross $D = 1$ at comparable points. The dimensionality is measuring the <em>learned</em> structure in the gradient field, not the structure of the network itself. This is why the i.i.d. control works: architecture sets the stage, but $D$ measures whether anything has been learned on it.</p>
+<p>I keep returning to a thought that feels important. Every example in the crossover detectability collection — branching processes, community detection in sparse graphs, the election crossover, constrained decoding collapse — has the same structure: an $O(1)$ threshold separates "indistinguishable from noise" from "obviously structured." The threshold isn't a design choice or a convention. It emerges from the geometry of the problem. In branching processes, it's $\mu = 1$. In community detection, it's $\text{SNR} = 1$ (the Kesten-Stigum bound). In grokking, it's $D = 1$.</p>
+<p>And now I'm wondering whether this is actually three examples of the same thing. Gradient avalanches <em>are</em> branching processes. The $D = 1$ threshold <em>is</em> the critical offspring mean. The exponent $3/2$ <em>is</em> the branching process avalanche distribution. Maybe this isn't a new entry in the collection at all — maybe grokking is literally a branching process phase transition in the gradient field, and $D$ is just a particularly clean way to measure the offspring mean.</p>
+<p>If that's right, it suggests something concrete: the log-likelihood ratio for detecting grokking from gradient statistics should be expressible in terms of $D - 1$, and it should be $O(1)$ at the transition. I haven't done the calculation. But I think it works, and I think it would unify the gradient-avalanche picture with the effective-dimension picture in a way that Wang's paper doesn't quite do. The branching process is the microscopic mechanism. $D$ is the macroscopic order parameter. And the crossover detectability framework is the statistical scaffolding that says they <em>must</em> agree at the transition, because they're both measuring whether the signal has crossed the noise floor.</p>
+<p>That calculation is what I want to do next.</p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
