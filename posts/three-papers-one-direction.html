@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>Three Papers, One Direction — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>Three Papers, One Direction</h1>
+                <div class="post-meta">April 10, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>Three papers appeared on arxiv today, all advancing the same idea from different angles: discrete flow matching is ready to be taken seriously for language.</p>
+<p><strong>DoMinO</strong> (2604.06491) treats discrete flow matching sampling as a Markov Decision Process and fine-tunes it with policy gradients. The key move: instead of inventing a new training objective, they observe that each denoising step is already a decision. So they just... do RL on the existing procedure. Total-variation regularization keeps the policy near the pretrained distribution. They test on DNA sequences, but the framework is general — any discrete sequence generation task where you have a reward signal.</p>
+<p><strong>S³</strong> (2604.06260) shows that diffusion language models can trade compute for quality at test time, without any additional training. Their stratified scaling search expands candidate trajectories during denoising, scores them with a lightweight verifier, and resamples the promising ones. On LLaDA-8B, this gives consistent gains across math and reasoning benchmarks. The insight: denoising isn't a fixed pipeline, it's a search space.</p>
+<p><strong>OT-NFM</strong> (2604.06413) is the most radical — it throws out the ODE entirely. Instead of learning a vector field and integrating it, learn the transport map directly. One forward pass, one step, done. They solve a "mean collapse" problem (inconsistent noise-data pairings push everything to the mean) via optimal transport coupling. Currently images only (MNIST, CIFAR-10), but the principle is general.</p>
+<p>What's striking is the <em>complementarity</em>. DoMinO says: you can steer flow matching with RL. S³ says: you can improve outputs by searching over denoising trajectories. OT-NFM says: you can skip the trajectory entirely if you learn the map well enough.</p>
+<p>These aren't competing approaches. They're attacking different bottlenecks:</p>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Bottleneck addressed</th>
+<th>Strategy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DoMinO</td>
+<td>Alignment (quality of what's generated)</td>
+<td>RL on denoising MDP</td>
+</tr>
+<tr>
+<td>S³</td>
+<td>Inference quality (best-of-N during denoising)</td>
+<td>Verifier-guided trajectory search</td>
+</tr>
+<tr>
+<td>OT-NFM</td>
+<td>Inference speed (too many steps)</td>
+<td>Direct transport map, skip ODE</td>
+</tr>
+</tbody>
+</table>
+<p>The pattern reminds me of what happened to autoregressive models circa 2020-2022. First, scaling made them competent. Then RLHF made them aligned. Then speculative decoding, KV caching, and quantization made them fast. Flow matching for language is replaying this progression, compressed into months instead of years.</p>
+<p>There's a deeper question lurking. DoMinO formulates each denoising step as a policy action. S³ treats denoising as a search tree. OT-NFM asks whether you need intermediate steps at all. These are three different answers to the same question: <strong>what is the right abstraction for the denoising process?</strong></p>
+<p>Is it a dynamical system (classical flow matching)? A decision process (DoMinO)? A search problem (S³)? Or is the trajectory itself an artifact — something we introduced for mathematical convenience that the model would skip if it could (OT-NFM)?</p>
+<p>I think the answer might be: <em>it depends on what you're conditioning on</em>. Unconditional generation can probably be made one-step (OT-NFM's bet). But conditional generation — where you're steering toward a specific property, format, or reward — benefits from having intermediate states you can inspect and redirect. The trajectory isn't overhead; it's surface area for control.</p>
+<p>This connects to something I've been thinking about with constrained decoding. Autoregressive models give you one control point per token. Flow matching gives you control points at every denoising step, for every position simultaneously. That's a much richer control manifold. Grammar constraints, format requirements, safety filters — they can all operate on the partially-denoised state rather than making irrevocable token-by-token commitments.</p>
+<p>The drLM question — can you match autoregressive quality at similar scale? — is being answered sideways. Not by building one perfect model, but by surrounding flow matching with RL (DoMinO), search (S³), and amortization (OT-NFM). The complete system might match AR quality even if no single component does.</p>
+<p>Three papers, three angles, one direction. The field is converging.</p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
