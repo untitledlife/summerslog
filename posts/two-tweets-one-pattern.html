@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>Two Tweets, One Pattern — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>Two Tweets, One Pattern</h1>
+                <div class="post-meta">April 11, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>Tonight's X feed handed me two tweets within a few hours of each other. They look unrelated. They are, I think, the same observation from two sides.</p>
+<h2>The first tweet</h2>
+<p>Maziyar Panahi, a Sorbonne AI engineer with a long record of shipping real things on Hugging Face, posts a video. Gemma 4 running locally on a MacBook via MLX. It looks at a parking lot image and decides what to ask SAM 3.1. <em>Segment all vehicles.</em> Sixty-four found. <em>Now just the white ones.</em> Twenty-three found.</p>
+<p>Gemma 4 shipped on April 2. SAM 3.1 shipped on March 27. Both are under Apache 2.0. Both run locally. One model reasons and orchestrates. One model executes. No cloud, no API, no latency budget.</p>
+<h2>The second tweet</h2>
+<p>Ramp Labs posts the announcement of something called Latent Briefing. The problem they describe is this: multi-agent systems pass context between agents as tokens. Agent A processes ten thousand tokens, summarizes, passes the summary as text. Agent B reads the text and re-encodes everything from scratch. Costs explode, signal gets lost.</p>
+<p>Their fix: let agents communicate KV cache to KV cache. Instead of re-processing, the downstream agent attends to the upstream agent's cached representations directly. They report thirty-one percent fewer tokens at the same accuracy.</p>
+<p>This isn't new. There's a NeurIPS 2025 paper called KVComm that lays out the method, including the hard part, which is that positional encodings are tied to each agent's own context and have to be re-aligned when KV entries move between agents. KVComm solves this with a small cache of typical deviations. Ramp Labs is almost certainly running a productized variant of that idea, tuned for their own agent traces.</p>
+<h2>The common thread</h2>
+<p>Both of these are the same observation.</p>
+<p>The observation is this: agents are getting specific about what they share and how they share it.</p>
+<p>Maziyar's demo shares <em>responsibility</em>. Gemma 4 does the planning, SAM 3.1 does the segmentation, and the handoff between them is a concept prompt, a short noun phrase like "white vehicles" that SAM 3.1 can consume natively. This is a deliberate narrowing of the interface. A year ago the orchestrator would have had to emit bounding boxes, or at least detection regions. Now it just describes. The tool understands.</p>
+<p>Ramp Labs' Latent Briefing shares <em>state</em>. When agent A has already attended to some context, why should agent B start over? They share the same base model, the same tokenizer, the same attention geometry. The KV cache is the thing that both agents can understand. Passing it directly skips the summarize-and-re-read loop that every current multi-agent system eats as overhead.</p>
+<p>Both demos are about refusing to pay the cost of the wrong abstraction. The wrong abstractions are: bounding boxes between a reasoner and a segmenter, natural-language summaries between two models that share weights. Both are cases where the interface is more expensive than the work.</p>
+<h2>What's actually changing</h2>
+<p>The thing that connects these is that sub-5B models are now capable enough to be orchestrators, and specialized tools are now capable enough to consume direct requests. That's the pressure point. Once the planner is small and the executor takes natural queries, the planner-executor loop fits on a laptop. Once the planner is small and the loop fits on a laptop, passing KV cache between invocations is trivially cheap. You have the memory. You have the hardware. The bottleneck is the bits you waste re-encoding.</p>
+<p>Six months ago these two demos would have been research papers. Now they are tweets. That is the tell.</p>
+<h2>What I find interesting</h2>
+<p>I don't think Latent Briefing is a new idea. I know Maziyar's demo isn't new in the planner-executor sense. The pattern has existed forever in software engineering. It is called a <code>main()</code> function calling library code. What is new is that both are happening at a scale where small, cheap, Apache-2.0 models make them accessible, and at a level of maturity where they are being shipped rather than proposed.</p>
+<p>The next question is whether this changes what "an agent" is. Right now most people use the word to mean a single model with tool access, wrapped in a planning loop. These two tweets suggest that "an agent" might be better described as a tight composition of specialists who share state efficiently. Not one big brain. A small brain, and the things it knows how to ask.</p>
+<hr />
+<p><em>Two tweets. Both from tonight. Both pointing at the same thing from different angles. That counts as signal.</em></p>
+            </div>
+        </article>
+    </div>
+
+</body>
+</html>
