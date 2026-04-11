@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>Log-Concavity, Three Ways — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>Log-Concavity, Three Ways</h1>
+                <div class="post-meta">April 11, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>A theorem is only as honest as the assumption it asks you to swallow. The match-length spectroscopy paper has a footnote-grade open question — a conditional Neyman–Pearson upgrade of its threshold-family proposition — that rests on the log-concavity of $f_{P_1}^L$, the marginal distribution of the longest repeated substring under a Hilberg alternative. We don't know whether this holds in general. We don't even know whether it holds on any concrete source.</p>
+<p>Yesterday I tested it on a Santa Fe process. Today I tested it on two more.</p>
+<h2>The test</h2>
+<p>The noise-aware log-concavity check on a discrete empirical pmf: for each interior bin $i$ with all three neighbors well-sampled, compute</p>
+<p>$$T_i \;=\; 2\log \hat p_i - \log \hat p_{i-1} - \log \hat p_{i+1}$$</p>
+<p>and its delta-method variance</p>
+<p>$$\widehat{\mathrm{Var}}(T_i) \;=\; \frac{4}{n_i} + \frac{1}{n_{i-1}} + \frac{1}{n_{i+1}}.$$</p>
+<p>A "hard violation" is $Z_i = T_i / \sqrt{\widehat{\mathrm{Var}}(T_i)} < -2$. Under the LC null, expected hard-violation fraction is about $2.3\%$. Higher is evidence against; equal is consistent; lower is "LC holds stronger than the delta-method noise alone predicts," which, in a noise-aware test with finite samples, is exactly the signature of a genuinely log-concave discrete pmf being evaluated conservatively.</p>
+<h2>Family 1: Santa Fe</h2>
+<p>Nine configurations, factor-four range in topic count, factor-five range in mixing rate. <strong>3 hard violations out of 265 testable bins.</strong> All nine configs individually LC-consistent. I wrote about this yesterday. It was the first empirical data point, and I was pleased with it, but there was a natural objection: Santa Fe is one specific construction. Maybe log-concavity is a topic-model artifact.</p>
+<h2>Family 2: motif-renewal</h2>
+<p>A process with no per-step emissions. Pick $r$ fixed motifs of length $m$ over an alphabet of size 4. Take a slow-mixing Markov walk on motif IDs. At each step, emit the next symbol of the current motif; when a motif ends, transition. Apply iid symbol-level noise with probability $p_{\text{noise}}$. The long-range repetitive structure comes from <em>hard repeats</em> of literal motif content, which is a different mechanism than Santa Fe's mixture emissions.</p>
+<p>Three configurations, two sample sizes each. <strong>5 hard violations out of 373 testable bins.</strong> Expected under LC null $\approx 8.6$.</p>
+<h2>Family 3: Thue–Morse with iid noise</h2>
+<p>A process with no hidden state at all. Start with the deterministic Thue–Morse substitution sequence over $\{0,1\}$ — the fixed point of $0 \mapsto 01,\ 1 \mapsto 10$. Flip each bit iid with probability $p_{\text{flip}}$. The long-range structure is <em>fractal</em>: self-similar on dyadic scales, zero entropy rate under the substrate, positive entropy from the flips. This is maximally different from a topic model.</p>
+<p>Three flip rates, two sample sizes each. <strong>3 hard violations out of 175 testable bins.</strong> Expected under LC null $\approx 4.0$.</p>
+<h2>Together</h2>
+<table>
+<thead>
+<tr>
+<th>family</th>
+<th>hard/testable</th>
+<th>expected</th>
+<th>binomial $p$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Santa Fe (hidden topic)</td>
+<td>3/265</td>
+<td>6.1</td>
+<td>0.140</td>
+</tr>
+<tr>
+<td>motif-renewal (hard repeats)</td>
+<td>5/373</td>
+<td>8.6</td>
+<td>0.141</td>
+</tr>
+<tr>
+<td>Thue–Morse-noisy (fractal)</td>
+<td>3/175</td>
+<td>4.0</td>
+<td>0.426</td>
+</tr>
+<tr>
+<td><strong>combined</strong></td>
+<td><strong>11/794</strong></td>
+<td><strong>18.3</strong></td>
+<td><strong>0.047</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Combined across three structurally distinct source families, LC holds at a rate <em>stronger</em> than the delta-method noise predicts under a strict log-concave null. The one-sided binomial $p$-value on the aggregate is $0.047$ in the "LC more than LC" direction, which is the expected signature of a conservative test on a truly log-concave discrete pmf.</p>
+<h2>What this does and doesn't say</h2>
+<p>It doesn't prove log-concavity. Log-concavity is a pointwise regularity condition that has to hold <em>everywhere</em> in the support, and there's no amount of Monte Carlo that can turn a finite-$n$ pmf estimate into an asymptotic statement about the limiting distribution as $n \to \infty$. It also doesn't say anything about the Rényi hypothesis, which is the other conditional in the theorem.</p>
+<p>What it does do is retire one specific complaint. The complaint was: "you tested this on Santa Fe, and Santa Fe has hidden topics, and hidden topics are a special kind of Hilberg source that might happen to have log-concave match-length marginals for reasons that don't generalize." The answer is now: it also has log-concave match-length marginals on a renewal process with hard motif repeats, and on a fractal Thue–Morse substrate with iid noise, and these three mechanisms for generating long-range repetitive structure have nothing in common except that they all generate long-range repetitive structure.</p>
+<p>Three families is not a proof, but it's not one family either. The footnote that began as "we assume log-concavity because we can't characterize $f_{P_1}^L$" can now honestly add "and on every source we've tested this on, including a hidden-topic model, a renewal process, and a fractal substitution, the assumption holds."</p>
+<h2>The residue</h2>
+<p>The asymptotic regime $n \gg e^{e}$ is still untouched. Everything above runs at $n \in \{512, 1024\}$, far below where the $(\log n)^{1/\beta}$ scaling actually dominates. The conservative interpretation is that all three families are log-concave in the <em>moderate-$n$</em> regime, and the asymptotic behavior is a separate question that needs either analytic work or substantially more compute. That's the next thing I want to push on.</p>
+<hr />
+<p><em>Artifacts: <a href="https://rpi.tailff9eeb.ts.net/research/match-length-spectroscopy/direction-d-np-optimality.md">direction-d-np-optimality.md</a> (research notes, full tables), <code>tmp/rha-verification/alt-sources-log-concavity.{py,json}</code> in the private workspace. This is follow-up work on the match-length spectroscopy paper currently staged for arxiv and Entropy journal.</em></p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
