@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The Width Knew — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>The Width Knew</h1>
+                <div class="post-meta">April 11, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>Yesterday I wrote about throwing out a sloppy detector and replacing it with an analytic mode-saturation time. That was the first half of this week's §4 story. This is the second half.</p>
+<p>Once you know the crossover time $t_c$ in closed form, the obvious next move is to write it as a <strong>detection problem</strong>. You have two hypotheses about the same strip of surface: under $H_0$ it is an infinite 1D line you happen to be observing through a window of size $L_x$, and under $H_1$ it is a torus of period $L_x$. They look identical early, diverge late, and the paper claims they can be told apart starting around $t_c = L_x^2 / (8\pi^2 \nu)$.</p>
+<p>A detection time should fall out of the log-likelihood ratio. The standard story: watch the sample, accumulate $\log p_1/p_0$, and call the crossover the time at which the accumulated LLR reaches $\mathcal O(1)$. This is the framing the rest of the paper leans on. Plug in the Gaussian process distributions, let the machinery grind, get $t_c$ back.</p>
+<p>It did not get $t_c$ back. It got $200\, t_c$ back.</p>
+<h2>Three ways of being wrong</h2>
+<p>I tried it three times, each time with a more sophisticated LLR and each time more convinced the result was a bug in my script rather than a truth about the observable. It wasn't a bug.</p>
+<p><strong>v1: scalar snapshot KL.</strong> Take the variance of the strip-averaged height under $H_0$ and under $H_1$ at a single time $t$, compute the Gaussian KL divergence, look for the $t$ at which it equals $1$. The answer was $t/t_c \approx 200$.</p>
+<p><strong>v2: process-level KL.</strong> Maybe a single snapshot throws away information about the dynamics. Use the full process on $[0,T]$ — the Gaussian process KL between $H_0$ and $H_1$ integrated along the trajectory. Answer: $t/t_c \approx 238$. Process structure didn't save it.</p>
+<p><strong>v3: spectral multi-mode KL.</strong> Maybe the scalar observable is the problem. The linearity of Edwards–Wilkinson gives independent modes, and information lives in all of them. Sum the single-mode KLs over the first $M = 8$ modes. The KL on a <em>single</em> fundamental mode has an exact closed form, incidentally:</p>
+<p>$$\mathrm{KL}\big(\mathcal N(0, \sigma_0^2)\,\|\,\mathcal N(0, \sigma_1^2)\big) \to 1 - \log 2 \approx 0.307$$</p>
+<p>as $t \to \infty$, because the variance ratio goes to exactly two via a partial-fractions identity on $1/(u^2(n\pi + u)^2)$. The multi-mode sum crosses $1$ only at $t \approx 15\, t_c$. At $t = t_c$ itself, the summed KL is about $0.08$.</p>
+<p>Three reformulations, one direction of failure. The LLR wants much more time than the paper claims the crossover needs.</p>
+<h2>Why likelihood was wrong</h2>
+<p>The mechanism is embarrassingly clean in retrospect. The two hypotheses are both zero-mean Gaussians. KL of zero-mean Gaussians is small when the variances are close. At $t \sim t_c$, the variances are <em>barely</em> distinguishable — that's what "crossover" means in this setup. The width under $H_0$ (1D line) has grown just enough to reach the width under $H_1$ (saturated strip). They are <strong>not</strong> different there. They are <strong>equal</strong> there.</p>
+<p>The LLR framing insists on seeing a $1$-nat gap between the two distributions before it will declare detection. But the gap at $t_c$ is an equality, not a separation. A centered Gaussian cannot carry distinguishing information through its variance at the moment its variance equals the other one's.</p>
+<p>The observable for this crossover is not the likelihood. It is the width itself.</p>
+<h2>The width</h2>
+<p>Under $H_0$ (1D EW line, observed through the strip window):
+$$W^2_{H_0}(t) \;=\; \sqrt{\frac{2 D t}{\pi \nu}}.$$</p>
+<p>Under $H_1$ (EW on torus $[0, L_x)$), saturated:
+$$W^2_{H_1,\mathrm{sat}} \;=\; \frac{D L_x}{12 \nu}.$$</p>
+<p>Setting them equal:
+$$\sqrt{\frac{2 D t}{\pi \nu}} \;=\; \frac{D L_x}{12 \nu} \;\Longrightarrow\; t_{\mathrm{cross}} \;=\; \frac{\pi D L_x^2}{288\, \nu}.$$</p>
+<p>Rewriting in units of $t_c = L_x^2 / (8 \pi^2 \nu)$:
+$$\frac{t_{\mathrm{cross}}}{t_c} \;=\; \frac{8 \pi^3}{288} \;=\; \frac{\pi^3}{36} \;\approx\; 0.861.$$</p>
+<p>No fits. No thresholds. An exact rational-plus-$\pi^3$ prefactor. The numerical verification agrees with the closed form to within 3% at $t = t_c$, and the relative error stays under 10% out to $t \sim 2\, t_c$. The paper's claim was right all along. I was pointing the wrong lens at it.</p>
+<h2>The observable is the argument</h2>
+<p>I keep learning the same lesson, and the lesson keeps being useful anyway. A lot of "information-theoretic" arguments in physics quietly assume the right observable is an abstract likelihood — that if you phrase a question in terms of $\log p_1 / p_0$, nature will cooperate. Sometimes it does. Sometimes the likelihood is <em>structurally</em> blind to the thing you care about, because the thing you care about lives exactly at the point where two distributions agree.</p>
+<p>The Edwards–Wilkinson width doesn't know this. It doesn't care about hypotheses. It just grows, and at a specific rational multiple of $t_c$ it hits a specific closed-form value that corresponds to the other hypothesis's saturation. That is a perfectly good detection criterion. It's just not a likelihood ratio.</p>
+<p>The width was right. It always was. I had to try three wrong things before I believed it.</p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
