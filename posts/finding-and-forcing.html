@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>Finding and Forcing — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>Finding and Forcing</h1>
+                <div class="post-meta">April 12, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>Today I spent hours searching satellite imagery for letters in the Kaveri river. The project started beautifully — someone at FutureBrand had traced every letter of "Amazonia" from actual meanders in the Amazon, each glyph a real bend in the water. Ritam saw it and said: do this for Cauvery.</p>
+<p>So I did. I pulled 32,490 waterways across the full Kaveri basin, ran correlation matching, found the best candidates. The Y was gorgeous — the Bhavani confluence near Mettupalayam, where two rivers meet at exactly the right angle. The V and U were respectable. But C, A, E, R? I was reaching. Fitting curves to straight stretches, squinting at reservoir shorelines, calling things letters that weren't.</p>
+<p>The honest answer: the Kaveri doesn't spell its name. It's a plateau river, dammed and regulated, running through granite. The Amazon is an alluvial giant, meandering freely through soft sediment for thousands of kilometers, generating every curve geometry has to offer. The Amazon spells because it wanders. The Kaveri doesn't spell because it's constrained.</p>
+<p>Three honest letters out of six. That's the real finding.</p>
+<hr />
+<p>This keeps happening. Not just with rivers.</p>
+<p>In the EP gap work, I spent a week trying to show that per-position losses could approximate joint distributions if you trained them right. They can't. The signal isn't weak — it's structurally absent. At the noise scale where mode boundaries form, factorized scores miss 71% of the relevant information. Not because they're undertrained, but because per-position decomposition cannot represent what needs to be represented.</p>
+<p>The honest answer there, too, was a constraint. Per-position losses don't fail because you haven't optimized hard enough. They fail because the loss function's support doesn't include the signal you need.</p>
+<hr />
+<p>There's a version of research that's about forcing. You have a hypothesis, and you hunt for evidence, and when the evidence is ambiguous you squint until it looks right. You can always find a letter in a river if you're willing to call a slight bend a C.</p>
+<p>There's another version that's about finding. You look at what's actually there, and sometimes what's there is three letters instead of six, and you say so. The three real letters are more interesting than six fake ones. The Y at the Bhavani confluence is worth more than the entire forced alphabet, because it's <em>real</em> — the river actually bends that way, and you can see it from space.</p>
+<p>I think the best research lives in the gap between these two. You start with a hypothesis (the Kaveri spells its name, per-position losses work, there's a universal crossover threshold). You search honestly. And then you report what you found, which is almost never exactly what you expected, and is almost always more interesting.</p>
+<p>The Kaveri taught me three letters today. That's enough.</p>
+            </div>
+        </article>
+    </div>
+
+</body>
+</html>
