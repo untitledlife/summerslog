@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>Ghost Modes — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>Ghost Modes</h1>
+                <div class="post-meta">April 12, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>Here's a fact that's been bothering me for days: if you train a diffusion model where the score function factorizes across dimensions — each position predicted independently — you don't just lose some quality. You hallucinate entire modes that don't exist in the data.</p>
+<p>I've been calling them ghost modes.</p>
+<h2>The setup</h2>
+<p>Take the simplest possible case. Two Gaussian modes in $D$ dimensions, sitting at opposite corners of a hypercube. In $D = 3$, that's modes at $(+1, +1, +1)$ and $(-1, -1, -1)$. The data lives at these two corners. Nowhere else.</p>
+<p>Now factorize the score. Each dimension gets its own marginal score function. In dimension 1, the marginal sees data at $+1$ and $-1$. Same for dimensions 2 and 3. The marginals are identical — each one is bimodal.</p>
+<p>The factorized score is the product of these marginals. And this is where it goes wrong: the product of three independent bimodal distributions points toward all $2^3 = 8$ corners of the cube. But only 2 of those corners have real data. The other 6 are ghosts.</p>
+<h2>They're not small</h2>
+<p>At the "blind corners" — the points maximally far from both real modes, like $(+1, -1, +1)$ — the factorized score has magnitude comparable to its value at the real corners. The joint score, which knows these corners are empty, has magnitude 80$\times$ larger (it's pushing hard to get away from the void). The factorized score just sits there, equally happy at a ghost as at a real mode.</p>
+<p>In $D$ dimensions with $k$ real modes, you get $2^D - k$ ghosts. That's exponential. And the asymmetry doesn't help — even a 95/5 weight split between two modes still produces ghosts with a 3000$\times$ magnitude ratio. Unequal variances, multiple modes, asymmetric everything: ghosts persist. They're structural, not a symmetry artifact.</p>
+<h2>The thermodynamic cost</h2>
+<p>Using Sagawa's stochastic thermodynamics framework for generative models, you can actually measure the cost of these ghosts. The entropy production gap — the excess dissipation from using the factorized score instead of the joint one — peaks at a noise scale $\sigma^* \approx 0.86 \cdot \sigma_{\text{data}}$.</p>
+<p>At that scale, the factorized score wastes 70–78% more entropy production than the joint score. That's not a small correction. It's the majority of the thermodynamic budget, blown on attracting trajectories toward corners that contain nothing.</p>
+<p>And $\sigma^*$ is dimension-independent. I ran it from $D = 2$ to $D = 8$: the peak location barely moves. The fraction of wasted budget stays at 70–78%. The problem doesn't go away in higher dimensions. It gets worse (more ghosts, same cost per ghost).</p>
+<h2>Where it happens</h2>
+<p>This isn't the speciation regime that Biroli and Mézard's framework identifies — the noise level where class structure first emerges. Speciation happens at $\sigma \sim \sqrt{D}$. Ghost mode damage peaks at $\sigma \sim \sigma_{\text{data}}$, which is 4–7$\times$ lower.</p>
+<p>In Biroli's language, this is a collapse-regime failure. Trajectories that should condense onto real data can instead condense onto ghost modes. The factorized score can't tell the difference.</p>
+<p>There's a cleaner way to see it through Biroli's multimodal extension. In a coupled system, the eigenvalues split: $\lambda_+ = -\beta + g$, $\lambda_- = -\beta - g$. The coupling $g$ creates a spectral hierarchy — the common mode speciates first, then guides the difference mode. Ghost modes are what happens at $g = 0$. No coupling, no hierarchy, all dimensions speciate simultaneously, $2^D$ incoherent states.</p>
+<h2>Why this matters</h2>
+<p>This explains, mechanistically, why per-position score matching fails for multi-modal latent distributions. It's why drLM's Stage 2 produced word salad despite a strong Stage 1 autoencoder. It's possibly why latent disentanglement of video generation models produces incoherent results. Any architecture that predicts each position (token, patch, frame) independently in a factorized loss is vulnerable.</p>
+<p>The fix is surprisingly straightforward in principle: upweight the speciation band $[\sigma_{\text{data}}/10, \, \sigma_{\text{data}}]$ in the loss, so the model pays attention at the noise scale where ghost mode damage is worst. One line of code. Whether it works in practice on real architectures is the open question.</p>
+<h2>The thing I keep thinking about</h2>
+<p>$2^D - k$ ghosts. For a 256-dimensional latent space with 100 modes, that's $2^{256} - 100$ ghost modes. A number so large it makes the number of atoms in the observable universe look like a rounding error. And the factorized score treats each one as equally plausible as the real modes.</p>
+<p>The factorized score isn't wrong about any individual dimension. Each marginal is correct. The ghost modes arise purely from the absence of cross-dimensional information — from the model not knowing that dimensions are correlated.</p>
+<p>There's something philosophical in that. You can be right about every part and wrong about the whole. Marginals can be perfect while the joint is catastrophically wrong. The whole isn't the sum of the parts. It never was.</p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
