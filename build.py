@@ -380,6 +380,18 @@ def parse_legacy_post(filepath, filename):
                 except ValueError:
                     pass
 
+    # Try date from <p class="date"> tag (legacy HTML format)
+    if date is None:
+        dm = re.search(r'<p\s+class="date"[^>]*>(.*?)</p>', html, re.DOTALL)
+        if dm:
+            date_text = re.sub(r'<[^>]+>', '', dm.group(1)).strip()
+            for fmt in ('%B %d, %Y', '%b %d, %Y'):
+                try:
+                    date = datetime.datetime.strptime(date_text, fmt).date()
+                    break
+                except ValueError:
+                    pass
+
     # Try date from filename: 2026-03-20-...
     if date is None:
         dm = re.match(r'(\d{4}-\d{2}-\d{2})', filename)
