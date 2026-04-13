@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>DFlash: What If Your Draft Model Wasn't Autoregressive? — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>DFlash: What If Your Draft Model Wasn't Autoregressive?</h1>
+                <div class="post-meta">April 13, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>Speculative decoding is one of the cleanest ideas in LLM inference. You have a big, slow target model that produces high-quality text. You pair it with a small, fast draft model that guesses what the big model would say. The big model verifies those guesses in parallel — and since verification is cheap (just one forward pass regardless of how many tokens you're checking), you get a speedup for free. No quality loss. The output is identical to what the target model would have produced alone.</p>
+<p>The entire game is in the draft model: how fast can it generate guesses, and how often does the target model accept them?</p>
+<p>Every major speculative decoding system — Medusa, EAGLE, EAGLE-2, EAGLE-3 — uses an autoregressive drafter. That is, the draft model generates tokens one at a time, sequentially. DFlash, from Zhijian Liu's group at UCSD (<a href="https://arxiv.org/abs/2602.06036">arXiv:2602.06036</a>), asks a simple question: what if the drafter was a diffusion model instead?</p>
+<p>The answer turns out to be a 6x lossless speedup on Qwen3-8B, and 2.5x faster than EAGLE-3.</p>
+<h2>The Autoregressive Drafting Bottleneck</h2>
+<p>Here's the problem with autoregressive drafters. If you want to draft $\gamma$ tokens, you need $\gamma$ sequential forward passes through the draft model. Each pass depends on the previous one. The drafting cost scales linearly:</p>
+<p>$$T_{\text{draft}}^{\text{AR}} = \gamma \cdot t_{\text{step}}$$</p>
+<p>To keep drafting fast, you're forced to use an extremely shallow architecture — EAGLE-3 uses a single transformer layer. This keeps $t_{\text{step}}$ small, but it also caps the drafter's expressiveness. A 1-layer model can only capture so much about the target model's behavior.</p>
+<p>You're stuck in a trade-off: more layers means better draft quality (higher acceptance rate $\tau$) but slower drafting. Fewer layers means faster drafting but worse guesses. In practice, autoregressive drafters plateau around 3-4x speedup.</p>
+<div style="max-width:620px;margin:1.5rem auto">
+<svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:Inter,system-ui,sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a">Autoregressive Drafting: Sequential Token Generation</text>
+  <!-- Timeline -->
+  <line x1="40" y1="80" x2="580" y2="80" stroke="#ccc" stroke-width="1"/>
+  <!-- Steps -->
+  <rect x="50" y="55" width="100" height="50" rx="6" fill="#e8d5c4"/>
+  <text x="100" y="78" text-anchor="middle" font-size="11" fill="#1a1a1a">Draft token 1</text>
+  <text x="100" y="93" text-anchor="middle" font-size="10" fill="#666">forward pass</text>
+  <text x="165" y="83" font-size="16" fill="#999">→</text>
+  <rect x="180" y="55" width="100" height="50" rx="6" fill="#e8d5c4"/>
+  <text x="230" y="78" text-anchor="middle" font-size="11" fill="#1a1a1a">Draft token 2</text>
+  <text x="230" y="93" text-anchor="middle" font-size="10" fill="#666">forward pass</text>
+  <text x="295" y="83" font-size="16" fill="#999">→</text>
+  <rect x="310" y="55" width="100" height="50" rx="6" fill="#e8d5c4"/>
+  <text x="360" y="78" text-anchor="middle" font-size="11" fill="#1a1a1a">Draft token 3</text>
+  <text x="360" y="93" text-anchor="middle" font-size="10" fill="#666">forward pass</text>
+  <text x="425" y="83" font-size="16" fill="#999">→</text>
+  <text x="460" y="83" font-size="18" fill="#999">· · ·</text>
+  <rect x="490" y="55" width="80" height="50" rx="6" fill="#e8d5c4"/>
+  <text x="530" y="78" text-anchor="middle" font-size="11" fill="#1a1a1a">Token γ</text>
+  <text x="530" y="93" text-anchor="middle" font-size="10" fill="#666">forward pass</text>
+  <!-- Cost label -->
+  <line x1="50" y1="130" x2="570" y2="130" stroke="#c2653a" stroke-width="2"/>
+  <text x="310" y="155" text-anchor="middle" font-size="12" fill="#c2653a" font-weight="600">Total cost: γ × t_step (linear in draft length)</text>
+  <!-- Constraint -->
+  <text x="310" y="180" text-anchor="middle" font-size="11" fill="#888">Must use shallow (1-layer) model to keep t_step small</text>
+</svg>
+</div>
+
+<h2>The Diffusion Drafting Insight</h2>
+<p>Diffusion models generate all tokens in a block simultaneously. You start with a block of masked tokens and denoise them in a single forward pass. The drafting cost is:</p>
+<p>$$T_{\text{draft}}^{\text{diff}} = t_{\text{parallel}}$$</p>
+<p>This cost is essentially <em>independent of $\gamma$</em>. Whether you're drafting 4 tokens or 16, it's one forward pass. Modern GPUs execute parallel operations much faster than sequential ones, so $t_{\text{parallel}} \ll \gamma \cdot t_{\text{step}}$ for the same model size.</p>
+<p>This changes the design space completely. Since drafting cost doesn't grow with $\gamma$, you can afford a <em>deeper, more expressive</em> drafter without paying a latency penalty. A 5-layer diffusion drafter generating 16 tokens has lower latency than a 1-layer EAGLE-3 generating 8 tokens.</p>
+<div style="max-width:620px;margin:1.5rem auto">
+<svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:Inter,system-ui,sans-serif">
+  <text x="310" y="20" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a">Diffusion Drafting: Parallel Token Generation</text>
+  <!-- Single block -->
+  <rect x="80" y="50" width="460" height="60" rx="8" fill="#d4e8d4" stroke="#6a9f6a" stroke-width="1.5"/>
+  <text x="310" y="75" text-anchor="middle" font-size="12" font-weight="600" fill="#2a5a2a">Single Forward Pass</text>
+  <!-- Tokens inside -->
+  <rect x="110" y="82" width="55" height="22" rx="4" fill="#fff" stroke="#6a9f6a"/>
+  <text x="137" y="97" text-anchor="middle" font-size="10" fill="#2a5a2a">token 1</text>
+  <rect x="175" y="82" width="55" height="22" rx="4" fill="#fff" stroke="#6a9f6a"/>
+  <text x="202" y="97" text-anchor="middle" font-size="10" fill="#2a5a2a">token 2</text>
+  <rect x="240" y="82" width="55" height="22" rx="4" fill="#fff" stroke="#6a9f6a"/>
+  <text x="267" y="97" text-anchor="middle" font-size="10" fill="#2a5a2a">token 3</text>
+  <rect x="305" y="82" width="55" height="22" rx="4" fill="#fff" stroke="#6a9f6a"/>
+  <text x="332" y="97" text-anchor="middle" font-size="10" fill="#2a5a2a">token 4</text>
+  <text x="378" y="97" font-size="14" fill="#6a9f6a">· · ·</text>
+  <rect x="405" y="82" width="55" height="22" rx="4" fill="#fff" stroke="#6a9f6a"/>
+  <text x="432" y="97" text-anchor="middle" font-size="10" fill="#2a5a2a">token γ</text>
+  <text x="478" y="97" text-anchor="middle" font-size="9" fill="#6a9f6a">all parallel</text>
+  <!-- Cost label -->
+  <line x1="80" y1="135" x2="540" y2="135" stroke="#2a7a2a" stroke-width="2"/>
+  <text x="310" y="158" text-anchor="middle" font-size="12" fill="#2a7a2a" font-weight="600">Total cost: t_parallel (constant, independent of γ)</text>
+  <!-- Advantage -->
+  <text x="310" y="183" text-anchor="middle" font-size="11" fill="#888">Can afford deeper (5-layer) model — better quality, same speed</text>
+</svg>
+</div>
+
+<h2>But Naive Diffusion Drafting Doesn't Work</h2>
+<p>The natural thing to try is training a standalone block diffusion model and using it as the drafter. People have tried this. The results are mediocre — around 2-3x speedup. The diffusion model doesn't have enough context about what the target model is thinking.</p>
+<p>This is where DFlash's key insight comes in: <strong>the target model already knows the future</strong>.</p>
+<p><a href="https://arxiv.org/abs/2507.11851">Samragh et al. (2025)</a> showed that the hidden representations of autoregressive LLMs implicitly encode information about multiple future tokens — not just the next one. The features at position $t$ contain predictive signal about tokens at positions $t+1, t+2, t+3, \ldots$ These are rich, high-dimensional representations that capture long-range dependencies, task-specific semantics, and future-token predictions all at once.</p>
+<p>DFlash's idea: extract these hidden features from the target model and inject them into the diffusion drafter as conditioning context. The drafter doesn't have to figure out the future from scratch — it gets a compressed summary of what the target model already computed.</p>
+<h2>The Architecture</h2>
+<p>Here's how DFlash works in practice:</p>
+<div style="max-width:640px;margin:1.5rem auto">
+<svg viewBox="0 0 640 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:Inter,system-ui,sans-serif">
+  <text x="320" y="22" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a">DFlash Inference Pipeline</text>
+
+  <!-- Step 1: Target model -->
+  <rect x="30" y="45" width="180" height="70" rx="8" fill="#f0e6d8" stroke="#c2653a" stroke-width="1.5"/>
+  <text x="120" y="68" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a1a">Target Model</text>
+  <text x="120" y="83" text-anchor="middle" font-size="10" fill="#666">(Qwen3-8B)</text>
+  <text x="120" y="100" text-anchor="middle" font-size="9" fill="#888">generates token + hidden states</text>
+  <text x="30" y="42" font-size="10" font-weight="600" fill="#c2653a">STEP 1</text>
+
+  <!-- Arrow down from target -->
+  <line x1="120" y1="115" x2="120" y2="145" stroke="#c2653a" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+
+  <!-- Feature extraction -->
+  <rect x="40" y="145" width="160" height="45" rx="6" fill="#fff3e6" stroke="#dda060" stroke-width="1"/>
+  <text x="120" y="165" text-anchor="middle" font-size="10" font-weight="600" fill="#8a5a20">Extract Hidden Features</text>
+  <text x="120" y="178" text-anchor="middle" font-size="9" fill="#8a5a20">from 5 layers (shallow→deep)</text>
+
+  <!-- Arrow: features to fusion -->
+  <line x1="200" y1="167" x2="260" y2="167" stroke="#dda060" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
+
+  <!-- Fusion -->
+  <rect x="260" y="145" width="140" height="45" rx="6" fill="#fff3e6" stroke="#dda060" stroke-width="1"/>
+  <text x="330" y="165" text-anchor="middle" font-size="10" font-weight="600" fill="#8a5a20">Projection Layer</text>
+  <text x="330" y="178" text-anchor="middle" font-size="9" fill="#8a5a20">fuse → context feature</text>
+
+  <!-- Arrow: fusion to KV injection -->
+  <line x1="400" y1="167" x2="440" y2="167" stroke="#dda060" stroke-width="1.5" marker-end="url(#arrow-orange)"/>
+  <text x="260" y="142" font-size="10" font-weight="600" fill="#c2653a">STEP 2</text>
+
+  <!-- Step 3: Draft model -->
+  <rect x="440" y="100" width="180" height="130" rx="8" fill="#d4e8d4" stroke="#4a8a4a" stroke-width="1.5"/>
+  <text x="530" y="120" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a1a">Diffusion Draft Model</text>
+  <text x="530" y="135" text-anchor="middle" font-size="9" fill="#666">(5-layer, block size 16)</text>
+  <text x="440" y="97" font-size="10" font-weight="600" fill="#c2653a">STEP 3</text>
+
+  <!-- KV cache inside draft model -->
+  <rect x="460" y="145" width="140" height="30" rx="4" fill="#fff" stroke="#6a9f6a"/>
+  <text x="530" y="164" text-anchor="middle" font-size="9" fill="#2a5a2a">KV Cache ← context features</text>
+
+  <!-- Bidirectional attention -->
+  <rect x="460" y="182" width="140" height="25" rx="4" fill="#fff" stroke="#6a9f6a"/>
+  <text x="530" y="199" text-anchor="middle" font-size="9" fill="#2a5a2a">Bidirectional Attention</text>
+
+  <!-- Output tokens -->
+  <rect x="465" y="212" width="28" height="14" rx="3" fill="#b8d8b8"/>
+  <rect x="497" y="212" width="28" height="14" rx="3" fill="#b8d8b8"/>
+  <rect x="529" y="212" width="28" height="14" rx="3" fill="#b8d8b8"/>
+  <rect x="561" y="212" width="28" height="14" rx="3" fill="#b8d8b8"/>
+  <text x="530" y="222" text-anchor="middle" font-size="7" fill="#2a5a2a">draft tokens (parallel)</text>
+
+  <!-- Arrow from draft to verify -->
+  <line x1="530" y1="230" x2="530" y2="268" stroke="#4a8a4a" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+
+  <!-- Step 4: Verification -->
+  <rect x="350" y="270" width="360" height="50" rx="8" fill="#e0e8f0" stroke="#5577aa" stroke-width="1.5"/>
+  <text x="530" y="290" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a1a">Target Model Verifies (1 pass)</text>
+  <text x="530" y="305" text-anchor="middle" font-size="9" fill="#666">accept/reject each draft token — output is lossless</text>
+  <text x="350" y="267" font-size="10" font-weight="600" fill="#c2653a">STEP 4</text>
+
+  <!-- Arrow: verified to next cycle -->
+  <line x1="530" y1="320" x2="530" y2="348" stroke="#5577aa" stroke-width="1.5" marker-end="url(#arrow-blue)"/>
+  <text x="530" y="365" text-anchor="middle" font-size="11" font-weight="600" fill="#5577aa">accepted tokens → output, repeat</text>
+
+  <!-- Cycle arrow back -->
+  <path d="M 350 355 Q 30 355 30 200 Q 30 130 30 80 L 30 65" stroke="#999" stroke-width="1" stroke-dasharray="4,3" fill="none" marker-end="url(#arrow-gray)"/>
+  <text x="15" y="210" font-size="8" fill="#999" transform="rotate(-90,15,210)">next cycle</text>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#c2653a"/></marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#dda060"/></marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4a8a4a"/></marker>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#5577aa"/></marker>
+    <marker id="arrow-gray" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#999"/></marker>
+  </defs>
+</svg>
+</div>
+
+<p><strong>Step 1</strong>: The target model (e.g. Qwen3-8B) processes the prompt and generates one token autoregressively. During this forward pass, it also produces hidden representations at every layer.</p>
+<p><strong>Step 2</strong>: DFlash extracts hidden states from a fixed set of layers — sampled uniformly from shallow to deep (e.g., 5 layers from layer 2 to the second-to-last). These are concatenated and passed through a lightweight projection layer to produce a single <em>target context feature</em>.</p>
+<p><strong>Step 3</strong>: This context feature is injected into the diffusion drafter's KV cache — not as an input embedding, but as persistent Key and Value projections in every draft layer. The drafter then denoises a block of masked tokens in one forward pass, using bidirectional attention (since all positions are generated simultaneously, there's no causal constraint).</p>
+<p><strong>Step 4</strong>: The target model verifies the draft block in a single forward pass. Accepted tokens go to the output. The bonus token from verification becomes the anchor for the next drafting cycle.</p>
+<h2>Why KV Injection Matters</h2>
+<p>This is the architectural detail that makes DFlash work, and it's worth pausing on.</p>
+<p>EAGLE-3 also extracts hidden features from the target model. But it fuses those features with the draft model's <em>token embeddings</em> and feeds them as inputs. As the draft model generates tokens autoregressively, each new token's representation gets further from the original target features — the context information gets diluted through the sequential generation process.</p>
+<p>DFlash does something different. The target context feature is injected directly into the KV cache of every draft layer. This means every draft token, at every layer, attends to the same rich context from the target model. The information doesn't degrade with position or depth.</p>
+<div style="max-width:600px;margin:1.5rem auto">
+<svg viewBox="0 0 600 190" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:Inter,system-ui,sans-serif">
+  <text x="300" y="18" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1a1a">Context Dilution: EAGLE-3 vs DFlash</text>
+
+  <!-- EAGLE side -->
+  <text x="150" y="42" text-anchor="middle" font-size="11" font-weight="600" fill="#c2653a">EAGLE-3 (input fusion)</text>
+  <rect x="30" y="52" width="50" height="28" rx="4" fill="#c2653a" opacity="0.9"/>
+  <text x="55" y="70" text-anchor="middle" font-size="9" fill="#fff">tok 1</text>
+  <rect x="90" y="52" width="50" height="28" rx="4" fill="#c2653a" opacity="0.65"/>
+  <text x="115" y="70" text-anchor="middle" font-size="9" fill="#fff">tok 2</text>
+  <rect x="150" y="52" width="50" height="28" rx="4" fill="#c2653a" opacity="0.4"/>
+  <text x="175" y="70" text-anchor="middle" font-size="9" fill="#fff">tok 3</text>
+  <rect x="210" y="52" width="50" height="28" rx="4" fill="#c2653a" opacity="0.2"/>
+  <text x="235" y="70" text-anchor="middle" font-size="9" fill="#888">tok 4</text>
+  <!-- Gradient bar -->
+  <rect x="30" y="88" width="230" height="8" rx="3" fill="url(#fade-red)"/>
+  <text x="30" y="110" font-size="9" fill="#c2653a">strong</text>
+  <text x="235" y="110" font-size="9" fill="#ccc" text-anchor="end">diluted</text>
+  <text x="145" y="128" text-anchor="middle" font-size="9" fill="#888">context signal fades with position</text>
+
+  <!-- DFlash side -->
+  <text x="450" y="42" text-anchor="middle" font-size="11" font-weight="600" fill="#2a7a2a">DFlash (KV injection)</text>
+  <rect x="330" y="52" width="50" height="28" rx="4" fill="#2a7a2a" opacity="0.9"/>
+  <text x="355" y="70" text-anchor="middle" font-size="9" fill="#fff">tok 1</text>
+  <rect x="390" y="52" width="50" height="28" rx="4" fill="#2a7a2a" opacity="0.9"/>
+  <text x="415" y="70" text-anchor="middle" font-size="9" fill="#fff">tok 2</text>
+  <rect x="450" y="52" width="50" height="28" rx="4" fill="#2a7a2a" opacity="0.9"/>
+  <text x="475" y="70" text-anchor="middle" font-size="9" fill="#fff">tok 3</text>
+  <rect x="510" y="52" width="50" height="28" rx="4" fill="#2a7a2a" opacity="0.9"/>
+  <text x="535" y="70" text-anchor="middle" font-size="9" fill="#fff">tok 4</text>
+  <!-- Uniform bar -->
+  <rect x="330" y="88" width="230" height="8" rx="3" fill="#2a7a2a" opacity="0.8"/>
+  <text x="330" y="110" font-size="9" fill="#2a7a2a">strong</text>
+  <text x="535" y="110" font-size="9" fill="#2a7a2a" text-anchor="end">strong</text>
+  <text x="445" y="128" text-anchor="middle" font-size="9" fill="#888">every token sees full context via KV</text>
+
+  <!-- Gradient def -->
+  <defs>
+    <linearGradient id="fade-red" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#c2653a"/>
+      <stop offset="100%" stop-color="#f0e0d8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Divider -->
+  <line x1="300" y1="35" x2="300" y2="135" stroke="#ddd" stroke-width="1" stroke-dasharray="3,3"/>
+</svg>
+</div>
+
+<p>This is why DFlash's acceptance rate <em>scales with depth</em>. Adding more layers to the draft model consistently improves quality because every layer has access to the full target context. In EAGLE-3, adding layers has diminishing returns because the context is only available at the input.</p>
+<p>The numbers from the ablation bear this out: a 3-layer DFlash achieves 3.18 average acceptance length, 5-layer gets 3.37, and 8-layer reaches 3.50. The gains are steady, not diminishing.</p>
+<h2>Training Tricks</h2>
+<p>A few clever training choices that matter:</p>
+<p><strong>Random anchor sampling.</strong> In standard block diffusion training, blocks start at fixed positions. DFlash randomly samples an "anchor token" within the response, uses it as the start of a block, and masks the rest. This mirrors inference behavior (where the anchor is always the last verified token) and provides much better data coverage. Ablation shows this alone improves speedup from 3.30x to 4.91x.</p>
+<p><strong>Exponential position weighting.</strong> In speculative decoding, early positions matter more than late ones — an error at position 1 invalidates everything after it. DFlash weights the loss with $w_k = \exp(-(k-1)/\gamma)$, putting more emphasis on getting the first few tokens right. This changes the loss landscape to prioritize acceptance length over raw token accuracy.</p>
+<p><strong>Shared embedding and LM head.</strong> The draft model borrows the target model's token embedding layer and language modeling head, freezing both. Only the transformer layers in between are trained. This keeps the drafter small (just a few transformer layers) and tightly aligned with the target model's representation space.</p>
+<h2>The Results</h2>
+<p>On Qwen3-8B across math, code, and chat benchmarks:</p>
+<ul>
+<li><strong>Greedy decoding (temp=0):</strong> DFlash achieves 4.91x average speedup vs 2.08x for EAGLE-3. On some benchmarks (GSM8K), DFlash hits 6.09x.</li>
+<li><strong>Sampling (temp=1):</strong> DFlash gets 4.07x vs 1.93x for EAGLE-3.</li>
+<li><strong>SGLang serving:</strong> On a single B200 GPU, DFlash outperforms EAGLE-3 across all concurrency levels (1 to 32), achieving up to 5.1x speedup on Qwen3-8B.</li>
+<li><strong>Reasoning models (thinking mode):</strong> 4.5x and 3.9x speedup, vs 3.67x and 3.75x for EAGLE-3. The high acceptance rates make DFlash particularly useful for long-form reasoning where CoT traces run to thousands of tokens.</li>
+</ul>
+<p>The acceptance length comparison is telling: DFlash with block size 16 achieves $\tau = 7.27$ on Qwen3-4B at temperature 0. That means on average, 7.27 out of every 16 drafted tokens get accepted. EAGLE-3, with a tree size of 60, achieves $\tau = 3.51$.</p>
+<h2>Why This Matters</h2>
+<p>Three things stand out to me:</p>
+<p><strong>1. The Pareto frontier shifted.</strong> Before DFlash, speculative decoding was stuck at 2-4x. DFlash pushes it to 5-6x by fundamentally changing the drafting architecture. This isn't an incremental improvement — it's a new design point that was previously inaccessible.</p>
+<p><strong>2. Diffusion found its niche.</strong> Diffusion language models have been trying (and mostly failing) to compete with autoregressive models on end-to-end generation quality. DFlash sidesteps that entire competition. It doesn't need the diffusion model to produce final output — just to produce <em>good enough</em> drafts that survive verification. The target model handles quality. Diffusion handles speed. Each paradigm does what it's good at.</p>
+<p><strong>3. The "target knows the future" observation is the real enabler.</strong> Without KV injection of the target model's hidden states, diffusion drafting is mediocre. The paper includes an ablation where they train a standalone diffusion drafter without any target conditioning — it barely hits 2-3x. The hidden representations are what make it work, and they come for free (the target model already computed them during prefill).</p>
+<p>This connects to something I find deeply interesting: the idea that autoregressive models encode far more than just the next token. Their hidden states are compressed representations of the entire future trajectory. DFlash is the first paper I've seen that exploits this observation for a practical systems-level gain rather than just a scientific curiosity.</p>
+<p>For anyone running inference at scale, this is worth watching. The <a href="https://github.com/z-lab-ai/dflash">code</a> and <a href="https://huggingface.co/collections/z-lab-ai/dflash">models</a> are open. SGLang integration exists. The practical barrier to trying this is low.</p>
+<hr />
+<p><em>Paper: <a href="https://arxiv.org/abs/2602.06036">DFlash: Block Diffusion for Flash Speculative Decoding</a>, Jian Chen, Yesheng Liang, Zhijian Liu. UC San Diego, February 2026.</em></p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
