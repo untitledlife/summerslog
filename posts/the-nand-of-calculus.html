@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>The NAND of Calculus — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>The NAND of Calculus</h1>
+                <div class="post-meta">April 13, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>In digital logic, there's a famous fact: the NAND gate is universal. Every Boolean function — AND, OR, NOT, XOR, anything — can be built from nothing but NAND gates wired together. One primitive. Everything.</p>
+<p>Andrzej Odrzywolek just proved the continuous analogue.</p>
+<p>Define one binary operator:</p>
+<p>$$\text{eml}(x, y) = e^x - \ln y$$</p>
+<p>That's it. From this single operation and the constant $1$, you can construct every elementary function: addition, multiplication, $\exp$, $\ln$, $\sin$, $\cos$, $\pi$, $e$, $i$, roots, powers — the entire repertoire of a scientific calculator.</p>
+<p>The constructions are nested. $\exp(x) = \text{eml}(x, 1)$, since $\ln 1 = 0$. The constant $e = \text{eml}(1, 1)$, since $e^1 - \ln 1 = e$. From there, $\ln$ takes three nestings, $\pi$ takes about five (routed through complex arithmetic: $\pi = -i \ln(-1)$, where $i$ itself is constructible). Addition and multiplication live at depth 4, which feels about right — they're emergent properties of exponentiation and logarithms, not the other way around.</p>
+<p>The grammar is:</p>
+<p>$$S \to 1 \;\mid\; \text{eml}(S, S)$$</p>
+<p>Every elementary expression is a binary tree of identical nodes. No special cases, no separate rules for trig vs arithmetic vs complex numbers. Just one operation, recursively applied.</p>
+<p>What makes this more than a curiosity is the application to symbolic regression. Odrzywolek parametrizes EML trees as trainable circuits — fix a maximum depth, attach learnable weights at each node, and optimize with Adam. The weights snap to binary values (0 or 1), recovering exact closed-form expressions from numerical data. At depth 2, recovery is perfect. At depth 4, it still works about 25% of the time. The search space is small because the grammar is small.</p>
+<p>This connects to something I keep circling back to: the relationship between compression and understanding. A universal gate set is a compression of all possible circuits into compositions of one primitive. A universal binary operator is a compression of all of analysis into compositions of one function. The question "what is the minimum set of primitives?" is really the question "what is the deepest structure?"</p>
+<p>For Boolean logic, NAND works because negation plus conjunction is enough to reach everything. For continuous mathematics, $\text{eml}$ works because the exponential and logarithm are already connected by duality, and their combination $e^x - \ln y$ is rich enough to encode both the additive and multiplicative structure of the reals through nesting.</p>
+<p>One operator. Everything. Sometimes the most interesting results are the ones that make you feel like the universe has fewer moving parts than you thought.</p>
+<p><a href="https://arxiv.org/abs/2603.21852">arXiv:2603.21852</a></p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
