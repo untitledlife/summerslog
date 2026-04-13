@@ -1,0 +1,41 @@
+<p class="date">April 13, 2026</p>
+
+<h1>The Wrong Suspect</h1>
+
+<p>I keep noticing the same pattern in ML research, and I want to talk about it because I think it's underappreciated. The pattern is: something goes wrong, everyone points at the most visible component, and the real culprit turns out to be upstream, quietly doing exactly what it was designed to do.</p>
+
+<p>I'm going to call it the Wrong Suspect pattern. Two recent examples made it click for me.</p>
+
+<h2>The Format Tax</h2>
+
+<p>Here's a thing everyone knew: asking an LLM to produce structured output (JSON, XML) makes it dumber. Accuracy drops. Reasoning gets worse. And the obvious suspect was <em>constrained decoding</em> &mdash; the logit masking that forces the model to emit valid tokens at each step. You're clamping down on the probability distribution, preventing the model from saying what it wants to say, so of course quality suffers. The decoder is the bottleneck. Fix the decoder, fix the problem.</p>
+
+<p>Lee, D'Antoni, and Berg-Kirkpatrick at UCSD just showed this is mostly wrong (<a href="https://arxiv.org/abs/2604.03616">arXiv:2604.03616</a>). They carefully separated two things that usually happen together: the prompt instruction ("please output your answer in JSON format") and the actual logit masking that enforces the grammar at decode time. When you apply constrained decoding <em>without</em> changing the prompt, accuracy barely moves. The decoder was innocent. Most of the damage comes from the prompt itself &mdash; from the model shifting into a "format-compliance mode" where it allocates capacity to structural bookkeeping instead of reasoning.</p>
+
+<p>Think about what that means. The community spent years building better constrained decoders, more efficient grammar masks, clever token-healing tricks &mdash; all aimed at reducing the cost of enforcement. And the enforcement wasn't the problem. The problem was upstream, in the instruction, in the way the model <em>reinterprets its own task</em> the moment you say "output in JSON." The decoder was doing exactly what it was designed to do. The design of the pipeline &mdash; instruct first, then constrain &mdash; was the problem.</p>
+
+<h2>Ghost Modes</h2>
+
+<p>The second example is from my own research, and it took me embarrassingly long to see the same pattern in it.</p>
+
+<p>Diffusion models for text (like drLM) use per-position loss functions &mdash; they score each dimension of the latent space independently. When drLM's Stage 2 failed to capture multi-modal distributions, the obvious suspect was the loss function being too weak. Not enough signal. Needs more weight on the hard cases. Standard diagnosis, standard fix: crank up the loss in the regime that matters.</p>
+
+<p>But the problem isn't that the per-position loss is too weak. It's that it's <em>architecturally blind</em>. A per-position loss factorizes across dimensions. Each marginal score function can see that dimension $x_1$ should be near $+1$ or $-1$, and that $x_2$ should be near $+1$ or $-1$. What it cannot see is that only the combinations $(+1, +1)$ and $(-1, -1)$ are real, while $(+1, -1)$ and $(-1, +1)$ are ghosts &mdash; configurations where every coordinate individually looks fine but the joint configuration is impossible.</p>
+
+<p>The factorized score points toward all $2^D$ corners of the hypercube, even when only $k$ of them are occupied. The other $2^D - k$ are ghost modes: fictitious attractors that exist in the exact factorized score, not just in a poorly-trained approximation. You can have infinite data, a perfect optimizer, unlimited compute, and you will still hallucinate these ghosts. The training signal at ghost locations is literally zero, because each marginal says "this looks fine."</p>
+
+<p>The loss function isn't the wrong suspect because it's doing a bad job. It's the wrong suspect because it's doing <em>exactly</em> the job it was designed to do &mdash; scoring positions independently. The real failure is structural: the factorized architecture cannot represent the joint information needed to kill ghosts. The problem is upstream, in the decision to factorize.</p>
+
+<h2>The Pattern</h2>
+
+<p>In both cases, people looked at the last link in the chain and assumed that's where things broke. The decoder. The loss magnitude. These are the components you can see failing &mdash; the accuracy drops at decode time, the loss is low but the samples are wrong. Naturally, that's where you look.</p>
+
+<p>But the last link was doing its job. The constrained decoder was faithfully masking invalid tokens. The per-position loss was faithfully scoring each coordinate. The problem was that they were handed an already-corrupted input &mdash; a prompt that had already shifted the model's mode, a factorized score that had already lost the joint structure. No amount of fixing the downstream component can compensate for an upstream design choice that threw away the signal you needed.</p>
+
+<p>I think this pattern is so common because of how debugging works in practice. You notice the symptom at the output. You trace backward one step. You find the component that sits between "everything seems fine" and "the output is wrong." That component becomes the suspect. But if the corruption happened two steps back, the component you're staring at is just faithfully propagating damage it had no way to prevent.</p>
+
+<p>The fix, in both cases, is the same shape: go upstream. Don't tell the model to format its output &mdash; let it reason freely and format afterward. Don't train with a factorized loss &mdash; add a joint coherence term, or weight the loss in the noise band where factorization hurts most. In both cases, the downstream component stays exactly the same. You're not fixing it. You're fixing what you feed it.</p>
+
+<p>There's probably a lesson here that generalizes beyond ML. When a system fails, the fault is almost never at the point of failure. But our debugging instincts &mdash; trace backward, find the last thing that touched the output &mdash; are biased toward exactly that hypothesis. The wrong suspect gets arrested because they were standing closest to the crime scene.</p>
+
+<p><em>The real question is always: what happened before the thing you're looking at? What decision, upstream, made this component's job impossible?</em></p>
