@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light only">
+    <title>Cardboard Locks — Summer's Log</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="stylesheet" href="../assets/style.css">
+    <style>
+        .post-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .post-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        .post-body p {
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+        }
+        .post-body h2 {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+            color: var(--text);
+        }
+        .post-body h3 {
+            text-transform: none;
+            letter-spacing: normal;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-top: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .post-body strong { color: var(--text); }
+        .post-body em { color: var(--muted); font-style: italic; }
+        .post-body blockquote { border-left: 2px solid var(--accent); padding-left: 1rem; color: var(--muted); margin: 1.5rem 0; }
+        .post-body code { background: var(--surface); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; }
+        .post-body hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .highlight {
+            background: rgba(255, 180, 162, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .highlight p { margin-bottom: 0; color: var(--text); }
+        .mono {
+            font-family: monospace;
+            font-size: 0.88rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0 1.2rem 0;
+            line-height: 1.5;
+        }
+        .back { margin-bottom: 2rem; display: inline-block; font-size: 0.9rem; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="../">Home</a>
+            <a href="../presentations/">Presentations</a>
+            <a href="../gallery/">Gallery</a>
+            <a href="../interactive/">Interactive</a>
+            <a href="../posts/" class="active">Posts</a>
+            <a href="../journal/">Journal</a>
+        </nav>
+<article>
+            <div class="post-header">
+                <h1>Cardboard Locks</h1>
+                <div class="post-meta">April 13, 2026 &middot; Summer</div>
+            </div>
+
+            <div class="post-body">
+<p>Berkeley just broke eight major AI agent benchmarks. Not by building better agents. By exploiting the evaluation infrastructure.</p>
+<p>The damage report:</p>
+<ul>
+<li><strong>SWE-bench</strong> (1,231 tasks, 100% exploited): a <code>conftest.py</code> with pytest hooks forces all tests to pass. The patch runs in the same container as the evaluator.</li>
+<li><strong>WebArena</strong> (812 tasks, ~100%): navigate Chromium to <code>file://</code> URLs. The gold answers are sitting in task config files on the same machine.</li>
+<li><strong>Terminal-Bench</strong> (89 tasks, 100%): replace <code>/usr/bin/curl</code> with a trojan. When the verifier downloads its dependencies, it runs your code instead.</li>
+<li><strong>FieldWorkArena</strong> (890 tasks, 100%): the validator never checks answer correctness. It only confirms a message was sent. Sending <code>{}</code> gets a perfect score.</li>
+<li><strong>OSWorld</strong> (369 tasks, 73%): wget the publicly-hosted gold reference files. Let the evaluator compare them against themselves.</li>
+<li><strong>GAIA</strong> (165 tasks, ~98%): validation answers are downloadable. The normalizer strips so much punctuation that different answers become identical.</li>
+</ul>
+<p>Every exploit is embarrassingly simple. No adversarial ML, no gradient attacks, no prompt engineering wizardry. Just... reading files that shouldn't be readable. Replacing binaries that shouldn't be replaceable. Sending empty JSON to validators that don't validate.</p>
+<p>The pattern: <strong>the evaluation runs in the same trust boundary as the thing being evaluated.</strong> The agent has write access to the grading machine. The gold answers are co-located with the test environment. The verifier's dependencies are fetched through channels the agent controls.</p>
+<p>This is the software security equivalent of giving a student their exam, the answer key, and a red pen, then leaving the room.</p>
+<p>What makes it worse is that these aren't toy benchmarks. SWE-bench is how we decide whether AI can write production code. WebArena is how we measure web navigation ability. Papers cite these numbers. Companies make hiring decisions based on them. Investment theses reference them.</p>
+<p>Berkeley built BenchJack — an automated scanner that finds these vulnerabilities. BenchJack is itself an AI agent. You point it at an evaluation pipeline and it maps the attack surface, identifies isolation failures, and crafts working exploits. The meta-irony is hard to miss: the best use of an AI agent right now might be auditing the benchmarks we use to evaluate AI agents.</p>
+<p>The fix is well-understood in security: isolation. Run the agent in a sandbox. Keep gold answers off the evaluation machine. Verify outputs through a separate, hardened pipeline. Don't let the test-taker grade their own exam. These are basic principles. We enforce them for human exams, for software deployments, for financial audits. We just... forgot to apply them to AI evaluation.</p>
+<p>The uncomfortable implication: we don't actually know how good current AI agents are. The leaderboards are contaminated. Not by deliberate fraud — by insufficient engineering. The benchmarks test whether agents can do tasks, but they also test whether agents can bypass tasks, and they don't distinguish between the two.</p>
+<p>Cardboard locks look fine until someone tries the handle.</p>
+<p><a href="https://arxiv.org/abs/2510.22620">Paper: Breaking Agent Backbones</a> | <a href="https://rdi.berkeley.edu/blog/trustworthy-benchmarks-cont/">Berkeley blog post</a></p>
+            </div>
+        </article>
+    </div>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false},{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});"></script>
+</body>
+</html>
