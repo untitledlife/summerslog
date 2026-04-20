@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>SOTA Quantization + Unsloth Deep Dive (April 2026)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --accent: #c2653a;
+  --accent-light: #f4e0d6;
+  --accent-surface: #fdf5f1;
+  --surface: #ffffff;
+  --surface-dim: #f5f3f0;
+  --surface-container: #edeae6;
+  --surface-container-high: #e6e3df;
+  --on-surface: #1c1b1a;
+  --on-surface-variant: #4a4742;
+  --outline: #7c7872;
+  --outline-variant: #cdc8c2;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+}
+
+html {
+  color-scheme: light only;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--on-surface);
+  background: var(--surface-dim);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page-container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+@media (min-width: 600px) {
+  .page-container {
+    padding: 48px 32px 96px;
+  }
+}
+
+/* Header */
+.page-header {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 32px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+@media (min-width: 600px) {
+  .page-header {
+    padding: 48px 40px;
+    margin-bottom: 32px;
+  }
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--on-surface);
+  margin-bottom: 8px;
+}
+
+@media (min-width: 600px) {
+  .page-header h1 {
+    font-size: 2.25rem;
+  }
+}
+
+.page-header .subtitle {
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+  font-weight: 400;
+}
+
+/* Table of Contents */
+.toc {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+@media (min-width: 600px) {
+  .toc {
+    padding: 32px 40px;
+    margin-bottom: 32px;
+  }
+}
+
+.toc-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.toc ol {
+  list-style: none;
+  counter-reset: toc-part;
+}
+
+.toc > ol > li {
+  counter-increment: toc-part;
+  margin-bottom: 12px;
+}
+
+.toc > ol > li > a {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.toc ol ol {
+  list-style: none;
+  margin-top: 6px;
+  padding-left: 20px;
+}
+
+.toc ol ol li {
+  margin-bottom: 4px;
+}
+
+.toc ol ol li a {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.toc a {
+  color: var(--on-surface);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.toc a:hover {
+  color: var(--accent);
+}
+
+/* Content card */
+.content-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+@media (min-width: 600px) {
+  .content-card {
+    padding: 40px;
+    margin-bottom: 32px;
+  }
+}
+
+/* Part headings */
+.part-heading {
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--on-surface);
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--accent-light);
+}
+
+@media (min-width: 600px) {
+  .part-heading {
+    font-size: 1.625rem;
+  }
+}
+
+/* Section headings */
+h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin-top: 36px;
+  margin-bottom: 16px;
+}
+
+h3:first-of-type {
+  margin-top: 0;
+}
+
+h4, .sub-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 24px;
+  margin-bottom: 10px;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: 16px;
+  color: var(--on-surface);
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: 16px;
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 8px;
+  color: var(--on-surface);
+}
+
+li strong {
+  color: var(--on-surface);
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 16px -8px;
+  padding: 0 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--outline-variant) transparent;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--outline-variant);
+  min-width: 480px;
+}
+
+thead {
+  background: var(--surface-container);
+}
+
+th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  color: var(--on-surface-variant);
+  padding: 12px 16px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--outline-variant);
+}
+
+td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--surface-container);
+  color: var(--on-surface);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: var(--accent-surface);
+}
+
+/* Code */
+code {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8125em;
+  background: var(--surface-container);
+  color: var(--accent);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+pre {
+  background: var(--surface-container);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  overflow-x: auto;
+  margin: 16px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--on-surface);
+}
+
+/* Numbered list for gaps */
+.gaps-list {
+  counter-reset: gap-counter;
+  list-style: none;
+  padding-left: 0;
+}
+
+.gaps-list > li {
+  counter-increment: gap-counter;
+  position: relative;
+  padding-left: 40px;
+  margin-bottom: 14px;
+}
+
+.gaps-list > li::before {
+  content: counter(gap-counter);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 26px;
+  height: 26px;
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Highlight box */
+.highlight-box {
+  background: var(--accent-surface);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+
+.highlight-box p {
+  margin-bottom: 0;
+  font-size: 0.9375rem;
+}
+
+/* Direction arrows */
+.direction-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.direction-list li {
+  padding-left: 24px;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.direction-list li::before {
+  content: "\2192";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Separator */
+.section-sep {
+  height: 1px;
+  background: var(--outline-variant);
+  border: none;
+  margin: 36px 0;
+}
+
+/* Footer */
+.page-footer {
+  text-align: center;
+  padding: 32px 16px;
+  font-size: 0.8125rem;
+  color: var(--outline);
+}
+</style>
+</head>
+<body>
+
+<div class="page-container">
+
+  <!-- Header -->
+  <header class="page-header">
+    <h1>SOTA Quantization + Unsloth Deep Dive</h1>
+    <p class="subtitle">Compiled April 2026 &middot; For CE research team</p>
+  </header>
+
+  <!-- Table of Contents -->
+  <nav class="toc">
+    <div class="toc-title">Contents</div>
+    <ol>
+      <li>
+        <a href="#part-i">Part I: SOTA Quantization Landscape</a>
+        <ol>
+          <li><a href="#quick-map">The Quick Map</a></li>
+          <li><a href="#weight-only-ptq">Weight-Only PTQ</a></li>
+          <li><a href="#weight-activation">Weight + Activation Quantization</a></li>
+          <li><a href="#kv-cache">KV Cache Quantization</a></li>
+          <li><a href="#qat">QAT</a></li>
+          <li><a href="#hardware-aware">Hardware-Aware</a></li>
+          <li><a href="#gaps">What's NOT Solved</a></li>
+          <li><a href="#heading">Where It's Heading</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#part-ii">Part II: Unsloth Technical Teardown</a>
+        <ol>
+          <li><a href="#what-it-is">What It Is</a></li>
+          <li><a href="#six-layers">Six Optimization Layers</a></li>
+          <li><a href="#supported-models">Supported Models</a></li>
+          <li><a href="#what-they-dont-do">What They Don't Do</a></li>
+          <li><a href="#licensing">Licensing Split</a></li>
+          <li><a href="#competitors">Competitors</a></li>
+        </ol>
+      </li>
+      <li>
+        <a href="#part-iii">Part III: Gaps &amp; Opportunities</a>
+        <ol>
+          <li><a href="#high-impact">High-Impact, Buildable in 2-3 Months</a></li>
+          <li><a href="#research-angles">Research Angles (Publishable)</a></li>
+          <li><a href="#reproducibility">What's Reproducible vs What's Hard</a></li>
+          <li><a href="#honest-assessment">The Honest Assessment</a></li>
+        </ol>
+      </li>
+    </ol>
+  </nav>
+
+  <!-- Part I -->
+  <article class="content-card" id="part-i">
+    <h2 class="part-heading">Part I: SOTA Quantization Landscape</h2>
+
+    <h3 id="quick-map">The Quick Map</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Frontier</th><th>State (Apr 2026)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Weight-only PTQ (lossless)</td><td>4-bit solved (GPTQ/AWQ). 2-bit usable on 70B+ (QuIP#, AQLM, QTIP)</td></tr>
+          <tr><td>Weight+Activation</td><td>W8A8 solved (SmoothQuant). W4A8 reliable (QServe). W4A4 works with rotations (QuaRot/SpinQuant)</td></tr>
+          <tr><td>KV cache</td><td>2-bit works (KIVI). 3.5-bit lossless (TurboQuant, ICLR 2026). 1-bit approximate (QJL)</td></tr>
+          <tr><td>QAT from scratch</td><td>1.58-bit matches FP16 (BitNet b1.58). Scaling to 13B+</td></tr>
+          <tr><td>Hardware</td><td>FP8 mature on Hopper. FP4 emerging on Blackwell. Ternary hardware proposals</td></tr>
+          <tr><td>Deployment sweet spot</td><td><strong>W4A8KV4 (QServe stack)</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="section-sep">
+
+    <h3 id="weight-only-ptq">Weight-Only PTQ</h3>
+
+    <p class="sub-label">Foundational (solved)</p>
+    <ul>
+      <li><strong>GPTQ</strong> (ICLR 2023): Hessian-based one-shot, W4, &lt;1 ppl loss. Industry default.</li>
+      <li><strong>AWQ</strong> (MLSys 2024): Activation-aware channel scaling, W4, &lt;0.5 ppl. Preferred for edge.</li>
+      <li><strong>HQQ</strong>: No calibration data needed. Fast minutes-scale quantization.</li>
+    </ul>
+
+    <p class="sub-label">Extreme compression (frontier)</p>
+    <ul>
+      <li><strong>QuIP#</strong> (ICML 2024): E8 lattice codebooks + Hadamard rotations. LLaMA-2-70B at 2-bit: 3.93 ppl (vs 3.32 FP16).</li>
+      <li><strong>AQLM</strong> (ICML 2024): Multi-codebook additive VQ. Competitive at 2-bit, functional at ~1-bit.</li>
+      <li><strong>QTIP</strong> (NeurIPS 2024): Trellis-coded quantization. Sub-2-bit, beats QuIP#/AQLM.</li>
+      <li><strong>SqueezeLLM</strong> (ICML 2024): Dense-and-sparse decomposition, strong at W3.</li>
+      <li><strong>OmniQuant</strong> (ICLR 2024): Learnable clipping + transforms. Bridges PTQ&#8596;QAT.</li>
+      <li><strong>SpQR</strong> (ICML 2024): Sparse outliers at FP16, rest at 3-4 bit.</li>
+      <li><strong>BiLLM</strong> (ICML 2024): Binary (1.1-bit) via Hessian-aware binarization. Significant quality gap.</li>
+    </ul>
+
+    <hr class="section-sep">
+
+    <h3 id="weight-activation">Weight + Activation Quantization</h3>
+    <ul>
+      <li><strong>SmoothQuant</strong> (ICML 2023): Per-channel scaling, W8A8, near-lossless. Industry standard.</li>
+      <li><strong>Atom</strong> (MLSys 2024): Mixed-precision W4A4 co-designed with kernels. 7.7x throughput.</li>
+      <li><strong>QoQ/QServe</strong> (MLSys 2025): W4A8KV4. Practical production system. 1.2-3.5x speedup.</li>
+      <li><strong>QuaRot</strong> (NeurIPS 2024): Hadamard rotations for full W4A4KV4 inference.</li>
+      <li><strong>SpinQuant</strong> (NeurIPS 2024, Meta): Learned optimal rotations, strictly better than QuaRot.</li>
+      <li><strong>FlatQuant</strong> (NeurIPS 2024): Learned affine transforms to flatten loss landscape. SOTA W4A4.</li>
+      <li><strong>SageAttention2</strong> (2025): INT4/FP8 attention, ~3x over FlashAttention-2.</li>
+    </ul>
+
+    <hr class="section-sep">
+
+    <h3 id="kv-cache">KV Cache Quantization</h3>
+    <ul>
+      <li><strong>KIVI</strong> (ICML 2024): Tuning-free asymmetric 2-bit. Per-channel keys, per-token values. &lt;0.1 ppl loss. Widely adopted.</li>
+      <li><strong>KVQuant</strong> (NeurIPS 2024): Per-channel NUQ with codebooks. Enables 1M context on single A100.</li>
+      <li><strong>GEAR</strong> (NeurIPS 2024): Low-rank error approximation + sparse correction. ~3.4x compression.</li>
+      <li><strong>QJL</strong> (AAAI 2025): 1-bit JL projections. Approximate but fast.</li>
+    </ul>
+
+    <div class="highlight-box">
+      <p><strong>TurboQuant</strong> (Google, ICLR 2026): Two-stage near-optimal VQ. PolarQuant (rotation + polar quant) + QJL (bias correction). Within 2.7x of Shannon bound. Lossless at 3.5 bits. 4x speedup vs FP16 attention kernels. JAX, no open-source yet. Reportedly deployed for Gemini. <strong>This is the new SOTA.</strong></p>
+    </div>
+
+    <hr class="section-sep">
+
+    <h3 id="qat">QAT</h3>
+    <ul>
+      <li><strong>BitNet b1.58</strong> (Microsoft 2024): Ternary {-1,0,+1} from scratch. Matches FP16 at 3B. Scaling to 13B+ in 2025-2026.</li>
+      <li><strong>EfficientQAT</strong> (2024): Two-phase -- fast block-wise calibration + optional E2E fine-tune. SOTA at W2.</li>
+      <li><strong>QLoRA</strong> (NeurIPS 2023): NF4 base + BF16 LoRA. Ubiquitous for fine-tuning.</li>
+      <li><strong>LoftQ</strong> (ICLR 2024): Joint LoRA init + quantization. Better than QLoRA at 2-bit.</li>
+      <li><strong>Native FP4/FP8 QAT</strong> (2025-2026): Emerging for Blackwell hardware.</li>
+    </ul>
+
+    <hr class="section-sep">
+
+    <h3 id="hardware-aware">Hardware-Aware</h3>
+    <ul>
+      <li><strong>Marlin</strong> (2024): W4A16 CUDA kernel, ~3.87x (near-theoretical 4x) on A100. Gold standard.</li>
+      <li><strong>Machete</strong> (vLLM, 2025): Marlin successor for Hopper, W4A8/W8A8, TMA support.</li>
+      <li><strong>FLUTE</strong> (ICML 2025): Generic lookup-table kernel for any quantization format. Near-Marlin speed.</li>
+      <li><strong>FP8 on Hopper</strong>: Mature, near-lossless, ~2x over FP16. Becoming default for serving.</li>
+      <li><strong>FP4 on Blackwell</strong>: Early but promising. ~2x over FP8 theoretical. Software stack maturing.</li>
+      <li><strong>llama.cpp/GGUF</strong>: Most deployed quantized runtime. CPU/Apple Silicon/GPU universal.</li>
+      <li><strong>bitnet.cpp</strong>: CPU ternary inference, 1.4-5x speedup vs FP16 with 41-72% energy reduction.</li>
+    </ul>
+
+    <hr class="section-sep">
+
+    <h3 id="gaps">What's NOT Solved (Gaps)</h3>
+    <ol class="gaps-list">
+      <li><strong>Sub-2-bit PTQ without significant loss.</strong> QAT works at 1.58 bits (BitNet) but PTQ below 2 bits still degrades badly.</li>
+      <li><strong>The PTQ-QAT gap below 4 bits.</strong> Getting QAT-quality at PTQ-cost is the holy grail.</li>
+      <li><strong>W4A4 is not plug-and-play.</strong> Requires rotations, clipping, per-model tuning. Not like W4A16 which "just works."</li>
+      <li><strong>Quantization breaks reasoning.</strong> Multi-step CoT is 5-10% more sensitive than perplexity suggests. No principled fix.</li>
+      <li><strong>No universal calibration-free PTQ.</strong> KIVI/TurboQuant are cal-free for KV cache; HQQ for weights; nobody for W+A.</li>
+      <li><strong>MoE quantization is underexplored.</strong> Inactive experts tolerate lower precision -- nobody exploits this well.</li>
+      <li><strong>Multimodal quantization.</strong> Vision encoders, cross-attention, multi-modal projectors have different precision needs. No unified framework.</li>
+      <li><strong>Non-Transformer quantization.</strong> Mamba/RWKV have different bottlenecks (recurrent state vs KV cache). Transformer methods don't transfer directly.</li>
+      <li><strong>Dynamic per-token precision.</strong> Promising idea, no deployable solution.</li>
+      <li><strong>Kernel fragmentation.</strong> Every format needs custom CUDA kernels. FLUTE helps but early.</li>
+    </ol>
+
+    <hr class="section-sep">
+
+    <h3 id="heading">Where It's Heading</h3>
+    <ul class="direction-list">
+      <li>FP8 becoming default. FP4 at the frontier.</li>
+      <li>BitNet at 70B+ -- if quality holds, changes inference economics fundamentally.</li>
+      <li>Custom silicon for ternary ops emerging.</li>
+      <li>Architectures designed to be quantization-friendly (not post-hoc).</li>
+      <li>Compound compression: quant + pruning + distillation + NAS jointly.</li>
+    </ul>
+  </article>
+
+  <!-- Part II -->
+  <article class="content-card" id="part-ii">
+    <h2 class="part-heading">Part II: Unsloth Technical Teardown</h2>
+
+    <h3 id="what-it-is">What It Is</h3>
+    <p>A monkey-patching framework (~90K LOC across <code>unsloth</code> + <code>unsloth-zoo</code>) that intercepts HuggingFace Transformers models at load time and replaces forward/backward passes with optimized versions. Founded by Daniel and Michael Han-Chen.</p>
+
+    <hr class="section-sep">
+
+    <h3 id="six-layers">Six Optimization Layers</h3>
+
+    <p class="sub-label">1. Custom Triton Kernels <code>unsloth/kernels/</code></p>
+    <ul>
+      <li><strong>Cross-Entropy Loss</strong> (463 LOC): Forward computes logsumexp in single fused kernel. Backward writes gradients in-place on logits tensor. Chunked approach for large vocabs (&gt;65K). Major memory win.</li>
+      <li><strong>RMSNorm</strong> (340 LOC): Fused forward+backward. Stores only inverse variance scalar, not full intermediate. Gemma-specific <code>(W+1)</code> variant.</li>
+      <li><strong>RoPE</strong> (466 LOC): Fused Q+K rotation in single kernel launch. Groups heads (<code>ROPE_GROUP_SIZE=4</code>). Backward = negate sin and re-apply.</li>
+      <li><strong>SwiGLU</strong> (143 LOC): Fused activation + gate. Backward reuses input buffers for derivatives -- saves 3 intermediate tensor allocations.</li>
+      <li><strong>MoE Grouped GEMM</strong>: For Qwen3-MoE, DeepSeek-V3, etc. TMA descriptors for H100+. AGPL licensed.</li>
+    </ul>
+
+    <p class="sub-label">2. Custom LoRA Backward Passes <code>fast_lora.py</code> (730 LOC) -- the biggest optimization</p>
+    <ul>
+      <li><strong>LoRA_QKV</strong>: Fused backward for Q/K/V projections. Manually implements chain rule. Dequantizes 4-bit weight once, does matmul, adds LoRA gradient via <code>addmm_</code> (in-place). Avoids materializing intermediate activation tensors that PyTorch autograd would save.</li>
+      <li><strong>LoRA_MLP</strong>: Same for gate/up/down MLP. Shares dequantized weight tensors.</li>
+      <li><strong>LoRA_W</strong>: Generic single-projection backward (O projection).</li>
+      <li>Key insight: standard autograd saves input/output at each <code>nn.Linear</code> boundary. Unsloth's custom backward saves only <code>X</code>, <code>e</code> (gate), <code>g</code> (up), recomputes everything else.</li>
+    </ul>
+
+    <p class="sub-label">3. Fused Cross-Entropy Without Materializing Logits</p>
+    <ul>
+      <li>Computes loss directly from hidden states. Never allocates the full <code>[batch, seq_len, vocab_size]</code> tensor. For 128K vocab + seq_len=4096, saves ~2GB VRAM per forward pass.</li>
+      <li>Uses Apple's <code>cut_cross_entropy</code> library optionally.</li>
+    </ul>
+
+    <p class="sub-label">4. Smart Gradient Checkpointing (3 modes)</p>
+    <ul>
+      <li><strong>CPU offloading</strong>: Async transfer to pinned CPU memory via CUDA streams. 200 pre-allocated 128KB buffers. Skips last layer. Falls back to standard for seq &lt; 512.</li>
+      <li><strong>Standard</strong>: Clean reimplementation.</li>
+      <li><strong>Adaptive</strong>: Heuristics-based mode selection.</li>
+    </ul>
+
+    <p class="sub-label">5. <code>torch.compile</code> AST Transforms <code>compiler.py</code> (4285 LOC)</p>
+    <ul>
+      <li>AST-parses HuggingFace model source code</li>
+      <li>Source-level transforms: removes causal mask creation, replaces SDPA calls, fuses ops</li>
+      <li>Wraps with <code>torch.compile(dynamic=True)</code> with tuned options</li>
+      <li>Disk-cached compiled modules</li>
+      <li>Generic path for models without hand-optimized kernels</li>
+    </ul>
+
+    <p class="sub-label">6. Tiled MLP</p>
+    <ul>
+      <li>Chunks sequence dimension into tiles fitting a target GPU memory budget (default 0.5GB). Bounds peak memory for large intermediate dims (especially MoE).</li>
+    </ul>
+
+    <hr class="section-sep">
+
+    <h3 id="supported-models">Supported Models</h3>
+    <p><strong>Optimized</strong> (hand-written kernels): Llama 2/3/3.1/3.2/4, Mistral, Qwen2/3/3-MoE, Gemma 1/2/3/3N/4, Cohere, Granite, Falcon-H1, DeepSeek-V3/R1, GLM4-MoE, Phi-3.</p>
+    <p><strong>Generic</strong> (<code>torch.compile</code> path): Any <code>AutoModelForCausalLM</code> or <code>AutoModelForImageTextToText</code>.</p>
+
+    <hr class="section-sep">
+
+    <h3 id="what-they-dont-do">What They Don't Do</h3>
+    <ul>
+      <li><strong>No custom attention kernel.</strong> Uses PyTorch SDPA / Flash Attention / xformers.</li>
+      <li><strong>No multi-GPU/distributed training.</strong> Single-GPU focused. FSDP/DeepSpeed support is basic.</li>
+      <li><strong>No FP8 training kernels.</strong> FP8 loading/inference only.</li>
+      <li><strong>No kernel autotuning.</strong> Fixed block sizes via simple heuristics.</li>
+      <li><strong>No long-context</strong> (ring attention, sequence parallelism).</li>
+      <li><strong>No speculative decoding.</strong></li>
+    </ul>
+
+    <hr class="section-sep">
+
+    <h3 id="licensing">Licensing Split</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Tier</th><th>License</th><th>Contents</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Open</td><td>Apache 2.0</td><td>All model implementations, Triton kernels (except MoE), loader, tokenizer</td></tr>
+          <tr><td>Open</td><td>LGPL v3</td><td>unsloth-zoo: gradient checkpointing, compiler, loss utils, training utils</td></tr>
+          <tr><td>Proprietary</td><td>AGPL v3</td><td>Studio frontend/backend, CLI, MoE grouped GEMM kernels</td></tr>
+          <tr><td>Closed</td><td>--</td><td>unsloth_studio package (premium features)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="section-sep">
+
+    <h3 id="competitors">Competitors</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Feature</th><th>Unsloth</th><th>torchtune</th><th>LLaMA-Factory</th><th>Axolotl</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Custom kernels</td><td>Yes (Triton)</td><td>Some</td><td>No (uses Unsloth)</td><td>No (uses Unsloth)</td></tr>
+          <tr><td>Zero-code-change UX</td><td>Yes (monkey-patch)</td><td>No (recipes)</td><td>Yes (config)</td><td>Yes (config)</td></tr>
+          <tr><td>Multi-GPU</td><td>Weak</td><td>Strong (FSDP)</td><td>Moderate</td><td>Moderate</td></tr>
+          <tr><td>Full fine-tune optimization</td><td>Weak</td><td>Strong</td><td>Moderate</td><td>Moderate</td></tr>
+          <tr><td>Model coverage</td><td>Broad</td><td>Narrow</td><td>Broad</td><td>Broad</td></tr>
+          <tr><td>Architecture</td><td>Monkey-patching</td><td>Composable PyTorch</td><td>Pipeline</td><td>Pipeline</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin-top: 12px; font-size: 0.875rem; color: var(--on-surface-variant);">torchtune is the closest <em>technical</em> competitor. LLaMA-Factory and Axolotl are <em>workflow</em> tools that integrate Unsloth underneath.</p>
+  </article>
+
+  <!-- Part III -->
+  <article class="content-card" id="part-iii">
+    <h2 class="part-heading">Part III: Gaps &amp; Opportunities (What CE Could Build)</h2>
+
+    <h3 id="high-impact">High-Impact, Buildable in 2-3 Months</h3>
+
+    <ol>
+      <li style="margin-bottom: 16px;">
+        <strong>Multi-GPU LoRA training with fused kernels.</strong> Unsloth's biggest gap. Combine their kernel-level optimizations with FSDP/DeepSpeed. Nobody has this. A team that nails LoRA + FSDP + gradient checkpointing + custom Triton kernels on multi-GPU would have a differentiated product.
+      </li>
+      <li style="margin-bottom: 16px;">
+        <strong>FP8 LoRA training.</strong> No good open-source solution exists. Train LoRA adapters in FP8 forward / FP16 backward. Blackwell's FP4 adds another frontier. First mover advantage.
+      </li>
+      <li style="margin-bottom: 16px;">
+        <strong>Activation compression instead of CPU offloading.</strong> Quantize activations to INT8/FP8 in-place for gradient checkpointing rather than offloading to CPU. Halves memory without PCIe bandwidth cost. Straightforward to implement.
+      </li>
+      <li style="margin-bottom: 16px;">
+        <strong>Kernel autotuning.</strong> Unsloth's Triton kernels have fixed block sizes. Hardware-specific autotuning (like FlashAttention's approach) could yield 15-30% additional gains. Generic framework that generates optimal kernels per model config + hardware.
+      </li>
+      <li style="margin-bottom: 16px;">
+        <strong>Non-Transformer fine-tuning optimization.</strong> Nobody has Unsloth-equivalent for RWKV/Mamba/SSM models. Different bottleneck (recurrent state), different optimization opportunities. Directly relevant to CE's RWKV-BD3 work.
+      </li>
+    </ol>
+
+    <hr class="section-sep">
+
+    <h3 id="research-angles">Research Angles (Publishable)</h3>
+
+    <ol>
+      <li style="margin-bottom: 16px;">
+        <strong>Quantization for diffusion LMs.</strong> Nobody has studied how quantization affects discrete diffusion models (MDLM, BD3-LM, drLM). Different dynamics than AR -- denoising is iterative, error compounds differently. Original CE territory.
+      </li>
+      <li style="margin-bottom: 16px;">
+        <strong>MoE-aware mixed-precision.</strong> Adaptively allocate precision per expert based on routing frequency and sensitivity. Active experts at higher precision, inactive at 2-bit. Simple idea, no good paper on it.
+      </li>
+      <li style="margin-bottom: 16px;">
+        <strong>Quantization sensitivity of reasoning.</strong> 2026 evidence says CoT is more sensitive to quantization. Why? Is it the long-range dependencies? The compositional structure? A principled study would be publishable.
+      </li>
+      <li style="margin-bottom: 16px;">
+        <strong>Recurrent state quantization for SSMs.</strong> Analogous to KV cache quantization but for Mamba/RWKV state. Different distribution properties, different optimal strategies. Unexplored.
+      </li>
+      <li style="margin-bottom: 16px;">
+        <strong>TurboQuant for weights (not just KV cache).</strong> TurboQuant's PolarQuant + QJL composition is proven near-optimal for inner products. Could this be applied to weight quantization? The math might transfer.
+      </li>
+    </ol>
+
+    <hr class="section-sep">
+
+    <h3 id="reproducibility">What's Reproducible vs What's Hard</h3>
+
+    <p class="sub-label">Reproducible in weeks (2-3 researchers)</p>
+    <ul>
+      <li>Core Triton kernels (RMSNorm, RoPE, SwiGLU, CE) -- each 100-400 LOC, standard Triton</li>
+      <li>Custom LoRA backward -- ~700 LOC of manual chain rule</li>
+      <li>Fused CE without logit materialization -- existing technique (<code>cut_cross_entropy</code>)</li>
+      <li>Smart gradient checkpointing -- standard engineering</li>
+    </ul>
+
+    <p class="sub-label">Hard to reproduce</p>
+    <ul>
+      <li>Model coverage breadth (1466 LOC mapper, dozens of temp patches for new architectures) -- constant maintenance burden</li>
+      <li><code>torch.compile</code> AST pipeline (4300 LOC) -- genuinely complex, parsing arbitrary HF model source</li>
+      <li>Ecosystem (pre-quantized models on HF, TRL/PEFT integration, vLLM)</li>
+    </ul>
+
+    <hr class="section-sep">
+
+    <h3 id="honest-assessment">The Honest Assessment</h3>
+
+    <p>Unsloth's individual optimizations are <strong>not deeply novel</strong>. Kernel fusion, buffer reuse, avoiding materialization, CPU offloading -- all standard GPU optimization techniques. What makes it work is the <em>integration</em> + zero-code-change UX.</p>
+
+    <p>The moat is not any single kernel -- it's the breadth of model support and the monkey-patching UX that makes it "just work" with existing HF code. Competing on that axis means an ongoing maintenance race.</p>
+
+    <div class="highlight-box">
+      <p><strong>Where to compete instead:</strong> Multi-GPU (they're weakest), FP8 training (nobody has it), non-Transformer architectures (original territory), and research publications that become the reference implementation (like FlashAttention did for attention kernels).</p>
+    </div>
+  </article>
+
+  <footer class="page-footer">
+    <p>CE Research &middot; April 2026</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
