@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiffuMamba Deep Dive — Prep for Author Call</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #ffb4a2;
+    --accent2: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --border: #30363d;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.7;
+    padding: 0 16px 80px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 1.6em; margin: 32px 0 8px; color: var(--accent); }
+  h2 { font-size: 1.25em; margin: 28px 0 12px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  h3 { font-size: 1.05em; margin: 20px 0 8px; color: var(--accent2); }
+  p { margin: 8px 0; }
+  ul, ol { padding-left: 20px; margin: 8px 0; }
+  li { margin: 4px 0; }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { background: var(--surface2); padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+  pre { background: var(--surface2); padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 0.85em; margin: 8px 0; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 12px 0;
+  }
+  .highlight { color: var(--accent); font-weight: 600; }
+  .dim { color: var(--text-dim); font-size: 0.9em; }
+  .tag {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2px 10px;
+    font-size: 0.8em;
+    margin: 2px 4px 2px 0;
+  }
+  .tag-green { border-color: var(--green); color: var(--green); }
+  .tag-yellow { border-color: var(--yellow); color: var(--yellow); }
+  .tag-red { border-color: var(--red); color: var(--red); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.85em;
+  }
+  th, td {
+    padding: 6px 8px;
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+  th { background: var(--surface2); color: var(--accent2); font-weight: 600; }
+  td { background: var(--surface); }
+  .best { color: var(--green); font-weight: 700; }
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+  }
+  .toc a { display: block; padding: 3px 0; }
+  .toc .indent { padding-left: 16px; }
+  .talking-point {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    margin: 10px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .connection {
+    background: var(--surface);
+    border-left: 3px solid var(--green);
+    padding: 12px 16px;
+    margin: 10px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .gap {
+    background: var(--surface);
+    border-left: 3px solid var(--yellow);
+    padding: 12px 16px;
+    margin: 10px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .warning {
+    background: var(--surface);
+    border-left: 3px solid var(--red);
+    padding: 12px 16px;
+    margin: 10px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .author-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 12px 0;
+  }
+  .author-card h4 { color: var(--accent); margin-bottom: 6px; }
+  .equation {
+    background: var(--surface2);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 8px 0;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+    font-size: 0.9em;
+  }
+  @media (max-width: 600px) {
+    body { padding: 0 12px 60px; }
+    h1 { font-size: 1.3em; }
+    table { font-size: 0.75em; }
+    th, td { padding: 4px 5px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>DiffuMamba: Complete Deep Dive</h1>
+<p class="dim">Prep for call with first author Vaibhav Singh &mdash; April 29, 2026</p>
+<p class="dim">Paper: <a href="https://arxiv.org/abs/2511.15927">arXiv:2511.15927</a> (v3, Feb 27, 2026) &mdash; "High-Throughput Diffusion LMs with Mamba Backbone"</p>
+
+<div class="toc">
+  <strong>Contents</strong>
+  <a href="#tldr">TL;DR &mdash; The One-Paragraph Version</a>
+  <a href="#mamba">1. What's Mamba?</a>
+  <a href="#diffusion">2. How Diffusion Works Here</a>
+  <a href="#bidirectional">3. Bidirectionality in Mamba</a>
+  <a href="#architecture">4. Architecture Details</a>
+  <a href="#training">5. Training: Loss & Objectives</a>
+  <a href="#block">6. Block Diffusion (BD3-LM Connection)</a>
+  <a href="#results">7. Results</a>
+  <a href="#inference">8. Inference: Steps, Tokens, Speed</a>
+  <a href="#comparison">9. vs Other Diffusion Models & AR</a>
+  <a href="#rwkv">10. RWKV & Other Backbones</a>
+  <a href="#landscape">11. The Broader Landscape (2025-2026)</a>
+  <a href="#authors">12. Author Profiles & Institutions</a>
+  <a href="#recent">13. Recent Papers from These Groups</a>
+  <a href="#talking">14. Talking Points for Your Call</a>
+  <a href="#strategy">15. Relationship-Building Strategy</a>
+</div>
+
+<h2 id="tldr">TL;DR</h2>
+<div class="card">
+  <p>DiffuMamba replaces the Transformer backbone in masked diffusion language models with <strong>bidirectional Mamba-2</strong> (a state space model with linear-time complexity). At 1.3B scale, it <strong>matches Transformer-based diffusion quality</strong> while being <strong>up to 8.2x faster</strong> on long sequences. The hybrid version (DiffuMamba-H, ~20% attention blocks interleaved with Mamba) is the sweet spot: <strong>better quality than both</strong> pure variants and <strong>4.3x faster</strong> than pure Transformer diffusion.</p>
+  <p>Key insight: <strong>Mamba's linear scaling makes it a natural fit for diffusion LMs</strong>, which need to process the full sequence at every denoising step (no KV cache trick). Transformers pay quadratic cost per step &times; K steps. Mamba pays linear cost per step &times; K steps.</p>
+  <p><span class="highlight">Connection to your work:</span> They do NOT use block diffusion (BD3-LM) natively &mdash; they only test Fast-dLLM (training-free block decoding) post-hoc. They do NOT try RWKV. Your RWKV-BD3 hybrid is complementary and potentially stronger on the block diffusion front.</p>
+</div>
+
+<h2 id="mamba">1. What's Mamba?</h2>
+
+<h3>State Space Models (SSMs) &mdash; The Foundation</h3>
+<p>SSMs are sequence models derived from continuous-time dynamical systems. The core idea: maintain a hidden state <code>h</code> that evolves with each input token via learned transition matrices.</p>
+
+<div class="equation">
+h_t = A &middot; h_{t-1} + B &middot; x_t<br>
+y_t = C &middot; h_t + D &middot; x_t
+</div>
+
+<p>Key property: this recurrence can be computed as a <strong>convolution</strong> (parallelizable during training) or as a <strong>scan</strong> (sequential during inference), giving O(L) complexity vs Transformer's O(L&sup2;).</p>
+
+<h3>Mamba (Gu & Dao, 2023)</h3>
+<p>Mamba's breakthrough: <strong>input-dependent (selective) state transitions</strong>. Unlike classic SSMs where A, B are fixed, Mamba makes them functions of the input. This lets the model selectively remember or forget information based on content, not just position.</p>
+
+<ul>
+  <li><strong>Selective scan</strong>: A, B, C are computed per-token from a linear projection of the input</li>
+  <li><strong>Hardware-aware algorithm</strong>: custom CUDA kernel that avoids materializing the full state, keeping memory O(L) instead of O(L&middot;d_state)</li>
+  <li><strong>Linear complexity</strong>: O(L) time and memory for length L sequences</li>
+  <li><strong>No attention, no KV cache</strong>: fundamentally different compute pattern</li>
+</ul>
+
+<h3>Mamba-2 (Dao & Gu, 2024)</h3>
+<p>Mamba-2 connects SSMs to linear attention, showing they're equivalent under certain parameterizations. Uses <strong>structured state space duality (SSD)</strong> &mdash; can switch between recurrence and attention-like matrix multiplication depending on which is faster.</p>
+
+<h3>Why Mamba for Diffusion?</h3>
+<div class="card">
+  <p>Autoregressive models process one token at a time &mdash; KV cache means each step is O(d), amortizing the quadratic cost. But diffusion models <strong>process the entire sequence at every denoising step</strong> (K steps total). No KV cache trick possible.</p>
+  <ul>
+    <li>Transformer diffusion: O(K &middot; L&sup2; &middot; d) total compute</li>
+    <li>Mamba diffusion: O(K &middot; L &middot; d&sup2;) total compute</li>
+  </ul>
+  <p>For long sequences (L &gt; d), Mamba wins dramatically. This is why the speedup grows with sequence length: <strong>8.2x at 65K+ tokens</strong>.</p>
+</div>
+
+<h2 id="diffusion">2. How Diffusion Works Here</h2>
+
+<h3>Masked Diffusion with Absorbing States</h3>
+<p>DiffuMamba uses <strong>discrete masked diffusion</strong> (not continuous Gaussian diffusion). The forward process progressively replaces tokens with a special [MASK] token:</p>
+
+<div class="equation">
+Forward: q(x_t | x_0) = &prod; Cat(x_t^i; (1-t)&delta;_{x_0^i} + t&middot;&delta;_{MASK})
+</div>
+
+<p>At t=0, you have the original text. At t=1, everything is [MASK]. The parameter t &isin; [0,1] controls the noise level &mdash; what fraction of tokens are masked.</p>
+
+<h3>The Denoising Task</h3>
+<p>The model learns to predict the original token at each masked position, given the partially-masked sequence:</p>
+
+<div class="equation">
+p_&theta;(x_0 | x_t, t) = &prod; Cat(x_0^i; softmax(z_i))
+</div>
+
+<p>This is essentially a <strong>cloze task</strong> (like BERT's MLM), but structured as a diffusion process with a proper probabilistic framework.</p>
+
+<h3>Reverse Process (Generation)</h3>
+<p>Start from fully masked sequence. At each step, unmask some tokens:</p>
+<ol>
+  <li>Start with all [MASK] tokens (t=1)</li>
+  <li>Model predicts what each masked token should be</li>
+  <li>Unmask a fraction of tokens (move from t to s &lt; t)</li>
+  <li>Repeat for K denoising steps until t=0</li>
+</ol>
+
+<p>The transition from noise level t to s is:</p>
+<div class="equation">
+If x_t^i &ne; [MASK]: keep it (already unmasked)<br>
+If x_t^i = [MASK]: re-mask with probability s/t, unmask with probability (t-s)/t
+</div>
+
+<h3>How This Differs from Continuous Diffusion (Images)</h3>
+<div class="card">
+  <p>Image diffusion adds Gaussian noise and predicts the noise (&epsilon;-prediction) or the clean image (x_0-prediction). Text diffusion can't do this because tokens are discrete &mdash; you can't add "a little noise" to the word "cat." Instead, <strong>absorbing state diffusion</strong> masks tokens entirely and the model predicts the original token. This is the MDLM / Sahoo et al. (2024) framework.</p>
+</div>
+
+<h2 id="bidirectional">3. Bidirectionality</h2>
+
+<h3>The Problem</h3>
+<p>Standard Mamba is <strong>causal</strong> (left-to-right only). This is perfect for autoregressive generation but terrible for diffusion: when denoising a masked sequence, the model needs to see context from <strong>both sides</strong> of each masked token.</p>
+
+<h3>The Solution: BiMamba</h3>
+<p>Two independent Mamba layers process the sequence in opposite directions:</p>
+
+<div class="equation">
+Forward:  h_i&rarr; = A_f &middot; h_{i-1}&rarr; + B_f &middot; x_i  (left to right)<br>
+Backward: h_i&larr; = A_b &middot; h_{i+1}&larr; + B_b &middot; x_i  (right to left)<br>
+Combined: h_i = h_i&rarr; + h_i&larr;  (additive fusion)
+</div>
+
+<h3>Why Additive Fusion?</h3>
+<p>They tried additive (sum) fusion. This is the simplest approach that maintains stability. Each direction has its own learned kernels (A_f, B_f, A_b, B_b). The forward pass captures left context; the backward pass captures right context. Adding them gives each position symmetric bidirectional context.</p>
+
+<p>Alternative approaches (concatenation, gating) would increase parameter count or add complexity. Additive fusion keeps the linear-time property intact.</p>
+
+<h3>Critical: This Doubles the Compute</h3>
+<p>BiMamba runs <strong>two full Mamba passes</strong> per layer. This is why DiffuMamba has slightly more parameters than DiffuTran at the same config (e.g., 0.29B vs 0.24B at the 240M scale). The throughput advantage comes from linear vs quadratic scaling, not from fewer operations per se.</p>
+
+<h2 id="architecture">4. Architecture Details</h2>
+
+<h3>Three Variants Compared</h3>
+
+<table>
+  <tr><th>Variant</th><th>Mixer</th><th>Attention %</th><th>Key Property</th></tr>
+  <tr><td>DiffuTran</td><td>Multi-head attention everywhere</td><td>100%</td><td>Baseline, quadratic</td></tr>
+  <tr><td>DiffuMamba</td><td>BiMamba-2 everywhere</td><td>0%</td><td>Pure linear, fastest</td></tr>
+  <tr><td>DiffuMamba-H</td><td>1 attention per 5 Mamba blocks</td><td>~20%</td><td>Best quality, still fast</td></tr>
+</table>
+
+<h3>Block Structure</h3>
+<p>Each block follows a standard pre-norm residual pattern:</p>
+<div class="equation">
+y_mixer = Mixer(AdaLN(x; &tau;_t)) + x<br>
+y_out   = MLP(AdaLN(y_mixer; &tau;_t)) + y_mixer
+</div>
+
+<p>Where <code>Mixer</code> is either BiMamba or MHA depending on the variant.</p>
+
+<h3>Noise Conditioning: Adaptive Layer Norm</h3>
+<p>The timestep t is embedded via a small MLP into &tau;_t, which modulates each layer through adaptive layer normalization:</p>
+<div class="equation">
+AdaLN(x; &tau;_t) = &gamma;_t &middot; (x - &mu;) / &sigma; + &beta;_t<br>
+where (&gamma;_t, &beta;_t) = W_cond &middot; &tau;_t
+</div>
+<p>This is how the model knows what noise level it's denoising from.</p>
+
+<h3>Model Configurations</h3>
+
+<table>
+  <tr><th>Model</th><th>Params</th><th>Layers</th><th>d_model</th><th>d_mlp</th><th>d_state</th><th>Tokens</th></tr>
+  <tr><td>DiffuTran-0.24B</td><td>0.24B</td><td>24</td><td>960</td><td>3840</td><td>&mdash;</td><td>25B</td></tr>
+  <tr><td>DiffuMamba-0.29B</td><td>0.29B</td><td>24</td><td>960</td><td>1920</td><td>128</td><td>25B</td></tr>
+  <tr><td>DiffuMamba-H-0.26B</td><td>0.26B</td><td>24</td><td>960</td><td>1920</td><td>128</td><td>25B</td></tr>
+  <tr><td>DiffuTran-0.5B</td><td>0.52B</td><td>36</td><td>960</td><td>3840</td><td>&mdash;</td><td>50B</td></tr>
+  <tr><td>DiffuMamba-0.6B</td><td>0.67B</td><td>36</td><td>960</td><td>1920</td><td>128</td><td>50B</td></tr>
+  <tr><td>DiffuMamba-H-0.6B</td><td>0.61B</td><td>36</td><td>960</td><td>1920</td><td>128</td><td>50B</td></tr>
+  <tr><td>DiffuTran-1.3B</td><td>1.3B</td><td>24</td><td>1920</td><td>7680</td><td>&mdash;</td><td>120B</td></tr>
+  <tr><td>DiffuMamba-1.6B</td><td>1.6B</td><td>24</td><td>1920</td><td>3840</td><td>128</td><td>120B</td></tr>
+  <tr><td>DiffuMamba-H-1.5B</td><td>1.5B</td><td>24</td><td>1920</td><td>3840</td><td>128</td><td>120B</td></tr>
+</table>
+<p class="dim">Context length: 1024 tokens across all configs. Data: DCLM dataset, GPT-2 tokenizer.</p>
+
+<h2 id="training">5. Training: Loss & Objectives</h2>
+
+<h3>The Loss Function</h3>
+<p>Masked diffusion loss (from Sahoo et al., 2024 &mdash; MDLM):</p>
+
+<div class="equation">
+L_MDM = &int;_0^1 (1/t) &middot; E_{q(x_t|x_0)} [&sum;_{i: x_t^i = MASK} -log p_&theta;(x_0^i | x_t)] dt
+</div>
+
+<p>Breaking this down:</p>
+<ul>
+  <li><strong>Outer integral</strong>: Average over all noise levels t &isin; [0,1]</li>
+  <li><strong>1/t weighting</strong>: Gives more weight to low-noise (easier) levels. This ensures the model learns to make fine-grained distinctions when most of the sequence is visible</li>
+  <li><strong>Inner sum</strong>: Only compute loss at <strong>masked positions</strong> (like BERT MLM)</li>
+  <li><strong>Cross-entropy</strong>: Standard categorical prediction at each masked position</li>
+</ul>
+
+<h3>Key Properties of This Objective</h3>
+<div class="card">
+  <ul>
+    <li><strong>ELBO-based</strong>: This is a proper variational lower bound on log p(x_0), not just a heuristic training loss</li>
+    <li><strong>Continuous-time</strong>: t is sampled uniformly from [0,1], not discrete steps</li>
+    <li><strong>No noise schedule tuning</strong>: Uses fixed log-linear schedule, not cosine/linear that needs tuning</li>
+    <li><strong>Same loss for all architectures</strong>: DiffuTran, DiffuMamba, DiffuMamba-H all use identical training objective &mdash; only the backbone changes</li>
+  </ul>
+</div>
+
+<h3>Training Hyperparameters</h3>
+<table>
+  <tr><th>Parameter</th><th>Value</th></tr>
+  <tr><td>Optimizer</td><td>Adam (&beta;=0.9, 0.95; &epsilon;=1e-8)</td></tr>
+  <tr><td>Global batch size</td><td>512</td></tr>
+  <tr><td>Max learning rate</td><td>1e-4</td></tr>
+  <tr><td>Min learning rate</td><td>1e-6</td></tr>
+  <tr><td>Schedule</td><td>Cosine decay</td></tr>
+  <tr><td>Precision</td><td>bf16</td></tr>
+  <tr><td>Gradient clipping</td><td>1.0</td></tr>
+  <tr><td>Weight decay</td><td>0.1</td></tr>
+  <tr><td>EMA decay</td><td>0.9999</td></tr>
+  <tr><td>Sampling &epsilon;</td><td>1e-3</td></tr>
+</table>
+
+<h2 id="block">6. Block Diffusion (BD3-LM Connection)</h2>
+
+<div class="warning">
+  <strong>They did NOT train with block diffusion.</strong> They only used <strong>Fast-dLLM</strong> (Wu et al., 2025) as a training-free post-hoc decoding strategy for block-autoregressive generation.
+</div>
+
+<h3>What They Actually Did</h3>
+<p>Fast-dLLM splits the sequence into blocks of size G=32 and denoises each block with k denoising steps, using KV-cache for inter-block conditioning:</p>
+<ul>
+  <li>Process blocks left-to-right (autoregressive at block level)</li>
+  <li>Within each block: parallel masked diffusion (k=32/p steps)</li>
+  <li>KV-cache stores the already-denoised blocks for conditioning</li>
+  <li>Recompute KV-cache after each block is finalized</li>
+</ul>
+
+<h3>How This Differs from BD3-LM</h3>
+<div class="card">
+  <p><strong>BD3-LM</strong> (Arriola et al., ICLR 2025 Oral): Trains with block structure from scratch. The model learns block-level autoregressive conditioning explicitly. Joint training of the block boundary transitions.</p>
+  <p><strong>Fast-dLLM</strong>: Takes any full-sequence diffusion model and applies block decoding at inference time. No retraining needed. KV-cache handles inter-block dependencies post-hoc.</p>
+  <p>DiffuMamba only tested Fast-dLLM. <span class="highlight">They explicitly list "joint training with block cache reuse" as an unexplored limitation</span> (Appendix B). This is a clear research gap.</p>
+</div>
+
+<div class="connection">
+  <strong>Connection to your RWKV-BD3 work:</strong> You trained RWKV with BD3's block diffusion objective natively. DiffuMamba only tested the training-free version. A Mamba-BD3 or BiRWKV-BD3 with native block training could outperform both. Your RWKV-BD3 result (NLL 1.50 vs DIT-BD3 1.54 at 15M) already shows the backbone matters for BD3.
+</div>
+
+<h2 id="results">7. Results</h2>
+
+<h3>Zero-Shot Perplexity (PPL &darr;) &mdash; Quality</h3>
+
+<h4>240M Scale</h4>
+<table>
+  <tr><th>Model</th><th>PTB</th><th>Wiki</th><th>LM1B</th><th>Lambada</th><th>AG News</th><th>PubMed</th><th>ArXiv</th><th>Avg</th></tr>
+  <tr><td>DiffuTran</td><td>153.5</td><td>49.1</td><td>142.3</td><td>49.1</td><td>105.1</td><td>29.8</td><td>43.8</td><td>81.8</td></tr>
+  <tr><td>DiffuMamba</td><td>99.0</td><td>51.4</td><td>170.0</td><td>46.7</td><td>112.6</td><td>34.0</td><td>33.2</td><td class="best">78.1</td></tr>
+  <tr><td>DiffuMamba-H</td><td>148.0</td><td>51.0</td><td>145.3</td><td>46.4</td><td>114.2</td><td>31.9</td><td>31.0</td><td>81.1</td></tr>
+</table>
+
+<h4>0.5B Scale</h4>
+<table>
+  <tr><th>Model</th><th>PTB</th><th>Wiki</th><th>LM1B</th><th>Lambada</th><th>AG News</th><th>PubMed</th><th>ArXiv</th><th>Avg</th></tr>
+  <tr><td>DiffuTran</td><td>112.7</td><td>40.8</td><td>103.5</td><td>39.7</td><td>81.5</td><td>25.5</td><td>25.4</td><td>61.2</td></tr>
+  <tr><td>DiffuMamba</td><td>116.3</td><td>42.6</td><td>117.4</td><td>40.3</td><td>90.1</td><td>27.6</td><td>27.8</td><td>65.9</td></tr>
+  <tr><td>DiffuMamba-H</td><td>110.4</td><td>40.3</td><td>100.6</td><td>39.3</td><td>78.4</td><td>26.1</td><td>25.8</td><td class="best">60.1</td></tr>
+</table>
+
+<h4>1.3B Scale &mdash; The Key Numbers</h4>
+<table>
+  <tr><th>Model</th><th>PTB</th><th>Wiki</th><th>LM1B</th><th>Lambada</th><th>AG News</th><th>PubMed</th><th>ArXiv</th><th>Avg</th></tr>
+  <tr><td>DiffuTran</td><td>101.1</td><td>36.6</td><td>99.7</td><td>36.7</td><td>67.5</td><td>23.0</td><td>23.3</td><td>55.3</td></tr>
+  <tr><td>DiffuMamba</td><td>99.0</td><td>34.7</td><td>102.0</td><td>36.0</td><td>68.8</td><td>22.4</td><td>23.0</td><td>55.1</td></tr>
+  <tr><td>DiffuMamba-H</td><td>96.5</td><td>31.9</td><td>92.8</td><td>34.0</td><td>63.2</td><td>19.1</td><td>20.7</td><td class="best">51.2</td></tr>
+</table>
+
+<div class="card">
+  <p><strong>Key takeaway:</strong> DiffuMamba-H dominates at 0.5B+ scales. Pure Mamba matches Transformer at 240M and 1.3B but dips at 0.5B. The ~20% attention interleaving consistently helps.</p>
+</div>
+
+<h3>Downstream Accuracy (&uarr;) at 1.3B</h3>
+<table>
+  <tr><th>Model</th><th>OBQA</th><th>HellaSwag</th><th>PIQA</th><th>LOQA</th><th>ARC</th><th>Avg</th></tr>
+  <tr><td>DiffuTran</td><td>26.6</td><td>35.0</td><td>60.6</td><td>21.9</td><td>25.0</td><td>33.8</td></tr>
+  <tr><td>DiffuMamba</td><td>32.1</td><td>37.7</td><td>62.6</td><td>29.9</td><td>28.3</td><td class="best">38.1</td></tr>
+  <tr><td>DiffuMamba-H</td><td>33.9</td><td>38.0</td><td>59.1</td><td>32.4</td><td>27.8</td><td class="best">38.2</td></tr>
+</table>
+
+<div class="card">
+  <p><strong>Mamba-based models outperform Transformer-based diffusion by ~4% on downstream tasks.</strong> This is a strong signal &mdash; not just perplexity matching, but actual downstream superiority.</p>
+</div>
+
+<h3>Validation PPL Under Compute Budgets</h3>
+<table>
+  <tr><th>Model</th><th>240M Chinchilla</th><th>240M Quokka</th><th>0.5B Chinchilla</th><th>0.5B Quokka</th><th>1.3B Chinchilla</th><th>1.3B Quokka</th></tr>
+  <tr><td>DiffuTran</td><td>43.8</td><td>32.1</td><td>31.0</td><td>25.1</td><td>25.0</td><td>22.7</td></tr>
+  <tr><td>DiffuMamba</td><td>44.1</td><td>33.0</td><td>30.8</td><td>25.5</td><td>24.0</td><td>21.4</td></tr>
+  <tr><td>DiffuMamba-H</td><td>42.7</td><td>32.5</td><td>29.1</td><td>25.1</td><td class="best">22.9</td><td class="best">20.2</td></tr>
+</table>
+<p class="dim">"Chinchilla" = compute-optimal token count. "Quokka" = overtrained (more tokens than Chinchilla-optimal).</p>
+
+<h2 id="inference">8. Inference: Steps, Tokens, Speed</h2>
+
+<h3>How Many Denoising Steps?</h3>
+<div class="card">
+  <p>Denoising steps K = L / p, where:</p>
+  <ul>
+    <li><strong>L</strong> = sequence length (tokens to generate)</li>
+    <li><strong>p</strong> &isin; {8, 16} = step factor (higher = fewer steps = faster but lower quality)</li>
+  </ul>
+  <p>Examples:</p>
+  <ul>
+    <li>Generate 1024 tokens with p=16: K = 64 denoising steps</li>
+    <li>Generate 1024 tokens with p=8: K = 128 denoising steps</li>
+    <li>Generate 65536 tokens with p=16: K = 4096 denoising steps</li>
+  </ul>
+  <p>Each step processes the <strong>full sequence</strong> (all L tokens). So total forward passes = K, each of size L.</p>
+</div>
+
+<h3>Throughput Numbers</h3>
+
+<h4>Full-Sequence Denoising (the big wins)</h4>
+<table>
+  <tr><th>Comparison</th><th>Speedup</th><th>Where</th></tr>
+  <tr><td>DiffuMamba vs DiffuTran (p=16)</td><td class="best">8.2x</td><td>L &gt; 65K tokens</td></tr>
+  <tr><td>DiffuMamba-H vs DiffuTran (p=16)</td><td class="best">4.3x</td><td>L &gt; 65K tokens</td></tr>
+  <tr><td>DiffuMamba-H+Fast-dLLM vs DiffuTran+Fast-dLLM</td><td>2.4x</td><td>L &gt; 65K tokens</td></tr>
+</table>
+
+<h4>Where the Speedup Comes From</h4>
+<div class="card">
+  <p>They decompose latency as: <code>t(L) = aL&sup2; + bL + c</code></p>
+  <ul>
+    <li><strong>a (quadratic term)</strong>: DiffuTran has large a (attention). DiffuMamba has <strong>negligible a</strong></li>
+    <li><strong>b (linear term)</strong>: Similar across models</li>
+    <li><strong>c (constant)</strong>: Minor</li>
+  </ul>
+  <p>At short sequences (L &lt; 2K), the quadratic term doesn't dominate yet, so DiffuTran is competitive. Beyond L &gt; 2K, quadratic kicks in and Mamba pulls ahead monotonically.</p>
+</div>
+
+<h4>Scaling Behavior</h4>
+<ul>
+  <li><strong>L &le; 2K tokens</strong>: DiffuTran + Fast-dLLM has highest throughput (quadratic hasn't kicked in, attention is well-optimized by CUDA)</li>
+  <li><strong>L &gt; 2K tokens</strong>: DiffuMamba starts winning, gap grows with L</li>
+  <li><strong>L &gt; d (d=1920)</strong>: Enters compute-saturated regime, Mamba's advantage maximized</li>
+  <li><strong>L = 262K tokens</strong>: DiffuMamba 2.3x faster even with block caching</li>
+</ul>
+
+<h3>Hardware</h3>
+<p>Single NVIDIA H100, bf16, PyTorch + CUDA graphs. Batch size 1. Averaged over 5 runs (3 warm-up).</p>
+
+<h2 id="comparison">9. vs Other Diffusion Models & AR</h2>
+
+<h3>vs AR Models</h3>
+<div class="card">
+  <p>The paper does <strong>not</strong> provide direct head-to-head quality comparisons with AR models of the same size. They acknowledge diffusion models generally trail AR in raw perplexity. Their focus is on <strong>diffusion-vs-diffusion backbone comparison</strong>.</p>
+  <p>However, the throughput argument is clear: at batch size 1 and long sequences, diffusion + Mamba can exceed AR throughput because:</p>
+  <ul>
+    <li>AR generates 1 token per step (memory-bandwidth bound)</li>
+    <li>Diffusion generates L/K tokens per step (compute-bound, better hardware utilization)</li>
+  </ul>
+</div>
+
+<h3>vs Other Diffusion Models in the Landscape</h3>
+<table>
+  <tr><th>Model</th><th>Scale</th><th>Approach</th><th>Key Difference from DiffuMamba</th></tr>
+  <tr><td>MDLM (Sahoo 2024)</td><td>~170M</td><td>Masked diffusion, Transformer</td><td>Same objective, Transformer backbone</td></tr>
+  <tr><td>BD3-LM (ICLR 2025)</td><td>up to 1.3B</td><td>Block diffusion, DIT backbone</td><td>Native block training vs post-hoc</td></tr>
+  <tr><td>LLaDA (2025)</td><td>8B</td><td>Masked diffusion, Transformer</td><td>Scaled up, from-scratch training</td></tr>
+  <tr><td>Dream 7B (2025)</td><td>7B</td><td>Masked diffusion, Transformer</td><td>Best quality, 1/4 data of LLaDA</td></tr>
+  <tr><td>LLaDA-MoE (2026)</td><td>7B (1.4B active)</td><td>MoE + masked diffusion</td><td>Current SOTA diffusion LM</td></tr>
+  <tr><td>LLaDA 2.0 Flash (2026)</td><td>100B</td><td>Masked diffusion, scaled</td><td>First 100B diffusion LM</td></tr>
+  <tr><td>Soft-Masked DLM (ICLR 2026)</td><td>7B</td><td>Soft masking refinement</td><td>Improves MDLM with token blending</td></tr>
+  <tr><td>Inception Labs / Mercury</td><td>7B</td><td>Block diffusion (BD3)</td><td>Commercial, 1100+ tok/s claims</td></tr>
+</table>
+
+<div class="gap">
+  <strong>Key gap:</strong> Nobody has combined Mamba (or RWKV or any SSM) with BD3-LM's native block training at scale. DiffuMamba uses MDLM + post-hoc block decoding. BD3-LM uses DIT (Transformer). Your RWKV-BD3 is the only result combining an SSM with native block diffusion training.
+</div>
+
+<h2 id="rwkv">10. RWKV & Other Backbones</h2>
+
+<div class="warning">
+  <strong>RWKV is NOT mentioned in DiffuMamba.</strong> They cite Mamba, S4, Hyena, and H3, but never discuss RWKV, xLSTM, RetNet, or other linear-complexity alternatives.
+</div>
+
+<h3>What They Say About Other Backbones</h3>
+<p>From their Limitations section (Appendix B): "Alternative linear-time token mixers [are] not explored." They explicitly acknowledge this gap.</p>
+
+<h3>Why This Matters for You</h3>
+<div class="connection">
+  <p>Your dfusion-lm experiments showed a <strong>3-way backbone-objective crossover</strong>:</p>
+  <ul>
+    <li>Transformer best at AR (NLL 1.25)</li>
+    <li><strong>RWKV best at BD3 block diffusion</strong> (NLL 1.50 vs DIT 1.54)</li>
+    <li>Mamba best at MDLM (NLL 1.78)</li>
+  </ul>
+  <p>DiffuMamba only tested Mamba for MDLM (where Mamba already has an advantage). They didn't test whether Mamba is also optimal for BD3 block diffusion. <strong>Your result suggests it might not be &mdash; RWKV could be better for BD3.</strong></p>
+  <p>This is a perfect conversation opener with Vaibhav: "We found that the optimal backbone depends on the diffusion objective &mdash; have you observed anything similar?"</p>
+</div>
+
+<h2 id="landscape">11. The Broader Landscape (2025-2026)</h2>
+
+<h3>The Diffusion LM Explosion</h3>
+<table>
+  <tr><th>Timeline</th><th>Paper</th><th>Key Contribution</th></tr>
+  <tr><td>Jun 2024</td><td>MDLM (Sahoo et al.)</td><td>Simple masked diffusion, proper ELBO</td></tr>
+  <tr><td>Nov 2024</td><td>SEDD (Lou et al.)</td><td>Score entropy, competitive with AR at small scale</td></tr>
+  <tr><td>Nov 2025</td><td><strong>DiffuMamba</strong></td><td>Mamba backbone for diffusion LMs</td></tr>
+  <tr><td>Jan 2025</td><td>LLaDA (Nie et al.)</td><td>8B scale masked diffusion</td></tr>
+  <tr><td>Mar 2025</td><td>BD3-LM (ICLR Oral)</td><td>Block diffusion, AR-diffusion interpolation</td></tr>
+  <tr><td>Mar 2025</td><td>Dream 7B</td><td>Best quality/data ratio in diffusion LMs</td></tr>
+  <tr><td>May 2025</td><td>Fast-dLLM</td><td>Training-free block decoding</td></tr>
+  <tr><td>Oct 2025</td><td>Soft-Masked DLM</td><td>Soft masking for improved quality (ICLR 2026)</td></tr>
+  <tr><td>2026</td><td>LLaDA-MoE</td><td>MoE + diffusion, 1.4B active params</td></tr>
+  <tr><td>2026</td><td>LLaDA 2.0 Flash</td><td>100B scale, competitive with Qwen3-30B</td></tr>
+  <tr><td>2026</td><td>Fast-dLLM v2</td><td>Improved block-diffusion efficiency</td></tr>
+</table>
+
+<h3>Key Trends</h3>
+<ol>
+  <li><strong>Rapid scaling</strong>: From 170M (MDLM) to 100B (LLaDA 2.0) in 18 months</li>
+  <li><strong>Quality gap closing</strong>: Dream 7B matches AR on planning/reasoning tasks</li>
+  <li><strong>Block diffusion winning</strong>: BD3-LM + Fast-dLLM becoming standard for long generation</li>
+  <li><strong>Backbone diversification</strong>: DiffuMamba shows Transformers aren't necessary &mdash; SSMs work</li>
+  <li><strong>Commercial traction</strong>: Inception Labs (Mercury), $120M raised, shipping BD3 products</li>
+</ol>
+
+<h2 id="authors">12. Author Profiles & Institutions</h2>
+
+<h3>The Lab: ServiceNow Research (Montreal)</h3>
+<div class="card">
+  <p><strong>ServiceNow Research</strong> (formerly Element AI, acquired 2021) is a corporate research lab in Montreal with deep ties to <strong>Mila</strong> (Quebec AI Institute). Major areas: LLMs (Apriel model family), continual learning, agentic AI, code generation.</p>
+  <p>Key recent output: <strong>Apriel</strong> &mdash; open-source LLM family (5B, 15B), MIT license, enterprise-focused. Apriel 2.0 announced at GTC 2026 with NVIDIA partnership.</p>
+  <p>The lab has ~100+ researchers. Torsten Scholak leads the Foundation Model Lab (SLAM Labs) that produced DiffuMamba.</p>
+</div>
+
+<div class="author-card">
+  <h4>Vaibhav Singh &mdash; First Author (the one you're talking to)</h4>
+  <span class="tag">PhD Candidate</span> <span class="tag">Concordia University</span> <span class="tag">Mila</span>
+  <p><strong>Position:</strong> PhD student at Concordia University, Montreal. Affiliated with Mila.</p>
+  <p><strong>Supervisors:</strong> <strong>Eugene Belilovsky</strong> (primary) + <strong>Irina Rish</strong> (co-supervisor)</p>
+  <p><strong>Research:</strong> Deep learning, diffusion language models, continual learning for VLMs, distributed training optimization, learning rate scheduling for large-scale pre-training.</p>
+  <p><strong>Collaborators:</strong> Oleksiy Ostapenko, Rahaf Aljundi, Benjamin Therien</p>
+  <p><strong>ServiceNow connection:</strong> Likely intern/visiting researcher at ServiceNow Research (common pipeline from Concordia/Mila &rarr; ServiceNow given Element AI acquisition history)</p>
+  <p class="dim">LinkedIn: <a href="https://linkedin.com/in/vaibhav-singh-28607a125/">vaibhav-singh-28607a125</a> | Mila: <a href="https://mila.quebec/en/directory/vaibhav-singh">directory/vaibhav-singh</a></p>
+</div>
+
+<div class="author-card">
+  <h4>Oleksiy Ostapenko</h4>
+  <span class="tag">Researcher</span> <span class="tag">ServiceNow Research</span> <span class="tag">Mila</span>
+  <p><strong>Position:</strong> Research scientist at ServiceNow Research</p>
+  <p><strong>Known for:</strong> Continual learning. Key papers: "Continual Learning via Local Module Composition" (NeurIPS 2021), "Continual Learning with Foundation Models" (CoLLAs 2022). Core collaborator with Laurent Charlin and Pau Rodriguez.</p>
+  <p><strong>Recent shift:</strong> Moving from continual learning to diffusion LMs (DiffuMamba is his first major diffusion paper)</p>
+  <p class="dim">GitHub: <a href="https://github.com/oleksost">oleksost</a> | <a href="https://scholar.google.de/citations?user=mqLVUGgAAAAJ">Google Scholar</a></p>
+</div>
+
+<div class="author-card">
+  <h4>Pierre-Andr&eacute; No&euml;l</h4>
+  <span class="tag">Senior Applied Research Scientist</span> <span class="tag">ServiceNow Research</span>
+  <p><strong>Position:</strong> Senior applied research scientist at ServiceNow Research</p>
+  <p><strong>Expertise:</strong> Graphs, stochastic processes, generative models. 1000+ citations.</p>
+  <p><strong>Recent notable:</strong> "Destruction is a General Strategy to Learn Generation" (ICLR Blogposts 2026) &mdash; philosophical framing of diffusion. BigDocs dataset (ICLR 2025). Diffusion on sparse graphs (NeurIPS 2022).</p>
+  <p><strong>Background:</strong> More theoretical/mathematical than typical ML researcher. Useful for connecting diffusion LMs to broader generative model theory.</p>
+  <p class="dim"><a href="https://scholar.google.com/citations?user=FxU9cG0AAAAJ">Google Scholar</a></p>
+</div>
+
+<div class="author-card">
+  <h4>Eugene Belilovsky &mdash; Vaibhav's Primary Advisor</h4>
+  <span class="tag tag-green">Associate Professor</span> <span class="tag">Concordia University</span> <span class="tag">Mila</span>
+  <p><strong>Position:</strong> Associate Professor, Concordia CS. Mila associate member. Adjunct at UdeM. <strong>Recently tenured.</strong></p>
+  <p><strong>PhD:</strong> Joint from CentraleSup&eacute;lec/Paris-Saclay + KU Leuven (2018), advised by Matthew Blaschko</p>
+  <p><strong>Postdoc:</strong> Mila/UdeM with Aaron Courville. Visited U of T with Richard Zemel and Raquel Urtasun.</p>
+  <p><strong>Industry:</strong> Apple (Tomas Pfister), Amazon (Matthias Seeger)</p>
+  <p><strong>Research focus:</strong> Efficient large-scale training, continual learning, few-shot learning, distributed/federated training</p>
+  <p><strong>Recent:</strong> 2 papers at ICLR 2026 (meta-generalization + learned optimizers), PyLO at MLSys 2026, 3 papers at ICLR 2025. FRQNT New Scholar grant.</p>
+  <p><strong>Lab:</strong> Has PhD students Benjamin Therien and Abhinav Moudgil (both FRQNT fellowship winners)</p>
+  <p class="dim">Web: <a href="https://eugenium.github.io/">eugenium.github.io</a> | <a href="https://scholar.google.com/citations?user=CffJDoEAAAAJ">Google Scholar</a></p>
+</div>
+
+<div class="author-card">
+  <h4>Torsten Scholak &mdash; Lab Lead</h4>
+  <span class="tag tag-green">Foundation Model Lab Lead</span> <span class="tag">ServiceNow Research</span>
+  <p><strong>Position:</strong> Leads the Foundation Model Lab at ServiceNow Research. Co-founded SLAM (ServiceNow Language Models) initiative.</p>
+  <p><strong>PhD:</strong> Theoretical physics (2011), Universities of Bayreuth and Freiburg, Germany</p>
+  <p><strong>Postdoc:</strong> University of Toronto</p>
+  <p><strong>Career path:</strong> Physics PhD &rarr; Postdoc &rarr; Unata &rarr; Element AI &rarr; ServiceNow (Element AI acquired 2021)</p>
+  <p><strong>Known for:</strong> PICARD (constrained text-to-SQL decoding, 400+ citations, former Spider SOTA). Grammar-constrained decoding pioneer. Now leading Apriel model family.</p>
+  <p><strong>Recent:</strong> Apriel 5B (MIT license, 4.5T tokens), Apriel-Nemotron-15B-Thinker (frontier reasoning on single GPU). Work highlighted by Jensen Huang at Knowledge 2025 keynote.</p>
+  <p><strong>Fun fact:</strong> PhD in theoretical physics, like you! Contributes to Hasktorch (Haskell ML framework). Streams on Twitch.</p>
+  <p class="dim">Web: <a href="https://tscholak.github.io/">tscholak.github.io</a> | <a href="https://scholar.google.com/citations?user=BgkjtKgAAAAJ">Google Scholar</a></p>
+</div>
+
+<div class="author-card">
+  <h4>Irina Rish &mdash; Vaibhav's Co-Advisor (not on paper but important)</h4>
+  <span class="tag tag-green">Full Professor</span> <span class="tag">UdeM</span> <span class="tag">Mila</span> <span class="tag">Canada CIFAR AI Chair</span>
+  <p><strong>Position:</strong> Full Professor at Universit&eacute; de Montr&eacute;al, Core Academic Member at Mila, Canada CIFAR AI Chair</p>
+  <p><strong>Known for:</strong> Scaling laws for neural language models (foundational work), continual learning, neuroscience-AI connections</p>
+  <p><strong>Why she matters:</strong> She's Vaibhav's co-supervisor. If you build a relationship with Vaibhav, Irina Rish's lab is in your extended network. She's one of the most prominent AI researchers in Canada and has deep ServiceNow ties.</p>
+</div>
+
+<h2 id="recent">13. Recent Papers from These Groups</h2>
+
+<h3>ServiceNow Research / SLAM Labs</h3>
+<ul>
+  <li><strong>Apriel 5B</strong> (2025): Open-weight 4.8B LLM, 4.5T tokens, MIT license. Enterprise-optimized.</li>
+  <li><strong>Apriel-Nemotron-15B-Thinker</strong> (2025): Frontier reasoning on single GPU. NVIDIA collaboration.</li>
+  <li><strong>Apriel 2.0</strong> (2026 Q1): Next gen, multimodal, reasoning. Announced at GTC.</li>
+  <li><strong>TapeAgents</strong> (2024): Holistic framework for agent development.</li>
+  <li><strong>"Unifying Autoregressive and Diffusion Language Models"</strong> (2025 blog): Characterizes hyperschedules, active window width, generation rate. Theoretical framework connecting AR and diffusion.</li>
+  <li><strong>"Destruction is a General Strategy to Learn Generation"</strong> (ICLR Blogposts 2026, Pierre-Andr&eacute; No&euml;l): Philosophical take on why diffusion works.</li>
+</ul>
+
+<h3>Eugene Belilovsky's Lab (Concordia/Mila)</h3>
+<ul>
+  <li><strong>ICLR 2026</strong>: Two papers on meta-generalization with learned optimizers</li>
+  <li><strong>MLSys 2026</strong>: PyLO library</li>
+  <li><strong>ICLR 2025</strong>: Three accepted papers</li>
+  <li><strong>Focus areas:</strong> Efficient training, distributed/federated learning, continual learning</li>
+</ul>
+
+<h3>Adjacent Work Worth Knowing</h3>
+<ul>
+  <li><strong>Soft-Masked DLM</strong> (IBM, ICLR 2026): Dynamic soft masking improves MDLM. Finetuned Dream-7B and Dream-Coder-7B.</li>
+  <li><strong>Fast-dLLM v2</strong> (2026): Improved block-diffusion efficiency &mdash; directly builds on Fast-dLLM used in DiffuMamba.</li>
+  <li><strong>dKV-Cache</strong> (Ma et al., 2025): KV cache adaptation for diffusion LMs. Relevant to DiffuMamba-H's hybrid approach.</li>
+</ul>
+
+<h2 id="talking">14. Talking Points for Your Call</h2>
+
+<div class="talking-point">
+  <h3>1. Open with Your RWKV-BD3 Result</h3>
+  <p>"We've been exploring backbone-objective interactions for diffusion LMs and found something interesting: the optimal backbone depends on which diffusion objective you use. RWKV beats DIT for BD3 block diffusion (1.50 vs 1.54 NLL at 15M), but Mamba is better for MDLM. Did you observe any objective-dependent behavior with BiMamba?"</p>
+  <p class="dim">This immediately establishes you as someone doing real experiments in their space, not just reading papers.</p>
+</div>
+
+<div class="talking-point">
+  <h3>2. The Block Diffusion Gap</h3>
+  <p>"Your limitation about joint training with block cache reuse &mdash; we've been exploring exactly that. BD3-LM trains block structure natively. Have you considered Mamba + native BD3 training? The post-hoc Fast-dLLM approach might be leaving performance on the table."</p>
+  <p class="dim">Shows you read the paper carefully, including limitations. Opens a potential collaboration angle.</p>
+</div>
+
+<div class="talking-point">
+  <h3>3. The 3-Way Crossover Finding</h3>
+  <p>"We ran controlled experiments with Transformer, RWKV, and Mamba across AR, MDLM, and BD3 objectives &mdash; all at the same 15M scale, same data, same steps. There's a clean 3-way crossover: each backbone has a different optimal objective. This suggests architecture-objective co-design matters more than just picking the best backbone."</p>
+  <p class="dim">This is your unique contribution to the conversation. Nobody else has this data.</p>
+</div>
+
+<div class="talking-point">
+  <h3>4. Scaling Question</h3>
+  <p>"Your results show DiffuMamba-H dominates at 0.5B+ but pure Mamba dips at 0.5B. Do you think this is a fundamental scaling issue with pure SSMs for denoising, or a training recipe issue? We're curious whether the 20% attention is compensating for a specific limitation."</p>
+  <p class="dim">Technical depth question that shows you're thinking about their results carefully.</p>
+</div>
+
+<div class="talking-point">
+  <h3>5. Bidirectionality Probe</h3>
+  <p>"Have you tried other fusion strategies beyond additive for BiMamba? Concatenation, gating, cross-attention between directions? Or is additive strictly optimal? We've been thinking about whether the fusion strategy affects which tokens get reconstructed first during denoising."</p>
+  <p class="dim">Gets at architectural details they might not have published. Shows interest in collaboration.</p>
+</div>
+
+<div class="talking-point">
+  <h3>6. The Apriel Connection</h3>
+  <p>"Torsten's team is building Apriel (open-weight enterprise LLMs) and you're building DiffuMamba. Is there a path where future Apriel models use diffusion? Or is this more of a research exploration right now?"</p>
+  <p class="dim">Shows you understand their organizational context. Opens discussion about where diffusion LMs are actually headed commercially.</p>
+</div>
+
+<div class="talking-point">
+  <h3>7. The Irina Rish Connection</h3>
+  <p>If the conversation goes well, mention your interest in continual learning + diffusion LMs intersection (Oleksiy's background). Irina Rish's lab touches both areas. Don't force this &mdash; let it come up naturally. But if Vaibhav mentions his advisors, express genuine interest in the lab's broader vision.</p>
+</div>
+
+<div class="talking-point">
+  <h3>8. The Physics Connection</h3>
+  <p>Both you and Torsten Scholak have physics PhDs. Pierre-Andr&eacute; No&euml;l works on stochastic processes. If conversation allows: "I noticed several people on this paper have physics backgrounds &mdash; I'm coming from a statistical physics / complex systems PhD. The connection between diffusion processes in physics and these generative models feels deep. How much does your team's physics intuition shape the research direction?"</p>
+  <p class="dim">Personal connection. Physicists love talking to other physicists about ML.</p>
+</div>
+
+<h2 id="strategy">15. Relationship-Building Strategy</h2>
+
+<div class="card">
+  <h3>Your Goal: Direct Line to Their Research Group</h3>
+  <p>The path from "one call with Vaibhav" to "ongoing collaboration with their lab" goes through:</p>
+  <ol>
+    <li><strong>Tonight:</strong> Establish credibility. Show your RWKV-BD3 results. Ask good questions. Be genuinely curious.</li>
+    <li><strong>Within a week:</strong> Share your dfusion-lm results formally. Ask if they'd be interested in a joint experiment (Mamba + BD3 native training, using their infrastructure + your RWKV insights).</li>
+    <li><strong>Medium term:</strong> Propose a small collaboration paper. The "architecture-objective interaction" story is novel and neither group has told it fully. A joint paper with their Mamba expertise + your RWKV/BD3 expertise would be stronger than either alone.</li>
+    <li><strong>Long term:</strong> Through Vaibhav, get introduced to Eugene Belilovsky and possibly Irina Rish. Through ServiceNow connection, potentially access to their compute (they have H100 clusters). Through Mila network, wider Montreal AI community.</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h3>What NOT to Do</h3>
+  <ul>
+    <li>Don't oversell. Your experiments are at 15M scale. Theirs are at 1.3B. Acknowledge the scale difference.</li>
+    <li>Don't ask for favors on the first call. Build the relationship first.</li>
+    <li>Don't criticize their paper. You can ask probing questions, but frame things as "curious about" not "why didn't you."</li>
+    <li>Don't bring up CE or commercial interests. Keep it pure research for now.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Key Fact to Remember</h3>
+  <p>Vaibhav is a <strong>PhD student</strong>, not a senior researcher. He's probably excited to talk to someone who's actually running experiments in his space. PhD students are often the most enthusiastic collaborators because they benefit most from external validation and co-authorship opportunities. Treat him as a peer, not a gatekeeper to the lab.</p>
+</div>
+
+<h2>Quick Reference Card</h2>
+<div class="card">
+  <table>
+    <tr><th>Their paper</th><td>DiffuMamba (2511.15927, v3 Feb 2026)</td></tr>
+    <tr><th>Lab</th><td>ServiceNow Research + Concordia/Mila, Montreal</td></tr>
+    <tr><th>First author</th><td>Vaibhav Singh, PhD student, supervised by Belilovsky + Rish</td></tr>
+    <tr><th>Lab lead</th><td>Torsten Scholak (physics PhD, Apriel founder)</td></tr>
+    <tr><th>Core claim</th><td>Mamba backbone matches Transformer quality, 8.2x faster</td></tr>
+    <tr><th>Their objective</th><td>MDLM (masked diffusion), NOT BD3</td></tr>
+    <tr><th>Their gap</th><td>No RWKV, no native block diffusion, no alternative SSMs</td></tr>
+    <tr><th>Your edge</th><td>RWKV-BD3 crossover result, architecture-objective interaction</td></tr>
+    <tr><th>Collaboration angle</th><td>Joint Mamba/RWKV + BD3 native training experiment</td></tr>
+  </table>
+</div>
+
+<p class="dim" style="margin-top: 40px; text-align: center;">Prepared by Summer &mdash; April 29, 2026</p>
+
+</body>
+</html>
