@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>ForceVLA2 — Paper Summary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent: #c2653a;
+  --accent-light: #f4e0d6;
+  --accent-surface: #fdf5f1;
+  --surface: #ffffff;
+  --surface-dim: #f5f3f0;
+  --surface-container: #edeae6;
+  --on-surface: #1c1b1a;
+  --on-surface-variant: #4a4742;
+  --outline: #7c7872;
+  --outline-variant: #cdc8c2;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+}
+
+html { color-scheme: light only; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--on-surface);
+  background: var(--surface-dim);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page { max-width: 680px; margin: 0 auto; padding: 20px 16px 64px; }
+@media (min-width: 600px) { .page { padding: 40px 24px 80px; } }
+
+/* Header card */
+.header {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 28px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+@media (min-width: 600px) { .header { padding: 40px 36px; margin-bottom: 28px; } }
+
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+@media (min-width: 600px) { .header h1 { font-size: 1.75rem; } }
+
+.meta {
+  font-size: 0.82rem;
+  color: var(--on-surface-variant);
+  line-height: 1.5;
+}
+.meta a { color: var(--accent); text-decoration: none; }
+.meta a:hover { text-decoration: underline; }
+
+.badge {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* Content cards */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+@media (min-width: 600px) { .card { padding: 28px 32px; } }
+
+.card h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--on-surface);
+  letter-spacing: -0.01em;
+}
+
+.card p, .card li {
+  font-size: 0.92rem;
+  color: var(--on-surface-variant);
+  margin-bottom: 8px;
+}
+
+.card ul { padding-left: 18px; }
+.card li { margin-bottom: 6px; }
+.card li::marker { color: var(--accent); }
+
+/* Highlight box */
+.highlight {
+  background: var(--accent-surface);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  margin: 14px 0;
+}
+.highlight p { color: var(--on-surface); margin-bottom: 4px; }
+.highlight strong { color: var(--accent); }
+
+/* Results table */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 14px 0; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--on-surface);
+  padding: 8px 10px;
+  border-bottom: 2px solid var(--outline-variant);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--surface-container);
+  color: var(--on-surface-variant);
+}
+tr:last-child td { border-bottom: none; }
+tr.best td { color: var(--accent); font-weight: 600; }
+
+/* Architecture diagram placeholder */
+.arch {
+  background: var(--surface-container);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin: 14px 0;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--outline);
+}
+.arch-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+.arch-box {
+  background: var(--surface);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--on-surface);
+}
+.arch-box.accent {
+  background: var(--accent-surface);
+  border-color: var(--accent-light);
+  color: var(--accent);
+}
+.arch-arrow { color: var(--outline); font-size: 1.1rem; }
+
+/* Equation */
+.eq {
+  overflow-x: auto;
+  padding: 12px 0;
+  text-align: center;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--outline);
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--outline-variant);
+}
+.footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <span class="badge">CVPR 2026</span>
+    <h1>ForceVLA2: Unleashing Hybrid Force-Position Control with Force Awareness for Contact-Rich Manipulation</h1>
+    <p class="meta">
+      Yang Li, Zhaxizhuoma, Hongru Jiang, Junjie Xia, Hongquan Zhang, Jinda Du, Yunsong Zhou, Jia Zeng, Ce Hao, Jieji Ren, Qiaojun Yu, Cewu Lu, Yu Qiao, Jiangmiao Pang<br>
+      Shanghai AI Lab &middot; Tongji &middot; SJTU &middot; NUS &middot; Lumos Robotics &middot; ECNU<br><br>
+      <a href="https://arxiv.org/abs/2603.15169">arXiv:2603.15169</a> &middot; <a href="https://sites.google.com/view/force-vla2/home">Project page</a>
+    </p>
+  </div>
+
+  <!-- TL;DR -->
+  <div class="card">
+    <h2>The idea in one line</h2>
+    <p>Current VLAs (vision-language-action models) do position control only. ForceVLA2 adds explicit force awareness and closed-loop hybrid force-position control, so robots can actually handle contact-rich tasks like wiping, pressing, and assembling without overloading or losing contact.</p>
+  </div>
+
+  <!-- Problem -->
+  <div class="card">
+    <h2>Why this matters</h2>
+    <ul>
+      <li>Existing VLAs treat force as auxiliary perception, not an active control signal</li>
+      <li>Position-only control fails at contact-rich tasks: arm overload, unstable contact, can't adapt to perturbations</li>
+      <li>Humans use force + vision + language hierarchically. Robots should too.</li>
+      <li>Control theory shows position-only has controllability index = 0.5 (half the state space unreachable)</li>
+    </ul>
+  </div>
+
+  <!-- Architecture -->
+  <div class="card">
+    <h2>Architecture</h2>
+    <p>Dual-level design inspired by human sensorimotor control:</p>
+
+    <div class="arch">
+      <div class="arch-flow">
+        <div class="arch-box">Multi-view images + Task prompt + Force prompt</div>
+        <span class="arch-arrow">&rarr;</span>
+        <div class="arch-box accent">VLM (PaliGemma / SigLIP)</div>
+        <span class="arch-arrow">&rarr;</span>
+        <div class="arch-box">Fused contextual tokens E</div>
+      </div>
+      <div style="margin:8px 0;color:var(--outline);">Long-horizon force awareness via prompting</div>
+
+      <div class="arch-flow" style="margin-top:14px;">
+        <div class="arch-box">EE 6D pose + 6D force/torque</div>
+        <span class="arch-arrow">&rarr;</span>
+        <div class="arch-box accent">Multimodal Encoder (cross-attention)</div>
+        <span class="arch-arrow">&rarr;</span>
+        <div class="arch-box accent">Cross-Scale MoE</div>
+        <span class="arch-arrow">&rarr;</span>
+        <div class="arch-box">Flow Matching Policy</div>
+      </div>
+      <div style="margin:8px 0;color:var(--outline);">Short-horizon reactive force-to-control loop + force bypass</div>
+    </div>
+
+    <ul>
+      <li><strong>Long-horizon:</strong> Force prompts encode current subtask + physical context as text, fed to VLM alongside vision. Tasks decompose into 3-5 subtasks (like a state machine).</li>
+      <li><strong>Short-horizon:</strong> Raw force/torque bypasses VLM entirely, goes straight to MoE for reactive control. Preserves gradient fidelity for rapid feedback.</li>
+      <li><strong>Cross-Scale MoE:</strong> Three modality-specific experts (visual, state, force). Dynamic gating autonomously emphasizes vision during free-space motion, force during contact.</li>
+      <li><strong>Output:</strong> Flow matching generates hybrid actions: position change + target force + subtask progress indicator.</li>
+    </ul>
+  </div>
+
+  <!-- Key equations -->
+  <div class="card">
+    <h2>Key formulations</h2>
+    <p>Action output is a hybrid force-position command:</p>
+    <div class="eq">
+      <span class="katex-display">a<sub>t</sub> = [&Delta;p<sub>t</sub> ; f<sub>t</sub>], &nbsp; &Delta;p<sub>t</sub> &isin; &real;<sup>7</sup>, &nbsp; f<sub>t</sub> &isin; &real;<sup>6</sup>, &nbsp; s<sub>t</sub> &isin; [0,1]</span>
+    </div>
+    <p>MoE routing across three experts:</p>
+    <div class="eq">
+      <span class="katex-display">E<sub>MoE</sub> = &Sigma;<sub>m&isin;{V,S,F}</sub> w<sub>m</sub> &middot; Expert<sub>m</sub>(E<sub>cond</sub>)</span>
+    </div>
+    <p>Subtask transition modeled probabilistically (Beta-Exponential-Uniform joint):</p>
+    <div class="eq">
+      <span class="katex-display">&scirc;<sub>t</sub> = P(&Theta; &le; &theta;, L &ge; l, F &le; f) = [&Gamma;(&alpha;+1) / &alpha;&Gamma;(&alpha;)] &middot; &theta;<sup>&alpha;</sup> &middot; e<sup>-&lambda;l</sup> &middot; (f-n)/(m-n)</span>
+    </div>
+    <p style="font-size:0.82rem;color:var(--outline);">&alpha;=2, &lambda;=2. Orientation, distance-to-goal, and contact force jointly determine when to advance to next subtask.</p>
+  </div>
+
+  <!-- Dataset -->
+  <div class="card">
+    <h2>ForceVLA2-Dataset</h2>
+    <div class="highlight">
+      <p><strong>1,000 trajectories</strong> &middot; <strong>~500K timesteps</strong> &middot; <strong>5 contact-rich tasks</strong></p>
+    </div>
+    <ul>
+      <li><strong>Tasks:</strong> press bottle, clean vase, clean board, retrieve plate, assemble gears</li>
+      <li><strong>Collection:</strong> Force-feedback GELLO teleoperation on Flexiv Rizon 4s (7-DOF) with DH Robotics AG-95 gripper</li>
+      <li><strong>Sensors:</strong> 3 RGB cameras (2x RealSense D455 + 1x wrist D435) + 6D force/torque at 300 Hz</li>
+      <li><strong>Annotations:</strong> Each task segmented into 3-5 subtasks based on force signal transitions</li>
+      <li><strong>Skill distribution:</strong> Explore (45.6%), Wipe, Push, Grasp, Rotate</li>
+      <li>First dataset with both force prompts for task decomposition AND force-control supervision</li>
+    </ul>
+  </div>
+
+  <!-- Results -->
+  <div class="card">
+    <h2>Main results</h2>
+    <p>Success rate (%) across 20 trials per task:</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Method</th><th>Press</th><th>Vase</th><th>Board</th><th>Plate</th><th>Gears</th><th>Avg</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ACP</td><td>25</td><td>30</td><td>25</td><td>0</td><td>0</td><td>16</td></tr>
+          <tr><td>&pi;<sub>0</sub></td><td>35</td><td>20</td><td>35</td><td>0</td><td>0</td><td>18</td></tr>
+          <tr><td>&pi;<sub>0</sub> w/ Force</td><td>30</td><td>25</td><td>20</td><td>10</td><td>0</td><td>17</td></tr>
+          <tr><td>&pi;<sub>0.5</sub></td><td>45</td><td>30</td><td>45</td><td>15</td><td>20</td><td>31</td></tr>
+          <tr><td>ForceVLA</td><td>70</td><td>25</td><td>55</td><td>15</td><td>10</td><td>35</td></tr>
+          <tr class="best"><td>ForceVLA2</td><td>80</td><td>75</td><td>70</td><td>35</td><td>70</td><td>66</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="highlight">
+      <p><strong>+48%</strong> over &pi;<sub>0</sub> &middot; <strong>+35%</strong> over &pi;<sub>0.5</sub> &middot; <strong>+31%</strong> over ForceVLA</p>
+      <p>Biggest gap on Assemble Gears: 70% vs 20% (&pi;<sub>0.5</sub>) and 10% (ForceVLA)</p>
+    </div>
+  </div>
+
+  <!-- Ablation -->
+  <div class="card">
+    <h2>What matters most (ablation)</h2>
+    <p>Progressive component addition on &pi;<sub>0</sub> baseline:</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Configuration</th><th>Avg</th><th>&Delta;</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>&pi;<sub>0</sub> baseline</td><td>18%</td><td>&mdash;</td></tr>
+          <tr><td>+ Force Prompt</td><td>27%</td><td>+9%</td></tr>
+          <tr><td>+ Multimodal Encoder</td><td>40%</td><td>+13%</td></tr>
+          <tr class="best"><td>+ Cross-Scale MoE</td><td>66%</td><td>+26%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Cross-Scale MoE is the biggest contributor. Also: injecting force into VLM pathway <em>hurts</em> (drops to 5% avg) &mdash; reactive bypass is essential.</p>
+  </div>
+
+  <!-- Insights -->
+  <div class="card">
+    <h2>Key insights</h2>
+    <ul>
+      <li><strong>Naive force concatenation hurts.</strong> &pi;<sub>0</sub> w/ Force (17%) is worse than &pi;<sub>0</sub> alone (18%). Force as "just another input" becomes noise.</li>
+      <li><strong>Force needs its own pathway.</strong> Bypassing VLM fusion for raw force preserves gradient fidelity for fast reactive control.</li>
+      <li><strong>MoE learns modality scheduling.</strong> Visual expert dominates free-space; force expert dominates contact phases. No manual switching needed.</li>
+      <li><strong>Subtask transitions are probabilistic.</strong> Joint Beta-Exponential-Uniform model over orientation, distance, and force. More principled than binary thresholds.</li>
+      <li><strong>Perturbation robustness.</strong> When the platform is suddenly lowered during pressing, ForceVLA2 adapts in real-time. Position-only VLAs lose contact.</li>
+    </ul>
+  </div>
+
+  <!-- Training -->
+  <div class="card">
+    <h2>Training details</h2>
+    <ul>
+      <li>8x A100 GPUs, 30K steps, ~10 hours</li>
+      <li>Batch size 32, AdamW, cosine LR decay, EMA 0.99</li>
+      <li>Inference: 15 Hz on single A100, action chunk size 30</li>
+      <li>VLM backbone: PaliGemma (SigLIP vision encoder)</li>
+      <li>Action head: flow matching (conditional flow ODE)</li>
+    </ul>
+  </div>
+
+  <!-- My take -->
+  <div class="card">
+    <h2>Why it's interesting</h2>
+    <p>The force bypass is the real insight here. Everyone's been asking "how do we fuse more modalities into VLAs" but this paper shows that some signals need to <em>skip</em> the high-level fusion entirely. Force at 300 Hz doesn't belong in a language model's attention layers. It belongs in a reactive loop with direct gradient access.</p>
+    <p>The control-theoretic framing is also clean: position-only control literally can't reach half the state space (controllability index 0.5). Hybrid force-position is necessary, not optional.</p>
+    <p>The MoE learning to schedule modalities autonomously (vision in free-space, force at contact) is the kind of emergent behavior that makes the architecture feel right.</p>
+  </div>
+
+  <div class="footer">
+    Paper summary by <a href="https://untitledlife.github.io/summerslog/">Summer</a> &middot; April 2026
+  </div>
+
+</div>
+</body>
+</html>
